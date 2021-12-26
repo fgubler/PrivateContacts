@@ -9,11 +9,13 @@ import com.tngtech.archunit.library.Architectures
 // packages
 private const val ROOT_PACKAGE = "ch.abwesend.privatecontacts"
 
-private const val VIEW_PACKAGE = "$ROOT_PACKAGE.view"
-private const val DOMAIN_PACKAGE = "$ROOT_PACKAGE.domain"
-private const val INFRASTRUCTURE_PACKAGE = "$ROOT_PACKAGE.infrastructure"
+private const val APPLICATION_PACKAGE = "$ROOT_PACKAGE.application.."
+private const val VIEW_PACKAGE = "$ROOT_PACKAGE.view.."
+private const val DOMAIN_PACKAGE = "$ROOT_PACKAGE.domain.."
+private const val INFRASTRUCTURE_PACKAGE = "$ROOT_PACKAGE.infrastructure.."
 
 // layers
+private const val APPLICATION_LAYER = "APPLICATION"
 private const val VIEW_LAYER = "VIEW"
 private const val DOMAIN_LAYER = "DOMAIN"
 private const val INFRASTRUCTURE_LAYER = "INFRASTRUCTURE"
@@ -27,14 +29,15 @@ class ArchitectureTest {
     @ArchTest
     val `view layer may not be accessed by any other layers`: ArchRule = layers()
         .whereLayer(VIEW_LAYER)
-        .mayNotBeAccessedByAnyLayer()
+        .mayOnlyBeAccessedByLayers(APPLICATION_LAYER)
 
     @ArchTest
     val `infrastructure layer may not be accessed by any other layers`: ArchRule = layers()
         .whereLayer(INFRASTRUCTURE_LAYER)
-        .mayNotBeAccessedByAnyLayer()
+        .mayOnlyBeAccessedByLayers(APPLICATION_LAYER)
 
     private fun layers() = Architectures.layeredArchitecture()
+        .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)
         .layer(VIEW_LAYER).definedBy(VIEW_PACKAGE)
         .layer(DOMAIN_LAYER).definedBy(DOMAIN_PACKAGE)
         .layer(INFRASTRUCTURE_LAYER).definedBy(INFRASTRUCTURE_PACKAGE)

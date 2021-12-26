@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts
+package ch.abwesend.privatecontacts.application
 
 import android.app.Application
 import android.content.Context
