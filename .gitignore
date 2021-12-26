@@ -18,13 +18,3 @@
 # Local properties
 /local.properties
 local.properties
-
-# Compiled Java class files
-*.class
-
-# Package files
-*.jar
-
-# Maven
-target/
-dist/
