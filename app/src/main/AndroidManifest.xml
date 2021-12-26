@@ -3,6 +3,7 @@
     package="ch.abwesend.privatecontacts">
 
     <application
+        android:name=".PrivateContactsApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
