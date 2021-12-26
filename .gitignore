@@ -1,6 +1,7 @@
 *.iml
 .gradle
 
+.idea/
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -17,13 +18,3 @@
 # Local properties
 /local.properties
 local.properties
-
-# Compiled Java class files
-*.class
-
-# Package files
-*.jar
-
-# Maven
-target/
-dist/
