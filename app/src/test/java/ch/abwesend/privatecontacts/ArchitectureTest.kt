@@ -24,7 +24,6 @@ private const val INFRASTRUCTURE_LAYER = "INFRASTRUCTURE"
     importOptions = [ImportOption.DoNotIncludeTests::class]
 )
 class ArchitectureTest {
-
     @ArchTest
     val `view layer may not be accessed by any other layers`: ArchRule = layers()
         .whereLayer(VIEW_LAYER)
