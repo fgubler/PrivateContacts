@@ -23,7 +23,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
         val context: Context = this
 
         startKoin {
-            androidLogger()
+            androidLogger() // use android logger for koin-internal logging
             androidContext(context)
             modules(koinModule)
         }
