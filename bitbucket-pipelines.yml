@@ -15,7 +15,7 @@ pipelines:
             caches:       # caching speed up subsequent execution https://support.atlassian.com/bitbucket-cloud/docs/cache-dependencies/
               - gradle
             script:
-              - ./gradlew assembleDebug
+              - bash ./gradlew assembleDebug
             artifacts:
               - app/build/outputs/**        # artifacts are files that are produced by a step https://support.atlassian.com/bitbucket-cloud/docs/use-artifacts-in-steps/
         - step:           # step to run lint (Android code scanning tool)
@@ -23,7 +23,7 @@ pipelines:
             caches:       # caching speed up subsequent execution https://support.atlassian.com/bitbucket-cloud/docs/cache-dependencies/
               - gradle
             script:
-              - ./gradlew lint
+              - bash ./gradlew ktlintCheck --continue
             artifacts:
               - app/build/reports/**        # artifacts are files that are produced by a step https://support.atlassian.com/bitbucket-cloud/docs/use-artifacts-in-steps/
         - step:           # step to run unit tests
@@ -31,4 +31,4 @@ pipelines:
             caches:
               - gradle    # caching speed up subsequent execution https://support.atlassian.com/bitbucket-cloud/docs/cache-dependencies/
             script:
-              - ./gradlew testDebugUnitTest # test reporting is automatically enabled https://support.atlassian.com/bitbucket-cloud/docs/test-reporting-in-pipelines/
+              - bash ./gradlew testDebugUnitTest # test reporting is automatically enabled https://support.atlassian.com/bitbucket-cloud/docs/test-reporting-in-pipelines/
