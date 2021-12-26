@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.ui.theme
+package ch.abwesend.privatecontacts.view.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

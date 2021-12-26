@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts
+package ch.abwesend.privatecontacts.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,7 +8,7 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import ch.abwesend.privatecontacts.ui.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
