@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.application
 
-import ch.abwesend.privatecontacts.domain.logging.ILoggerFactory
+import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.IContactLoadService

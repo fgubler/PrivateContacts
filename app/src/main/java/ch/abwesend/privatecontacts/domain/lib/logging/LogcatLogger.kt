@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.domain.logging
+package ch.abwesend.privatecontacts.domain.lib.logging
 
 import android.util.Log
 

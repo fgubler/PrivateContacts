@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.domain.logging
+package ch.abwesend.privatecontacts.domain.lib.logging
 
 interface ILogger {
     // ======== logging methods with arrays ========

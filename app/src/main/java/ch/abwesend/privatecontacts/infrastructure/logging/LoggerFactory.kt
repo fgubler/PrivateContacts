@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.infrastructure.logging
 
-import ch.abwesend.privatecontacts.domain.logging.ILogger
-import ch.abwesend.privatecontacts.domain.logging.ILoggerFactory
-import ch.abwesend.privatecontacts.domain.logging.LogcatLogger
+import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
+import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
+import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
 
 private const val LOGGING_TAG = "PrivateContacts"
 
