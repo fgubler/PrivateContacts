@@ -6,8 +6,8 @@ import org.koin.core.component.inject
 
 object KoinHelper : KoinComponent
 
-inline fun <reified T : Any> Any.injectAnywhere(): Lazy<T> =
+inline fun <reified T : Any> injectAnywhere(): Lazy<T> =
     KoinHelper.inject()
 
-inline fun <reified T : Any> Any.getAnywhere(): T =
+inline fun <reified T : Any> getAnywhere(): T =
     KoinHelper.get()
