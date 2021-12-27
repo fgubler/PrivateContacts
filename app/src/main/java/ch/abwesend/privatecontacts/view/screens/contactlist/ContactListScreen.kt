@@ -47,7 +47,7 @@ fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
 }
 
 @Composable
-fun ContactListTopBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
+private fun ContactListTopBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
         navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) }
@@ -55,7 +55,7 @@ fun ContactListTopBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineSco
 }
 
 @Composable
-fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
+private fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
     FloatingActionButton(onClick = { createContact(router, viewModel) }) {
         Icon(
             imageVector = Icons.Default.Add,
@@ -66,7 +66,7 @@ fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
 }
 
 @Composable
-fun ContactListContent(router: AppRouter, viewModel: ContactListViewModel) {
+private fun ContactListContent(router: AppRouter, viewModel: ContactListViewModel) {
     val contactsResource: AsyncResource<List<Contact>> by viewModel.contacts.collectAsState(LoadingResource())
 
     contactsResource

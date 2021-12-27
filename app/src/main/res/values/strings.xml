@@ -8,4 +8,5 @@
     <string name="navigation">Navigation</string>
     <string name="new_contact">New Contact</string>
     <string name="loading_contacts">Contacts are being loaded</string>
+    <string name="no_contacts_found">No contacts found</string>
 </resources>
