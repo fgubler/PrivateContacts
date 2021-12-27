@@ -1,12 +1,15 @@
 package ch.abwesend.privatecontacts.view.screens
 
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -29,7 +32,7 @@ fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
         scaffoldState = scaffoldState,
         topBar = { ContactListTopBar(scaffoldState, coroutineScope) },
         drawerContent = { SideDrawerContent(router, Screen.ContactList) },
-        floatingActionButton = { AddContactButton(viewModel = viewModel) }
+        floatingActionButton = { AddContactButton(router = router, viewModel = viewModel) }
     ) {
     }
 }
@@ -55,6 +58,17 @@ fun MenuButton(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
 }
 
 @Composable
-fun AddContactButton(viewModel: ContactListViewModel) {
-    // TODO implement
+fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
+    FloatingActionButton(onClick = { createContact(router, viewModel) }) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(id = R.string.new_contact),
+            tint = MaterialTheme.colors.onSecondary,
+        )
+    }
+}
+
+private fun createContact(router: AppRouter, viewModel: ContactListViewModel) {
+    viewModel.createContact()
+    router.navigateToScreen(Screen.ContactDetail)
 }

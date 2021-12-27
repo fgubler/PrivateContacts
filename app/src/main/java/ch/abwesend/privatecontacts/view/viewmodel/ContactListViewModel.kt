@@ -13,4 +13,8 @@ class ContactListViewModel : ViewModel() {
     val contacts: ResourceStateFlow<List<Contact>> by lazy {
         loadService.loadContacts()
     }
+
+    fun createContact() {
+        // TODO implement
+    }
 }
