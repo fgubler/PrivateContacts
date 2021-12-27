@@ -79,6 +79,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
     implementation "androidx.activity:activity-compose:1.4.0"
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
+    implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
+    implementation "androidx.compose.material:material-icons-extended:$composeVersion"
 
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:29.0.3")
@@ -87,6 +89,7 @@ dependencies {
     // Others
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
+    implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
 
     // ===== Testing =====
     // Unit Tests

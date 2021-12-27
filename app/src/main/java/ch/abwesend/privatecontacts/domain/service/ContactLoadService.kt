@@ -7,17 +7,24 @@ import ch.abwesend.privatecontacts.domain.model.Contact
 import ch.abwesend.privatecontacts.domain.model.ContactRead
 import ch.abwesend.privatecontacts.domain.model.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.PhoneNumberType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 interface IContactLoadService {
-    suspend fun loadContacts(): ResourceStateFlow<List<Contact>>
+    fun loadContacts(): ResourceStateFlow<List<Contact>>
 }
 
 class ContactLoadService : IContactLoadService {
-    override suspend fun loadContacts(): ResourceStateFlow<List<Contact>> {
+    override fun loadContacts(): ResourceStateFlow<List<Contact>> {
         // TODO implement
         val stateFlow = mutableResourceStateFlow<List<Contact>>()
-        stateFlow.emitReady(dummyContacts)
+
+        CoroutineScope(Dispatchers.Default).launch {
+            stateFlow.emitReady(dummyContacts)
+        }
+
         return stateFlow
     }
 }
