@@ -2,7 +2,6 @@ package ch.abwesend.privatecontacts.view.screens
 
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
@@ -10,18 +9,27 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
+import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
+import ch.abwesend.privatecontacts.domain.model.Contact
+import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.components.MenuButton
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactList
+import ch.abwesend.privatecontacts.view.util.composeIfLoading
+import ch.abwesend.privatecontacts.view.util.composeIfReady
+import ch.abwesend.privatecontacts.view.util.getLogger
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
@@ -34,6 +42,7 @@ fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
         drawerContent = { SideDrawerContent(router, Screen.ContactList) },
         floatingActionButton = { AddContactButton(router = router, viewModel = viewModel) }
     ) {
+        ContactListContent(router = router, viewModel = viewModel)
     }
 }
 
@@ -46,18 +55,6 @@ fun ContactListTopBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineSco
 }
 
 @Composable
-fun MenuButton(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
-    IconButton(onClick = {
-        coroutineScope.launch { scaffoldState.drawerState.open() }
-    }) {
-        Icon(
-            imageVector = Icons.Default.Menu,
-            contentDescription = stringResource(id = R.string.menu)
-        )
-    }
-}
-
-@Composable
 fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
     FloatingActionButton(onClick = { createContact(router, viewModel) }) {
         Icon(
@@ -66,6 +63,28 @@ fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel) {
             tint = MaterialTheme.colors.onSecondary,
         )
     }
+}
+
+@Composable
+fun ContactListContent(router: AppRouter, viewModel: ContactListViewModel) {
+    val contactsResource: AsyncResource<List<Contact>> by viewModel.contacts.collectAsState(LoadingResource())
+
+    contactsResource
+        .composeIfLoading {
+            getLogger().debug("Loading contacts")
+            LoadingIndicatorFullScreen(
+                textAfterIndicator = { stringResource(id = R.string.loading_contacts) }
+            )
+        }
+        .composeIfReady { contacts ->
+            ContactList(contacts = contacts) { contact ->
+                selectContact(router, viewModel, contact)
+            }
+        }
+}
+
+private fun selectContact(router: AppRouter, viewModel: ContactListViewModel, contact: Contact) {
+    // TODO implement
 }
 
 private fun createContact(router: AppRouter, viewModel: ContactListViewModel) {

@@ -7,4 +7,5 @@
     <string name="menu">Open menu</string>
     <string name="navigation">Navigation</string>
     <string name="new_contact">New Contact</string>
+    <string name="loading_contacts">Contacts are being loaded</string>
 </resources>

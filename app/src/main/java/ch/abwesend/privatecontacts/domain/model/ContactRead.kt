@@ -15,3 +15,7 @@ data class ContactRead(
     override val lastName: String,
     override val phoneNumbers: List<PhoneNumber>
 ) : Contact
+
+fun Contact.getFullName(firstNameFirst: Boolean) =
+    if (firstNameFirst) "$firstName $lastName"
+    else "$lastName $firstName"

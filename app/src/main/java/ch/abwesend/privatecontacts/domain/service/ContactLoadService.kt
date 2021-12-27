@@ -1,14 +1,17 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitLoading
 import ch.abwesend.privatecontacts.domain.lib.flow.emitReady
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.Contact
 import ch.abwesend.privatecontacts.domain.model.ContactRead
 import ch.abwesend.privatecontacts.domain.model.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.PhoneNumberType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -22,7 +25,12 @@ class ContactLoadService : IContactLoadService {
         val stateFlow = mutableResourceStateFlow<List<Contact>>()
 
         CoroutineScope(Dispatchers.Default).launch {
+            logger.debug("contacts: before emission")
+            stateFlow.emitLoading()
+            logger.debug("contacts: emitted loading")
+            delay(2000)
             stateFlow.emitReady(dummyContacts)
+            logger.debug("contacts: emitted ready")
         }
 
         return stateFlow
