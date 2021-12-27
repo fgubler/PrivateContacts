@@ -31,7 +31,6 @@ fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
         drawerContent = { SideDrawerContent(router, Screen.ContactList) },
         floatingActionButton = { AddContactButton(viewModel = viewModel) }
     ) {
-
     }
 }
 
@@ -54,7 +53,6 @@ fun MenuButton(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
         )
     }
 }
-
 
 @Composable
 fun AddContactButton(viewModel: ContactListViewModel) {

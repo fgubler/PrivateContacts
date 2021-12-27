@@ -14,4 +14,4 @@ data class ContactRead(
     override val firstName: String,
     override val lastName: String,
     override val phoneNumbers: List<PhoneNumber>
-): Contact
+) : Contact

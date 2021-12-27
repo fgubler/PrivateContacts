@@ -6,12 +6,11 @@ import androidx.navigation.NavOptions
 class AppRouter(private val navController: NavHostController) {
 
     fun navigateToScreen(screen: Screen, navOptions: NavOptions? = null): Boolean =
-        when(screen) {
+        when (screen) {
             Screen.ContactList -> navigateToContactListScreen()
             Screen.Settings -> navigateToSettingsScreen()
             Screen.Contact -> navigateToContactScreen()
         }
-
 
     private fun navigateToContactListScreen(): Boolean {
         navController.navigate(Screen.ContactList.key)

@@ -83,7 +83,6 @@ fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) 
     }
 }
 
-
 @Composable
 fun SideDrawerElement(
     @StringRes titleRes: Int,

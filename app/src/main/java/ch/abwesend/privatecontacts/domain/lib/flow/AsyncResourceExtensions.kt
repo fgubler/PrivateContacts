@@ -16,7 +16,7 @@ suspend fun <T> MutableResourceStateFlow<T>.emitReady(value: T) = emit(ReadyReso
 suspend fun <T> MutableResourceStateFlow<T>.emitError(error: Exception) = emit(ErrorResource(listOf(error)))
 suspend fun <T> MutableResourceStateFlow<T>.emitInactive() = emit(InactiveResource())
 
-fun <T> ResourceStateFlow<T>.observeLoading(owner: LifecycleOwner, observer: () -> Unit, ): ResourceStateFlow<T> {
+fun <T> ResourceStateFlow<T>.observeLoading(owner: LifecycleOwner, observer: () -> Unit,): ResourceStateFlow<T> {
     observe(owner) { it.ifLoading(observer) }
     return this
 }

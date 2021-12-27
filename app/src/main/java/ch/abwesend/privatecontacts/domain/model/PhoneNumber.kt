@@ -5,4 +5,3 @@ data class PhoneNumber(
     val type: PhoneNumberType,
     val isMainNumber: Boolean = false,
 )
-

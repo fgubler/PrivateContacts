@@ -16,19 +16,17 @@ data class ReadyResource<T>(val value: T) : AsyncResource<T>() {
     override fun ifReady(handler: (T) -> Unit): Unit = handler(value)
 }
 
-class LoadingResource<T>: AsyncResource<T>() {
+class LoadingResource<T> : AsyncResource<T>() {
     override val valueOrNull: T? = null
     override fun ifLoading(handler: () -> Unit): Unit = handler()
 }
 
-data class ErrorResource<T>(val error: List<Exception>): AsyncResource<T>() {
+data class ErrorResource<T>(val error: List<Exception>) : AsyncResource<T>() {
     override val valueOrNull: T? = null
     override fun ifError(handler: (List<Exception>) -> Unit): Unit = handler(error)
 }
 
-class InactiveResource<T>(): AsyncResource<T>() {
+class InactiveResource<T>() : AsyncResource<T>() {
     override val valueOrNull: T? = null
     override fun ifInactive(handler: () -> Unit): Unit = handler()
 }
-
-
