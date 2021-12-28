@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.domain.lib.flow
 
-import androidx.lifecycle.LifecycleOwner
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -16,24 +16,14 @@ suspend fun <T> MutableResourceStateFlow<T>.emitReady(value: T) = emit(ReadyReso
 suspend fun <T> MutableResourceStateFlow<T>.emitError(error: Exception) = emit(ErrorResource(listOf(error)))
 suspend fun <T> MutableResourceStateFlow<T>.emitInactive() = emit(InactiveResource())
 
-fun <T> ResourceStateFlow<T>.observeLoading(owner: LifecycleOwner, observer: () -> Unit,): ResourceStateFlow<T> {
-    observe(owner) { it.ifLoading(observer) }
-    return this
-}
-
-fun <T> ResourceStateFlow<T>.observeReady(owner: LifecycleOwner, observer: (T) -> Unit): ResourceStateFlow<T> {
-    observe(owner) { it.ifReady(observer) }
-    return this
-}
-
-fun <T> ResourceStateFlow<T>.observeError(owner: LifecycleOwner, observer: (List<Exception>) -> Unit):
-    ResourceStateFlow<T> {
-    observe(owner) { it.ifError(observer) }
-    return this
-}
-
-fun <T> ResourceStateFlow<T>.observeInactive(owner: LifecycleOwner, observer: () -> Unit):
-    ResourceStateFlow<T> {
-    observe(owner) { it.ifInactive(observer) }
-    return this
-}
+suspend fun <T> MutableResourceStateFlow<T>.withLoadingState(loader: suspend () -> T): T? =
+    try {
+        emitLoading()
+        val result = loader()
+        emitReady(result)
+        result
+    } catch (e: Exception) {
+        emitError(e)
+        logger.error("Failed to load data", e)
+        null
+    }

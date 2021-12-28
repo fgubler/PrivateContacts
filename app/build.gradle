@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     id "de.mannodermaus.android-junit5"
     id "org.jlleitschuh.gradle.ktlint"
+    id "kotlin-kapt"
 
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
@@ -22,6 +23,12 @@ android {
         testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
         vectorDrawables {
             useSupportLibrary true
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/room_schemas".toString()]
+            }
         }
     }
 
@@ -87,6 +94,12 @@ dependencies {
     implementation platform("com.google.firebase:firebase-bom:29.0.3")
     implementation 'com.google.firebase:firebase-crashlytics'
 
+    // Room
+    implementation "androidx.room:room-ktx:$roomVersion"
+    implementation "androidx.room:room-runtime:$roomVersion"
+    kapt "androidx.room:room-compiler:$roomVersion"
+    implementation "androidx.room:room-paging:2.4.0"
+
     // Others
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
@@ -105,6 +118,7 @@ dependencies {
     testImplementation "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
 
     testImplementation "io.insert-koin:koin-test:${koinVersion}"
+    testImplementation "androidx.room:room-testing:$roomVersion"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archUnitVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
