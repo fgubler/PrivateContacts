@@ -20,13 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.Contact
+import ch.abwesend.privatecontacts.domain.model.ContactBase
 import ch.abwesend.privatecontacts.domain.model.getFullName
 
 @Composable
 fun ContactList(
-    contacts: List<Contact>,
-    onContactSelected: (Contact) -> Unit,
+    contacts: List<ContactBase>,
+    onContactSelected: (ContactBase) -> Unit,
 ) {
     if (contacts.isEmpty()) {
         NoResults()
@@ -53,8 +53,8 @@ private fun NoResults() {
 
 @Composable
 private fun ListWithResults(
-    contacts: List<Contact>,
-    onContactSelected: (Contact) -> Unit,
+    contacts: List<ContactBase>,
+    onContactSelected: (ContactBase) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier

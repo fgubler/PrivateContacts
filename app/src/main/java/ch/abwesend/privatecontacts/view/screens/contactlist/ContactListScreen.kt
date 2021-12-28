@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
-import ch.abwesend.privatecontacts.domain.model.Contact
+import ch.abwesend.privatecontacts.domain.model.ContactBase
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.MenuButton
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
@@ -67,7 +67,7 @@ private fun AddContactButton(router: AppRouter, viewModel: ContactListViewModel)
 
 @Composable
 private fun ContactListContent(router: AppRouter, viewModel: ContactListViewModel) {
-    val contactsResource: AsyncResource<List<Contact>> by viewModel.contacts.collectAsState(LoadingResource())
+    val contactsResource: AsyncResource<List<ContactBase>> by viewModel.contacts.collectAsState(LoadingResource())
 
     contactsResource
         .composeIfLoading {
@@ -83,7 +83,7 @@ private fun ContactListContent(router: AppRouter, viewModel: ContactListViewMode
         }
 }
 
-private fun selectContact(router: AppRouter, viewModel: ContactListViewModel, contact: Contact) {
+private fun selectContact(router: AppRouter, viewModel: ContactListViewModel, contact: ContactBase) {
     // TODO implement
 }
 
