@@ -23,7 +23,7 @@ fun LoadingIndicatorFullScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.size(200.dp)    // needs a fixed size vor alignment/arrangement
+            modifier = Modifier.size(200.dp) // needs a fixed size vor alignment/arrangement
         )
         textAfterIndicator?.let { text ->
             Text(

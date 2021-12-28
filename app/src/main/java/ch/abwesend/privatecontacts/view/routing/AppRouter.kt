@@ -9,9 +9,9 @@ class AppRouter(private val navController: NavHostController) {
     fun navigateToScreen(screen: Screen, navOptions: NavOptions? = null): Boolean =
         when (screen) {
             Screen.ContactList -> tryNavigate(screen, navOptions)
-            Screen.Settings -> notYetImplemented()  // TODO implement
-            Screen.ContactDevelopers -> notYetImplemented()  // TODO implement
-            Screen.ContactDetail -> notYetImplemented()  // TODO implement
+            Screen.Settings -> notYetImplemented() // TODO implement
+            Screen.ContactDevelopers -> notYetImplemented() // TODO implement
+            Screen.ContactDetail -> notYetImplemented() // TODO implement
         }
 
     private fun notYetImplemented(): Boolean {
@@ -25,7 +25,7 @@ class AppRouter(private val navController: NavHostController) {
         try {
             navController.navigate(screen.key)
             true
-        } catch(e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             e.logger.warning("Cannot navigate to '${screen.key}': screen not found")
             false
         }

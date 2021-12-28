@@ -22,4 +22,3 @@ fun <T> AsyncResource<T>.composeIfLoading(handler: @Composable () -> Unit): Asyn
     (this as? LoadingResource)?.let { handler() }
     return this
 }
-
