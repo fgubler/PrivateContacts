@@ -10,6 +10,7 @@ buildscript {
         junit5AndroidVersion = "1.2.2"
         archUnitVersion = "0.22.0"
         koinVersion = "3.1.4"
+        roomVersion = "2.4.0"
     }
     repositories {
         google()

@@ -1,3 +1,7 @@
 package ch.abwesend.privatecontacts.domain.repository
 
-interface IContactRepository
+import ch.abwesend.privatecontacts.domain.model.ContactBase
+
+interface IContactRepository {
+    suspend fun loadContacts(): List<ContactBase>
+}
