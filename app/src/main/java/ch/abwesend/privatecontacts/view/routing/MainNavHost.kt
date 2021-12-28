@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import ch.abwesend.privatecontacts.view.screens.ContactListScreen
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf

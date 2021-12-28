@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.view.screens
+package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -24,7 +24,6 @@ import ch.abwesend.privatecontacts.view.components.MenuButton
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactList
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.util.getLogger
