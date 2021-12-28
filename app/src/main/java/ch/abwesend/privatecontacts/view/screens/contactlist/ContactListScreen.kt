@@ -1,9 +1,10 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -13,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -88,7 +90,7 @@ private fun ContactListContent(router: AppRouter, viewModel: ContactListViewMode
             )
         }
         .composeIfError {
-            LoadingError()
+            LoadingError(viewModel)
         }
         .composeIfReady { contacts ->
             ContactList(contacts = contacts) { contact ->
@@ -98,15 +100,26 @@ private fun ContactListContent(router: AppRouter, viewModel: ContactListViewMode
 }
 
 @Composable
-private fun LoadingError() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+private fun LoadingError(viewModel: ContactListViewModel) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp)
     ) {
-        Text(text = stringResource(id = R.string.data_loading_error))
+        Text(
+            text = stringResource(id = R.string.data_loading_error),
+            modifier = Modifier.padding(bottom = 20.dp)
+        )
+        Button(onClick = { viewModel.loadContacts() }) {
+            Text(text = stringResource(id = R.string.reload_data))
+            Icon(
+                imageVector = Icons.Default.Sync,
+                contentDescription = stringResource(id = R.string.reload_data),
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
     }
 }
 
