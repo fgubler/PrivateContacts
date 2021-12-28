@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.model.ContactBase
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.MenuButton
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
+import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.composeIfError
@@ -41,9 +42,12 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun ContactListScreen(router: AppRouter, viewModel: ContactListViewModel) {
+fun ContactListScreen(screenContext: ScreenContext) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
+
+    val router = screenContext.router
+    val viewModel = screenContext.contactListViewModel
 
     Scaffold(
         scaffoldState = scaffoldState,
