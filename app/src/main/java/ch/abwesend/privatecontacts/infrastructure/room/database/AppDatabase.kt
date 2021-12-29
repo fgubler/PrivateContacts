@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDa
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 
 @Database(
-    version = 6,
+    version = 7,
     exportSchema = true,
     entities = [ContactEntity::class, ContactDataEntity::class],
     autoMigrations = []
