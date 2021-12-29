@@ -2,7 +2,6 @@ package ch.abwesend.privatecontacts.infrastructure.room
 
 import android.content.Context
 import androidx.room.Room
-import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.ContactFull
 import ch.abwesend.privatecontacts.domain.model.ContactType
 import ch.abwesend.privatecontacts.domain.model.PhoneNumber
@@ -16,10 +15,7 @@ object DatabaseFactory {
             AppDatabase::class.java,
             "private_contacts_database"
         )
-            .let {
-                if (BuildConfig.DEBUG) it.fallbackToDestructiveMigration() // recreate DB if migrations fail
-                else it
-            }
+            // .fallbackToDestructiveMigration() // insert to recreate DB if migrations fail
             .addMigrations(*DatabaseMigrations.allMigrations)
             .build()
 }
