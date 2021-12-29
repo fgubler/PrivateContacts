@@ -4,11 +4,12 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import java.util.UUID
 
 @Dao
 interface ContactDataDao {
     @Query("SELECT * FROM ContactDataEntity WHERE contactId = :contactId")
-    fun getDataForContact(contactId: Int): List<ContactDataEntity>
+    fun getDataForContact(contactId: UUID): List<ContactDataEntity>
 
     @Insert
     fun insert(data: ContactDataEntity)

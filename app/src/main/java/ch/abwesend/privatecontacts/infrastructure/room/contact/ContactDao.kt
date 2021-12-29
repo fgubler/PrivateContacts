@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import java.util.UUID
 
 @Dao
 interface ContactDao {
@@ -14,7 +15,7 @@ interface ContactDao {
     fun count(): Int
 
     @Query("SELECT * FROM ContactEntity WHERE id IN (:ids)")
-    fun findByIds(ids: List<Int>): List<ContactEntity>
+    fun findByIds(ids: List<UUID>): List<ContactEntity>
 
     @Query(
         """

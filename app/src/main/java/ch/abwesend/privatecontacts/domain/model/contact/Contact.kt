@@ -1,20 +1,12 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import java.util.UUID
 
 interface Contact : ContactBase {
     val phoneNumbers: List<PhoneNumber>
 }
 
 data class ContactFull(
-    override val id: Int,
-    override val uuid: UUID,
-    override var firstName: String,
-    override var lastName: String,
-    override var nickname: String,
-    override var notes: String,
+    private val contactBase: ContactBase,
     override var phoneNumbers: List<PhoneNumber>,
-    override val type: ContactType,
-) : Contact
+) : ContactBase by contactBase, Contact

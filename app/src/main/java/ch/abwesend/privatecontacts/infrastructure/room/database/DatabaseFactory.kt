@@ -3,13 +3,20 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 import android.content.Context
 import androidx.room.Room
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberType
+import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import java.util.UUID
 
-object DatabaseFactory {
-    fun createDatabase(context: Context,): AppDatabase =
+interface DatabaseInitializer {
+    suspend fun initializeDatabase()
+}
+
+object DatabaseFactory : DatabaseInitializer {
+    fun createDatabase(context: Context): AppDatabase =
         Room.databaseBuilder(
             context.applicationContext,
             AppDatabase::class.java,
@@ -18,73 +25,82 @@ object DatabaseFactory {
             // .fallbackToDestructiveMigration() // insert to recreate DB if migrations fail
             .addMigrations(*DatabaseMigrations.allMigrations)
             .build()
+
+    override suspend fun initializeDatabase() {
+        val contactRepository: IContactRepository = getAnywhere()
+        dummyContacts.forEach { contactRepository.createContact(it) }
+    }
 }
 
 val dummyContacts = listOf(
     ContactFull(
-        id = 1,
-        uuid = UUID.randomUUID(),
-        firstName = "Darth",
-        lastName = "Vader",
-        nickname = "Darthy",
-        type = ContactType.PRIVATE,
-        notes = "Evil but not very good at it",
+        contactBase = ContactLite(
+            id = UUID.randomUUID(),
+            firstName = "Darth",
+            lastName = "Vader",
+            nickname = "Darthy",
+            type = ContactType.PRIVATE,
+            notes = "Evil but not very good at it",
+        ),
         phoneNumbers = listOf(),
     ),
     ContactFull(
-        id = 2,
-        uuid = UUID.randomUUID(),
-        firstName = "Luke",
-        lastName = "Skywalker",
-        nickname = "Lucky Luke",
-        type = ContactType.PUBLIC,
-        notes = "Lost his hand",
+        contactBase = ContactLite(
+            id = UUID.randomUUID(),
+            firstName = "Luke",
+            lastName = "Skywalker",
+            nickname = "Lucky Luke",
+            type = ContactType.PUBLIC,
+            notes = "Lost his hand",
+        ),
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "1234",
-                type = PhoneNumberType.Private
+                type = ContactDataSubType.Private
             ),
         ),
     ),
     ContactFull(
-        id = 3,
-        uuid = UUID.randomUUID(),
-        firstName = "Obi-Wan",
-        lastName = "Kenobi",
-        nickname = "Obi",
-        type = ContactType.PUBLIC,
-        notes = "Efficient way of suicide",
+        contactBase = ContactLite(
+            id = UUID.randomUUID(),
+            firstName = "Obi-Wan",
+            lastName = "Kenobi",
+            nickname = "Obi",
+            type = ContactType.PUBLIC,
+            notes = "Efficient way of suicide",
+        ),
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "12345",
-                type = PhoneNumberType.Private
+                type = ContactDataSubType.Private
             ),
             PhoneNumber(
                 value = "123456",
-                type = PhoneNumberType.Business
+                type = ContactDataSubType.Business
             ),
         ),
     ),
     ContactFull(
-        id = 4,
-        uuid = UUID.randomUUID(),
-        firstName = "Yoda",
-        lastName = "",
-        nickname = "Yo-Da",
-        type = ContactType.PRIVATE,
-        notes = "Small and green",
+        contactBase = ContactLite(
+            id = UUID.randomUUID(),
+            firstName = "Yoda",
+            lastName = "",
+            nickname = "Yo-Da",
+            type = ContactType.PRIVATE,
+            notes = "Small and green",
+        ),
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "123456",
-                type = PhoneNumberType.Private
+                type = ContactDataSubType.Private
             ),
             PhoneNumber(
                 value = "1234567",
-                type = PhoneNumberType.Business
+                type = ContactDataSubType.Business
             ),
             PhoneNumber(
                 value = "12345678",
-                type = PhoneNumberType.Custom("Jedi-Number")
+                type = ContactDataSubType.Custom("Jedi-Number")
             ),
         ),
     ),

@@ -1,9 +1,11 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
+import java.util.UUID
 
 @Entity(
     foreignKeys = [
@@ -16,12 +18,12 @@ import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
     ]
 )
 data class ContactDataEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val contactId: Int,
+    @PrimaryKey val id: UUID,
+    val contactId: UUID,
     val type: ContactDataType,
-    val subType: ContactDataSubType,
-    val customSubType: String?, // if the subtype is custom, the user can enter custom-subtype
-    val sortOrder: Int,
-    val value: String,
+    @Embedded(prefix = "subType") val subType: ContactDataSubTypeEntity,
     val isMain: Boolean,
+    val value: String,
+    val sortOrder: Int? = null,
+    val customSubType: String? = null, // if the subtype is custom, the user can enter custom-subtype
 )

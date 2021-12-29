@@ -6,8 +6,10 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.IContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
+import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseInitializer
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -16,8 +18,10 @@ internal val koinModule = module {
     single<IContactLoadService> { ContactLoadService() }
     single<IContactRepository> { ContactRepository() }
     single<ILoggerFactory> { LoggerFactory() }
-    single { ApplicationScope() }
+    single<DatabaseInitializer> { DatabaseFactory }
+    single { ContactDataRepository() }
 
+    single { ApplicationScope() }
     factory { AppRouter(get()) }
 
     single {
