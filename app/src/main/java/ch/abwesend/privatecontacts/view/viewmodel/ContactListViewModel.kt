@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
-import ch.abwesend.privatecontacts.domain.model.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.service.IContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch

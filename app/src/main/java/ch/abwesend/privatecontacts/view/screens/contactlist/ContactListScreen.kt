@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
-import ch.abwesend.privatecontacts.domain.model.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.MenuButton
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent

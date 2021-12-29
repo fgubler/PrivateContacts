@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.domain.model
+package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
 import java.util.UUID
@@ -10,6 +10,7 @@ interface ContactBase {
     val lastName: String
     val nickname: String
     val type: ContactType
+    val notes: String
 }
 
 data class ContactLite(
@@ -19,4 +20,5 @@ data class ContactLite(
     override val lastName: String,
     override val nickname: String,
     override val type: ContactType,
+    override val notes: String,
 ) : ContactBase
