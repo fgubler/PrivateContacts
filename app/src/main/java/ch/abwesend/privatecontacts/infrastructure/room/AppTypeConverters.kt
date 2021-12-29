@@ -2,9 +2,21 @@ package ch.abwesend.privatecontacts.infrastructure.room
 
 import androidx.room.TypeConverter
 import ch.abwesend.privatecontacts.domain.model.ContactType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
 import java.util.UUID
 
 class AppTypeConverters {
+    // UUID
+    @TypeConverter
+    fun serializeUuid(uuid: UUID?): String? {
+        return uuid?.toString()
+    }
+    @TypeConverter
+    fun deserializeUuid(value: String?): UUID? {
+        return value?.let { UUID.fromString(it) }
+    }
+
     // ContactType
     @TypeConverter
     fun serializeContactType(type: ContactType?): String? {
@@ -15,13 +27,23 @@ class AppTypeConverters {
         return value?.let { ContactType.valueOf(it) }
     }
 
-    // UUID
+    // ContactDataType
     @TypeConverter
-    fun serializeUuid(uuid: UUID?): String? {
-        return uuid?.toString()
+    fun serializeContactDataType(type: ContactDataType?): String? {
+        return type?.name
     }
     @TypeConverter
-    fun deserializeUuid(value: String?): UUID? {
-        return value?.let { UUID.fromString(it) }
+    fun deserializeContactDataType(value: String?): ContactDataType? {
+        return value?.let { ContactDataType.valueOf(it) }
+    }
+
+    // ContactDataSubType
+    @TypeConverter
+    fun serializeContactDataSubType(type: ContactDataSubType?): String? {
+        return type?.name
+    }
+    @TypeConverter
+    fun deserializeContactDataSubType(value: String?): ContactDataSubType? {
+        return value?.let { ContactDataSubType.valueOf(it) }
     }
 }
