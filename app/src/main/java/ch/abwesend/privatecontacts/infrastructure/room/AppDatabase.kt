@@ -2,16 +2,18 @@ package ch.abwesend.privatecontacts.infrastructure.room
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 
 @Database(
-    version = 2,
+    version = 3,
     exportSchema = true,
     entities = [ContactEntity::class],
 )
+@TypeConverters(AppTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     private var initialized: Boolean = false
 
