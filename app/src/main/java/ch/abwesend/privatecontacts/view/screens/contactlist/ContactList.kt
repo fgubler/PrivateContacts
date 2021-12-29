@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ContactBase
-import ch.abwesend.privatecontacts.domain.model.getFullName
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 
 @Composable
 fun ContactList(

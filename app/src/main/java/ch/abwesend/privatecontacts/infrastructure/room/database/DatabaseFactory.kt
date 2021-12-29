@@ -1,11 +1,11 @@
-package ch.abwesend.privatecontacts.infrastructure.room
+package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import android.content.Context
 import androidx.room.Room
-import ch.abwesend.privatecontacts.domain.model.ContactFull
-import ch.abwesend.privatecontacts.domain.model.ContactType
-import ch.abwesend.privatecontacts.domain.model.PhoneNumber
-import ch.abwesend.privatecontacts.domain.model.PhoneNumberType
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberType
 import java.util.UUID
 
 object DatabaseFactory {

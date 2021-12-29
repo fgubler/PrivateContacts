@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.domain.model
+package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R

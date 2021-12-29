@@ -1,5 +1,8 @@
-package ch.abwesend.privatecontacts.domain.model
+package ch.abwesend.privatecontacts.domain.model.contact
 
+import ch.abwesend.privatecontacts.domain.model.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import java.util.UUID
 
 interface Contact : ContactBase {

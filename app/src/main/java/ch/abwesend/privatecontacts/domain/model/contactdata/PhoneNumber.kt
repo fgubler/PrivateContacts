@@ -1,4 +1,10 @@
-package ch.abwesend.privatecontacts.domain.model
+package ch.abwesend.privatecontacts.domain.model.contactdata
+
+data class PhoneNumber(
+    val value: String,
+    val type: PhoneNumberType,
+    val isMainNumber: Boolean = false,
+)
 
 sealed interface PhoneNumberType {
     val value: String

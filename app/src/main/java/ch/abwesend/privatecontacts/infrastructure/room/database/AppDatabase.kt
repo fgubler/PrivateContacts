@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.room
+package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

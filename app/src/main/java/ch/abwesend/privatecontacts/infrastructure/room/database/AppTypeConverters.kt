@@ -1,7 +1,7 @@
-package ch.abwesend.privatecontacts.infrastructure.room
+package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import androidx.room.TypeConverter
-import ch.abwesend.privatecontacts.domain.model.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
 import java.util.UUID

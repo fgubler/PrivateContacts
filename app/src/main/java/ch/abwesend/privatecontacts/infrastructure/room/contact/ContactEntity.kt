@@ -3,7 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contact
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ch.abwesend.privatecontacts.domain.model.ContactBase
-import ch.abwesend.privatecontacts.domain.model.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactType
 import java.util.UUID
 
 @Entity
