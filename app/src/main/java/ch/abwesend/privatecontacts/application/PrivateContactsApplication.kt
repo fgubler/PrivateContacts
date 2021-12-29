@@ -2,8 +2,6 @@ package ch.abwesend.privatecontacts.application
 
 import android.app.Application
 import android.content.Context
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.component.KoinComponent
@@ -22,11 +20,4 @@ class PrivateContactsApplication : Application(), KoinComponent {
             modules(koinModule)
         }
     }
-
-    companion object {
-        val applicationScope by lazy { CoroutineScope(SupervisorJob()) }
-    }
 }
-
-val applicationScope: CoroutineScope
-    get() = PrivateContactsApplication.applicationScope

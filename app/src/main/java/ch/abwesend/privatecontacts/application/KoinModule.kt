@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.application
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.ApplicationScope
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
@@ -15,6 +16,8 @@ internal val koinModule = module {
     single<IContactLoadService> { ContactLoadService() }
     single<IContactRepository> { ContactRepository() }
     single<ILoggerFactory> { LoggerFactory() }
+    single { ApplicationScope() }
+
     factory { AppRouter(get()) }
 
     single {
