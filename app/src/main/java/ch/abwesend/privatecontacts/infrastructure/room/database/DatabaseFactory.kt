@@ -11,12 +11,13 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import java.util.UUID
 
-interface DatabaseInitializer {
+interface IDatabaseFactory {
+    fun createDatabase(context: Context): AppDatabase
     suspend fun initializeDatabase()
 }
 
-object DatabaseFactory : DatabaseInitializer {
-    fun createDatabase(context: Context): AppDatabase =
+open class DatabaseFactory : IDatabaseFactory {
+    override fun createDatabase(context: Context): AppDatabase =
         Room.databaseBuilder(
             context.applicationContext,
             AppDatabase::class.java,
@@ -56,7 +57,8 @@ val dummyContacts = listOf(
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "1234",
-                type = ContactDataSubType.Private
+                type = ContactDataSubType.Private,
+                isMainNumber = true,
             ),
         ),
     ),
@@ -72,11 +74,13 @@ val dummyContacts = listOf(
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "12345",
-                type = ContactDataSubType.Private
+                type = ContactDataSubType.Private,
+                isMainNumber = true,
             ),
             PhoneNumber(
                 value = "123456",
-                type = ContactDataSubType.Business
+                type = ContactDataSubType.Business,
+                isMainNumber = false,
             ),
         ),
     ),
@@ -92,15 +96,18 @@ val dummyContacts = listOf(
         phoneNumbers = listOf(
             PhoneNumber(
                 value = "123456",
-                type = ContactDataSubType.Private
+                type = ContactDataSubType.Private,
+                isMainNumber = false,
             ),
             PhoneNumber(
                 value = "1234567",
-                type = ContactDataSubType.Business
+                type = ContactDataSubType.Business,
+                isMainNumber = false,
             ),
             PhoneNumber(
                 value = "12345678",
-                type = ContactDataSubType.Custom("Jedi-Number")
+                type = ContactDataSubType.Custom("Jedi-Number"),
+                isMainNumber = true,
             ),
         ),
     ),

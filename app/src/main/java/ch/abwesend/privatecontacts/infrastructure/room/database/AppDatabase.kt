@@ -33,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
         if (!hasData) {
             logger.info("Initializing database")
 
-            val initializer: DatabaseInitializer = getAnywhere()
+            val initializer: IDatabaseFactory = getAnywhere()
             initializer.initializeDatabase()
             initialized = true
         }
