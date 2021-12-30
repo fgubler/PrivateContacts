@@ -6,7 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
 import java.util.UUID
 
-class AppTypeConverters {
+object AppTypeConverters {
     // UUID
     @TypeConverter
     fun serializeUuid(uuid: UUID?): String? {
