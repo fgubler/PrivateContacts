@@ -123,6 +123,9 @@ dependencies {
     testImplementation "androidx.room:room-testing:$roomVersion"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archUnitVersion}"
 
+    testImplementation "io.mockk:mockk:${mockkVersion}"
+    testImplementation "io.mockk:mockk-agent-jvm:${mockkVersion}"
+
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     // Instrumented Tests
@@ -138,6 +141,9 @@ dependencies {
     androidTestImplementation "io.insert-koin:koin-test:${koinVersion}"
     androidTestImplementation "de.mannodermaus.junit5:android-test-core:${junit5AndroidVersion}"
     androidTestImplementation "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
+
+    androidTestImplementation "io.mockk:mockk-android:${mockkVersion}"
+    androidTestImplementation "io.mockk:mockk-agent-jvm:${mockkVersion}"
 
     androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
 }

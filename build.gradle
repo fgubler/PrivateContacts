@@ -11,6 +11,7 @@ buildscript {
         archUnitVersion = "0.22.0"
         koinVersion = "3.1.4"
         roomVersion = "2.4.0"
+        mockkVersion = "1.12.1"
     }
     repositories {
         google()

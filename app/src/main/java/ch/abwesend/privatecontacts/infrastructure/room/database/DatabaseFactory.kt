@@ -2,8 +2,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import android.content.Context
 import androidx.room.Room
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
-import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -33,28 +32,24 @@ open class DatabaseFactory : IDatabaseFactory {
     }
 }
 
-val dummyContacts = listOf(
-    ContactFull(
-        contactBase = ContactLite(
-            id = UUID.randomUUID(),
-            firstName = "Darth",
-            lastName = "Vader",
-            nickname = "Darthy",
-            type = ContactType.PRIVATE,
-            notes = "Evil but not very good at it",
-        ),
-        phoneNumbers = listOf(),
+val dummyContacts = mutableListOf(
+    ContactEditable(
+        id = UUID.randomUUID(),
+        firstName = "Darth",
+        lastName = "Vader",
+        nickname = "Darthy",
+        type = ContactType.PRIVATE,
+        notes = "Evil but not very good at it",
+        phoneNumbers = mutableListOf(),
     ),
-    ContactFull(
-        contactBase = ContactLite(
-            id = UUID.randomUUID(),
-            firstName = "Luke",
-            lastName = "Skywalker",
-            nickname = "Lucky Luke",
-            type = ContactType.PUBLIC,
-            notes = "Lost his hand",
-        ),
-        phoneNumbers = listOf(
+    ContactEditable(
+        id = UUID.randomUUID(),
+        firstName = "Luke",
+        lastName = "Skywalker",
+        nickname = "Lucky Luke",
+        type = ContactType.PUBLIC,
+        notes = "Lost his hand",
+        phoneNumbers = mutableListOf(
             PhoneNumber(
                 value = "1234",
                 type = ContactDataSubType.Private,
@@ -62,16 +57,14 @@ val dummyContacts = listOf(
             ),
         ),
     ),
-    ContactFull(
-        contactBase = ContactLite(
-            id = UUID.randomUUID(),
-            firstName = "Obi-Wan",
-            lastName = "Kenobi",
-            nickname = "Obi",
-            type = ContactType.PUBLIC,
-            notes = "Efficient way of suicide",
-        ),
-        phoneNumbers = listOf(
+    ContactEditable(
+        id = UUID.randomUUID(),
+        firstName = "Obi-Wan",
+        lastName = "Kenobi",
+        nickname = "Obi",
+        type = ContactType.PUBLIC,
+        notes = "Efficient way of suicide",
+        phoneNumbers = mutableListOf(
             PhoneNumber(
                 value = "12345",
                 type = ContactDataSubType.Private,
@@ -84,16 +77,14 @@ val dummyContacts = listOf(
             ),
         ),
     ),
-    ContactFull(
-        contactBase = ContactLite(
-            id = UUID.randomUUID(),
-            firstName = "Yoda",
-            lastName = "",
-            nickname = "Yo-Da",
-            type = ContactType.PRIVATE,
-            notes = "Small and green",
-        ),
-        phoneNumbers = listOf(
+    ContactEditable(
+        id = UUID.randomUUID(),
+        firstName = "Yoda",
+        lastName = "",
+        nickname = "Yo-Da",
+        type = ContactType.PRIVATE,
+        notes = "Small and green",
+        phoneNumbers = mutableListOf(
             PhoneNumber(
                 value = "123456",
                 type = ContactDataSubType.Private,
