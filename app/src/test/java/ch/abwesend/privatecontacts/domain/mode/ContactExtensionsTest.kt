@@ -1,7 +1,9 @@
 package ch.abwesend.privatecontacts.domain.mode
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
+import ch.abwesend.privatecontacts.domain.model.contact.createNew
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactBase
@@ -66,5 +68,12 @@ class ContactExtensionsTest {
         assertThat(result.notes).isEqualTo(contact.notes)
 
         assertThat(result.phoneNumbers).isEqualTo(mutableListOf(phoneNumber))
+    }
+
+    @Test
+    fun `should create new editable contact`() {
+        val result = ContactEditable.createNew()
+
+        assertThat(result.isNew).isTrue
     }
 }

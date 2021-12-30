@@ -22,7 +22,7 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
-    fun createContact() {
-        // TODO implement
-    }
+    // TODO it is not very nice to expose the suspend function
+    suspend fun resolveContact(contact: ContactBase) =
+        loadService.resolveContact(contact)
 }

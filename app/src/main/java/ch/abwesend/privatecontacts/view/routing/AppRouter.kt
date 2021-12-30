@@ -9,10 +9,13 @@ class AppRouter(private val navController: NavHostController) {
     fun navigateToScreen(screen: Screen, navOptions: NavOptions? = null): Boolean =
         when (screen) {
             Screen.ContactList -> tryNavigate(screen, navOptions)
+            Screen.ContactEdit -> tryNavigate(screen, navOptions)
             Screen.Settings -> notYetImplemented() // TODO implement
             Screen.ContactDevelopers -> notYetImplemented() // TODO implement
             Screen.ContactDetail -> notYetImplemented() // TODO implement
         }
+
+    fun navigateUp(): Boolean = navController.navigateUp()
 
     private fun notYetImplemented(): Boolean {
         Toast

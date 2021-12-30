@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.util
+package ch.abwesend.privatecontacts.testutil
 
 import android.annotation.SuppressLint
 import androidx.arch.core.executor.ArchTaskExecutor

@@ -15,4 +15,7 @@ data class ContactEditable(
     override var type: ContactType,
     override var notes: String,
     override val phoneNumbers: MutableList<PhoneNumber>,
-) : Contact
+    val isNew: Boolean = false,
+) : Contact {
+    companion object
+}

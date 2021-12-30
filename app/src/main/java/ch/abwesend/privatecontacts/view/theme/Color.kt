@@ -11,3 +11,7 @@ val primaryLight = Color(0xFF607D8B)
 val primaryDark = Color(0xFFADCAD8) // TODO re-consider?
 val primaryVariant = Color(0xFF455A64)
 val secondary = Color(0xFFFDD835)
+
+object AppColors {
+    val grayText = Color(0xFF525252)
+}

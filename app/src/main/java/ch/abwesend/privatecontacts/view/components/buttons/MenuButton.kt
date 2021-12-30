@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.view.components
+package ch.abwesend.privatecontacts.view.components.buttons
 
 import androidx.compose.material.DrawerState
 import androidx.compose.material.Icon

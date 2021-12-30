@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import ch.abwesend.privatecontacts.R
 
+// TODO change to enum?
 sealed interface Screen {
     val titleRes: Int
     val icon: ImageVector
@@ -36,6 +37,12 @@ sealed interface Screen {
         @StringRes override val titleRes: Int = R.string.screen_contact_details
         override val icon: ImageVector = Icons.Default.ContactPage
         override val key: String = "ContactDetailsScreen"
+    }
+
+    object ContactEdit : Screen {
+        @StringRes override val titleRes: Int = R.string.screen_contact_edit
+        override val icon: ImageVector = Icons.Default.ContactPage
+        override val key: String = "ContactEditScreen"
     }
 }
 

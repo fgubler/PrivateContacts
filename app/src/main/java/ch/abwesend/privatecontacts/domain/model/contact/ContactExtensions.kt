@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import java.util.UUID
 
 fun ContactBase.getFullName(firstNameFirst: Boolean): String =
     if (firstNameFirst) "$firstName $lastName"
@@ -21,4 +22,16 @@ fun ContactBase.toContactEditable(
         type = type,
         notes = notes,
         phoneNumbers = phoneNumbers,
+    )
+
+fun ContactEditable.Companion.createNew(): ContactEditable =
+    ContactEditable(
+        id = UUID.randomUUID(),
+        firstName = "",
+        lastName = "",
+        nickname = "",
+        type = ContactType.PUBLIC,
+        notes = "",
+        phoneNumbers = mutableListOf(),
+        isNew = true,
     )
