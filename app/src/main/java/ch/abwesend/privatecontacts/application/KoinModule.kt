@@ -6,7 +6,11 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactSaveService
+import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.IContactLoadService
+import ch.abwesend.privatecontacts.domain.service.IContactSaveService
+import ch.abwesend.privatecontacts.domain.service.IContactValidationService
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
@@ -18,11 +22,15 @@ import org.koin.dsl.module
 
 internal val koinModule = module {
     single<IContactLoadService> { ContactLoadService() }
+    single<IContactValidationService> { ContactValidationService() }
+    single<IContactSaveService> { ContactSaveService() }
+
     single<IContactRepository> { ContactRepository() }
+    single { ContactDataRepository() }
+
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory> { DatabaseFactory }
     single<IDispatchers> { Dispatchers }
-    single { ContactDataRepository() }
 
     single { ApplicationScope() }
     factory { AppRouter(get()) }

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import java.util.UUID
 
 @Dao
@@ -25,6 +26,9 @@ interface ContactDao {
     """
     )
     suspend fun searchByAnyName(query: String): List<ContactEntity>
+
+    @Update
+    suspend fun update(contact: ContactEntity)
 
     @Insert
     suspend fun insert(contact: ContactEntity)

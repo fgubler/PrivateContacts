@@ -7,6 +7,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,13 +15,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun ContactEditScreen(screenContext: ScreenContext) {
@@ -28,6 +35,21 @@ fun ContactEditScreen(screenContext: ScreenContext) {
     val selectedContact = viewModel.selectedContact
 
     var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
+    var showSavingErrorDialog: Boolean by remember { mutableStateOf(false) }
+    var showValidationErrorDialog: Boolean by remember { mutableStateOf(false) }
+    // TODO implement validation error dialog
+
+    LaunchedEffect(Unit) {
+        viewModel.saveResult.collect { result ->
+            showDiscardConfirmationDialog = false
+            onSaveResult(
+                screenContext = screenContext,
+                result = result,
+                showSavingErrorDialog = { showSavingErrorDialog = true },
+                showValidationErrorDialog = { showValidationErrorDialog = true },
+            )
+        }
+    }
 
     selectedContact?.let { contact ->
         Scaffold(
@@ -39,10 +61,11 @@ fun ContactEditScreen(screenContext: ScreenContext) {
         ) {
             ContactEditContent(screenContext, contact)
 
-            if (showDiscardConfirmationDialog) {
-                DiscardConfirmationDialog(screenContext) {
-                    showDiscardConfirmationDialog = false
-                }
+            DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
+                showDiscardConfirmationDialog = false
+            }
+            SavingErrorDialog(showSavingErrorDialog) {
+                showSavingErrorDialog = false
             }
         }
     } ?: NoContactLoaded(viewModel)
@@ -70,7 +93,19 @@ private fun ContactEditTopBar(
 
 private fun onSave(screenContext: ScreenContext, contact: ContactFull) {
     screenContext.contactEditViewModel.saveContact(contact)
-    screenContext.router.navigateUp()
+}
+
+private fun onSaveResult(
+    screenContext: ScreenContext,
+    result: ContactSaveResult,
+    showValidationErrorDialog: () -> Unit,
+    showSavingErrorDialog: () -> Unit,
+) {
+    when (result) {
+        is Success -> screenContext.router.navigateUp()
+        is Failure -> showSavingErrorDialog()
+        is ValidationFailure -> showValidationErrorDialog()
+    }
 }
 
 private fun onDiscard(
@@ -97,14 +132,31 @@ private fun hasChanges(screenContext: ScreenContext): Boolean =
 @Composable
 private fun DiscardConfirmationDialog(
     screenContext: ScreenContext,
-    hideConfirmationDialog: () -> Unit
+    visible: Boolean,
+    hideDialog: () -> Unit
 ) {
-    YesNoDialog(
-        title = R.string.discard_changes_title,
-        text = R.string.discard_changes_text,
-        onYes = { onDiscardConfirmed(screenContext) },
-        onNo = hideConfirmationDialog
-    )
+    if (visible) {
+        YesNoDialog(
+            title = R.string.discard_changes_title,
+            text = R.string.discard_changes_text,
+            onYes = { onDiscardConfirmed(screenContext) },
+            onNo = hideDialog
+        )
+    }
+}
+
+@Composable
+private fun SavingErrorDialog(
+    visible: Boolean,
+    onClose: () -> Unit
+) {
+    if (visible) {
+        OkDialog(
+            title = R.string.error,
+            text = R.string.saving_data_error,
+            onClose = onClose
+        )
+    }
 }
 
 @Composable

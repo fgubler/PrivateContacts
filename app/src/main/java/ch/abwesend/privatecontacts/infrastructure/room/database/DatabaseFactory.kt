@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import android.content.Context
 import androidx.room.Room
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
@@ -28,7 +29,10 @@ object DatabaseFactory : IDatabaseFactory {
 
     override suspend fun initializeDatabase() {
         val contactRepository: IContactRepository = getAnywhere()
-        dummyContacts.forEach { contactRepository.createContact(it) }
+
+        if (BuildConfig.DEBUG) {
+            dummyContacts.forEach { contactRepository.createContact(it) }
+        }
     }
 }
 
@@ -51,9 +55,11 @@ val dummyContacts = mutableListOf(
         notes = "Lost his hand",
         phoneNumbers = mutableListOf(
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "1234",
                 type = ContactDataSubType.Private,
-                isMainNumber = true,
+                isMain = true,
+                sortOrder = 0,
             ),
         ),
     ),
@@ -66,14 +72,18 @@ val dummyContacts = mutableListOf(
         notes = "Efficient way of suicide",
         phoneNumbers = mutableListOf(
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "12345",
                 type = ContactDataSubType.Private,
-                isMainNumber = true,
+                isMain = true,
+                sortOrder = 0,
             ),
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "123456",
                 type = ContactDataSubType.Business,
-                isMainNumber = false,
+                isMain = false,
+                sortOrder = 1,
             ),
         ),
     ),
@@ -86,19 +96,25 @@ val dummyContacts = mutableListOf(
         notes = "Small and green",
         phoneNumbers = mutableListOf(
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "123456",
                 type = ContactDataSubType.Private,
-                isMainNumber = false,
+                isMain = false,
+                sortOrder = 0,
             ),
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "1234567",
                 type = ContactDataSubType.Business,
-                isMainNumber = false,
+                isMain = false,
+                sortOrder = 1,
             ),
             PhoneNumber(
+                id = UUID.randomUUID(),
                 value = "12345678",
                 type = ContactDataSubType.Custom("Jedi-Number"),
-                isMainNumber = true,
+                isMain = true,
+                sortOrder = 2,
             ),
         ),
     ),

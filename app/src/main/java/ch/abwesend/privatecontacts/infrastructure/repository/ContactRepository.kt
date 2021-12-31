@@ -6,6 +6,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import ch.abwesend.privatecontacts.domain.model.result.SavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
@@ -37,15 +39,35 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val numberType = contactData.subType.toContactDataSubType() ?: return null
 
         return PhoneNumber(
-            value = contactData.value,
+            id = contactData.id,
             type = numberType,
-            isMainNumber = contactData.isMain
+            isMain = contactData.isMain,
+            sortOrder = contactData.sortOrder,
+            value = contactData.value,
         )
     }
 
-    override suspend fun createContact(contact: Contact) =
-        withDatabase { database ->
-            database.contactDao().insert(contact.toEntity())
-            contactDataRepository.createContactData(contact)
+    override suspend fun createContact(contact: Contact): ContactSaveResult =
+        try {
+            withDatabase { database ->
+                database.contactDao().insert(contact.toEntity())
+                contactDataRepository.createContactData(contact)
+                ContactSaveResult.Success
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to create contact", e)
+            ContactSaveResult.Failure(UNKNOWN_ERROR)
+        }
+
+    override suspend fun updateContact(contact: Contact): ContactSaveResult =
+        try {
+            withDatabase { database ->
+                database.contactDao().update(contact.toEntity())
+                contactDataRepository.updateContactData(contact)
+                ContactSaveResult.Success
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to update contact", e)
+            ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 }
