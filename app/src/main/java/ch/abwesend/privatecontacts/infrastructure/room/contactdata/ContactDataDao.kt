@@ -9,14 +9,14 @@ import java.util.UUID
 @Dao
 interface ContactDataDao {
     @Query("SELECT * FROM ContactDataEntity WHERE contactId = :contactId")
-    fun getDataForContact(contactId: UUID): List<ContactDataEntity>
+    suspend fun getDataForContact(contactId: UUID): List<ContactDataEntity>
 
     @Insert
-    fun insert(data: ContactDataEntity)
+    suspend fun insert(data: ContactDataEntity)
 
     @Insert
-    fun insertAll(data: List<ContactDataEntity>)
+    suspend fun insertAll(data: List<ContactDataEntity>)
 
     @Delete
-    fun delete(data: ContactDataEntity)
+    suspend fun delete(data: ContactDataEntity)
 }

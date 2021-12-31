@@ -9,13 +9,13 @@ import java.util.UUID
 @Dao
 interface ContactDao {
     @Query("SELECT * FROM ContactEntity")
-    fun getAll(): List<ContactEntity>
+    suspend fun getAll(): List<ContactEntity>
 
     @Query("SELECT COUNT(1) FROM ContactEntity")
-    fun count(): Int
+    suspend fun count(): Int
 
     @Query("SELECT * FROM ContactEntity WHERE id IN (:ids)")
-    fun findByIds(ids: List<UUID>): List<ContactEntity>
+    suspend fun findByIds(ids: List<UUID>): List<ContactEntity>
 
     @Query(
         """
@@ -24,14 +24,14 @@ interface ContactDao {
         WHERE (firstName || lastName || nickname) LIKE '%' || :query || '%' 
     """
     )
-    fun searchByAnyName(query: String): List<ContactEntity>
+    suspend fun searchByAnyName(query: String): List<ContactEntity>
 
     @Insert
-    fun insert(contact: ContactEntity)
+    suspend fun insert(contact: ContactEntity)
 
     @Insert
-    fun insertAll(contacts: List<ContactEntity>)
+    suspend fun insertAll(contacts: List<ContactEntity>)
 
     @Delete
-    fun delete(contact: ContactEntity)
+    suspend fun delete(contact: ContactEntity)
 }
