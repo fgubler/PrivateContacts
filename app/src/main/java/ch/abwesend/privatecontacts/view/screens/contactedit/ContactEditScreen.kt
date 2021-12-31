@@ -1,26 +1,19 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.view.components.FullScreenError
@@ -28,7 +21,6 @@ import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 
 @Composable
@@ -36,24 +28,40 @@ fun ContactEditScreen(screenContext: ScreenContext) {
     val viewModel = screenContext.contactEditViewModel
     val selectedContact = viewModel.selectedContact
 
+    var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
+
     selectedContact?.let { contact ->
         Scaffold(
-            topBar = { ContactEditTopBar(screenContext, contact) }
+            topBar = {
+                ContactEditTopBar(screenContext, contact) {
+                    showDiscardConfirmationDialog = true
+                }
+            }
         ) {
             ContactEditContent(screenContext, contact)
+
+            if (showDiscardConfirmationDialog) {
+                DiscardConfirmationDialog(screenContext) {
+                    showDiscardConfirmationDialog = false
+                }
+            }
         }
     } ?: NoContactLoaded(viewModel)
 }
 
 @Composable
-private fun ContactEditTopBar(screenContext: ScreenContext, contact: ContactFull) {
+private fun ContactEditTopBar(
+    screenContext: ScreenContext,
+    contact: ContactFull,
+    showDiscardConfirmationDialog: () -> Unit,
+) {
     @StringRes val title = if (contact.isNew) R.string.screen_contact_edit_create
     else R.string.screen_contact_edit
 
     TopAppBar(
         title = { Text(text = stringResource(id = title)) },
         navigationIcon = {
-            CancelIconButton { onCancel(screenContext) }
+            CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
         },
         actions = {
             SaveIconButton { onSave(screenContext, contact) }
@@ -66,10 +74,49 @@ private fun onSave(screenContext: ScreenContext, contact: ContactFull) {
     screenContext.router.navigateUp()
 }
 
-private fun onCancel(screenContext: ScreenContext) {
-    // TODO ask the user for confirmation
-    screenContext.contactEditViewModel.clearContact()
+private fun onDiscard(
+    screenContext: ScreenContext,
+    showConfirmationDialog: () -> Unit,
+) {
+    if (hasChanges(screenContext)) {
+        showConfirmationDialog()
+    } else {
+        onDiscardConfirmed(screenContext)
+    }
+}
+
+private fun onDiscardConfirmed(screenContext: ScreenContext) {
     screenContext.router.navigateUp()
+    screenContext.contactEditViewModel.clearContact()
+}
+
+private fun hasChanges(screenContext: ScreenContext): Boolean =
+    screenContext.contactEditViewModel.let {
+        it.originalContact != it.selectedContact
+    }
+
+@Composable
+private fun DiscardConfirmationDialog(
+    screenContext: ScreenContext,
+    hideConfirmationDialog: () -> Unit
+) {
+    val onCancel = { hideConfirmationDialog() }
+    AlertDialog(
+        title = { Text(stringResource(id = R.string.discard_changes_title)) },
+        text = { Text(stringResource(id = R.string.discard_changes_text)) },
+        confirmButton = {
+            Button(onClick = { onDiscardConfirmed(screenContext) }) {
+                Text(stringResource(id = R.string.yes))
+            }
+        },
+        dismissButton = {
+            Button(onClick = onCancel) {
+                Text(stringResource(id = R.string.no))
+            }
+        },
+
+        onDismissRequest = onCancel
+    )
 }
 
 @Composable
@@ -83,78 +130,4 @@ private fun NoContactLoaded(viewModel: ContactEditViewModel) {
             viewModel.createNewContact()
         }
     )
-}
-
-@Composable
-private fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
-    val onChanged = { newContact: ContactFull -> screenContext.contactEditViewModel.updateContact(newContact) }
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
-    ) {
-        PersonalInformation(contact, onChanged)
-
-        Notes(contact, onChanged)
-    }
-}
-
-@Composable
-private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
-    val textFieldModifier = Modifier.padding(bottom = 2.dp)
-    ContactCategory(label = R.string.personal_information, icon = Icons.Default.Person) {
-        Column {
-            OutlinedTextField(
-                label = { Text(stringResource(id = R.string.first_name)) },
-                value = contact.firstName,
-                onValueChange = { newValue ->
-                    onChanged(contact.copy(firstName = newValue))
-                },
-                singleLine = true,
-                modifier = textFieldModifier,
-            )
-            OutlinedTextField(
-                label = { Text(stringResource(id = R.string.last_name)) },
-                value = contact.lastName,
-                onValueChange = { newValue ->
-                    onChanged(contact.copy(lastName = newValue))
-                },
-                singleLine = true,
-                modifier = textFieldModifier,
-            )
-        }
-    }
-}
-
-@Composable
-private fun Notes(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
-    ContactCategory(label = R.string.notes, icon = Icons.Default.SpeakerNotes) {
-        OutlinedTextField(
-            label = { Text(stringResource(id = R.string.notes)) },
-            value = contact.notes,
-            onValueChange = { newValue ->
-                onChanged(contact.copy(notes = newValue))
-            },
-            singleLine = false,
-            maxLines = 10
-        )
-    }
-}
-
-@Composable
-private fun ContactCategory(
-    @StringRes label: Int,
-    icon: ImageVector,
-    content: @Composable () -> Unit
-) {
-    Row(
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = label),
-            modifier = Modifier.padding(top = 23.dp, end = 20.dp),
-            tint = AppColors.grayText
-        )
-        content()
-    }
 }
