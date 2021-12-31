@@ -18,9 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.util.applicationScope
+import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.view.components.ButtonConfig
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -34,7 +36,6 @@ import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.util.getLogger
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -116,7 +117,8 @@ private fun selectContact(screenContext: ScreenContext, contact: ContactBase) {
     applicationScope.launch {
         val resolved = screenContext.contactListViewModel.resolveContact(contact)
         screenContext.contactEditViewModel.selectContact(resolved)
-        withContext(Dispatchers.Main.immediate) {
+        val dispatchers: IDispatchers = getAnywhere()
+        withContext(dispatchers.mainImmediate) {
             screenContext.router.navigateToScreen(Screen.ContactEdit)
         }
     }

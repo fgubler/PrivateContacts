@@ -15,7 +15,7 @@ interface IDatabaseFactory {
     suspend fun initializeDatabase()
 }
 
-open class DatabaseFactory : IDatabaseFactory {
+object DatabaseFactory : IDatabaseFactory {
     override fun createDatabase(context: Context): AppDatabase =
         Room.databaseBuilder(
             context.applicationContext,
