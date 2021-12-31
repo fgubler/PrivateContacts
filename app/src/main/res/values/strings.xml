@@ -14,9 +14,12 @@
     <string name="menu">Open menu</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
     <string name="error">Error</string>
+    <string name="unknown_error">Unknown error</string>
 
     <string name="private_contact">Private</string>
     <string name="public_contact">Public</string>
@@ -38,7 +41,10 @@
     <string name="last_name">Last name</string>
     <string name="nickname">Nickname</string>
     <string name="notes">Notes</string>
-    <string name="saving_data_error">Something went wrong. The data could not be saved.</string>
+
+    <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
+    <string name="data_validation_errors">Validation errors</string>
+    <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
 
     <string name="discard_changes_title">Discard Changes</string>
     <string name="discard_changes_text">Are you sure you would like to discard all unsaved changes?</string>

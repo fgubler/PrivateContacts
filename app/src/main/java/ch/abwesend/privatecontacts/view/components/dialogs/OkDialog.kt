@@ -20,7 +20,26 @@ fun OkDialog(
         onDismissRequest = onClose,
         confirmButton = {
             Button(onClick = onClose) {
-                Text(stringResource(id = R.string.yes))
+                Text(stringResource(id = R.string.ok))
+            }
+        },
+        dismissButton = {},
+    )
+}
+
+@Composable
+fun OkDialog(
+    @StringRes title: Int,
+    onClose: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    AlertDialog(
+        title = { Text(stringResource(id = title)) },
+        text = content,
+        onDismissRequest = onClose,
+        confirmButton = {
+            Button(onClick = onClose) {
+                Text(stringResource(id = R.string.ok))
             }
         },
         dismissButton = {},

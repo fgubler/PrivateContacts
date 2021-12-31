@@ -1,6 +1,9 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -12,13 +15,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
+import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError
+import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
@@ -35,9 +42,8 @@ fun ContactEditScreen(screenContext: ScreenContext) {
     val selectedContact = viewModel.selectedContact
 
     var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
-    var showSavingErrorDialog: Boolean by remember { mutableStateOf(false) }
-    var showValidationErrorDialog: Boolean by remember { mutableStateOf(false) }
-    // TODO implement validation error dialog
+    var savingError: ContactSavingError? by remember { mutableStateOf(null) }
+    var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
 
     LaunchedEffect(Unit) {
         viewModel.saveResult.collect { result ->
@@ -45,8 +51,8 @@ fun ContactEditScreen(screenContext: ScreenContext) {
             onSaveResult(
                 screenContext = screenContext,
                 result = result,
-                showSavingErrorDialog = { showSavingErrorDialog = true },
-                showValidationErrorDialog = { showValidationErrorDialog = true },
+                setSavingError = { savingError = it },
+                setValidationErrors = { validationErrors = it },
             )
         }
     }
@@ -61,11 +67,15 @@ fun ContactEditScreen(screenContext: ScreenContext) {
         ) {
             ContactEditContent(screenContext, contact)
 
+            // Dialogs
             DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
                 showDiscardConfirmationDialog = false
             }
-            SavingErrorDialog(showSavingErrorDialog) {
-                showSavingErrorDialog = false
+            SavingErrorDialog(savingError) {
+                savingError = null
+            }
+            ValidationErrorDialog(validationErrors) {
+                validationErrors = emptyList()
             }
         }
     } ?: NoContactLoaded(viewModel)
@@ -98,13 +108,13 @@ private fun onSave(screenContext: ScreenContext, contact: ContactFull) {
 private fun onSaveResult(
     screenContext: ScreenContext,
     result: ContactSaveResult,
-    showValidationErrorDialog: () -> Unit,
-    showSavingErrorDialog: () -> Unit,
+    setValidationErrors: (List<ContactValidationError>) -> Unit,
+    setSavingError: (ContactSavingError) -> Unit,
 ) {
     when (result) {
         is Success -> screenContext.router.navigateUp()
-        is Failure -> showSavingErrorDialog()
-        is ValidationFailure -> showValidationErrorDialog()
+        is Failure -> setSavingError(result.error)
+        is ValidationFailure -> setValidationErrors(result.validationErrors)
     }
 }
 
@@ -147,15 +157,38 @@ private fun DiscardConfirmationDialog(
 
 @Composable
 private fun SavingErrorDialog(
-    visible: Boolean,
+    error: ContactSavingError?,
     onClose: () -> Unit
 ) {
-    if (visible) {
+    error?.let { savingError ->
         OkDialog(
             title = R.string.error,
-            text = R.string.saving_data_error,
             onClose = onClose
-        )
+        ) {
+            val errorText = stringResource(id = savingError.label)
+            val description = stringResource(R.string.saving_data_error, errorText)
+            Text(text = description)
+        }
+    }
+}
+
+@Composable
+private fun ValidationErrorDialog(
+    validationErrors: List<ContactValidationError>,
+    onClose: () -> Unit
+) {
+    if (validationErrors.isNotEmpty()) {
+        OkDialog(
+            title = R.string.data_validation_errors,
+            onClose = onClose
+        ) {
+            Column {
+                validationErrors.forEach { error ->
+                    Text(stringResource(id = error.label))
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+            }
+        }
     }
 }
 
