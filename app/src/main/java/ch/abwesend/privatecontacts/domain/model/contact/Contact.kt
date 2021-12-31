@@ -7,14 +7,14 @@ interface Contact : ContactBase {
     val phoneNumbers: List<PhoneNumber>
 }
 
-data class ContactEditable(
-    override var id: UUID,
-    override var firstName: String,
-    override var lastName: String,
-    override var nickname: String,
-    override var type: ContactType,
-    override var notes: String,
-    override val phoneNumbers: MutableList<PhoneNumber>,
+data class ContactFull(
+    override val id: UUID,
+    override val firstName: String,
+    override val lastName: String,
+    override val nickname: String,
+    override val type: ContactType,
+    override val notes: String,
+    override val phoneNumbers: List<PhoneNumber>,
     val isNew: Boolean = false,
 ) : Contact {
     companion object

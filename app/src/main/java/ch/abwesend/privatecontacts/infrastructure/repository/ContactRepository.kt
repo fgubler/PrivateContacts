@@ -3,7 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -23,7 +23,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             }
         }
 
-    override suspend fun resolveContact(contact: ContactBase): ContactEditable {
+    override suspend fun resolveContact(contact: ContactBase): ContactFull {
         val contactData = contactDataRepository.loadContactData(contact)
         val phoneNumbers = contactData.mapNotNull { tryResolvePhoneNumber(it) }
 

@@ -7,14 +7,14 @@ fun ContactBase.getFullName(firstNameFirst: Boolean): String =
     if (firstNameFirst) "$firstName $lastName"
     else "$lastName $firstName"
 
-fun Contact.asEditable(): ContactEditable =
-    if (this is ContactEditable) this
+fun Contact.asFull(): ContactFull =
+    if (this is ContactFull) this
     else toContactEditable(this.phoneNumbers.toMutableList())
 
 fun ContactBase.toContactEditable(
     phoneNumbers: MutableList<PhoneNumber>
-): ContactEditable =
-    ContactEditable(
+): ContactFull =
+    ContactFull(
         id = id,
         firstName = firstName,
         lastName = lastName,
@@ -24,8 +24,8 @@ fun ContactBase.toContactEditable(
         phoneNumbers = phoneNumbers,
     )
 
-fun ContactEditable.Companion.createNew(): ContactEditable =
-    ContactEditable(
+fun ContactFull.Companion.createNew(): ContactFull =
+    ContactFull(
         id = UUID.randomUUID(),
         firstName = "",
         lastName = "",

@@ -11,15 +11,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-
-data class ButtonConfig(
-    @StringRes val label: Int,
-    val icon: ImageVector?,
-    val onClick: () -> Unit,
-)
+import ch.abwesend.privatecontacts.view.components.config.ButtonConfig
 
 @Composable
 fun FullScreenError(

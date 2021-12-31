@@ -1,25 +1,29 @@
 package ch.abwesend.privatecontacts.view.viewmodel
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.asEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.asFull
 import ch.abwesend.privatecontacts.domain.model.contact.createNew
 
 class ContactEditViewModel : ViewModel() {
-    private val _contact: MutableState<ContactEditable?> = mutableStateOf(null)
-    val contact: State<ContactEditable?> = _contact
+    var selectedContact: ContactFull? by mutableStateOf(null)
+        private set
 
     fun selectContact(contact: Contact) {
-        _contact.value = contact.asEditable()
+        selectedContact = contact.asFull()
     }
 
     fun createNewContact() {
-        val contact = ContactEditable.createNew()
+        val contact = ContactFull.createNew()
         selectContact(contact)
+    }
+
+    fun updateContact(contact: ContactFull) {
+        selectedContact = contact
     }
 
     fun saveContact(contact: Contact) {
@@ -27,6 +31,6 @@ class ContactEditViewModel : ViewModel() {
     }
 
     fun clearContact() {
-        _contact.value = null
+        selectedContact = null
     }
 }

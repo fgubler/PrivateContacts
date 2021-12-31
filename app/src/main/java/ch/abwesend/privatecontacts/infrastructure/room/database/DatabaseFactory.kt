@@ -2,7 +2,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import android.content.Context
 import androidx.room.Room
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -33,7 +33,7 @@ object DatabaseFactory : IDatabaseFactory {
 }
 
 val dummyContacts = mutableListOf(
-    ContactEditable(
+    ContactFull(
         id = UUID.randomUUID(),
         firstName = "Darth",
         lastName = "Vader",
@@ -42,7 +42,7 @@ val dummyContacts = mutableListOf(
         notes = "Evil but not very good at it",
         phoneNumbers = mutableListOf(),
     ),
-    ContactEditable(
+    ContactFull(
         id = UUID.randomUUID(),
         firstName = "Luke",
         lastName = "Skywalker",
@@ -57,7 +57,7 @@ val dummyContacts = mutableListOf(
             ),
         ),
     ),
-    ContactEditable(
+    ContactFull(
         id = UUID.randomUUID(),
         firstName = "Obi-Wan",
         lastName = "Kenobi",
@@ -77,7 +77,7 @@ val dummyContacts = mutableListOf(
             ),
         ),
     ),
-    ContactEditable(
+    ContactFull(
         id = UUID.randomUUID(),
         firstName = "Yoda",
         lastName = "",

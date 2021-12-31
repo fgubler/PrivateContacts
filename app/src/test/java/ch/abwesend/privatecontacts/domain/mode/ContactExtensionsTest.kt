@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.domain.mode
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.asEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.asFull
 import ch.abwesend.privatecontacts.domain.model.contact.createNew
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
@@ -38,7 +38,7 @@ class ContactExtensionsTest {
     fun `should not change editable contact`() {
         val contact = someContactEditable()
 
-        val editable = contact.asEditable()
+        val editable = contact.asFull()
 
         assertThat(editable === contact).isTrue // reference equality
     }
@@ -48,7 +48,7 @@ class ContactExtensionsTest {
         val contact = someContactNonEditable()
         mockkStatic(ContactBase::toContactEditable)
 
-        contact.asEditable()
+        contact.asFull()
 
         verify { contact.toContactEditable(any()) }
     }
@@ -72,7 +72,7 @@ class ContactExtensionsTest {
 
     @Test
     fun `should create new editable contact`() {
-        val result = ContactEditable.createNew()
+        val result = ContactFull.createNew()
 
         assertThat(result.isNew).isTrue
     }

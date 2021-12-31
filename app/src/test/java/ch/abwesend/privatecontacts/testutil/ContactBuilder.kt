@@ -2,7 +2,7 @@ package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
@@ -35,7 +35,7 @@ fun someContactEditable(
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
     phoneNumbers: List<PhoneNumber> = emptyList(),
-): Contact = ContactEditable(
+): Contact = ContactFull(
     id = id,
     firstName = firstName,
     lastName = lastName,
