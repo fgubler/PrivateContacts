@@ -11,6 +11,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.mockkClass
 import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.AfterEach
@@ -21,6 +22,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.koin.test.junit5.KoinTestExtension
+import org.koin.test.junit5.mock.MockProviderExtension
 
 /**
  * Super-class for koin-based tests.
@@ -43,9 +45,10 @@ abstract class KoinTestBase : KoinTest {
     @MockK
     protected lateinit var contactDataDao: ContactDataDao
 
+    /** Sets up the koin-module for injections */
     @RegisterExtension
     @JvmField
-    val koinTestExtension = KoinTestExtension.create {
+    protected val koinTestExtension = KoinTestExtension.create {
         modules(
             module {
                 single { loggerFactory }
@@ -54,6 +57,13 @@ abstract class KoinTestBase : KoinTest {
                 setupKoinModule()
             }
         )
+    }
+
+    /** Defines that koin-mocks are created with mockk */
+    @JvmField
+    @RegisterExtension
+    protected val mockProvider = MockProviderExtension.create { clazz ->
+        mockkClass(clazz)
     }
 
     @BeforeEach
@@ -75,7 +85,10 @@ abstract class KoinTestBase : KoinTest {
         tearDown()
     }
 
+    /** executed before each test */
     protected open fun setup() {}
+    /** executed after each test */
     protected open fun tearDown() {}
+    /** add additional injections to be mocked in koin */
     protected open fun Module.setupKoinModule() {}
 }
