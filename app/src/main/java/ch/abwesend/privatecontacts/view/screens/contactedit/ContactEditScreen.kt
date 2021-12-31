@@ -1,8 +1,6 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.annotation.StringRes
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -20,6 +18,7 @@ import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 
@@ -100,22 +99,11 @@ private fun DiscardConfirmationDialog(
     screenContext: ScreenContext,
     hideConfirmationDialog: () -> Unit
 ) {
-    val onCancel = { hideConfirmationDialog() }
-    AlertDialog(
-        title = { Text(stringResource(id = R.string.discard_changes_title)) },
-        text = { Text(stringResource(id = R.string.discard_changes_text)) },
-        confirmButton = {
-            Button(onClick = { onDiscardConfirmed(screenContext) }) {
-                Text(stringResource(id = R.string.yes))
-            }
-        },
-        dismissButton = {
-            Button(onClick = onCancel) {
-                Text(stringResource(id = R.string.no))
-            }
-        },
-
-        onDismissRequest = onCancel
+    YesNoDialog(
+        title = R.string.discard_changes_title,
+        text = R.string.discard_changes_text,
+        onYes = { onDiscardConfirmed(screenContext) },
+        onNo = hideConfirmationDialog
     )
 }
 
