@@ -27,7 +27,7 @@ fun someContactBase(
     notes = notes,
 )
 
-fun someContactEditable(
+fun someContactFull(
     id: UUID = UUID.randomUUID(),
     firstName: String = "John",
     lastName: String = "Snow",

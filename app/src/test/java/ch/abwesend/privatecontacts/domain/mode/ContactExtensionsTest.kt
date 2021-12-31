@@ -7,7 +7,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.createNew
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
+import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.someContactNonEditable
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.junit5.MockKExtension
@@ -36,7 +36,7 @@ class ContactExtensionsTest {
 
     @Test
     fun `should not change editable contact`() {
-        val contact = someContactEditable()
+        val contact = someContactFull()
 
         val editable = contact.asFull()
 
