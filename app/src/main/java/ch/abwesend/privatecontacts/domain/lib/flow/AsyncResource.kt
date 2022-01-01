@@ -26,7 +26,7 @@ data class ErrorResource<T>(val error: List<Exception>) : AsyncResource<T>() {
     override fun ifError(handler: (List<Exception>) -> Unit): Unit = handler(error)
 }
 
-class InactiveResource<T>() : AsyncResource<T>() {
+class InactiveResource<T> : AsyncResource<T>() {
     override val valueOrNull: T? = null
     override fun ifInactive(handler: () -> Unit): Unit = handler()
 }

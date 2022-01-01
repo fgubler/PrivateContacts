@@ -33,7 +33,9 @@ class EventFlow<T>private constructor(
     val isShared: Boolean
         get() = internalFlow is SharedFlow
 
-    /** emit is suspending but should never actually suspend/block the execution due to buffering */
+    /**
+     * emit is suspending but should never actually suspend/block the execution due to buffering
+     */
     override suspend fun emit(value: T) {
         internalChannel.send(value)
     }
