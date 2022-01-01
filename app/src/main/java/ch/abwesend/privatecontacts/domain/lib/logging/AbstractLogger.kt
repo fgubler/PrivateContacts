@@ -127,7 +127,7 @@ abstract class AbstractLogger : ILogger {
      * can be overridden by subclasses to define another log-level mechanism
      * @return true, if messages of this level should be logged
      */
-    private fun checkLogLevel(logLevel: Int): Boolean {
+    protected open fun checkLogLevel(logLevel: Int): Boolean {
         return loggingActive && Log.isLoggable(loggingTag, logLevel)
     }
 }
