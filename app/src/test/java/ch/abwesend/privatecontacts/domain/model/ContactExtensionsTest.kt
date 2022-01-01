@@ -1,11 +1,11 @@
-package ch.abwesend.privatecontacts.domain.mode
+package ch.abwesend.privatecontacts.domain.model
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.asFull
 import ch.abwesend.privatecontacts.domain.model.contact.createNew
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
-import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.toContactFull
 import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.someContactNonEditable
@@ -35,7 +35,7 @@ class ContactExtensionsTest {
     }
 
     @Test
-    fun `should not change editable contact`() {
+    fun `should not change full contact`() {
         val contact = someContactFull()
 
         val editable = contact.asFull()
@@ -44,21 +44,21 @@ class ContactExtensionsTest {
     }
 
     @Test
-    fun `should create editable contact if not already editable`() {
+    fun `should create full contact if not already`() {
         val contact = someContactNonEditable()
-        mockkStatic(ContactBase::toContactEditable)
+        mockkStatic(ContactBase::toContactFull)
 
         contact.asFull()
 
-        verify { contact.toContactEditable(any()) }
+        verify { contact.toContactFull(any()) }
     }
 
     @Test
-    fun `should create editable contact from base contact`() {
+    fun `should create full contact from base contact`() {
         val contact = someContactBase()
         val phoneNumber = somePhoneNumber()
 
-        val result = contact.toContactEditable(mutableListOf(phoneNumber))
+        val result = contact.toContactFull(mutableListOf(phoneNumber))
 
         assertThat(result.id).isEqualTo(contact.id)
         assertThat(result.firstName).isEqualTo(contact.firstName)
@@ -71,7 +71,7 @@ class ContactExtensionsTest {
     }
 
     @Test
-    fun `should create new editable contact`() {
+    fun `should create new full contact`() {
         val result = ContactFull.createNew()
 
         assertThat(result.isNew).isTrue
