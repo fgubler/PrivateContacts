@@ -8,9 +8,6 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
-import ch.abwesend.privatecontacts.domain.service.IContactLoadService
-import ch.abwesend.privatecontacts.domain.service.IContactSaveService
-import ch.abwesend.privatecontacts.domain.service.IContactValidationService
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
@@ -21,9 +18,9 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 internal val koinModule = module {
-    single<IContactLoadService> { ContactLoadService() }
-    single<IContactValidationService> { ContactValidationService() }
-    single<IContactSaveService> { ContactSaveService() }
+    single { ContactLoadService() }
+    single { ContactValidationService() }
+    single { ContactSaveService() }
 
     single<IContactRepository> { ContactRepository() }
     single { ContactDataRepository() }

@@ -7,15 +7,11 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.F
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
-interface IContactSaveService {
-    suspend fun saveContact(contact: Contact): ContactSaveResult
-}
-
-class ContactSaveService : IContactSaveService {
-    private val validationService: IContactValidationService by injectAnywhere()
+class ContactSaveService {
+    private val validationService: ContactValidationService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
 
-    override suspend fun saveContact(contact: Contact): ContactSaveResult {
+    suspend fun saveContact(contact: Contact): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
 
         return when {

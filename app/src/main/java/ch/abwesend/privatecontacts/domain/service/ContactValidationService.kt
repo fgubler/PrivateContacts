@@ -6,12 +6,8 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 
-interface IContactValidationService {
-    suspend fun validateContact(contact: Contact): ContactValidationResult
-}
-
-class ContactValidationService : IContactValidationService {
-    override suspend fun validateContact(contact: Contact): ContactValidationResult {
+class ContactValidationService {
+    suspend fun validateContact(contact: Contact): ContactValidationResult {
         val validationErrors = mutableListOf<ContactValidationError>()
 
         if (contact.getFullName(true).trim().isEmpty()) {

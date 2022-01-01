@@ -11,13 +11,13 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.asFull
 import ch.abwesend.privatecontacts.domain.model.contact.createNew
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.service.IContactSaveService
+import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ContactEditViewModel : ViewModel() {
-    private val saveService: IContactSaveService by injectAnywhere()
+    private val saveService: ContactSaveService by injectAnywhere()
 
     var originalContact: ContactFull? = null
         private set
