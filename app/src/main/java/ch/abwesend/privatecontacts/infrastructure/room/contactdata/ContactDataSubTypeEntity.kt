@@ -10,14 +10,14 @@ data class ContactDataSubTypeEntity(
     val customValue: String?,
 )
 
-fun ContactDataSubTypeEntity.toContactDataSubType(): ContactDataSubType? {
+fun ContactDataSubTypeEntity.toContactDataSubType(): ContactDataSubType {
     return when (key) {
         ContactDataSubType.Key.PRIVATE -> ContactDataSubType.Private
         ContactDataSubType.Key.BUSINESS -> ContactDataSubType.Business
         ContactDataSubType.Key.MOBILE -> ContactDataSubType.Mobile
         ContactDataSubType.Key.OTHER -> ContactDataSubType.Other
         ContactDataSubType.Key.BIRTHDAY -> ContactDataSubType.Birthday
-        ContactDataSubType.Key.CUSTOM -> customValue?.let { ContactDataSubType.Custom(it) }
+        ContactDataSubType.Key.CUSTOM -> ContactDataSubType.Custom(customValue.orEmpty())
     }
 }
 

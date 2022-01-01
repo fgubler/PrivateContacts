@@ -34,7 +34,7 @@ class ContactDataRepository : RepositoryBase() {
 
     fun tryResolvePhoneNumber(contactData: ContactDataEntity): PhoneNumber? {
         if (contactData.type != ContactDataType.PHONE_NUMBER) return null
-        val numberType = contactData.subType.toContactDataSubType() ?: return null
+        val numberType = contactData.subType.toContactDataSubType()
 
         return PhoneNumber(
             id = contactData.id,
