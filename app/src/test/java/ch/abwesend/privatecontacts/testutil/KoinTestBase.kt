@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
@@ -37,6 +38,7 @@ import org.koin.test.junit5.mock.MockProviderExtension
 abstract class KoinTestBase : KoinTest {
     private lateinit var loggerFactory: ILoggerFactory
     private lateinit var database: AppDatabase
+    private lateinit var testLogger: ILogger
 
     @MockK
     protected lateinit var contactDao: ContactDao
@@ -68,8 +70,9 @@ abstract class KoinTestBase : KoinTest {
     @BeforeEach
     fun baseSetup() {
         loggerFactory = mockk()
-        every { loggerFactory.createDefault(any()) } returns spyk(TestLogger())
-        every { loggerFactory.createLogcat(any()) } returns spyk(TestLogger())
+        testLogger = TestLogger()
+        every { loggerFactory.createDefault(any()) } returns spyk(testLogger)
+        every { loggerFactory.createLogcat(any()) } returns spyk(testLogger)
 
         database = mockk()
         coEvery { database.ensureInitialized() } returns Unit
