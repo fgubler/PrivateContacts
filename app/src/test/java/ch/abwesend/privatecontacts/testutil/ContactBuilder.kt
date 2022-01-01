@@ -35,6 +35,7 @@ fun someContactFull(
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
     phoneNumbers: List<PhoneNumber> = emptyList(),
+    isNew: Boolean = false,
 ): Contact = ContactFull(
     id = id,
     firstName = firstName,
@@ -43,6 +44,7 @@ fun someContactFull(
     type = type,
     notes = notes,
     phoneNumbers = phoneNumbers.toMutableList(),
+    isNew = isNew,
 )
 
 fun someContactNonEditable(
