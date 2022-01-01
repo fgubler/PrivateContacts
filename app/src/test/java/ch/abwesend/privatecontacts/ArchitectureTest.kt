@@ -1,6 +1,8 @@
 package ch.abwesend.privatecontacts
 
 import com.tngtech.archunit.core.importer.ImportOption
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
+import com.tngtech.archunit.core.importer.Location
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
@@ -25,7 +27,7 @@ private const val INFRASTRUCTURE_LAYER = "INFRASTRUCTURE"
 @Suppress("unused", "PropertyName")
 @AnalyzeClasses(
     packages = [ROOT_PACKAGE],
-    importOptions = [ImportOption.DoNotIncludeTests::class]
+    importOptions = [DoNotIncludeTests::class, DoNotIncludeKotlinTests::class]
 )
 class ArchitectureTest {
     @ArchTest
@@ -58,4 +60,10 @@ class ArchitectureTest {
         .layer(VIEW_LAYER).definedBy(VIEW_PACKAGE)
         .layer(DOMAIN_LAYER).definedBy(DOMAIN_PACKAGE)
         .layer(INFRASTRUCTURE_LAYER).definedBy(INFRASTRUCTURE_PACKAGE)
+}
+
+class DoNotIncludeKotlinTests : ImportOption {
+    override fun includes(location: Location): Boolean {
+        return !location.contains("Test/") && !location.contains("test/")
+    }
 }
