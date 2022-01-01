@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.domain.lib.logging
 
 import android.util.Log
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.util.Constants
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
@@ -127,7 +128,9 @@ abstract class AbstractLogger : ILogger {
      * can be overridden by subclasses to define another log-level mechanism
      * @return true, if messages of this level should be logged
      */
-    protected open fun checkLogLevel(logLevel: Int): Boolean {
-        return loggingActive && Log.isLoggable(loggingTag, logLevel)
-    }
+    protected open fun checkLogLevel(logLevel: Int): Boolean =
+        loggingActive && (Log.isLoggable(loggingTag, logLevel) || allowDebugLoggingOnDebugBuild(logLevel))
+
+    private fun allowDebugLoggingOnDebugBuild(logLevel: Int): Boolean =
+        logLevel == Log.DEBUG && Log.isLoggable(loggingTag, Log.INFO) && BuildConfig.DEBUG
 }
