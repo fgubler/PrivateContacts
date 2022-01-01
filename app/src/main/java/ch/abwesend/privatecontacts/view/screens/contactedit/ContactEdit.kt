@@ -25,7 +25,7 @@ import ch.abwesend.privatecontacts.view.theme.AppColors
 
 @Composable
 fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
-    val onChanged = { newContact: ContactFull -> screenContext.contactEditViewModel.updateContact(newContact) }
+    val onChanged = { newContact: ContactFull -> screenContext.contactEditViewModel.changeContact(newContact) }
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {

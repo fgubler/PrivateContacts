@@ -34,16 +34,16 @@ class ContactEditViewModel : ViewModel() {
         selectedContact = full
     }
 
-    fun createNewContact() {
+    fun createContact() {
         val contact = ContactFull.createNew()
         selectContact(contact)
     }
 
-    fun updateContact(contact: ContactFull) {
+    fun changeContact(contact: ContactFull) {
         selectedContact = contact
     }
 
-    fun saveContact(contact: ContactFull) {
+    fun saveContact(contact: Contact) {
         viewModelScope.launch {
             val result = saveService.saveContact(contact)
             _saveResult.emit(result)

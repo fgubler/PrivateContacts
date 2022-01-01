@@ -127,6 +127,6 @@ private fun selectContact(screenContext: ScreenContext, contact: ContactBase) {
 }
 
 private fun createContact(screenContext: ScreenContext) {
-    screenContext.contactEditViewModel.createNewContact()
+    screenContext.contactEditViewModel.createContact()
     screenContext.router.navigateToScreen(Screen.ContactEdit)
 }

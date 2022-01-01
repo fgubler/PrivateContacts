@@ -5,6 +5,7 @@ import java.util.UUID
 
 interface Contact : ContactBase {
     val phoneNumbers: List<PhoneNumber>
+    val isNew: Boolean
 }
 
 data class ContactFull(
@@ -15,7 +16,7 @@ data class ContactFull(
     override val type: ContactType,
     override val notes: String,
     override val phoneNumbers: List<PhoneNumber>,
-    val isNew: Boolean = false,
+    override val isNew: Boolean = false,
 ) : Contact {
     companion object
 }

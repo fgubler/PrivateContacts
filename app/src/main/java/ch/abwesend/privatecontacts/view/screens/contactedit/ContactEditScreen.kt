@@ -200,7 +200,7 @@ private fun NoContactLoaded(viewModel: ContactEditViewModel) {
             label = R.string.create_contact,
             icon = Icons.Default.Add
         ) {
-            viewModel.createNewContact()
+            viewModel.createContact()
         }
     )
 }
