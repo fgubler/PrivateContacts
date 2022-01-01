@@ -73,7 +73,7 @@ private fun AddContactButton(screenContext: ScreenContext) {
 @Composable
 private fun ContactListContent(screenContext: ScreenContext) {
     val viewModel = screenContext.contactListViewModel
-    val contacts = viewModel.contactsPaged.collectAsLazyPagingItems()
+    val contacts = viewModel.contacts.value.collectAsLazyPagingItems()
 
     when {
         contacts.isError -> LoadingError(viewModel)
@@ -91,7 +91,7 @@ private fun LoadingError(viewModel: ContactListViewModel) {
         buttonConfig = ButtonConfig(
             label = R.string.reload_data,
             icon = Icons.Default.Sync
-        ) { viewModel.loadContacts() }, // TODO fix
+        ) { viewModel.reloadContacts() },
     )
 }
 
