@@ -10,10 +10,18 @@ class ContactValidationService {
     suspend fun validateContact(contact: Contact): ContactValidationResult {
         val validationErrors = mutableListOf<ContactValidationError>()
 
+        validationErrors.addAll(validateName(contact))
+
+        return ContactValidationResult.fromErrors(validationErrors)
+    }
+
+    private fun validateName(contact: Contact): List<ContactValidationError> {
+        val validationErrors = mutableListOf<ContactValidationError>()
+
         if (contact.getFullName(true).trim().isEmpty()) {
             validationErrors.add(NAME_NOT_SET)
         }
 
-        return ContactValidationResult.fromErrors(validationErrors)
+        return validationErrors
     }
 }
