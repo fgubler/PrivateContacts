@@ -68,11 +68,7 @@ fun SideDrawerHeader() {
 
 @Composable
 fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) {
-    Text(
-        text = stringResource(id = R.string.navigation),
-        style = MaterialTheme.typography.subtitle1,
-        modifier = Modifier.padding(bottom = 5.dp)
-    )
+    SideDrawerListHeader(titleRes = R.string.navigation)
     sideDrawerScreens.forEach { screen ->
         SideDrawerElement(
             titleRes = screen.titleRes,
@@ -84,7 +80,16 @@ fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) 
 }
 
 @Composable
-fun SideDrawerElement(
+private fun SideDrawerListHeader(@StringRes titleRes: Int) {
+    Text(
+        text = stringResource(id = titleRes),
+        style = MaterialTheme.typography.subtitle1,
+        modifier = Modifier.padding(start = 5.dp, bottom = 5.dp)
+    )
+}
+
+@Composable
+private fun SideDrawerElement(
     @StringRes titleRes: Int,
     icon: ImageVector,
     isSelected: Boolean,
