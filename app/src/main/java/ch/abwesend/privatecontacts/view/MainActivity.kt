@@ -1,0 +1,49 @@
+package ch.abwesend.privatecontacts.view
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.routing.AppRouter
+import ch.abwesend.privatecontacts.view.routing.MainNavHost
+import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import org.koin.android.ext.android.get
+import org.koin.core.parameter.parametersOf
+
+class MainActivity : ComponentActivity() {
+    private val contactListViewModel: ContactListViewModel by viewModels()
+    private val contactEditViewModel: ContactEditViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        logger.info("Main activity started")
+
+        setContent {
+            PrivateContactsTheme {
+                val navController = rememberNavController()
+                val screenContext = createScreenContext(navController)
+
+                MainNavHost(
+                    navController = navController,
+                    screenContext = screenContext,
+                )
+            }
+        }
+    }
+
+    private fun createScreenContext(navController: NavHostController): ScreenContext {
+        val router: AppRouter = get { parametersOf(navController) }
+
+        return ScreenContext(
+            router = router,
+            contactListViewModel = contactListViewModel,
+            contactEditViewModel = contactEditViewModel,
+        )
+    }
+}

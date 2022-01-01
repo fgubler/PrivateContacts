@@ -1,3 +1,53 @@
 <resources>
     <string name="app_name">Private Contacts</string>
+    <string name="screen_contact_list">Contacts</string>
+    <string name="screen_settings">Settings</string>
+    <string name="screen_contact_developers">Contact</string>
+    <string name="screen_contact_details">Contact Details</string>
+    <string name="screen_contact_edit">Edit Contact</string>
+    <string name="screen_contact_edit_create">Create Contact</string>
+
+    <string name="no_contacts_found">No contacts found</string>
+    <string name="data_loading_error">An error occurred while loading the data</string>
+    <string name="no_contact_selected">No contact selected</string>
+
+    <string name="menu">Open menu</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="error">Error</string>
+    <string name="unknown_error">Unknown error</string>
+
+    <string name="private_contact">Private</string>
+    <string name="public_contact">Public</string>
+    <string name="subtype_private">Private</string>
+    <string name="subtype_business">Business</string>
+    <string name="subtype_mobile">Mobile</string>
+    <string name="subtype_other">Other</string>
+    <string name="subtype_custom">Custom</string>
+    <string name="subtype_birthday">Birthday</string>
+
+    <string name="create_contact">Create Contact</string>
+
+    <string name="navigation">Navigation</string>
+    <string name="loading_contacts">Contacts are being loaded</string>
+    <string name="reload_data">Reload data</string>
+
+    <string name="personal_information">Personal information</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="nickname">Nickname</string>
+    <string name="notes">Notes</string>
+
+    <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
+    <string name="data_validation_errors">Validation errors</string>
+    <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
+
+    <string name="discard_changes_title">Discard Changes</string>
+    <string name="discard_changes_text">Are you sure you would like to discard all unsaved changes?</string>
+
+
 </resources>
