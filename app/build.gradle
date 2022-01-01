@@ -101,6 +101,9 @@ dependencies {
     implementation "androidx.room:room-paging:2.4.0"
 
     // Others
+    implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
@@ -122,6 +125,7 @@ dependencies {
     testImplementation "io.insert-koin:koin-test-junit5:${koinVersion}"
     testImplementation "androidx.room:room-testing:$roomVersion"
     testImplementation "com.tngtech.archunit:archunit-junit5:${archUnitVersion}"
+    testImplementation "androidx.paging:paging-common-ktx:${pagingVersion}"
 
     testImplementation "io.mockk:mockk:${mockkVersion}"
     testImplementation "io.mockk:mockk-agent-jvm:${mockkVersion}"

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -17,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.items
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
@@ -24,14 +25,14 @@ import ch.abwesend.privatecontacts.view.components.FullScreenError
 
 @Composable
 fun ContactList(
-    contacts: List<ContactBase>,
+    pagedContacts: LazyPagingItems<ContactBase>,
     onContactSelected: (ContactBase) -> Unit,
 ) {
-    if (contacts.isEmpty()) {
+    if (pagedContacts.itemCount <= 0) {
         NoResults()
     } else {
         ListWithResults(
-            contacts = contacts,
+            pagedContacts = pagedContacts,
             onContactSelected = onContactSelected
         )
     }
@@ -44,7 +45,7 @@ private fun NoResults() {
 
 @Composable
 private fun ListWithResults(
-    contacts: List<ContactBase>,
+    pagedContacts: LazyPagingItems<ContactBase>,
     onContactSelected: (ContactBase) -> Unit,
 ) {
     LazyColumn(
@@ -52,20 +53,23 @@ private fun ListWithResults(
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        items(contacts) { contact ->
+        items(pagedContacts) { nullableContact ->
+            // Beware: Need to draw the row even for null, otherwise, loading new pages does not work properly
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp)
-                    .clickable { onContactSelected(contact) }
+                    .clickable { nullableContact?.let { onContactSelected(it) } }
             ) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = contact.getFullName(firstNameFirst = true),
-                    modifier = Modifier.padding(start = 10.dp, end = 20.dp)
-                )
-                Text(text = contact.getFullName(firstNameFirst = true))
+                nullableContact?.let { contact ->
+                    Icon(
+                        imageVector = Icons.Filled.AccountCircle,
+                        contentDescription = contact.getFullName(),
+                        modifier = Modifier.padding(start = 10.dp, end = 20.dp)
+                    )
+                    Text(text = contact.getFullName())
+                }
             }
             Spacer(modifier = Modifier.height(6.dp))
         }

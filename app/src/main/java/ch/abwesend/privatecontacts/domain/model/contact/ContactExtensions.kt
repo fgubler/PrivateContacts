@@ -1,9 +1,12 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
+import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import java.util.UUID
 
-fun ContactBase.getFullName(firstNameFirst: Boolean): String =
+fun ContactBase.getFullName(
+    firstNameFirst: Boolean = Settings.orderByFirstName
+): String =
     if (firstNameFirst) "$firstName $lastName"
     else "$lastName $firstName"
 

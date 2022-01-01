@@ -12,14 +12,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
+import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
@@ -30,10 +27,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.components.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
-import ch.abwesend.privatecontacts.view.util.composeIfError
-import ch.abwesend.privatecontacts.view.util.composeIfLoading
-import ch.abwesend.privatecontacts.view.util.composeIfReady
-import ch.abwesend.privatecontacts.view.util.getLogger
+import ch.abwesend.privatecontacts.view.util.isError
+import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -78,27 +73,15 @@ private fun AddContactButton(screenContext: ScreenContext) {
 @Composable
 private fun ContactListContent(screenContext: ScreenContext) {
     val viewModel = screenContext.contactListViewModel
-    LaunchedEffect(Unit) {
-        viewModel.loadContacts()
+    val contacts = viewModel.contactsPaged.collectAsLazyPagingItems()
+
+    when {
+        contacts.isError -> LoadingError(viewModel)
+        contacts.isLoading -> LoadingIndicatorFullScreen(R.string.loading_contacts)
+        else -> ContactList(pagedContacts = contacts) { contact ->
+            selectContact(screenContext, contact)
+        }
     }
-
-    val contactsResource: AsyncResource<List<ContactBase>> by viewModel.contacts.collectAsState()
-
-    contactsResource
-        .composeIfLoading {
-            getLogger().debug("Loading contacts")
-            LoadingIndicatorFullScreen(
-                textAfterIndicator = { stringResource(id = R.string.loading_contacts) }
-            )
-        }
-        .composeIfError {
-            LoadingError(viewModel)
-        }
-        .composeIfReady { contacts ->
-            ContactList(contacts = contacts) { contact ->
-                selectContact(screenContext, contact)
-            }
-        }
 }
 
 @Composable
@@ -108,7 +91,7 @@ private fun LoadingError(viewModel: ContactListViewModel) {
         buttonConfig = ButtonConfig(
             label = R.string.reload_data,
             icon = Icons.Default.Sync
-        ) { viewModel.loadContacts() },
+        ) { viewModel.loadContacts() }, // TODO fix
     )
 }
 

@@ -131,9 +131,9 @@ private fun createElementClickListener(router: AppRouter, selectedScreen: Screen
         val isSelected = screen == selectedScreen
 
         if (isSelected) {
-            logger.debug("Screen '${screen.key}' is already selected")
+            logger.info("Screen '${screen.key}' is already selected")
         } else {
-            logger.debug("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
+            logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             router.navigateToScreen(screen)
         }
     }

@@ -11,8 +11,14 @@ abstract class RepositoryBase {
 
     protected suspend fun <T> withDatabase(
         query: suspend (AppDatabase) -> T
-    ): T = withContext(dispatchers.io) {
-        database.ensureInitialized()
-        query(database)
-    }
+    ): T = withDatabase(database, dispatchers, query)
+}
+
+suspend fun <T> withDatabase(
+    database: AppDatabase,
+    dispatchers: IDispatchers,
+    query: suspend (AppDatabase) -> T
+): T = withContext(dispatchers.io) {
+    database.ensureInitialized()
+    query(database)
 }

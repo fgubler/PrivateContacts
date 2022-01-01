@@ -6,11 +6,13 @@ buildscript {
         coroutinesVersion = "1.5.2"
         androidLifecycleVersion = "2.4.0"
 
+        koinVersion = "3.1.4"
+        roomVersion = "2.4.0"
+        pagingVersion = "3.1.0"
+
         junitJupiterVersion = "5.8.2"
         junit5AndroidVersion = "1.2.2"
         archUnitVersion = "0.22.0"
-        koinVersion = "3.1.4"
-        roomVersion = "2.4.0"
         mockkVersion = "1.12.1"
     }
     repositories {

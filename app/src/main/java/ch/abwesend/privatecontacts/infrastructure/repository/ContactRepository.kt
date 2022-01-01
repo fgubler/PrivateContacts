@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
@@ -17,8 +18,22 @@ class ContactRepository : RepositoryBase(), IContactRepository {
     override suspend fun loadContacts(): List<ContactBase> =
         withDatabase { database ->
             database.contactDao().getAll().also {
-                logger.debug("Loaded ${it.size} contacts")
+                logger.info("Loaded ${it.size} contacts")
             }
+        }
+
+    override suspend fun getContactsPaged(loadSize: Int, offsetInRows: Int): List<ContactBase> =
+        withDatabase { database ->
+            logger.info("Loading contacts with pageSize = $loadSize and offset = $offsetInRows")
+
+            val result = if (Settings.orderByFirstName) {
+                database.contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
+            } else {
+                database.contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
+            }
+
+            logger.info("Loaded ${result.size} contacts with pageSize = $loadSize and offset = $offsetInRows")
+            result
         }
 
     override suspend fun resolveContact(contact: ContactBase): ContactFull {

@@ -12,6 +12,12 @@ interface ContactDao {
     @Query("SELECT * FROM ContactEntity")
     suspend fun getAll(): List<ContactEntity>
 
+    @Query("SELECT * FROM ContactEntity ORDER BY firstName LIMIT :loadSize OFFSET :offsetInRows")
+    suspend fun getPagedByFirstName(loadSize: Int, offsetInRows: Int): List<ContactEntity>
+
+    @Query("SELECT * FROM ContactEntity ORDER BY lastName LIMIT :loadSize OFFSET :offsetInRows")
+    suspend fun getPagedByLastName(loadSize: Int, offsetInRows: Int): List<ContactEntity>
+
     @Query("SELECT COUNT(1) FROM ContactEntity")
     suspend fun count(): Int
 

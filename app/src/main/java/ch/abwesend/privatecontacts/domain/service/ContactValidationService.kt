@@ -18,7 +18,7 @@ class ContactValidationService {
     private fun validateName(contact: Contact): List<ContactValidationError> {
         val validationErrors = mutableListOf<ContactValidationError>()
 
-        if (contact.getFullName(true).trim().isEmpty()) {
+        if (contact.getFullName().trim().isEmpty()) {
             validationErrors.add(NAME_NOT_SET)
         }
 
