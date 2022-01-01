@@ -25,5 +25,4 @@ data class ContactDataEntity(
     val isMain: Boolean,
     val value: String,
     val sortOrder: Int? = null,
-    val customSubType: String? = null, // if the subtype is custom, the user can enter custom-subtype
 )
