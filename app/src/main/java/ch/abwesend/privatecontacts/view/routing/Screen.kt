@@ -1,6 +1,5 @@
 package ch.abwesend.privatecontacts.view.routing
 
-import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Contacts
@@ -9,46 +8,49 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import ch.abwesend.privatecontacts.R
 
-// TODO change to enum?
-sealed interface Screen {
-    val titleRes: Int
-    val icon: ImageVector
-    val key: String
+enum class Screen(
+    val titleRes: Int,
+    val icon: ImageVector,
+    val key: String,
+    val showInSideDrawer: Boolean,
+) {
+    ContactList(
+        titleRes = R.string.screen_contact_list,
+        icon = Icons.Default.Contacts,
+        key = "ContactListScreen",
+        showInSideDrawer = true,
+    ),
 
-    object ContactList : Screen {
-        @StringRes override val titleRes: Int = R.string.screen_contact_list
-        override val icon: ImageVector = Icons.Default.Contacts
-        override val key: String = "ContactListScreen"
-    }
+    Settings(
+        titleRes = R.string.screen_settings,
+        icon = Icons.Default.Settings,
+        key = "SettingsScreen",
+        showInSideDrawer = true,
+    ),
 
-    object Settings : Screen {
-        @StringRes override val titleRes: Int = R.string.screen_settings
-        override val icon: ImageVector = Icons.Default.Settings
-        override val key: String = "SettingsScreen"
-    }
+    ContactDevelopers(
+        titleRes = R.string.screen_contact_developers,
+        icon = Icons.Default.Email,
+        key = "ContactDevelopersScreen",
+        showInSideDrawer = true,
+    ),
 
-    object ContactDevelopers : Screen {
-        @StringRes override val titleRes: Int = R.string.screen_contact_developers
-        override val icon: ImageVector = Icons.Default.Email
-        override val key: String = "ContactDevelopersScreen"
-    }
+    ContactDetail(
+        titleRes = R.string.screen_contact_details,
+        icon = Icons.Default.ContactPage,
+        key = "ContactDetailsScreen",
+        showInSideDrawer = false,
+    ),
 
-    object ContactDetail : Screen {
-        @StringRes override val titleRes: Int = R.string.screen_contact_details
-        override val icon: ImageVector = Icons.Default.ContactPage
-        override val key: String = "ContactDetailsScreen"
-    }
+    ContactEdit(
+        titleRes = R.string.screen_contact_edit,
+        icon = Icons.Default.ContactPage,
+        key = "ContactEditScreen",
+        showInSideDrawer = false,
+    );
 
-    object ContactEdit : Screen {
-        @StringRes override val titleRes: Int = R.string.screen_contact_edit
-        override val icon: ImageVector = Icons.Default.ContactPage
-        override val key: String = "ContactEditScreen"
+    companion object {
+        val sideDrawerScreens: List<Screen> =
+            values().filter { it.showInSideDrawer }
     }
 }
-
-val sideDrawerScreens: List<Screen>
-    get() = listOf(
-        Screen.ContactList,
-        Screen.Settings,
-        Screen.ContactDevelopers,
-    )

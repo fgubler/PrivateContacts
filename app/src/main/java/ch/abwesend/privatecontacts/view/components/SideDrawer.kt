@@ -25,7 +25,6 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
-import ch.abwesend.privatecontacts.view.routing.sideDrawerScreens
 
 @Composable
 fun SideDrawerContent(router: AppRouter, selectedScreen: Screen) {
@@ -69,7 +68,7 @@ fun SideDrawerHeader() {
 @Composable
 fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) {
     SideDrawerListHeader(titleRes = R.string.navigation)
-    sideDrawerScreens.forEach { screen ->
+    Screen.sideDrawerScreens.forEach { screen ->
         SideDrawerElement(
             titleRes = screen.titleRes,
             icon = screen.icon,
