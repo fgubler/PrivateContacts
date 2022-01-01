@@ -9,9 +9,9 @@ fun ContactBase.getFullName(firstNameFirst: Boolean): String =
 
 fun Contact.asFull(): ContactFull =
     if (this is ContactFull) this
-    else toContactEditable(this.phoneNumbers.toMutableList())
+    else toContactFull(this.phoneNumbers.toMutableList())
 
-fun ContactBase.toContactEditable(
+fun ContactBase.toContactFull(
     phoneNumbers: MutableList<PhoneNumber>
 ): ContactFull =
     ContactFull(

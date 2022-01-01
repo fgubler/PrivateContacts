@@ -2,7 +2,10 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataSubType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 
 class ContactDataRepository : RepositoryBase() {
@@ -28,4 +31,17 @@ class ContactDataRepository : RepositoryBase() {
 
             database.contactDataDao().updateAll(contactData)
         }
+
+    fun tryResolvePhoneNumber(contactData: ContactDataEntity): PhoneNumber? {
+        if (contactData.type != ContactDataType.PHONE_NUMBER) return null
+        val numberType = contactData.subType.toContactDataSubType() ?: return null
+
+        return PhoneNumber(
+            id = contactData.id,
+            type = numberType,
+            isMain = contactData.isMain,
+            sortOrder = contactData.sortOrder,
+            value = contactData.value,
+        )
+    }
 }
