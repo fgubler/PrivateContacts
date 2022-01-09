@@ -33,12 +33,12 @@ sealed class ContactDataSubType {
 
     object Other : ContactDataSubType() {
         override val key: Key = OTHER
-        override val titleRes: Int = R.string.subtype_business
+        override val titleRes: Int = R.string.subtype_other
     }
 
     object Birthday : ContactDataSubType() {
         override val key: Key = BIRTHDAY
-        override val titleRes: Int = R.string.subtype_business
+        override val titleRes: Int = R.string.subtype_birthday
     }
 
     open class Custom(val customValue: String) : ContactDataSubType() {
