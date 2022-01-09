@@ -1,26 +1,27 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
 import ch.abwesend.privatecontacts.view.theme.AppColors
 
 @Composable
@@ -38,7 +39,8 @@ fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
 @Composable
 private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
     val textFieldModifier = Modifier.padding(bottom = 2.dp)
-    ContactCategory(label = R.string.personal_information, icon = Icons.Default.Person) {
+    val prefixIcon = IconConfig(label = R.string.personal_information, icon = Icons.Default.Person)
+    ContactCategory(prefixIcon) {
         Column {
             OutlinedTextField(
                 label = { Text(stringResource(id = R.string.first_name)) },
@@ -64,7 +66,8 @@ private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -
 
 @Composable
 private fun Notes(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
-    ContactCategory(label = R.string.notes, icon = Icons.Default.SpeakerNotes) {
+    val prefixIcon = IconConfig(label = R.string.notes, icon = Icons.Default.SpeakerNotes)
+    ContactCategory(prefixIcon = prefixIcon) {
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.notes)) },
             value = contact.notes,
@@ -79,20 +82,48 @@ private fun Notes(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
 
 @Composable
 private fun ContactCategory(
-    @StringRes label: Int,
-    icon: ImageVector,
-    content: @Composable () -> Unit
+    prefixIcon: IconConfig,
+    postfixIcon: IconButtonConfig? = null,
+    content: @Composable () -> Unit,
 ) {
-    Row(
+    ConstraintLayout(
         modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-        verticalAlignment = Alignment.Top,
     ) {
+        val (prefixIconRef, contentRef, postfixIconRef) = createRefs()
         Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = label),
-            modifier = Modifier.padding(top = 23.dp, end = 20.dp),
-            tint = AppColors.grayText
+            imageVector = prefixIcon.icon,
+            contentDescription = stringResource(id = prefixIcon.label),
+            tint = AppColors.grayText,
+            modifier = Modifier
+                .padding(top = 23.dp, end = 20.dp)
+                .constrainAs(prefixIconRef) {
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
+                },
         )
-        content()
+        Surface(
+            modifier = Modifier.constrainAs(contentRef) {
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(prefixIconRef.end)
+            }
+        ) {
+            content()
+        }
+        postfixIcon?.let {
+            IconButton(onClick = postfixIcon.onClick) {
+                Icon(
+                    imageVector = postfixIcon.icon,
+                    contentDescription = stringResource(id = postfixIcon.label),
+                    tint = AppColors.grayText,
+                    modifier = Modifier
+                        .padding(top = 23.dp, start = 20.dp)
+                        .constrainAs(postfixIconRef) {
+                            top.linkTo(parent.top)
+                            start.linkTo(contentRef.end)
+                        },
+                )
+            }
+        }
     }
 }
