@@ -7,4 +7,5 @@ interface ContactData {
     val sortOrder: Int?
     val type: ContactDataSubType
     val isMain: Boolean
+    val allowedTypes: List<ContactDataSubType>
 }

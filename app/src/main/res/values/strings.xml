@@ -21,6 +21,7 @@
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
 
+    <string name="type">Type</string>
     <string name="private_contact">Private</string>
     <string name="public_contact">Public</string>
     <string name="subtype_private">Private</string>
@@ -41,6 +42,8 @@
     <string name="last_name">Last name</string>
     <string name="nickname">Nickname</string>
     <string name="notes">Notes</string>
+
+    <string name="phone_number">Phone number</string>
 
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>

@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.view.routing
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,6 +11,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactList
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
 
+@ExperimentalMaterialApi
 @Composable
 fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {
     NavHost(navController = navController, startDestination = ContactList.key) {

@@ -41,10 +41,17 @@ sealed class ContactDataSubType {
         override val titleRes: Int = R.string.subtype_business
     }
 
-    class Custom(val customValue: String) : ContactDataSubType() {
+    open class Custom(val customValue: String) : ContactDataSubType() {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.subtype_custom
         override fun getTitle(stringProvider: StringProvider): String = customValue
+
+        companion object {
+            val Base = object : Custom("") {
+                override fun getTitle(stringProvider: StringProvider): String =
+                    stringProvider(titleRes)
+            }
+        }
     }
 
     enum class Key {

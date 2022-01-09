@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -29,13 +30,14 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
-import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.flow.collect
 
+@ExperimentalMaterialApi
 @Composable
 fun ContactEditScreen(screenContext: ScreenContext) {
     val viewModel = screenContext.contactEditViewModel

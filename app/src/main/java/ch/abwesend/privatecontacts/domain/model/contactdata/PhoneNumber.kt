@@ -8,4 +8,16 @@ data class PhoneNumber(
     override val type: ContactDataSubType,
     override val isMain: Boolean,
     val value: String,
-) : ContactData
+) : ContactData {
+    override val allowedTypes: List<ContactDataSubType> = defaultAllowedTypes
+
+    companion object {
+        private val defaultAllowedTypes = listOf(
+            ContactDataSubType.Mobile,
+            ContactDataSubType.Private,
+            ContactDataSubType.Business,
+            ContactDataSubType.Other,
+            // ContactDataSubType.Custom.Base,   // TODO allow custom types
+        )
+    }
+}
