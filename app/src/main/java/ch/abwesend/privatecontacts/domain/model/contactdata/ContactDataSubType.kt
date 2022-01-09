@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.util.StringProvider
 sealed class ContactDataSubType {
     abstract val key: Key
     protected abstract val titleRes: Int
+    protected open val isPlaceHolder: Boolean = false
 
     open fun getTitle(stringProvider: StringProvider): String =
         stringProvider(titleRes)
@@ -41,17 +42,18 @@ sealed class ContactDataSubType {
         override val titleRes: Int = R.string.subtype_birthday
     }
 
-    open class Custom(val customValue: String) : ContactDataSubType() {
+    /** The "Custom" which is shown in the dropdown of possible sub-types */
+    object Custom : ContactDataSubType() {
+        override val key: Key = CUSTOM
+        override val titleRes: Int = R.string.subtype_custom
+        override val isPlaceHolder: Boolean = true
+    }
+
+    /** The "Custom" which is then created based on [customValue] */
+    class CustomValue(val customValue: String) : ContactDataSubType() {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.subtype_custom
         override fun getTitle(stringProvider: StringProvider): String = customValue
-
-        companion object {
-            val Base = object : Custom("") {
-                override fun getTitle(stringProvider: StringProvider): String =
-                    stringProvider(titleRes)
-            }
-        }
     }
 
     enum class Key {

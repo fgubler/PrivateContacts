@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Custom
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubTypeEntity
@@ -118,8 +118,8 @@ class ContactDataRepositoryTest : KoinTestBase() {
         assertThat(result.value).isEqualTo(contactData.value)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.subType.key)
-        assertThat(result.type).isInstanceOf(Custom::class.java)
-        assertThat((result.type as Custom).customValue).isEqualTo(contactData.subType.customValue)
+        assertThat(result.type).isInstanceOf(CustomValue::class.java)
+        assertThat((result.type as CustomValue).customValue).isEqualTo(contactData.subType.customValue)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
     }
 }

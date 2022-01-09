@@ -17,7 +17,7 @@ data class PhoneNumber(
             ContactDataSubType.Private,
             ContactDataSubType.Business,
             ContactDataSubType.Other,
-            // ContactDataSubType.Custom.Base,   // TODO allow custom types
+            ContactDataSubType.Custom,
         )
     }
 }

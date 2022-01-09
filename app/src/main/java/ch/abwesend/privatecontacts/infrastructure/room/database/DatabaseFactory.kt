@@ -112,7 +112,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "12345678",
-                type = ContactDataSubType.Custom("Jedi-Number"),
+                type = ContactDataSubType.CustomValue("Jedi-Number"),
                 isMain = true,
                 sortOrder = 2,
             ),

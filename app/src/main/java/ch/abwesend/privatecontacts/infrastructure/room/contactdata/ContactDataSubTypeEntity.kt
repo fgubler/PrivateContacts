@@ -17,12 +17,12 @@ fun ContactDataSubTypeEntity.toContactDataSubType(): ContactDataSubType {
         ContactDataSubType.Key.MOBILE -> ContactDataSubType.Mobile
         ContactDataSubType.Key.OTHER -> ContactDataSubType.Other
         ContactDataSubType.Key.BIRTHDAY -> ContactDataSubType.Birthday
-        ContactDataSubType.Key.CUSTOM -> ContactDataSubType.Custom(customValue.orEmpty())
+        ContactDataSubType.Key.CUSTOM -> ContactDataSubType.CustomValue(customValue.orEmpty())
     }
 }
 
 fun ContactDataSubType.toEntity(): ContactDataSubTypeEntity =
     when (this) {
-        is ContactDataSubType.Custom -> ContactDataSubTypeEntity(key, customValue)
+        is ContactDataSubType.CustomValue -> ContactDataSubTypeEntity(key, customValue)
         else -> ContactDataSubTypeEntity(key, null)
     }
