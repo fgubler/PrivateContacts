@@ -11,6 +11,8 @@ import ch.abwesend.privatecontacts.testutil.someContactFull
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -51,7 +53,8 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `update should update the data in the database`() {
         val contact = someContactFull()
-        coEvery { contactDataDao.updateAll(any()) } returns Unit
+        coEvery { contactDataDao.updateAll(any()) } just runs
+        coEvery { contactDataDao.insertAll(any()) } just runs
 
         runBlocking { underTest.updateContactData(contact) }
 
@@ -61,7 +64,8 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `update should consider phone numbers`() {
         val contact = spyk(someContactFull())
-        coEvery { contactDataDao.updateAll(any()) } returns Unit
+        coEvery { contactDataDao.updateAll(any()) } just runs
+        coEvery { contactDataDao.insertAll(any()) } just runs
 
         runBlocking { underTest.updateContactData(contact) }
 
@@ -98,7 +102,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
 
         assertThat(result).isNotNull
         assertThat(result!!.id).isEqualTo(contactData.id)
-        assertThat(result.value).isEqualTo(contactData.value)
+        assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.subType.key)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
@@ -115,7 +119,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
 
         assertThat(result).isNotNull
         assertThat(result!!.id).isEqualTo(contactData.id)
-        assertThat(result.value).isEqualTo(contactData.value)
+        assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.subType.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)

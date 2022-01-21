@@ -23,6 +23,7 @@ data class ContactDataEntity(
     val type: ContactDataType,
     @Embedded(prefix = "subType") val subType: ContactDataSubTypeEntity,
     val isMain: Boolean,
-    val value: String,
+    val valueRaw: String,
+    val valueFormatted: String,
     val sortOrder: Int? = null,
 )

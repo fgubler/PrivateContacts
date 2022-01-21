@@ -14,13 +14,5 @@ data class ContactEntity(
     override val nickname: String,
     override val type: ContactType,
     override val notes: String,
+    var fullTextSearch: String, // column optimized for full-text search
 ) : ContactBase
-
-fun ContactBase.toEntity() = ContactEntity(
-    id = id,
-    firstName = firstName,
-    lastName = lastName,
-    nickname = nickname,
-    type = type,
-    notes = notes,
-)

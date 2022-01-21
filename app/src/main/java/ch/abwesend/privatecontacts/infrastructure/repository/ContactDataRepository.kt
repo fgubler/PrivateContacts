@@ -44,7 +44,7 @@ class ContactDataRepository : RepositoryBase() {
             type = numberType,
             isMain = contactData.isMain,
             sortOrder = contactData.sortOrder,
-            value = contactData.value,
+            value = contactData.valueRaw,
             isNew = false,
         )
     }

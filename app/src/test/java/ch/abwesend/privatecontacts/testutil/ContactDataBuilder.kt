@@ -21,7 +21,8 @@ fun someContactDataEntity(
 ): ContactDataEntity = ContactDataEntity(
     id = id,
     contactId = contactId,
-    value = value,
+    valueRaw = value,
+    valueFormatted = value,
     type = type,
     subType = subType,
     isMain = isMain,
@@ -43,10 +44,12 @@ fun somePhoneNumber(
     type: ContactDataSubType = Mobile,
     sortOrder: Int? = null,
     isMainNumber: Boolean = false,
+    isNew: Boolean = false,
 ): PhoneNumber = PhoneNumber(
     id = id,
     value = value,
     type = type,
     isMain = isMainNumber,
+    isNew = isNew,
     sortOrder = sortOrder,
 )
