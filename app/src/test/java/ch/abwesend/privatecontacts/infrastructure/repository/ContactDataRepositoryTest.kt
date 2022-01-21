@@ -3,16 +3,19 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubTypeEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.testutil.KoinTestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -70,6 +73,31 @@ class ContactDataRepositoryTest : KoinTestBase() {
         runBlocking { underTest.updateContactData(contact) }
 
         verify { contact.phoneNumbers }
+    }
+
+    @Test
+    fun `update should update existing phone numbers and insert new ones`() {
+        val newNumber = somePhoneNumber(value = "1234", isNew = true)
+        val existingNumber = somePhoneNumber(value = "5678", isNew = false)
+        val contact = spyk(
+            someContactFull(
+                phoneNumbers = listOf(newNumber, existingNumber)
+            )
+        )
+        coEvery { contactDataDao.updateAll(any()) } just runs
+        coEvery { contactDataDao.insertAll(any()) } just runs
+
+        runBlocking { underTest.updateContactData(contact) }
+
+        verify { contact.phoneNumbers }
+        val updateSlot = slot<List<ContactDataEntity>>()
+        val insertSlot = slot<List<ContactDataEntity>>()
+        coVerify { contactDataDao.updateAll(capture(updateSlot)) }
+        coVerify { contactDataDao.insertAll(capture(insertSlot)) }
+        assertThat(updateSlot.captured).hasSize(1)
+        assertThat(updateSlot.captured.first().id).isEqualTo(existingNumber.id)
+        assertThat(insertSlot.captured).hasSize(1)
+        assertThat(insertSlot.captured.first().id).isEqualTo(newNumber.id)
     }
 
     @Test
