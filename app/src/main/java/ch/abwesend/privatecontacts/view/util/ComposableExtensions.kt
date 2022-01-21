@@ -9,7 +9,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 
 @Composable
