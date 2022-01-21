@@ -59,6 +59,7 @@ val dummyContacts = mutableListOf(
                 value = "1234",
                 type = ContactDataSubType.Private,
                 isMain = true,
+                isNew = false,
                 sortOrder = 0,
             ),
         ),
@@ -76,6 +77,7 @@ val dummyContacts = mutableListOf(
                 value = "12345",
                 type = ContactDataSubType.Private,
                 isMain = true,
+                isNew = false,
                 sortOrder = 0,
             ),
             PhoneNumber(
@@ -83,6 +85,7 @@ val dummyContacts = mutableListOf(
                 value = "123456",
                 type = ContactDataSubType.Business,
                 isMain = false,
+                isNew = false,
                 sortOrder = 1,
             ),
         ),
@@ -100,6 +103,7 @@ val dummyContacts = mutableListOf(
                 value = "123456",
                 type = ContactDataSubType.Private,
                 isMain = false,
+                isNew = false,
                 sortOrder = 0,
             ),
             PhoneNumber(
@@ -107,6 +111,7 @@ val dummyContacts = mutableListOf(
                 value = "1234567",
                 type = ContactDataSubType.Business,
                 isMain = false,
+                isNew = false,
                 sortOrder = 1,
             ),
             PhoneNumber(
@@ -114,6 +119,7 @@ val dummyContacts = mutableListOf(
                 value = "12345678",
                 type = ContactDataSubType.CustomValue("Jedi-Number"),
                 isMain = true,
+                isNew = false,
                 sortOrder = 2,
             ),
         ),
