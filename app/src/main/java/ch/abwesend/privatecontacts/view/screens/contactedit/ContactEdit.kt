@@ -15,9 +15,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.SpeakerNotes
@@ -35,6 +37,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
@@ -45,6 +49,7 @@ import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.phoneNumbersForDisplay
 
 private val textFieldModifier = Modifier.padding(bottom = 2.dp)
+private val contactDataIconModifier = Modifier.padding(top = 23.dp)
 
 @ExperimentalMaterialApi
 @Composable
@@ -89,21 +94,28 @@ private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -
 @ExperimentalMaterialApi
 @Composable
 private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
+    val onPhoneNumberChanged: (PhoneNumber) -> Unit = { newNumber ->
+        val newNumbers =
+            if (contact.phoneNumbers.any { it.id == newNumber.id }) {
+                contact.phoneNumbers.map {
+                    if (it.id == newNumber.id) newNumber
+                    else it
+                }
+            } else {
+                contact.phoneNumbers + newNumber
+            }
+        onChanged(contact.copy(phoneNumbers = newNumbers))
+    }
+
+    val phoneNumbersToDisplay = contact.phoneNumbersForDisplay
     ContactCategory(label = R.string.phone_number, icon = Icons.Default.Phone) {
         Column {
-            contact.phoneNumbersForDisplay.forEachIndexed { displayIndex, phoneNumber ->
-                PhoneNumber(phoneNumber = phoneNumber) { newNumber ->
-                    val newNumbers =
-                        if (contact.phoneNumbers.any { it.id == phoneNumber.id }) {
-                            contact.phoneNumbers.map {
-                                if (it.id == phoneNumber.id) newNumber
-                                else it
-                            }
-                        } else {
-                            contact.phoneNumbers + newNumber
-                        }
-                    onChanged(contact.copy(phoneNumbers = newNumbers))
-                }
+            phoneNumbersToDisplay.forEachIndexed { displayIndex, phoneNumber ->
+                PhoneNumber(
+                    phoneNumber = phoneNumber,
+                    isLastElement = (displayIndex == phoneNumbersToDisplay.size - 1),
+                    onChanged = onPhoneNumberChanged,
+                )
                 if (displayIndex < contact.phoneNumbers.size - 1) {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
@@ -114,22 +126,48 @@ private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit)
 
 @ExperimentalMaterialApi
 @Composable
-private fun PhoneNumber(phoneNumber: PhoneNumber, onChanged: (PhoneNumber) -> Unit) {
-    Column {
-        OutlinedTextField(
-            label = { Text(stringResource(id = R.string.phone_number)) },
-            value = phoneNumber.value,
-            singleLine = true,
-            onValueChange = { newValue -> onChanged(phoneNumber.copy(value = newValue)) },
-            modifier = textFieldModifier,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Phone,
-                imeAction = ImeAction.Next
-            ),
-        )
+private fun PhoneNumber(
+    phoneNumber: PhoneNumber,
+    isLastElement: Boolean,
+    onChanged: (PhoneNumber) -> Unit,
+) {
+    val onPhoneNumberChanged: (String) -> Unit = { newValue ->
+        val newStatus = phoneNumber.modelStatus.tryChangeTo(CHANGED)
+        val newNumber = phoneNumber.copy(value = newValue, modelStatus = newStatus)
+        onChanged(newNumber)
+    }
+    val onPhoneNumberRemoved: () -> Unit = {
+        val newStatus = phoneNumber.modelStatus.tryChangeTo(DELETED)
+        val newNumber = phoneNumber.copy(modelStatus = newStatus)
+        onChanged(newNumber)
+    }
 
-        ContactDataTypeDropDown(data = phoneNumber) { newType ->
-            onChanged(phoneNumber.copy(type = newType))
+    Row {
+        Column {
+            OutlinedTextField(
+                label = { Text(stringResource(id = R.string.phone_number)) },
+                value = phoneNumber.value,
+                singleLine = true,
+                onValueChange = onPhoneNumberChanged,
+                modifier = textFieldModifier,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Phone,
+                    imeAction = ImeAction.Next
+                ),
+            )
+
+            ContactDataTypeDropDown(data = phoneNumber) { newType ->
+                onChanged(phoneNumber.copy(type = newType))
+            }
+        }
+        if (!isLastElement) {
+            IconButton(onClick = onPhoneNumberRemoved) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    modifier = contactDataIconModifier,
+                    contentDescription = stringResource(id = R.string.remove)
+                )
+            }
         }
     }
 }
@@ -200,7 +238,7 @@ private fun ContactCategory(
         Icon(
             imageVector = icon,
             contentDescription = stringResource(id = label),
-            modifier = Modifier.padding(top = 23.dp, end = 20.dp),
+            modifier = contactDataIconModifier.padding(end = 20.dp),
             tint = AppColors.grayText
         )
         content()

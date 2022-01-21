@@ -3,6 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 import android.content.Context
 import androidx.room.Room
 import ch.abwesend.privatecontacts.BuildConfig
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
@@ -59,8 +60,8 @@ val dummyContacts = mutableListOf(
                 value = "1234",
                 type = ContactDataSubType.Private,
                 isMain = true,
-                isNew = false,
                 sortOrder = 0,
+                modelStatus = CHANGED,
             ),
         ),
     ),
@@ -77,7 +78,7 @@ val dummyContacts = mutableListOf(
                 value = "12345",
                 type = ContactDataSubType.Private,
                 isMain = true,
-                isNew = false,
+                modelStatus = CHANGED,
                 sortOrder = 0,
             ),
             PhoneNumber(
@@ -85,7 +86,7 @@ val dummyContacts = mutableListOf(
                 value = "123456",
                 type = ContactDataSubType.Business,
                 isMain = false,
-                isNew = false,
+                modelStatus = CHANGED,
                 sortOrder = 1,
             ),
         ),
@@ -103,7 +104,7 @@ val dummyContacts = mutableListOf(
                 value = "123456",
                 type = ContactDataSubType.Private,
                 isMain = false,
-                isNew = false,
+                modelStatus = CHANGED,
                 sortOrder = 0,
             ),
             PhoneNumber(
@@ -111,7 +112,7 @@ val dummyContacts = mutableListOf(
                 value = "1234567",
                 type = ContactDataSubType.Business,
                 isMain = false,
-                isNew = false,
+                modelStatus = CHANGED,
                 sortOrder = 1,
             ),
             PhoneNumber(
@@ -119,7 +120,7 @@ val dummyContacts = mutableListOf(
                 value = "12345678",
                 type = ContactDataSubType.CustomValue("Jedi-Number"),
                 isMain = true,
-                isNew = false,
+                modelStatus = CHANGED,
                 sortOrder = 2,
             ),
         ),

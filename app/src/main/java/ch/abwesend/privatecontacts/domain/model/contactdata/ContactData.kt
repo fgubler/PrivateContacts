@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import java.util.UUID
 
 sealed interface ContactData {
@@ -9,5 +10,5 @@ sealed interface ContactData {
     val isMain: Boolean
     val allowedTypes: List<ContactDataSubType>
     val isEmpty: Boolean
-    val isNew: Boolean
+    val modelStatus: ModelStatus
 }

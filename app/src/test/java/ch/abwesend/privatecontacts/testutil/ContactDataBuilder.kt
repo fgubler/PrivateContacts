@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.testutil
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Mobile
@@ -44,12 +45,12 @@ fun somePhoneNumber(
     type: ContactDataSubType = Mobile,
     sortOrder: Int? = null,
     isMainNumber: Boolean = false,
-    isNew: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): PhoneNumber = PhoneNumber(
     id = id,
     value = value,
     type = type,
     isMain = isMainNumber,
-    isNew = isNew,
+    modelStatus = modelStatus,
     sortOrder = sortOrder,
 )

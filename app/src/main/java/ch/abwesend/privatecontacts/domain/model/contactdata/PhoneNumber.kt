@@ -1,14 +1,15 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import java.util.UUID
 
 data class PhoneNumber(
     override val id: UUID,
     override val sortOrder: Int?,
     override val type: ContactDataSubType,
-    override val isMain: Boolean,
-    override val isNew: Boolean,
     val value: String,
+    override val isMain: Boolean = false,
+    override val modelStatus: ModelStatus,
 ) : ContactData {
     override val allowedTypes: List<ContactDataSubType> = defaultAllowedTypes
 
@@ -27,9 +28,9 @@ data class PhoneNumber(
                 id = UUID.randomUUID(),
                 sortOrder = sortOrder,
                 type = ContactDataSubType.Mobile,
+                value = "",
                 isMain = (sortOrder == 0),
-                isNew = true,
-                value = ""
+                modelStatus = ModelStatus.NEW,
             )
     }
 }

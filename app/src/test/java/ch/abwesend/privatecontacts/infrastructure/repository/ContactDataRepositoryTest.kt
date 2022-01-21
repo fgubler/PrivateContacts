@@ -1,5 +1,8 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
@@ -12,6 +15,7 @@ import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
@@ -58,6 +62,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
         val contact = someContactFull()
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
+        coEvery { contactDataDao.deleteAll(any()) } just runs
 
         runBlocking { underTest.updateContactData(contact) }
 
@@ -69,6 +74,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
         val contact = spyk(someContactFull())
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
+        coEvery { contactDataDao.deleteAll(any()) } just runs
 
         runBlocking { underTest.updateContactData(contact) }
 
@@ -76,28 +82,61 @@ class ContactDataRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `update should update existing phone numbers and insert new ones`() {
-        val newNumber = somePhoneNumber(value = "1234", isNew = true)
-        val existingNumber = somePhoneNumber(value = "5678", isNew = false)
-        val contact = spyk(
-            someContactFull(
-                phoneNumbers = listOf(newNumber, existingNumber)
-            )
-        )
+    fun `update should update existing phone numbers `() {
+        val existingNumber = somePhoneNumber(value = "5678", modelStatus = CHANGED)
+        val contact = spyk(someContactFull(phoneNumbers = listOf(existingNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
+        coEvery { contactDataDao.deleteAll(any()) } just runs
 
         runBlocking { underTest.updateContactData(contact) }
 
         verify { contact.phoneNumbers }
         val updateSlot = slot<List<ContactDataEntity>>()
-        val insertSlot = slot<List<ContactDataEntity>>()
         coVerify { contactDataDao.updateAll(capture(updateSlot)) }
-        coVerify { contactDataDao.insertAll(capture(insertSlot)) }
+        coVerify { contactDataDao.insertAll(emptyList()) }
+        coVerify { contactDataDao.deleteAll(emptyList()) }
+        confirmVerified(contactDataDao)
         assertThat(updateSlot.captured).hasSize(1)
         assertThat(updateSlot.captured.first().id).isEqualTo(existingNumber.id)
+    }
+
+    @Test
+    fun `update should insert new phone numbers`() {
+        val newNumber = somePhoneNumber(value = "1234", modelStatus = NEW)
+        val contact = spyk(someContactFull(phoneNumbers = listOf(newNumber)))
+        coEvery { contactDataDao.updateAll(any()) } just runs
+        coEvery { contactDataDao.insertAll(any()) } just runs
+        coEvery { contactDataDao.deleteAll(any()) } just runs
+
+        runBlocking { underTest.updateContactData(contact) }
+
+        verify { contact.phoneNumbers }
+        val insertSlot = slot<List<ContactDataEntity>>()
+        coVerify { contactDataDao.insertAll(capture(insertSlot)) }
+        coVerify { contactDataDao.updateAll(emptyList()) }
+        coVerify { contactDataDao.deleteAll(emptyList()) }
         assertThat(insertSlot.captured).hasSize(1)
         assertThat(insertSlot.captured.first().id).isEqualTo(newNumber.id)
+    }
+
+    @Test
+    fun `update should delete deleted phone numbers`() {
+        val deletedNumber = somePhoneNumber(value = "1234", modelStatus = DELETED)
+        val contact = spyk(someContactFull(phoneNumbers = listOf(deletedNumber)))
+        coEvery { contactDataDao.updateAll(any()) } just runs
+        coEvery { contactDataDao.insertAll(any()) } just runs
+        coEvery { contactDataDao.deleteAll(any()) } just runs
+
+        runBlocking { underTest.updateContactData(contact) }
+
+        verify { contact.phoneNumbers }
+        val deleteSlot = slot<List<ContactDataEntity>>()
+        coVerify { contactDataDao.deleteAll(capture(deleteSlot)) }
+        coVerify { contactDataDao.insertAll(emptyList()) }
+        coVerify { contactDataDao.updateAll(emptyList()) }
+        assertThat(deleteSlot.captured).hasSize(1)
+        assertThat(deleteSlot.captured.first().id).isEqualTo(deletedNumber.id)
     }
 
     @Test

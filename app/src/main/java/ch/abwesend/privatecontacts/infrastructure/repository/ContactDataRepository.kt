@@ -1,5 +1,9 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -28,11 +32,19 @@ class ContactDataRepository : RepositoryBase() {
         withDatabase { database ->
             val contactData = contact.allContactData.filter { !it.isEmpty }
 
-            val newData = contactData.filter { it.isNew }.map { it.toEntity(contact.id) }
-            val existingData = contactData.filter { !it.isNew }.map { it.toEntity(contact.id) }
+            val newData = contactData
+                .filter { it.modelStatus == NEW }
+                .map { it.toEntity(contact.id) }
+            val changedData = contactData
+                .filter { it.modelStatus == CHANGED }
+                .map { it.toEntity(contact.id) }
+            val deletedData = contactData
+                .filter { it.modelStatus == DELETED }
+                .map { it.toEntity(contact.id) }
 
             database.contactDataDao().insertAll(newData)
-            database.contactDataDao().updateAll(existingData)
+            database.contactDataDao().updateAll(changedData)
+            database.contactDataDao().deleteAll(deletedData)
         }
 
     fun tryResolvePhoneNumber(contactData: ContactDataEntity): PhoneNumber? {
@@ -42,10 +54,10 @@ class ContactDataRepository : RepositoryBase() {
         return PhoneNumber(
             id = contactData.id,
             type = numberType,
-            isMain = contactData.isMain,
             sortOrder = contactData.sortOrder,
             value = contactData.valueRaw,
-            isNew = false,
+            isMain = contactData.isMain,
+            modelStatus = UNCHANGED,
         )
     }
 

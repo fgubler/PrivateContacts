@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.view.util
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -10,9 +11,12 @@ val Contact.phoneNumbersForDisplay: List<PhoneNumber>
 fun <T : ContactData> List<T>.prepareForDisplay(
     factory: (sortOrder: Int) -> T
 ): List<T> {
-    val sortedList = sortedBy { it.sortOrder ?: Int.MAX_VALUE }
+    val sortedList = filter { it.modelStatus != DELETED }
+        .sortedBy { it.sortOrder ?: Int.MAX_VALUE }
+
     val emptyElement: List<T> =
         if (any { it.isEmpty }) emptyList()
         else listOf(factory(size))
+
     return sortedList + emptyElement
 }

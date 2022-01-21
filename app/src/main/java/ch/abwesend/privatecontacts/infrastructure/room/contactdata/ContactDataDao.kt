@@ -23,4 +23,7 @@ interface ContactDataDao {
 
     @Delete
     suspend fun delete(data: ContactDataEntity)
+
+    @Delete
+    suspend fun deleteAll(data: List<ContactDataEntity>)
 }
