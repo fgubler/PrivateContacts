@@ -3,7 +3,7 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Success
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactValidationServiceTest : KoinTestBase() {
+class ContactValidationServiceTest : TestBase() {
     private lateinit var underTest: ContactValidationService
 
     override fun setup() {

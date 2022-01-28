@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
 import ch.abwesend.privatecontacts.domain.lib.flow.emitLoading
 import ch.abwesend.privatecontacts.domain.lib.flow.emitReady
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -24,7 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class AsyncResourceExtensionsTest : KoinTestBase() {
+class AsyncResourceExtensionsTest : TestBase() {
     @MockK
     private lateinit var flow: MutableResourceStateFlow<Int>
 

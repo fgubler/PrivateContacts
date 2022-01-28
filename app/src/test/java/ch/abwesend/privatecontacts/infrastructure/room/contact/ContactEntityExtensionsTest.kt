@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contact
 
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.junit5.MockKExtension
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactDataRepositoryTest : KoinTestBase() {
+class ContactDataRepositoryTest : TestBase() {
     @Test
     fun `fulltext search string should contain the names`() {
         val contact = someContactFull()
@@ -35,7 +35,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `fulltext search string should contain the phone numbers`() {
         val contact = someContactFull(
-            phoneNumbers = listOf(
+            contactData = listOf(
                 somePhoneNumber(value = "12345"),
                 somePhoneNumber(value = "56789"),
             )

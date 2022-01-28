@@ -3,7 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
@@ -21,7 +21,7 @@ import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactRepositoryTest : KoinTestBase() {
+class ContactRepositoryTest : TestBase() {
     @MockK
     private lateinit var contactDataRepository: ContactDataRepository
 

@@ -6,6 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import io.mockk.every
 import io.mockk.mockk
@@ -34,7 +35,7 @@ fun someContactFull(
     nickname: String = "Lord Snow",
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
-    phoneNumbers: List<PhoneNumber> = emptyList(),
+    contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
 ): Contact = ContactFull(
     id = id,
@@ -43,7 +44,7 @@ fun someContactFull(
     nickname = nickname,
     type = type,
     notes = notes,
-    phoneNumbers = phoneNumbers.toMutableList(),
+    contactDataSet = contactData,
     isNew = isNew,
 )
 

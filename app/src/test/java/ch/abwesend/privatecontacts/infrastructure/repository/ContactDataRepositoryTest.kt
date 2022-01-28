@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCa
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactDataRepositoryTest : KoinTestBase() {
+class ContactDataRepositoryTest : TestBase() {
     private lateinit var underTest: ContactDataRepository
 
     override fun setup() {
@@ -85,7 +85,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `update should update existing phone numbers `() {
         val existingNumber = somePhoneNumber(value = "5678", modelStatus = CHANGED)
-        val contact = spyk(someContactFull(phoneNumbers = listOf(existingNumber)))
+        val contact = spyk(someContactFull(contactData = listOf(existingNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -105,7 +105,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `update should insert new phone numbers`() {
         val newNumber = somePhoneNumber(value = "1234", modelStatus = NEW)
-        val contact = spyk(someContactFull(phoneNumbers = listOf(newNumber)))
+        val contact = spyk(someContactFull(contactData = listOf(newNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -124,7 +124,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
     @Test
     fun `update should delete deleted phone numbers`() {
         val deletedNumber = somePhoneNumber(value = "1234", modelStatus = DELETED)
-        val contact = spyk(someContactFull(phoneNumbers = listOf(deletedNumber)))
+        val contact = spyk(someContactFull(contactData = listOf(deletedNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs

@@ -35,7 +35,7 @@ import org.koin.test.junit5.mock.MockProviderExtension
  */
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-abstract class KoinTestBase : KoinTest {
+abstract class TestBase : KoinTest {
     private lateinit var loggerFactory: ILoggerFactory
     private lateinit var database: AppDatabase
     private lateinit var testLogger: ILogger
