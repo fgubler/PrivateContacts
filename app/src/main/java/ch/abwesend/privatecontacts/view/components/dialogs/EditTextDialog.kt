@@ -21,10 +21,11 @@ import ch.abwesend.privatecontacts.R
 fun EditTextDialog(
     @StringRes title: Int,
     @StringRes label: Int,
+    initialValue: String = "",
     onSave: (String) -> Unit,
     onCancel: () -> Unit,
 ) {
-    var value: String by remember { mutableStateOf("") }
+    var value: String by remember { mutableStateOf(initialValue) }
     val focusRequester = remember { FocusRequester() }
 
     AlertDialog(

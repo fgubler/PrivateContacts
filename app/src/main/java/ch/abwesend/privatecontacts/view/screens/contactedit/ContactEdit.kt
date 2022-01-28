@@ -64,6 +64,7 @@ fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
     }
 
     var contactDataWaitingForCustomType: ContactData? by remember { mutableStateOf(null) }
+    val customTypeInitialText = contactDataWaitingForCustomType?.type.customValue
 
     val waitForCustomContactDataType = { contactData: ContactData ->
         if (contactDataWaitingForCustomType != null) {
@@ -96,6 +97,7 @@ fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
         Notes(contact, onChanged)
         ContactDataTypeCustomValueDialog(
             visible = contactDataWaitingForCustomType != null,
+            initialText = customTypeInitialText,
             hideDialog = { contactDataWaitingForCustomType = null },
             onCustomTypeDefined = onCustomTypeDefined
         )
@@ -244,6 +246,7 @@ private fun ContactDataTypeDropDown(
 @Composable
 private fun ContactDataTypeCustomValueDialog(
     visible: Boolean,
+    initialText: String,
     hideDialog: () -> Unit,
     onCustomTypeDefined: (String) -> Unit,
 ) {
@@ -251,6 +254,7 @@ private fun ContactDataTypeCustomValueDialog(
         EditTextDialog(
             title = R.string.define_custom_type,
             label = R.string.type,
+            initialValue = initialText,
             onCancel = hideDialog,
             onSave = onCustomTypeDefined
         )
@@ -291,3 +295,6 @@ private fun ContactCategory(
         content()
     }
 }
+
+private val ContactDataType?.customValue: String
+    get() = (this as? ContactDataType.CustomValue)?.customValue.orEmpty()
