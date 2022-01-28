@@ -37,30 +37,68 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
+import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.theme.AppColors
+import ch.abwesend.privatecontacts.view.util.addOrReplaceContactDataEntry
 import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.phoneNumbersForDisplay
 
 private val textFieldModifier = Modifier.padding(bottom = 2.dp)
 private val contactDataIconModifier = Modifier.padding(top = 23.dp)
 
+private val logger = Screen.ContactEdit.logger
+
 @ExperimentalMaterialApi
 @Composable
 fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
-    val onChanged = { newContact: ContactFull -> screenContext.contactEditViewModel.changeContact(newContact) }
+    val onChanged = { newContact: ContactFull ->
+        screenContext.contactEditViewModel.changeContact(newContact)
+    }
+
+    var contactDataWaitingForCustomType: ContactData? by remember { mutableStateOf(null) }
+
+    val waitForCustomContactDataType = { contactData: ContactData ->
+        if (contactDataWaitingForCustomType != null) {
+            logger.warning(
+                "overwriting contact data waiting for custom type: " +
+                    "from $contactDataWaitingForCustomType to $contactData"
+            )
+        }
+        contactDataWaitingForCustomType = contactData
+    }
+
+    val onCustomTypeDefined = { customValue: String ->
+        contactDataWaitingForCustomType?.let { contactData ->
+            val newContactData = contactData.changeType(ContactDataType.CustomValue(customValue))
+            onChanged(contact.addOrReplaceContactDataEntry(newContactData))
+        }
+        contactDataWaitingForCustomType = null
+    }
+
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState())
     ) {
         PersonalInformation(contact, onChanged)
-        PhoneNumbers(contact, onChanged)
+        PhoneNumbers(
+            contact = contact,
+            waitForCustomType = waitForCustomContactDataType,
+            onChanged = onChanged
+        )
 
         Notes(contact, onChanged)
+        ContactDataTypeCustomValueDialog(
+            visible = contactDataWaitingForCustomType != null,
+            hideDialog = { contactDataWaitingForCustomType = null },
+            onCustomTypeDefined = onCustomTypeDefined
+        )
     }
 }
 
@@ -92,18 +130,13 @@ private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -
 
 @ExperimentalMaterialApi
 @Composable
-private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
+private fun PhoneNumbers(
+    contact: ContactFull,
+    waitForCustomType: (ContactData) -> Unit,
+    onChanged: (ContactFull) -> Unit,
+) {
     val onPhoneNumberChanged: (PhoneNumber) -> Unit = { newNumber ->
-        val newNumbers =
-            if (contact.phoneNumbers.any { it.id == newNumber.id }) {
-                contact.phoneNumbers.map {
-                    if (it.id == newNumber.id) newNumber
-                    else it
-                }
-            } else {
-                contact.phoneNumbers + newNumber
-            }
-        onChanged(contact.copy(phoneNumbers = newNumbers))
+        onChanged(contact.addOrReplaceContactDataEntry(newNumber))
     }
 
     val phoneNumbersToDisplay = contact.phoneNumbersForDisplay
@@ -113,6 +146,7 @@ private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit)
                 StringBasedContactDataEntry(
                     contactData = phoneNumber,
                     isLastElement = (displayIndex == phoneNumbersToDisplay.size - 1),
+                    waitForCustomType = waitForCustomType,
                     onChanged = onPhoneNumberChanged,
                 )
                 if (displayIndex < contact.phoneNumbers.size - 1) {
@@ -128,6 +162,7 @@ private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit)
 private fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
     contactData: T,
     isLastElement: Boolean,
+    waitForCustomType: (ContactData) -> Unit,
     onChanged: (T) -> Unit,
 ) {
     Row {
@@ -144,7 +179,7 @@ private fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
                 ),
             )
 
-            ContactDataTypeDropDown(data = contactData) { newType ->
+            ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
                 onChanged(contactData.changeType(newType))
             }
         }
@@ -162,7 +197,11 @@ private fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
 
 @ExperimentalMaterialApi
 @Composable
-private fun ContactDataTypeDropDown(data: ContactData, onChanged: (ContactDataType) -> Unit) {
+private fun ContactDataTypeDropDown(
+    data: ContactData,
+    waitForCustomType: (ContactData) -> Unit,
+    onChanged: (ContactDataType) -> Unit,
+) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
@@ -187,7 +226,11 @@ private fun ContactDataTypeDropDown(data: ContactData, onChanged: (ContactDataTy
             data.allowedTypes.forEach { type ->
                 DropdownMenuItem(
                     onClick = {
-                        onChanged(type)
+                        if (type == ContactDataType.Custom) {
+                            waitForCustomType(data)
+                        } else {
+                            onChanged(type)
+                        }
                         dropdownExpanded = false
                     }
                 ) {
@@ -195,6 +238,22 @@ private fun ContactDataTypeDropDown(data: ContactData, onChanged: (ContactDataTy
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ContactDataTypeCustomValueDialog(
+    visible: Boolean,
+    hideDialog: () -> Unit,
+    onCustomTypeDefined: (String) -> Unit,
+) {
+    if (visible) {
+        EditTextDialog(
+            title = R.string.define_custom_type,
+            label = R.string.type,
+            onCancel = hideDialog,
+            onSave = onCustomTypeDefined
+        )
     }
 }
 

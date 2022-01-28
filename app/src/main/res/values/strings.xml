@@ -34,6 +34,8 @@
 
     <string name="create_contact">Create Contact</string>
 
+    <string name="define_custom_type">Define custom type</string>
+
     <string name="navigation">Navigation</string>
     <string name="loading_contacts">Contacts are being loaded</string>
     <string name="reload_data">Reload data</string>

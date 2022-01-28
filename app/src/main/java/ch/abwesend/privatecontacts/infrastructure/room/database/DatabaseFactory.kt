@@ -45,7 +45,7 @@ val dummyContacts = mutableListOf(
         nickname = "Darthy",
         type = ContactType.PRIVATE,
         notes = "Evil but not very good at it",
-        phoneNumbers = mutableListOf(),
+        contactDataSet = mutableListOf(),
     ),
     ContactFull(
         id = UUID.randomUUID(),
@@ -54,7 +54,7 @@ val dummyContacts = mutableListOf(
         nickname = "Lucky Luke",
         type = ContactType.PUBLIC,
         notes = "Lost his hand",
-        phoneNumbers = mutableListOf(
+        contactDataSet = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "1234",
@@ -72,7 +72,7 @@ val dummyContacts = mutableListOf(
         nickname = "Obi",
         type = ContactType.PUBLIC,
         notes = "Efficient way of suicide",
-        phoneNumbers = mutableListOf(
+        contactDataSet = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "12345",
@@ -98,7 +98,7 @@ val dummyContacts = mutableListOf(
         nickname = "Yo-Da",
         type = ContactType.PRIVATE,
         notes = "Small and green",
-        phoneNumbers = mutableListOf(
+        contactDataSet = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "123456",

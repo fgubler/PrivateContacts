@@ -1,7 +1,7 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.Settings
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import java.util.UUID
 
 fun ContactBase.getFullName(
@@ -15,7 +15,7 @@ fun Contact.asFull(): ContactFull =
     else toContactFull(this.phoneNumbers.toMutableList())
 
 fun ContactBase.toContactFull(
-    phoneNumbers: MutableList<PhoneNumber>
+    contactDataSet: List<ContactData>
 ): ContactFull =
     ContactFull(
         id = id,
@@ -24,7 +24,7 @@ fun ContactBase.toContactFull(
         nickname = nickname,
         type = type,
         notes = notes,
-        phoneNumbers = phoneNumbers,
+        contactDataSet = contactDataSet,
     )
 
 fun ContactFull.Companion.createNew(): ContactFull =
@@ -35,6 +35,6 @@ fun ContactFull.Companion.createNew(): ContactFull =
         nickname = "",
         type = ContactType.PRIVATE,
         notes = "",
-        phoneNumbers = mutableListOf(),
+        contactDataSet = listOf(),
         isNew = true,
     )

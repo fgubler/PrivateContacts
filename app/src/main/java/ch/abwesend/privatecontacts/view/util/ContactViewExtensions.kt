@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.view.util
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
+import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 
@@ -19,4 +20,19 @@ fun <T : ContactData> List<T>.prepareForDisplay(
         else listOf(factory(size))
 
     return sortedList + emptyElement
+}
+
+fun <T : ContactData> List<T>.addOrReplace(newData: T): List<T> =
+    if (any { it.id == newData.id }) {
+        map {
+            if (it.id == newData.id) newData
+            else it
+        }
+    } else {
+        this + newData
+    }
+
+fun ContactFull.addOrReplaceContactDataEntry(newEntry: ContactData): ContactFull {
+    val newContactDataSet = contactDataSet.addOrReplace(newEntry)
+    return copy(contactDataSet = newContactDataSet)
 }

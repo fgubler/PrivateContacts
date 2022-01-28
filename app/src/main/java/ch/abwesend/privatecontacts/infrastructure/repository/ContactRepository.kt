@@ -41,7 +41,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val phoneNumbers = contactData.mapNotNull { contactDataRepository.tryResolvePhoneNumber(it) }
 
         return contact.toContactFull(
-            phoneNumbers = phoneNumbers.toMutableList()
+            contactDataSet = phoneNumbers.toMutableList()
         )
     }
 
