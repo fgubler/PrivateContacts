@@ -8,6 +8,7 @@ data class PhoneNumber(
     override val sortOrder: Int?,
     override val type: ContactDataSubType,
     val value: String,
+    val formattedValue: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : ContactData {

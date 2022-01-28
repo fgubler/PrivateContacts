@@ -22,5 +22,5 @@ fun PhoneNumber.toEntity(contactId: UUID): ContactDataEntity =
         sortOrder = sortOrder,
         isMain = isMain,
         valueRaw = value,
-        valueFormatted = value,
+        valueFormatted = formattedValue,
     )
