@@ -6,7 +6,7 @@ import java.util.UUID
 
 data class PhoneNumber(
     override val id: UUID,
-    override val sortOrder: Int?,
+    override val sortOrder: Int,
     override val type: ContactDataType,
     override val value: String,
     override val formattedValue: String = value,

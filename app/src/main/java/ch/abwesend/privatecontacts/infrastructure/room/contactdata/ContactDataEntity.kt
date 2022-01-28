@@ -25,5 +25,5 @@ data class ContactDataEntity(
     val isMain: Boolean,
     val valueRaw: String,
     val valueFormatted: String,
-    val sortOrder: Int? = null,
+    val sortOrder: Int,
 )

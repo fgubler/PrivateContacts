@@ -5,7 +5,7 @@ import java.util.UUID
 
 sealed interface ContactData {
     val id: UUID
-    val sortOrder: Int? // ascending (0 comes first)
+    val sortOrder: Int // ascending (0 comes first)
     val type: ContactDataType
     val isMain: Boolean
     val allowedTypes: List<ContactDataType>
