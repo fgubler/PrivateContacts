@@ -47,6 +47,7 @@
     <string name="notes">Notes</string>
 
     <string name="phone_number">Phone number</string>
+    <string name="email_address">Email address</string>
 
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>

@@ -111,7 +111,7 @@ class ContactRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
-        every { contactDataRepository.tryResolvePhoneNumber(any()) } returns null
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         runBlocking { underTest.resolveContact(contact) }
 
@@ -122,7 +122,7 @@ class ContactRepositoryTest : TestBase() {
     fun `resolving a contact should use the base-data from the base-contact`() {
         val contact = someContactBase()
         coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
-        every { contactDataRepository.tryResolvePhoneNumber(any()) } returns null
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         val result = runBlocking { underTest.resolveContact(contact) }
 
@@ -141,13 +141,13 @@ class ContactRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
-        every { contactDataRepository.tryResolvePhoneNumber(any()) } returns null
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         runBlocking { underTest.resolveContact(contact) }
 
         coVerify { contactDataRepository.loadContactData(contact) }
         contactData.forEach {
-            coVerify { contactDataRepository.tryResolvePhoneNumber(it) }
+            coVerify { contactDataRepository.tryResolveContactData(it) }
         }
     }
 }

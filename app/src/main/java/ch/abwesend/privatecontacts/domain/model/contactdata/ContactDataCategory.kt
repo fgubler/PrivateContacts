@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.room.contactdata
+package ch.abwesend.privatecontacts.domain.model.contactdata
 
 enum class ContactDataCategory {
     EMAIL,

@@ -3,12 +3,13 @@ package ch.abwesend.privatecontacts.view.util
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 
-val IContact.phoneNumbersForDisplay: List<PhoneNumber>
-    get() = contactDataSet
-        .filterIsInstance<PhoneNumber>()
-        .prepareForDisplay { PhoneNumber.createEmpty(it) }
+inline fun <reified T : ContactData> IContact.contactDataForDisplay(
+    noinline factory: (sortOrder: Int) -> T
+): List<T> =
+    contactDataSet
+        .filterIsInstance<T>()
+        .prepareForDisplay(factory)
 
 fun <T : ContactData> List<T>.prepareForDisplay(
     factory: (sortOrder: Int) -> T

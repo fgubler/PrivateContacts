@@ -17,7 +17,7 @@ private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: ContactI
     ContactDataEntity(
         id = id.uuid,
         contactId = contactId.uuid,
-        category = ContactDataCategory.PHONE_NUMBER,
+        category = category,
         type = type.toEntity(),
         sortOrder = sortOrder,
         isMain = isMain,

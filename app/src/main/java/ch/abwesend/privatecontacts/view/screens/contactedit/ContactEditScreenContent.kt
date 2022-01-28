@@ -24,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactCategory
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.PhoneNumbers
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.textFieldModifier
 import ch.abwesend.privatecontacts.view.util.addOrReplace
@@ -62,6 +63,11 @@ fun ContactEditScreen.ContactEditContent(screenContext: ScreenContext, contact: 
     ) {
         PersonalInformation(contact, onChanged)
         PhoneNumbers(
+            contact = contact,
+            waitForCustomType = waitForCustomContactDataType,
+            onChanged = onChanged
+        )
+        EmailAddresses(
             contact = contact,
             waitForCustomType = waitForCustomContactDataType,
             onChanged = onChanged
@@ -108,6 +114,7 @@ private fun ContactEditScreen.PersonalInformation(
     }
 }
 
+@Suppress("unused")
 @Composable
 private fun ContactEditScreen.ContactDataTypeCustomValueDialog(
     visible: Boolean,

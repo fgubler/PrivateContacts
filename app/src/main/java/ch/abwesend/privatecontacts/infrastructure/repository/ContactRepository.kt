@@ -37,11 +37,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
     override suspend fun resolveContact(contact: IContactBase): IContact {
         val contactData = contactDataRepository.loadContactData(contact)
-        val phoneNumbers = contactData.mapNotNull { contactDataRepository.tryResolvePhoneNumber(it) }
+        val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
 
-        return contact.toContactEditable(
-            contactDataSet = phoneNumbers.toMutableList()
-        )
+        return contact.toContactEditable(contactDataSet = resolvedData.toMutableList())
     }
 
     override suspend fun createContact(contact: IContact): ContactSaveResult =

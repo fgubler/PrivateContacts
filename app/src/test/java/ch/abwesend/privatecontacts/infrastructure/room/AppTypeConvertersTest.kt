@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.infrastructure.room
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppTypeConverters
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

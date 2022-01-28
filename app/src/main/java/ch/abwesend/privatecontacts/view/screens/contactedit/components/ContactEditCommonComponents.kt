@@ -3,6 +3,8 @@ package ch.abwesend.privatecontacts.view.screens.contactedit.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
@@ -30,16 +32,20 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.theme.AppColors
+import ch.abwesend.privatecontacts.view.util.addOrReplace
+import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.getTitle
 
 val contactDataIconModifier = Modifier.padding(top = 23.dp)
 val textFieldModifier = Modifier.padding(bottom = 2.dp)
 
+@Suppress("unused")
 @Composable
 fun ContactEditScreen.ContactCategory(
     @StringRes label: Int,
@@ -62,8 +68,46 @@ fun ContactEditScreen.ContactCategory(
 
 @ExperimentalMaterialApi
 @Composable
+inline fun <reified T : StringBasedContactData<T>> ContactEditScreen.ContactDataCategory(
+    contact: IContactEditable,
+    @StringRes label: Int,
+    icon: ImageVector,
+    keyboardType: KeyboardType,
+    noinline factory: (sortOrder: Int) -> T,
+    noinline waitForCustomType: (ContactData) -> Unit,
+    crossinline onChanged: (IContactEditable) -> Unit,
+) {
+    val onEntryChanged: (T) -> Unit = { newEntry ->
+        contact.contactDataSet.addOrReplace(newEntry)
+        onChanged(contact)
+    }
+
+    val dataEntriesToDisplay = contact.contactDataForDisplay(factory)
+    ContactCategory(label = label, icon = icon) {
+        Column {
+            dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
+                StringBasedContactDataEntry(
+                    contactData = contactData,
+                    label = label,
+                    keyboardType = keyboardType,
+                    isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
+                    waitForCustomType = waitForCustomType,
+                    onChanged = onEntryChanged,
+                )
+                if (displayIndex < dataEntriesToDisplay.size - 1) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+            }
+        }
+    }
+}
+
+@ExperimentalMaterialApi
+@Composable
 fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntry(
     contactData: T,
+    @StringRes label: Int,
+    keyboardType: KeyboardType,
     isLastElement: Boolean,
     waitForCustomType: (ContactData) -> Unit,
     onChanged: (T) -> Unit,
@@ -71,13 +115,13 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
     Row {
         Column {
             OutlinedTextField(
-                label = { Text(stringResource(id = R.string.phone_number)) },
+                label = { Text(stringResource(id = label)) },
                 value = contactData.value,
                 singleLine = true,
                 onValueChange = { onChanged(contactData.changeValue(it)) },
                 modifier = textFieldModifier,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Phone,
+                    keyboardType = keyboardType,
                     imeAction = ImeAction.Next
                 ),
             )
@@ -98,6 +142,7 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
     }
 }
 
+@Suppress("unused")
 @ExperimentalMaterialApi
 @Composable
 fun ContactEditScreen.ContactDataTypeDropDown(

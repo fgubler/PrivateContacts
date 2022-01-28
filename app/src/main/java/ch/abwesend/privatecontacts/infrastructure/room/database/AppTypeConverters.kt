@@ -2,8 +2,8 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import androidx.room.TypeConverter
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import java.util.UUID
 
 object AppTypeConverters {

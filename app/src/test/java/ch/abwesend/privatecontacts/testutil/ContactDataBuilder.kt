@@ -1,13 +1,13 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import java.util.UUID

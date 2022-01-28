@@ -1,14 +1,17 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
@@ -47,17 +50,32 @@ class ContactDataRepository : RepositoryBase() {
             database.contactDataDao().deleteAll(deletedData)
         }
 
-    fun tryResolvePhoneNumber(contactData: ContactDataEntity): PhoneNumber? {
-        if (contactData.category != ContactDataCategory.PHONE_NUMBER) return null
-        val numberType = contactData.type.toContactDataType()
+    fun tryResolveContactData(contactData: ContactDataEntity): ContactData? = try {
+        val type = contactData.type.toContactDataType()
 
-        return PhoneNumber(
-            id = ContactDataId(contactData.id),
-            type = numberType,
-            sortOrder = contactData.sortOrder,
-            value = contactData.valueRaw,
-            isMain = contactData.isMain,
-            modelStatus = UNCHANGED,
-        )
+        when (contactData.category) {
+            ContactDataCategory.PHONE_NUMBER -> PhoneNumber(
+                id = ContactDataId(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
+            ContactDataCategory.EMAIL -> EmailAddress(
+                id = ContactDataId(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
+            ContactDataCategory.ADDRESS -> null // TODO implement
+            ContactDataCategory.WEBSITE -> null // TODO implement
+            ContactDataCategory.DATE -> null // TODO implement
+        }
+    } catch (e: Exception) {
+        logger.error("Failed to resolve contact-data", e)
+        null
     }
 }

@@ -6,6 +6,7 @@ import java.util.UUID
 sealed interface ContactData {
     val id: ContactDataId
     val sortOrder: Int // ascending (0 comes first)
+    val category: ContactDataCategory
     val type: ContactDataType
     val isMain: Boolean
     val allowedTypes: List<ContactDataType>
@@ -29,6 +30,9 @@ value class ContactDataId(val uuid: UUID) {
 interface StringBasedContactDataSimple : ContactData {
     val value: String
     val formattedValue: String
+
+    override val isEmpty: Boolean
+        get() = value.isEmpty()
 }
 
 /**

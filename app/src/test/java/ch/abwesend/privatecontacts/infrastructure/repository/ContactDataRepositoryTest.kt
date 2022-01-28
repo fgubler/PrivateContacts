@@ -3,11 +3,12 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory.PHONE_NUMBER
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -150,11 +151,12 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.getDataForContact(contact.id.uuid) }
     }
 
+    // TODO change the setup here: generic method, not specific for category
     @Test
-    fun `resolving a phone-number should return if the data is of a different type`() {
-        val contactData = someContactDataEntity(category = ContactDataCategory.EMAIL)
+    fun `resolving a phone-number should return null if the data is of a different type`() {
+        val contactData = someContactDataEntity(category = ContactDataCategory.DATE)
 
-        val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
+        val result = runBlocking { underTest.tryResolveContactData(contactData) }
 
         assertThat(result).isNull()
     }
@@ -166,11 +168,11 @@ class ContactDataRepositoryTest : TestBase() {
             type = ContactDataTypeEntity(PRIVATE, null)
         )
 
-        val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
+        val result = runBlocking { underTest.tryResolveContactData(contactData) }
 
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(contactData.id)
-        assertThat(result.value).isEqualTo(contactData.valueRaw)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
@@ -183,11 +185,11 @@ class ContactDataRepositoryTest : TestBase() {
             type = ContactDataTypeEntity(CUSTOM, "TestCustomValue")
         )
 
-        val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
+        val result = runBlocking { underTest.tryResolveContactData(contactData) }
 
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(contactData.id)
-        assertThat(result.value).isEqualTo(contactData.valueRaw)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)
