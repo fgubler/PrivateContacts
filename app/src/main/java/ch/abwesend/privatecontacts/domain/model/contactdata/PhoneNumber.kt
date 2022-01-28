@@ -6,29 +6,29 @@ import java.util.UUID
 data class PhoneNumber(
     override val id: UUID,
     override val sortOrder: Int?,
-    override val type: ContactDataSubType,
+    override val type: ContactDataType,
     override val value: String,
     override val formattedValue: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : StringBasedContactData {
-    override val allowedTypes: List<ContactDataSubType> = defaultAllowedTypes
+    override val allowedTypes: List<ContactDataType> = defaultAllowedTypes
 
     override val isEmpty: Boolean = value.isEmpty()
 
     companion object {
         private val defaultAllowedTypes = listOf(
-            ContactDataSubType.Mobile,
-            ContactDataSubType.Private,
-            ContactDataSubType.Business,
-            ContactDataSubType.Other,
-            ContactDataSubType.Custom,
+            ContactDataType.Mobile,
+            ContactDataType.Private,
+            ContactDataType.Business,
+            ContactDataType.Other,
+            ContactDataType.Custom,
         )
         fun createEmpty(sortOrder: Int): PhoneNumber =
             PhoneNumber(
                 id = UUID.randomUUID(),
                 sortOrder = sortOrder,
-                type = ContactDataSubType.Mobile,
+                type = ContactDataType.Mobile,
                 value = "",
                 isMain = (sortOrder == 0),
                 modelStatus = ModelStatus.NEW,

@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.infrastructure.room
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppTypeConverters
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -41,27 +41,27 @@ class AppTypeConvertersTest {
 
     @Test
     fun `should convert ContactDataType`() {
-        val nonNullValue = ContactDataType.EMAIL
-        val nullValue: ContactDataType? = null
+        val nonNullValue = ContactDataCategory.EMAIL
+        val nullValue: ContactDataCategory? = null
 
-        val serializedNonNull = underTest.serializeContactDataType(nonNullValue)
-        val serializedNull = underTest.serializeContactDataType(nullValue)
-        val deserializedNonNull = underTest.deserializeContactDataType(serializedNonNull)
-        val deserializedNull = underTest.deserializeContactDataType(serializedNull)
+        val serializedNonNull = underTest.serializeContactDataCategory(nonNullValue)
+        val serializedNull = underTest.serializeContactDataCategory(nullValue)
+        val deserializedNonNull = underTest.deserializeContactDataCategory(serializedNonNull)
+        val deserializedNull = underTest.deserializeContactDataCategory(serializedNull)
 
         assertThat(deserializedNonNull).isEqualTo(nonNullValue)
         assertThat(deserializedNull).isEqualTo(nullValue)
     }
 
     @Test
-    fun `should convert ContactDataSubType-Key`() {
-        val nonNullValue = ContactDataSubType.Key.BUSINESS
-        val nullValue: ContactDataSubType.Key? = null
+    fun `should convert ContactDataType-Key`() {
+        val nonNullValue = ContactDataType.Key.BUSINESS
+        val nullValue: ContactDataType.Key? = null
 
-        val serializedNonNull = underTest.serializeContactDataSubType(nonNullValue)
-        val serializedNull = underTest.serializeContactDataSubType(nullValue)
-        val deserializedNonNull = underTest.deserializeContactDataSubType(serializedNonNull)
-        val deserializedNull = underTest.deserializeContactDataSubType(serializedNull)
+        val serializedNonNull = underTest.serializeContactDataType(nonNullValue)
+        val serializedNull = underTest.serializeContactDataType(nullValue)
+        val deserializedNonNull = underTest.deserializeContactDataType(serializedNonNull)
+        val deserializedNull = underTest.deserializeContactDataType(serializedNull)
 
         assertThat(deserializedNonNull).isEqualTo(nonNullValue)
         assertThat(deserializedNull).isEqualTo(nullValue)

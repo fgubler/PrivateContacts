@@ -9,7 +9,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 
 @Composable
 fun getLogger(): ILogger = LocalContext.current.logger
@@ -33,6 +33,6 @@ fun <T> AsyncResource<T>.composeIfError(handler: @Composable (List<Exception>) -
 }
 
 @Composable
-fun ContactDataSubType.getTitle(context: Context = LocalContext.current): String {
+fun ContactDataType.getTitle(context: Context = LocalContext.current): String {
     return getTitle(context::getString)
 }

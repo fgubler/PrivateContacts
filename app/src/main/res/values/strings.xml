@@ -25,12 +25,12 @@
     <string name="type">Type</string>
     <string name="private_contact">Private</string>
     <string name="public_contact">Public</string>
-    <string name="subtype_private">Private</string>
-    <string name="subtype_business">Business</string>
-    <string name="subtype_mobile">Mobile</string>
-    <string name="subtype_other">Other</string>
-    <string name="subtype_custom">Custom</string>
-    <string name="subtype_birthday">Birthday</string>
+    <string name="type_private">Private</string>
+    <string name="type_business">Business</string>
+    <string name="type_mobile">Mobile</string>
+    <string name="type_other">Other</string>
+    <string name="type_custom">Custom</string>
+    <string name="type_birthday">Birthday</string>
 
     <string name="create_contact">Create Contact</string>
 

@@ -3,12 +3,13 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.CustomValue
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.CUSTOM
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubTypeEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.KoinTestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
@@ -151,7 +152,7 @@ class ContactDataRepositoryTest : KoinTestBase() {
 
     @Test
     fun `resolving a phone-number should return if the data is of a different type`() {
-        val contactData = someContactDataEntity(type = ContactDataType.EMAIL)
+        val contactData = someContactDataEntity(category = ContactDataCategory.EMAIL)
 
         val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
 
@@ -159,10 +160,10 @@ class ContactDataRepositoryTest : KoinTestBase() {
     }
 
     @Test
-    fun `resolving a phone-number should return the phone-number for normal subtypes`() {
+    fun `resolving a phone-number should return the phone-number for normal types`() {
         val contactData = someContactDataEntity(
-            type = ContactDataType.PHONE_NUMBER,
-            subType = ContactDataSubTypeEntity(PRIVATE, null)
+            category = PHONE_NUMBER,
+            type = ContactDataTypeEntity(PRIVATE, null)
         )
 
         val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
@@ -171,15 +172,15 @@ class ContactDataRepositoryTest : KoinTestBase() {
         assertThat(result!!.id).isEqualTo(contactData.id)
         assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
-        assertThat(result.type.key).isEqualTo(contactData.subType.key)
+        assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
     }
 
     @Test
-    fun `resolving a phone-number should return the phone-number for subtype custom`() {
+    fun `resolving a phone-number should return the phone-number for type custom`() {
         val contactData = someContactDataEntity(
-            type = ContactDataType.PHONE_NUMBER,
-            subType = ContactDataSubTypeEntity(CUSTOM, "TestCustomValue")
+            category = PHONE_NUMBER,
+            type = ContactDataTypeEntity(CUSTOM, "TestCustomValue")
         )
 
         val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
@@ -188,9 +189,9 @@ class ContactDataRepositoryTest : KoinTestBase() {
         assertThat(result!!.id).isEqualTo(contactData.id)
         assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
-        assertThat(result.type.key).isEqualTo(contactData.subType.key)
+        assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)
-        assertThat((result.type as CustomValue).customValue).isEqualTo(contactData.subType.customValue)
+        assertThat((result.type as CustomValue).customValue).isEqualTo(contactData.type.customValue)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
     }
 }

@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
-enum class ContactDataType {
+enum class ContactDataCategory {
     EMAIL,
     PHONE_NUMBER,
     ADDRESS,

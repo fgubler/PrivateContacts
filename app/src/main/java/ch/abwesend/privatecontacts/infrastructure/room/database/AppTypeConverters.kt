@@ -2,8 +2,8 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import androidx.room.TypeConverter
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import java.util.UUID
 
 object AppTypeConverters {
@@ -27,23 +27,23 @@ object AppTypeConverters {
         return value?.let { ContactType.valueOf(it) }
     }
 
-    // ContactDataType
+    // ContactDataCategory
     @TypeConverter
-    fun serializeContactDataType(type: ContactDataType?): String? {
-        return type?.name
+    fun serializeContactDataCategory(category: ContactDataCategory?): String? {
+        return category?.name
     }
     @TypeConverter
-    fun deserializeContactDataType(value: String?): ContactDataType? {
-        return value?.let { ContactDataType.valueOf(it) }
+    fun deserializeContactDataCategory(value: String?): ContactDataCategory? {
+        return value?.let { ContactDataCategory.valueOf(it) }
     }
 
-    // ContactDataSubType.Key
+    // ContactDataType.Key
     @TypeConverter
-    fun serializeContactDataSubType(type: ContactDataSubType.Key?): String? {
+    fun serializeContactDataType(type: ContactDataType.Key?): String? {
         return type?.name
     }
     @TypeConverter
-    fun deserializeContactDataSubType(value: String?): ContactDataSubType.Key? {
-        return value?.let { ContactDataSubType.Key.valueOf(it) }
+    fun deserializeContactDataType(value: String?): ContactDataType.Key? {
+        return value?.let { ContactDataType.Key.valueOf(it) }
     }
 }

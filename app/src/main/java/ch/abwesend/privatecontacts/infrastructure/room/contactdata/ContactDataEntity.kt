@@ -20,8 +20,8 @@ import java.util.UUID
 data class ContactDataEntity(
     @PrimaryKey val id: UUID,
     val contactId: UUID,
-    val type: ContactDataType,
-    @Embedded(prefix = "subType") val subType: ContactDataSubTypeEntity,
+    val category: ContactDataCategory,
+    @Embedded(prefix = "type") val type: ContactDataTypeEntity,
     val isMain: Boolean,
     val valueRaw: String,
     val valueFormatted: String,

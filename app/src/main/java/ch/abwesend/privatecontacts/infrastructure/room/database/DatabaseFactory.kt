@@ -6,7 +6,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
@@ -58,7 +58,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "1234",
-                type = ContactDataSubType.Private,
+                type = ContactDataType.Private,
                 isMain = true,
                 sortOrder = 0,
                 modelStatus = CHANGED,
@@ -76,7 +76,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "12345",
-                type = ContactDataSubType.Private,
+                type = ContactDataType.Private,
                 isMain = true,
                 modelStatus = CHANGED,
                 sortOrder = 0,
@@ -84,7 +84,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "123456",
-                type = ContactDataSubType.Business,
+                type = ContactDataType.Business,
                 isMain = false,
                 modelStatus = CHANGED,
                 sortOrder = 1,
@@ -102,7 +102,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "123456",
-                type = ContactDataSubType.Private,
+                type = ContactDataType.Private,
                 isMain = false,
                 modelStatus = CHANGED,
                 sortOrder = 0,
@@ -110,7 +110,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "1234567",
-                type = ContactDataSubType.Business,
+                type = ContactDataType.Business,
                 isMain = false,
                 modelStatus = CHANGED,
                 sortOrder = 1,
@@ -118,7 +118,7 @@ val dummyContacts = mutableListOf(
             PhoneNumber(
                 id = UUID.randomUUID(),
                 value = "12345678",
-                type = ContactDataSubType.CustomValue("Jedi-Number"),
+                type = ContactDataType.CustomValue("Jedi-Number"),
                 isMain = true,
                 modelStatus = CHANGED,
                 sortOrder = 2,

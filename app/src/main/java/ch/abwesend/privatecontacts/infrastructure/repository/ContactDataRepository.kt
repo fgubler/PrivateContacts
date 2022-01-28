@@ -8,9 +8,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataSubType
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 
 class ContactDataRepository : RepositoryBase() {
@@ -48,8 +48,8 @@ class ContactDataRepository : RepositoryBase() {
         }
 
     fun tryResolvePhoneNumber(contactData: ContactDataEntity): PhoneNumber? {
-        if (contactData.type != ContactDataType.PHONE_NUMBER) return null
-        val numberType = contactData.subType.toContactDataSubType()
+        if (contactData.category != ContactDataCategory.PHONE_NUMBER) return null
+        val numberType = contactData.type.toContactDataType()
 
         return PhoneNumber(
             id = contactData.id,

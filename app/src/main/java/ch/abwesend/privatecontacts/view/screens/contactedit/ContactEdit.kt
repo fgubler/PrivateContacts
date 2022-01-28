@@ -41,7 +41,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.theme.AppColors
@@ -174,7 +174,7 @@ private fun PhoneNumber(
 
 @ExperimentalMaterialApi
 @Composable
-private fun ContactDataTypeDropDown(data: ContactData, onChanged: (ContactDataSubType) -> Unit) {
+private fun ContactDataTypeDropDown(data: ContactData, onChanged: (ContactDataType) -> Unit) {
     var dropdownExpanded by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(

@@ -1,22 +1,22 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Mobile
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubTypeEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType.PHONE_NUMBER
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import java.util.UUID
 
 fun someContactDataEntity(
     id: UUID = UUID.randomUUID(),
     contactId: UUID = UUID.randomUUID(),
     value: String = "1234",
-    type: ContactDataType = PHONE_NUMBER,
-    subType: ContactDataSubTypeEntity = someContactDataSubTypeEntity(),
+    category: ContactDataCategory = PHONE_NUMBER,
+    type: ContactDataTypeEntity = someContactDataTypeEntity(),
     sortOrder: Int? = null,
     isMain: Boolean = false,
 ): ContactDataEntity = ContactDataEntity(
@@ -24,17 +24,17 @@ fun someContactDataEntity(
     contactId = contactId,
     valueRaw = value,
     valueFormatted = value,
+    category = category,
     type = type,
-    subType = subType,
     isMain = isMain,
     sortOrder = sortOrder,
 )
 
-fun someContactDataSubTypeEntity(
-    key: ContactDataSubType.Key = PRIVATE,
+fun someContactDataTypeEntity(
+    key: ContactDataType.Key = PRIVATE,
     customValue: String? = null
-): ContactDataSubTypeEntity =
-    ContactDataSubTypeEntity(
+): ContactDataTypeEntity =
+    ContactDataTypeEntity(
         key = key,
         customValue = customValue
     )
@@ -42,7 +42,7 @@ fun someContactDataSubTypeEntity(
 fun somePhoneNumber(
     id: UUID = UUID.randomUUID(),
     value: String = "1234",
-    type: ContactDataSubType = Mobile,
+    type: ContactDataType = Mobile,
     sortOrder: Int? = null,
     isMainNumber: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
