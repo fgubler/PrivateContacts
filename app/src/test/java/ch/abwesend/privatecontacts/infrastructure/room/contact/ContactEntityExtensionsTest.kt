@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactDataRepositoryTest : TestBase() {
+class ContactEntityExtensionsTest : TestBase() {
     @Test
     fun `fulltext search string should contain the names`() {
         val contact = someContactFull()
