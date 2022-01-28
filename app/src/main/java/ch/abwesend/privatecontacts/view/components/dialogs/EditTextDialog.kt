@@ -6,10 +6,14 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 
@@ -21,6 +25,7 @@ fun EditTextDialog(
     onCancel: () -> Unit,
 ) {
     var value: String by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
 
     AlertDialog(
         title = { Text(stringResource(id = title)) },
@@ -28,7 +33,8 @@ fun EditTextDialog(
             OutlinedTextField(
                 label = { Text(stringResource(id = label)) },
                 value = value,
-                onValueChange = { newValue -> value = newValue }
+                onValueChange = { newValue -> value = newValue },
+                modifier = Modifier.focusRequester(focusRequester)
             )
         },
         onDismissRequest = onCancel,
@@ -43,4 +49,7 @@ fun EditTextDialog(
             }
         },
     )
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }
