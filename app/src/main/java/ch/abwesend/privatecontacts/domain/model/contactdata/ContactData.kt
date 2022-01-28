@@ -14,6 +14,9 @@ sealed interface ContactData {
 
     fun changeType(type: ContactDataType): ContactData
     fun delete(): ContactData
+
+    /** returning null means that the data will be ignored in search */
+    fun formatValueForSearch(): String?
 }
 
 interface StringBasedContactDataSimple : ContactData {

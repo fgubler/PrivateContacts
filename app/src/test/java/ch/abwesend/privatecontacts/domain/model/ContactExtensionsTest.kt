@@ -67,7 +67,7 @@ class ContactExtensionsTest {
         assertThat(result.type).isEqualTo(contact.type)
         assertThat(result.notes).isEqualTo(contact.notes)
 
-        assertThat(result.phoneNumbers).isEqualTo(mutableListOf(phoneNumber))
+        assertThat(result.contactDataSet).isEqualTo(mutableListOf(phoneNumber))
     }
 
     @Test

@@ -8,11 +8,12 @@ private const val FULL_TEXT_SEARCH_ELEMENT_SEPARATOR = "|"
 fun Contact.toEntity(): ContactEntity {
     val base = (this as ContactBase).toEntity()
 
-    val phoneNumbers = phoneNumbers
-        .map { it.value } // TODO remove all non-numeric characters
+    val contactData = contactDataSet
+        .mapNotNull { it.formatValueForSearch() }
+        .filter { it.isNotEmpty() }
         .joinToString(FULL_TEXT_SEARCH_ELEMENT_SEPARATOR)
 
-    base.fullTextSearch += (FULL_TEXT_SEARCH_ELEMENT_SEPARATOR + phoneNumbers)
+    base.fullTextSearch += (FULL_TEXT_SEARCH_ELEMENT_SEPARATOR + contactData)
     return base
 }
 

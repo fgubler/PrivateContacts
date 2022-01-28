@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contact
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
@@ -43,8 +44,8 @@ class ContactDataRepositoryTest : TestBase() {
 
         val entity = contact.toEntity()
 
-        contact.phoneNumbers.forEach { phoneNumber ->
-            assertThat(entity.fullTextSearch).containsSequence(phoneNumber.value)
+        contact.contactDataSet.forEach { phoneNumber ->
+            assertThat(entity.fullTextSearch).containsSequence((phoneNumber as PhoneNumber).value)
         }
     }
 }

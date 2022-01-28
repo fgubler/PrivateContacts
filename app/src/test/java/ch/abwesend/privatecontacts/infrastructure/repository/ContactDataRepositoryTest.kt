@@ -55,7 +55,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.createContactData(contact) }
 
-        verify { contact.phoneNumbers }
+        verify { contact.contactDataSet }
     }
 
     @Test
@@ -79,7 +79,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.updateContactData(contact) }
 
-        verify { contact.phoneNumbers }
+        verify { contact.contactDataSet }
     }
 
     @Test
@@ -92,7 +92,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.updateContactData(contact) }
 
-        verify { contact.phoneNumbers }
+        verify { contact.contactDataSet }
         val updateSlot = slot<List<ContactDataEntity>>()
         coVerify { contactDataDao.updateAll(capture(updateSlot)) }
         coVerify { contactDataDao.insertAll(emptyList()) }
@@ -112,7 +112,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.updateContactData(contact) }
 
-        verify { contact.phoneNumbers }
+        verify { contact.contactDataSet }
         val insertSlot = slot<List<ContactDataEntity>>()
         coVerify { contactDataDao.insertAll(capture(insertSlot)) }
         coVerify { contactDataDao.updateAll(emptyList()) }
@@ -131,7 +131,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.updateContactData(contact) }
 
-        verify { contact.phoneNumbers }
+        verify { contact.contactDataSet }
         val deleteSlot = slot<List<ContactDataEntity>>()
         coVerify { contactDataDao.deleteAll(capture(deleteSlot)) }
         coVerify { contactDataDao.insertAll(emptyList()) }

@@ -6,7 +6,6 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
@@ -21,8 +20,8 @@ class ContactDataRepository : RepositoryBase() {
 
     suspend fun createContactData(contact: Contact) =
         withDatabase { database ->
-            val contactData = contact.phoneNumbers.map { phoneNumber ->
-                phoneNumber.toEntity(contact.id)
+            val contactData = contact.contactDataSet.map { contactData ->
+                contactData.toEntity(contact.id)
             }
 
             database.contactDataDao().insertAll(contactData)
@@ -30,7 +29,7 @@ class ContactDataRepository : RepositoryBase() {
 
     suspend fun updateContactData(contact: Contact) =
         withDatabase { database ->
-            val contactData = contact.allContactData.filter { !it.isEmpty }
+            val contactData = contact.contactDataSet.filter { !it.isEmpty }
 
             val newData = contactData
                 .filter { it.modelStatus == NEW }
@@ -60,7 +59,4 @@ class ContactDataRepository : RepositoryBase() {
             modelStatus = UNCHANGED,
         )
     }
-
-    private val Contact.allContactData: List<ContactData>
-        get() = phoneNumbers // add additional types here
 }

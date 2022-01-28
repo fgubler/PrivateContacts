@@ -151,7 +151,7 @@ private fun PhoneNumbers(
                     waitForCustomType = waitForCustomType,
                     onChanged = onPhoneNumberChanged,
                 )
-                if (displayIndex < contact.phoneNumbers.size - 1) {
+                if (displayIndex < phoneNumbersToDisplay.size - 1) {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }

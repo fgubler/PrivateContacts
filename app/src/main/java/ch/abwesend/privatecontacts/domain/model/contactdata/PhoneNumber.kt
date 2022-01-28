@@ -31,6 +31,8 @@ data class PhoneNumber(
         return copy(modelStatus = status)
     }
 
+    override fun formatValueForSearch(): String = value.filter { it.isDigit() }
+
     companion object {
         private val defaultAllowedTypes = listOf(
             ContactDataType.Mobile,

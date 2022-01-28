@@ -7,7 +7,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 
 val Contact.phoneNumbersForDisplay: List<PhoneNumber>
-    get() = phoneNumbers.prepareForDisplay { PhoneNumber.createEmpty(it) }
+    get() = contactDataSet
+        .filterIsInstance<PhoneNumber>()
+        .prepareForDisplay { PhoneNumber.createEmpty(it) }
 
 fun <T : ContactData> List<T>.prepareForDisplay(
     factory: (sortOrder: Int) -> T

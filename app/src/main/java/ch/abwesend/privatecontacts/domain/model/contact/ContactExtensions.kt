@@ -12,7 +12,7 @@ fun ContactBase.getFullName(
 
 fun Contact.asFull(): ContactFull =
     if (this is ContactFull) this
-    else toContactFull(this.phoneNumbers.toMutableList())
+    else toContactFull(this.contactDataSet.toMutableList())
 
 fun ContactBase.toContactFull(
     contactDataSet: List<ContactData>

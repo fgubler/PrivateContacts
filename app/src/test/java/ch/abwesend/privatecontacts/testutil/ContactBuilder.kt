@@ -7,7 +7,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import io.mockk.every
 import io.mockk.mockk
 import java.util.UUID
@@ -55,7 +54,7 @@ fun someContactNonEditable(
     nickname: String = "Lord Snow",
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
-    phoneNumbers: List<PhoneNumber> = emptyList(),
+    contactDataSet: List<ContactData> = emptyList(),
 ): Contact {
     val mock = mockk<Contact>()
 
@@ -65,7 +64,7 @@ fun someContactNonEditable(
     every { mock.nickname } returns nickname
     every { mock.type } returns type
     every { mock.notes } returns notes
-    every { mock.phoneNumbers } returns phoneNumbers
+    every { mock.contactDataSet } returns contactDataSet
 
     return mock
 }
