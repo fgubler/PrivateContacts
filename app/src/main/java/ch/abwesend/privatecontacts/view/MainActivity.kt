@@ -8,14 +8,13 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import org.koin.android.ext.android.get
-import org.koin.core.parameter.parametersOf
 
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
@@ -40,7 +39,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun createScreenContext(navController: NavHostController): ScreenContext {
-        val router: AppRouter = get { parametersOf(navController) }
+        val router: AppRouter = getAnywhereWithParams(navController)
 
         return ScreenContext(
             router = router,
