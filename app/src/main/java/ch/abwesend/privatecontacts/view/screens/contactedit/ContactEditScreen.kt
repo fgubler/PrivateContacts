@@ -37,9 +37,12 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.flow.collect
 
+/** dummy-object to create separate namespace */
+object ContactEditScreen
+
 @ExperimentalMaterialApi
 @Composable
-fun ContactEditScreen(screenContext: ScreenContext) {
+fun ContactEditScreen.Screen(screenContext: ScreenContext) {
     val viewModel = screenContext.contactEditViewModel
     val selectedContact = viewModel.selectedContact
 
