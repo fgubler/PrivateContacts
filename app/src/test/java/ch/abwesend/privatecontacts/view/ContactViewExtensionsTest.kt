@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.view
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
@@ -12,7 +13,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
@@ -91,7 +91,7 @@ class ContactViewExtensionsTest : TestBase() {
 
     @Test
     fun `addOrReplace should replace an existing element`() {
-        val id = UUID.randomUUID()
+        val id = ContactDataId.randomId()
         val phoneNumber1 = somePhoneNumber(id = id, value = "1")
         val phoneNumber2 = somePhoneNumber(id = id, value = "2")
         val list = mutableListOf<PhoneNumber>()

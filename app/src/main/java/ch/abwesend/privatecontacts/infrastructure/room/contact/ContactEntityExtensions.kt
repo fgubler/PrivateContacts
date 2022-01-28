@@ -18,7 +18,7 @@ fun IContact.toEntity(): ContactEntity {
 }
 
 fun IContactBase.toEntity() = ContactEntity(
-    id = id,
+    rawId = id.uuid,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,

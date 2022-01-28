@@ -1,7 +1,6 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import java.util.UUID
 
 interface IContact : IContactBase {
     val contactDataSet: List<ContactData>
@@ -9,7 +8,7 @@ interface IContact : IContactBase {
 }
 
 data class Contact(
-    override val id: UUID,
+    override val id: ContactId,
     override val firstName: String,
     override val lastName: String,
     override val nickname: String,

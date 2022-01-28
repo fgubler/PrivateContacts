@@ -3,15 +3,15 @@ package ch.abwesend.privatecontacts.testutil
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import java.util.UUID
 
 fun someContactBase(
-    id: UUID = UUID.randomUUID(),
+    id: ContactId = ContactId.randomId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -27,7 +27,7 @@ fun someContactBase(
 )
 
 fun someContactFull(
-    id: UUID = UUID.randomUUID(),
+    id: ContactId = ContactId.randomId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -47,7 +47,7 @@ fun someContactFull(
 )
 
 fun someContactEditable(
-    id: UUID = UUID.randomUUID(),
+    id: ContactId = ContactId.randomId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",

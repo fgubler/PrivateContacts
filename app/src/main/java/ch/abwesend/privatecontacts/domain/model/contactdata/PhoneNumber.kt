@@ -2,10 +2,9 @@ package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import java.util.UUID
 
 data class PhoneNumber(
-    override val id: UUID,
+    override val id: ContactDataId,
     override val sortOrder: Int,
     override val type: ContactDataType,
     override val value: String,
@@ -45,7 +44,7 @@ data class PhoneNumber(
         )
         fun createEmpty(sortOrder: Int): PhoneNumber =
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 sortOrder = sortOrder,
                 type = ContactDataType.Mobile,
                 value = "",

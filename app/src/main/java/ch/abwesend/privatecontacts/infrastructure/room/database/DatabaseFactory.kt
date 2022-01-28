@@ -5,12 +5,13 @@ import androidx.room.Room
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
-import java.util.UUID
 
 interface IDatabaseFactory {
     fun createDatabase(context: Context): AppDatabase
@@ -39,7 +40,7 @@ object DatabaseFactory : IDatabaseFactory {
 
 val dummyContacts = mutableListOf(
     Contact(
-        id = UUID.randomUUID(),
+        id = ContactId.randomId(),
         firstName = "Darth",
         lastName = "Vader",
         nickname = "Darthy",
@@ -48,7 +49,7 @@ val dummyContacts = mutableListOf(
         contactDataSet = mutableListOf(),
     ),
     Contact(
-        id = UUID.randomUUID(),
+        id = ContactId.randomId(),
         firstName = "Luke",
         lastName = "Skywalker",
         nickname = "Lucky Luke",
@@ -56,7 +57,7 @@ val dummyContacts = mutableListOf(
         notes = "Lost his hand",
         contactDataSet = mutableListOf(
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "1234",
                 type = ContactDataType.Private,
                 isMain = true,
@@ -66,7 +67,7 @@ val dummyContacts = mutableListOf(
         ),
     ),
     Contact(
-        id = UUID.randomUUID(),
+        id = ContactId.randomId(),
         firstName = "Obi-Wan",
         lastName = "Kenobi",
         nickname = "Obi",
@@ -74,7 +75,7 @@ val dummyContacts = mutableListOf(
         notes = "Efficient way of suicide",
         contactDataSet = mutableListOf(
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "12345",
                 type = ContactDataType.Private,
                 isMain = true,
@@ -82,7 +83,7 @@ val dummyContacts = mutableListOf(
                 sortOrder = 0,
             ),
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "123456",
                 type = ContactDataType.Business,
                 isMain = false,
@@ -92,7 +93,7 @@ val dummyContacts = mutableListOf(
         ),
     ),
     Contact(
-        id = UUID.randomUUID(),
+        id = ContactId.randomId(),
         firstName = "Yoda",
         lastName = "",
         nickname = "Yo-Da",
@@ -100,7 +101,7 @@ val dummyContacts = mutableListOf(
         notes = "Small and green",
         contactDataSet = mutableListOf(
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "123456",
                 type = ContactDataType.Private,
                 isMain = false,
@@ -108,7 +109,7 @@ val dummyContacts = mutableListOf(
                 sortOrder = 0,
             ),
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "1234567",
                 type = ContactDataType.Business,
                 isMain = false,
@@ -116,7 +117,7 @@ val dummyContacts = mutableListOf(
                 sortOrder = 1,
             ),
             PhoneNumber(
-                id = UUID.randomUUID(),
+                id = ContactDataId.randomId(),
                 value = "12345678",
                 type = ContactDataType.CustomValue("Jedi-Number"),
                 isMain = true,

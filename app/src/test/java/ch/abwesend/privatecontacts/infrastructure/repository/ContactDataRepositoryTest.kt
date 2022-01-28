@@ -99,7 +99,7 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.deleteAll(emptyList()) }
         confirmVerified(contactDataDao)
         assertThat(updateSlot.captured).hasSize(1)
-        assertThat(updateSlot.captured.first().id).isEqualTo(existingNumber.id)
+        assertThat(updateSlot.captured.first().id).isEqualTo(existingNumber.id.uuid)
     }
 
     @Test
@@ -118,7 +118,7 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.updateAll(emptyList()) }
         coVerify { contactDataDao.deleteAll(emptyList()) }
         assertThat(insertSlot.captured).hasSize(1)
-        assertThat(insertSlot.captured.first().id).isEqualTo(newNumber.id)
+        assertThat(insertSlot.captured.first().id).isEqualTo(newNumber.id.uuid)
     }
 
     @Test
@@ -137,7 +137,7 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.insertAll(emptyList()) }
         coVerify { contactDataDao.updateAll(emptyList()) }
         assertThat(deleteSlot.captured).hasSize(1)
-        assertThat(deleteSlot.captured.first().id).isEqualTo(deletedNumber.id)
+        assertThat(deleteSlot.captured.first().id).isEqualTo(deletedNumber.id.uuid)
     }
 
     @Test
@@ -147,7 +147,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         runBlocking { underTest.loadContactData(contact) }
 
-        coVerify { contactDataDao.getDataForContact(contact.id) }
+        coVerify { contactDataDao.getDataForContact(contact.id.uuid) }
     }
 
     @Test
@@ -169,7 +169,7 @@ class ContactDataRepositoryTest : TestBase() {
         val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
 
         assertThat(result).isNotNull
-        assertThat(result!!.id).isEqualTo(contactData.id)
+        assertThat(result!!.id.uuid).isEqualTo(contactData.id)
         assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)
@@ -186,7 +186,7 @@ class ContactDataRepositoryTest : TestBase() {
         val result = runBlocking { underTest.tryResolvePhoneNumber(contactData) }
 
         assertThat(result).isNotNull
-        assertThat(result!!.id).isEqualTo(contactData.id)
+        assertThat(result!!.id.uuid).isEqualTo(contactData.id)
         assertThat(result.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)

@@ -2,7 +2,6 @@ package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import java.util.UUID
 
 interface IContactEditable : IContact {
     override var firstName: String
@@ -16,7 +15,7 @@ interface IContactEditable : IContact {
 }
 
 data class ContactEditable(
-    override val id: UUID,
+    override val id: ContactId,
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,
@@ -31,7 +30,7 @@ data class ContactEditable(
     companion object {
         fun createNew(): ContactEditable =
             ContactEditable(
-                id = UUID.randomUUID(),
+                id = ContactId.randomId(),
                 firstName = "",
                 lastName = "",
                 nickname = "",

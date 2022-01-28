@@ -6,6 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
@@ -15,7 +16,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 class ContactDataRepository : RepositoryBase() {
     suspend fun loadContactData(contact: IContactBase): List<ContactDataEntity> =
         withDatabase { database ->
-            database.contactDataDao().getDataForContact(contact.id)
+            database.contactDataDao().getDataForContact(contact.id.uuid)
         }
 
     suspend fun createContactData(contact: IContact) =
@@ -51,7 +52,7 @@ class ContactDataRepository : RepositoryBase() {
         val numberType = contactData.type.toContactDataType()
 
         return PhoneNumber(
-            id = contactData.id,
+            id = ContactDataId(contactData.id),
             type = numberType,
             sortOrder = contactData.sortOrder,
             value = contactData.valueRaw,

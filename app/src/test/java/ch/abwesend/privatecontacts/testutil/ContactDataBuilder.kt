@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
@@ -40,7 +41,7 @@ fun someContactDataTypeEntity(
     )
 
 fun somePhoneNumber(
-    id: UUID = UUID.randomUUID(),
+    id: ContactDataId = ContactDataId.randomId(),
     value: String = "1234",
     type: ContactDataType = Mobile,
     sortOrder: Int = 0,

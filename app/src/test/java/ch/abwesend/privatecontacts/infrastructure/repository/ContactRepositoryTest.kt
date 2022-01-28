@@ -107,8 +107,8 @@ class ContactRepositoryTest : TestBase() {
     fun `resolving a contact should load the contact-data`() {
         val contact = someContactBase()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id),
-            someContactDataEntity(contactId = contact.id),
+            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contact.id.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         every { contactDataRepository.tryResolvePhoneNumber(any()) } returns null
@@ -137,8 +137,8 @@ class ContactRepositoryTest : TestBase() {
     fun `resolving a contact should try to resolve phone-numbers`() {
         val contact = someContactBase()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id),
-            someContactDataEntity(contactId = contact.id),
+            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contact.id.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         every { contactDataRepository.tryResolvePhoneNumber(any()) } returns null
