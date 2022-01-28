@@ -13,7 +13,16 @@ sealed interface ContactData {
     val modelStatus: ModelStatus
 }
 
-interface StringBasedContactData : ContactData {
+interface StringBasedContactDataSimple : ContactData {
     val value: String
     val formattedValue: String
+}
+
+/**
+ * The generics are needed to make the functions return the dynamic type of "this"
+ */
+interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataSimple {
+    fun changeValue(value: String): T
+    fun changeType(type: ContactDataType): T
+    fun delete(): T
 }

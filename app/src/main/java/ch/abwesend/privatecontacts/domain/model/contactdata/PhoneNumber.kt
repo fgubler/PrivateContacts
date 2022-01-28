@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import java.util.UUID
 
 data class PhoneNumber(
@@ -11,10 +12,24 @@ data class PhoneNumber(
     override val formattedValue: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData {
+) : StringBasedContactData<PhoneNumber> {
     override val allowedTypes: List<ContactDataType> = defaultAllowedTypes
-
     override val isEmpty: Boolean = value.isEmpty()
+
+    override fun changeValue(value: String): PhoneNumber {
+        val status = modelStatus.tryChangeTo(CHANGED)
+        return copy(value = value, modelStatus = status)
+    }
+
+    override fun changeType(type: ContactDataType): PhoneNumber {
+        val status = modelStatus.tryChangeTo(CHANGED)
+        return copy(type = type, modelStatus = status)
+    }
+
+    override fun delete(): PhoneNumber {
+        val status = modelStatus.tryChangeTo(ModelStatus.DELETED)
+        return copy(modelStatus = status)
+    }
 
     companion object {
         private val defaultAllowedTypes = listOf(

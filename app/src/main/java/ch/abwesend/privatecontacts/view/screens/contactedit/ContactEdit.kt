@@ -37,12 +37,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.util.getTitle
@@ -111,8 +110,8 @@ private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit)
     ContactCategory(label = R.string.phone_number, icon = Icons.Default.Phone) {
         Column {
             phoneNumbersToDisplay.forEachIndexed { displayIndex, phoneNumber ->
-                PhoneNumber(
-                    phoneNumber = phoneNumber,
+                StringBasedContactDataEntry(
+                    contactData = phoneNumber,
                     isLastElement = (displayIndex == phoneNumbersToDisplay.size - 1),
                     onChanged = onPhoneNumberChanged,
                 )
@@ -126,29 +125,18 @@ private fun PhoneNumbers(contact: ContactFull, onChanged: (ContactFull) -> Unit)
 
 @ExperimentalMaterialApi
 @Composable
-private fun PhoneNumber(
-    phoneNumber: PhoneNumber,
+private fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
+    contactData: T,
     isLastElement: Boolean,
-    onChanged: (PhoneNumber) -> Unit,
+    onChanged: (T) -> Unit,
 ) {
-    val onPhoneNumberChanged: (String) -> Unit = { newValue ->
-        val newStatus = phoneNumber.modelStatus.tryChangeTo(CHANGED)
-        val newNumber = phoneNumber.copy(value = newValue, modelStatus = newStatus)
-        onChanged(newNumber)
-    }
-    val onPhoneNumberRemoved: () -> Unit = {
-        val newStatus = phoneNumber.modelStatus.tryChangeTo(DELETED)
-        val newNumber = phoneNumber.copy(modelStatus = newStatus)
-        onChanged(newNumber)
-    }
-
     Row {
         Column {
             OutlinedTextField(
                 label = { Text(stringResource(id = R.string.phone_number)) },
-                value = phoneNumber.value,
+                value = contactData.value,
                 singleLine = true,
-                onValueChange = onPhoneNumberChanged,
+                onValueChange = { onChanged(contactData.changeValue(it)) },
                 modifier = textFieldModifier,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = KeyboardType.Phone,
@@ -156,12 +144,12 @@ private fun PhoneNumber(
                 ),
             )
 
-            ContactDataTypeDropDown(data = phoneNumber) { newType ->
-                onChanged(phoneNumber.copy(type = newType))
+            ContactDataTypeDropDown(data = contactData) { newType ->
+                onChanged(contactData.changeType(newType))
             }
         }
         if (!isLastElement) {
-            IconButton(onClick = onPhoneNumberRemoved) {
+            IconButton(onClick = { onChanged(contactData.delete()) }) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     modifier = contactDataIconModifier,
