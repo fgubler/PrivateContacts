@@ -12,3 +12,8 @@ sealed interface ContactData {
     val isEmpty: Boolean
     val modelStatus: ModelStatus
 }
+
+interface StringBasedContactData : ContactData {
+    val value: String
+    val formattedValue: String
+}

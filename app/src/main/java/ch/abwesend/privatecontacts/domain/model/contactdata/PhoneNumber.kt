@@ -7,11 +7,11 @@ data class PhoneNumber(
     override val id: UUID,
     override val sortOrder: Int?,
     override val type: ContactDataSubType,
-    val value: String,
-    val formattedValue: String = value,
+    override val value: String,
+    override val formattedValue: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : ContactData {
+) : StringBasedContactData {
     override val allowedTypes: List<ContactDataSubType> = defaultAllowedTypes
 
     override val isEmpty: Boolean = value.isEmpty()

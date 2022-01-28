@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import java.util.UUID
 
 /**
@@ -10,7 +11,7 @@ import java.util.UUID
  */
 fun ContactData.toEntity(contactId: UUID): ContactDataEntity =
     when (this) {
-        is PhoneNumber -> toEntity(contactId)
+        is StringBasedContactData -> toEntity(contactId)
     }
 
 fun PhoneNumber.toEntity(contactId: UUID): ContactDataEntity =
