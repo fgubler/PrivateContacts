@@ -1,12 +1,11 @@
 package ch.abwesend.privatecontacts.view.util
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 
-val Contact.phoneNumbersForDisplay: List<PhoneNumber>
+val IContact.phoneNumbersForDisplay: List<PhoneNumber>
     get() = contactDataSet
         .filterIsInstance<PhoneNumber>()
         .prepareForDisplay { PhoneNumber.createEmpty(it) }
@@ -27,17 +26,12 @@ fun <T : ContactData> List<T>.prepareForDisplay(
     return sortedList + emptyElement
 }
 
-fun <T : ContactData> List<T>.addOrReplace(newData: T): List<T> =
-    if (any { it.id == newData.id }) {
-        map {
-            if (it.id == newData.id) newData
-            else it
-        }
-    } else {
-        this + newData
-    }
+fun <T : ContactData> MutableList<T>.addOrReplace(newData: T) {
+    val indexOfExisting = indexOfFirst { it.id == newData.id }
 
-fun ContactFull.addOrReplaceContactDataEntry(newEntry: ContactData): ContactFull {
-    val newContactDataSet = contactDataSet.addOrReplace(newEntry)
-    return copy(contactDataSet = newContactDataSet)
+    if (indexOfExisting >= 0) {
+        set(indexOfExisting, newData)
+    } else {
+        add(newData)
+    }
 }

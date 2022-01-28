@@ -2,10 +2,9 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
-import ch.abwesend.privatecontacts.domain.model.contact.toContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -15,14 +14,14 @@ import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
 
-    override suspend fun loadContacts(): List<ContactBase> =
+    override suspend fun loadContacts(): List<IContactBase> =
         withDatabase { database ->
             database.contactDao().getAll().also {
                 logger.info("Loaded ${it.size} contacts")
             }
         }
 
-    override suspend fun getContactsPaged(loadSize: Int, offsetInRows: Int): List<ContactBase> =
+    override suspend fun getContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
         withDatabase { database ->
             logger.info("Loading contacts with pageSize = $loadSize and offset = $offsetInRows")
 
@@ -36,16 +35,16 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             result
         }
 
-    override suspend fun resolveContact(contact: ContactBase): ContactFull {
+    override suspend fun resolveContact(contact: IContactBase): IContact {
         val contactData = contactDataRepository.loadContactData(contact)
         val phoneNumbers = contactData.mapNotNull { contactDataRepository.tryResolvePhoneNumber(it) }
 
-        return contact.toContactFull(
+        return contact.toContactEditable(
             contactDataSet = phoneNumbers.toMutableList()
         )
     }
 
-    override suspend fun createContact(contact: Contact): ContactSaveResult =
+    override suspend fun createContact(contact: IContact): ContactSaveResult =
         try {
             withDatabase { database ->
                 database.contactDao().insert(contact.toEntity())
@@ -57,7 +56,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun updateContact(contact: Contact): ContactSaveResult =
+    override suspend fun updateContact(contact: IContact): ContactSaveResult =
         try {
             withDatabase { database ->
                 database.contactDao().update(contact.toEntity())

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
@@ -86,7 +86,7 @@ fun ContactEditScreen(screenContext: ScreenContext) {
 @Composable
 private fun ContactEditTopBar(
     screenContext: ScreenContext,
-    contact: ContactFull,
+    contact: IContactEditable,
     showDiscardConfirmationDialog: () -> Unit,
 ) {
     @StringRes val title = if (contact.isNew) R.string.screen_contact_edit_create
@@ -103,7 +103,7 @@ private fun ContactEditTopBar(
     )
 }
 
-private fun onSave(screenContext: ScreenContext, contact: ContactFull) {
+private fun onSave(screenContext: ScreenContext, contact: IContactEditable) {
     screenContext.contactEditViewModel.saveContact(contact)
 }
 
@@ -138,7 +138,7 @@ private fun onDiscardConfirmed(screenContext: ScreenContext) {
 
 private fun hasChanges(screenContext: ScreenContext): Boolean =
     screenContext.contactEditViewModel.let {
-        it.originalContact != it.selectedContact
+        it.originalContact != it.selectedContact?.contact
     }
 
 @Composable

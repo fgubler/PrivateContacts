@@ -3,12 +3,12 @@ package ch.abwesend.privatecontacts.domain.model.contact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import java.util.UUID
 
-interface Contact : ContactBase {
+interface IContact : IContactBase {
     val contactDataSet: List<ContactData>
     val isNew: Boolean
 }
 
-data class ContactFull(
+data class Contact(
     override val id: UUID,
     override val firstName: String,
     override val lastName: String,
@@ -17,6 +17,4 @@ data class ContactFull(
     override val notes: String,
     override val contactDataSet: List<ContactData>,
     override val isNew: Boolean = false,
-) : Contact {
-    companion object
-}
+) : IContact

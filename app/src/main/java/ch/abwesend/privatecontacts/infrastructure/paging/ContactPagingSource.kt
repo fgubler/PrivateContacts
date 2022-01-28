@@ -5,18 +5,18 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import java.lang.Exception
 
-class ContactPagingSource : PagingSource<Int, ContactBase>() {
+class ContactPagingSource : PagingSource<Int, IContactBase>() {
     private val contactRepository: IContactRepository by injectAnywhere()
 
     override suspend fun load(
         params: LoadParams<Int>
-    ): LoadResult<Int, ContactBase> {
+    ): LoadResult<Int, IContactBase> {
         val pageNumber = params.key ?: 1 // start on page 1 by default
         val loadSize = params.loadSize
 
@@ -36,7 +36,7 @@ class ContactPagingSource : PagingSource<Int, ContactBase>() {
         }
     }
 
-    override fun getRefreshKey(state: PagingState<Int, ContactBase>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, IContactBase>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)

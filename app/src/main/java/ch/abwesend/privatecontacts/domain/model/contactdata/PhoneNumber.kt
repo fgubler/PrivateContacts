@@ -13,7 +13,9 @@ data class PhoneNumber(
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : StringBasedContactData<PhoneNumber> {
-    override val allowedTypes: List<ContactDataType> = defaultAllowedTypes
+    override val allowedTypes: List<ContactDataType>
+        get() = defaultAllowedTypes
+
     override val isEmpty: Boolean = value.isEmpty()
 
     override fun changeValue(value: String): PhoneNumber {

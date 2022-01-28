@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import androidx.paging.PagingData
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -12,12 +12,12 @@ class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val contactPagerFactory: ContactPagerFactory by injectAnywhere()
 
-    fun loadPagedContacts(): Flow<PagingData<ContactBase>> =
+    fun loadPagedContacts(): Flow<PagingData<IContactBase>> =
         contactPagerFactory.createContactPager().flow
 
-    suspend fun loadContacts(): List<ContactBase> =
+    suspend fun loadContacts(): List<IContactBase> =
         contactRepository.loadContacts()
 
-    suspend fun resolveContact(contact: ContactBase): Contact =
+    suspend fun resolveContact(contact: IContactBase): IContact =
         contactRepository.resolveContact(contact)
 }

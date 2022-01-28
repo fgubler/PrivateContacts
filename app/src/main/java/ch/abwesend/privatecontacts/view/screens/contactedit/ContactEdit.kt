@@ -38,7 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -47,7 +47,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.theme.AppColors
-import ch.abwesend.privatecontacts.view.util.addOrReplaceContactDataEntry
+import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.phoneNumbersForDisplay
 
@@ -58,8 +58,8 @@ private val logger = Screen.ContactEdit.logger
 
 @ExperimentalMaterialApi
 @Composable
-fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
-    val onChanged = { newContact: ContactFull ->
+fun ContactEditContent(screenContext: ScreenContext, contact: IContactEditable) {
+    val onChanged = { newContact: IContactEditable ->
         screenContext.contactEditViewModel.changeContact(newContact)
     }
 
@@ -79,7 +79,8 @@ fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
     val onCustomTypeDefined = { customValue: String ->
         contactDataWaitingForCustomType?.let { contactData ->
             val newContactData = contactData.changeType(ContactDataType.CustomValue(customValue))
-            onChanged(contact.addOrReplaceContactDataEntry(newContactData))
+            contact.contactDataSet.addOrReplace(newContactData)
+            onChanged(contact)
         }
         contactDataWaitingForCustomType = null
     }
@@ -105,14 +106,15 @@ fun ContactEditContent(screenContext: ScreenContext, contact: ContactFull) {
 }
 
 @Composable
-private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
+private fun PersonalInformation(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
     ContactCategory(label = R.string.personal_information, icon = Icons.Default.Person) {
         Column {
             OutlinedTextField(
                 label = { Text(stringResource(id = R.string.first_name)) },
                 value = contact.firstName,
                 onValueChange = { newValue ->
-                    onChanged(contact.copy(firstName = newValue))
+                    contact.firstName = newValue
+                    onChanged(contact)
                 },
                 singleLine = true,
                 modifier = textFieldModifier,
@@ -121,7 +123,8 @@ private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -
                 label = { Text(stringResource(id = R.string.last_name)) },
                 value = contact.lastName,
                 onValueChange = { newValue ->
-                    onChanged(contact.copy(lastName = newValue))
+                    contact.lastName = newValue
+                    onChanged(contact)
                 },
                 singleLine = true,
                 modifier = textFieldModifier,
@@ -133,12 +136,13 @@ private fun PersonalInformation(contact: ContactFull, onChanged: (ContactFull) -
 @ExperimentalMaterialApi
 @Composable
 private fun PhoneNumbers(
-    contact: ContactFull,
+    contact: IContactEditable,
     waitForCustomType: (ContactData) -> Unit,
-    onChanged: (ContactFull) -> Unit,
+    onChanged: (IContactEditable) -> Unit,
 ) {
     val onPhoneNumberChanged: (PhoneNumber) -> Unit = { newNumber ->
-        onChanged(contact.addOrReplaceContactDataEntry(newNumber))
+        contact.contactDataSet.addOrReplace(newNumber)
+        onChanged(contact)
     }
 
     val phoneNumbersToDisplay = contact.phoneNumbersForDisplay
@@ -262,13 +266,14 @@ private fun ContactDataTypeCustomValueDialog(
 }
 
 @Composable
-private fun Notes(contact: ContactFull, onChanged: (ContactFull) -> Unit) {
+private fun Notes(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
     ContactCategory(label = R.string.notes, icon = Icons.Default.SpeakerNotes) {
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.notes)) },
             value = contact.notes,
             onValueChange = { newValue ->
-                onChanged(contact.copy(notes = newValue))
+                contact.notes = newValue
+                onChanged(contact)
             },
             singleLine = false,
             maxLines = 10

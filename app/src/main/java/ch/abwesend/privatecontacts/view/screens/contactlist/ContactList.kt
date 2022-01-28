@@ -19,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 
 @Composable
 fun ContactList(
-    pagedContacts: LazyPagingItems<ContactBase>,
-    onContactSelected: (ContactBase) -> Unit,
+    pagedContacts: LazyPagingItems<IContactBase>,
+    onContactSelected: (IContactBase) -> Unit,
 ) {
     if (pagedContacts.itemCount <= 0) {
         NoResults()
@@ -45,8 +45,8 @@ private fun NoResults() {
 
 @Composable
 private fun ListWithResults(
-    pagedContacts: LazyPagingItems<ContactBase>,
-    onContactSelected: (ContactBase) -> Unit,
+    pagedContacts: LazyPagingItems<IContactBase>,
+    onContactSelected: (IContactBase) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier

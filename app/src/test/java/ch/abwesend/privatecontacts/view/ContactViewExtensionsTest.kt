@@ -80,13 +80,13 @@ class ContactViewExtensionsTest : TestBase() {
     fun `addOrReplace should add a new element`() {
         val phoneNumber1 = somePhoneNumber(value = "1")
         val phoneNumber2 = somePhoneNumber(value = "2")
+        val list = mutableListOf<PhoneNumber>()
 
-        val result = emptyList<PhoneNumber>()
-            .addOrReplace(phoneNumber1)
-            .addOrReplace(phoneNumber2)
+        list.addOrReplace(phoneNumber1)
+        list.addOrReplace(phoneNumber2)
 
-        assertThat(result).hasSize(2)
-        assertThat(result).isEqualTo(listOf(phoneNumber1, phoneNumber2))
+        assertThat(list).hasSize(2)
+        assertThat(list).isEqualTo(listOf(phoneNumber1, phoneNumber2))
     }
 
     @Test
@@ -94,12 +94,12 @@ class ContactViewExtensionsTest : TestBase() {
         val id = UUID.randomUUID()
         val phoneNumber1 = somePhoneNumber(id = id, value = "1")
         val phoneNumber2 = somePhoneNumber(id = id, value = "2")
+        val list = mutableListOf<PhoneNumber>()
 
-        val result = emptyList<PhoneNumber>()
-            .addOrReplace(phoneNumber1)
-            .addOrReplace(phoneNumber2)
+        list.addOrReplace(phoneNumber1)
+        list.addOrReplace(phoneNumber2)
 
-        assertThat(result).hasSize(1)
-        assertThat(result).isEqualTo(listOf(phoneNumber2))
+        assertThat(list).hasSize(1)
+        assertThat(list).isEqualTo(listOf(phoneNumber2))
     }
 }

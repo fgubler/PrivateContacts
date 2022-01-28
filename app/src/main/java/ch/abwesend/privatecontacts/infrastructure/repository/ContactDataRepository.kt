@@ -4,8 +4,8 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
@@ -13,12 +13,12 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 
 class ContactDataRepository : RepositoryBase() {
-    suspend fun loadContactData(contact: ContactBase): List<ContactDataEntity> =
+    suspend fun loadContactData(contact: IContactBase): List<ContactDataEntity> =
         withDatabase { database ->
             database.contactDataDao().getDataForContact(contact.id)
         }
 
-    suspend fun createContactData(contact: Contact) =
+    suspend fun createContactData(contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.map { contactData ->
                 contactData.toEntity(contact.id)
@@ -27,7 +27,7 @@ class ContactDataRepository : RepositoryBase() {
             database.contactDataDao().insertAll(contactData)
         }
 
-    suspend fun updateContactData(contact: Contact) =
+    suspend fun updateContactData(contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.filter { !it.isEmpty }
 

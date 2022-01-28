@@ -1,6 +1,6 @@
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
@@ -11,7 +11,7 @@ class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
 
-    suspend fun saveContact(contact: Contact): ContactSaveResult {
+    suspend fun saveContact(contact: IContact): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
 
         return when {

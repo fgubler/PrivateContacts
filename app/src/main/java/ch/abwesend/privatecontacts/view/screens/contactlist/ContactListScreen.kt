@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
@@ -95,7 +95,7 @@ private fun LoadingError(viewModel: ContactListViewModel) {
     )
 }
 
-private fun selectContact(screenContext: ScreenContext, contact: ContactBase) {
+private fun selectContact(screenContext: ScreenContext, contact: IContactBase) {
     // TODO this should not be done in the view
     applicationScope.launch {
         val resolved = screenContext.contactListViewModel.resolveContact(contact)

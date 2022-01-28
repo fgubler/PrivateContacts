@@ -1,12 +1,12 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contact
 
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 
 private const val FULL_TEXT_SEARCH_ELEMENT_SEPARATOR = "|"
 
-fun Contact.toEntity(): ContactEntity {
-    val base = (this as ContactBase).toEntity()
+fun IContact.toEntity(): ContactEntity {
+    val base = (this as IContactBase).toEntity()
 
     val contactData = contactDataSet
         .mapNotNull { it.formatValueForSearch() }
@@ -17,7 +17,7 @@ fun Contact.toEntity(): ContactEntity {
     return base
 }
 
-fun ContactBase.toEntity() = ContactEntity(
+fun IContactBase.toEntity() = ContactEntity(
     id = id,
     firstName = firstName,
     lastName = lastName,
