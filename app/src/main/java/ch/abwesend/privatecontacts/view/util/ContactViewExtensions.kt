@@ -13,11 +13,14 @@ fun <T : ContactData> List<T>.prepareForDisplay(
     factory: (sortOrder: Int) -> T
 ): List<T> {
     val sortedList = filter { it.modelStatus != DELETED }
-        .sortedBy { it.sortOrder ?: Int.MAX_VALUE }
+        .sortedBy { it.sortOrder }
 
     val emptyElement: List<T> =
         if (any { it.isEmpty }) emptyList()
-        else listOf(factory(size))
+        else {
+            val sortOrder = (maxOfOrNull { it.sortOrder } ?: -1) + 1
+            listOf(factory(sortOrder))
+        }
 
     return sortedList + emptyElement
 }

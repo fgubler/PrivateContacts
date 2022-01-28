@@ -17,7 +17,7 @@ fun someContactDataEntity(
     value: String = "1234",
     category: ContactDataCategory = PHONE_NUMBER,
     type: ContactDataTypeEntity = someContactDataTypeEntity(),
-    sortOrder: Int? = null,
+    sortOrder: Int = 0,
     isMain: Boolean = false,
 ): ContactDataEntity = ContactDataEntity(
     id = id,
@@ -43,7 +43,7 @@ fun somePhoneNumber(
     id: UUID = UUID.randomUUID(),
     value: String = "1234",
     type: ContactDataType = Mobile,
-    sortOrder: Int? = null,
+    sortOrder: Int = 0,
     isMainNumber: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): PhoneNumber = PhoneNumber(
