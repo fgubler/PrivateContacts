@@ -1,8 +1,10 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contact
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,6 +48,22 @@ class ContactEntityExtensionsTest : TestBase() {
 
         contact.contactDataSet.forEach { phoneNumber ->
             assertThat(entity.fullTextSearch).containsSequence((phoneNumber as PhoneNumber).value)
+        }
+    }
+
+    @Test
+    fun `fulltext search string should contain the email addresses`() {
+        val contact = someContactFull(
+            contactData = listOf(
+                someEmailAddress(value = "12345"),
+                someEmailAddress(value = "56789"),
+            )
+        )
+
+        val entity = contact.toEntity()
+
+        contact.contactDataSet.forEach { email ->
+            assertThat(entity.fullTextSearch).containsSequence((email as EmailAddress).value)
         }
     }
 }

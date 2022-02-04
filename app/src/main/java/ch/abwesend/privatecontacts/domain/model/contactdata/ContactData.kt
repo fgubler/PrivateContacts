@@ -27,7 +27,7 @@ value class ContactDataId(val uuid: UUID) {
     }
 }
 
-interface StringBasedContactDataSimple : ContactData {
+interface StringBasedContactDataBase : ContactData {
     val value: String
     val formattedValue: String
 
@@ -38,7 +38,7 @@ interface StringBasedContactDataSimple : ContactData {
 /**
  * The generics are needed to make the functions return the dynamic type of "this"
  */
-interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataSimple {
+interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataBase {
     fun changeValue(value: String): T
     override fun changeType(type: ContactDataType): T
     override fun delete(): T

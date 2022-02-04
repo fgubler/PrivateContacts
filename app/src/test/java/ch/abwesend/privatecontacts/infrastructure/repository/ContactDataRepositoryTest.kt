@@ -8,7 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataBase
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -172,7 +172,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(contactData.id)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(contactData.valueRaw)
+        assertThat((result as? StringBasedContactDataBase)?.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.isMain).isEqualTo(contactData.isMain)
@@ -189,7 +189,7 @@ class ContactDataRepositoryTest : TestBase() {
 
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(contactData.id)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(contactData.valueRaw)
+        assertThat((result as? StringBasedContactDataBase)?.value).isEqualTo(contactData.valueRaw)
         assertThat(result.sortOrder).isEqualTo(contactData.sortOrder)
         assertThat(result.type.key).isEqualTo(contactData.type.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)

@@ -10,8 +10,10 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
+fun someContactId(): ContactId = ContactId.randomId()
+
 fun someContactBase(
-    id: ContactId = ContactId.randomId(),
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -27,7 +29,7 @@ fun someContactBase(
 )
 
 fun someContactFull(
-    id: ContactId = ContactId.randomId(),
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -47,7 +49,7 @@ fun someContactFull(
 )
 
 fun someContactEditable(
-    id: ContactId = ContactId.randomId(),
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
