@@ -18,6 +18,30 @@ interface ContactDao {
     @Query("SELECT * FROM ContactEntity ORDER BY lastName, firstName, id LIMIT :loadSize OFFSET :offsetInRows")
     suspend fun getPagedByLastName(loadSize: Int, offsetInRows: Int): List<ContactEntity>
 
+    @Query(
+        """
+        SELECT * 
+        FROM ContactEntity
+        WHERE fullTextSearch LIKE '%' || :query || '%'
+        ORDER BY firstName, lastName, id 
+        LIMIT :loadSize 
+        OFFSET :offsetInRows 
+    """
+    )
+    suspend fun searchPagedByFirstName(query: String, loadSize: Int, offsetInRows: Int): List<ContactEntity>
+
+    @Query(
+        """
+        SELECT * 
+        FROM ContactEntity
+        WHERE fullTextSearch LIKE '%' || :query || '%'
+        ORDER BY lastName, firstName, id 
+        LIMIT :loadSize 
+        OFFSET :offsetInRows 
+    """
+    )
+    suspend fun searchPagedByLastName(query: String, loadSize: Int, offsetInRows: Int): List<ContactEntity>
+
     @Query("SELECT COUNT(1) FROM ContactEntity")
     suspend fun count(): Int
 

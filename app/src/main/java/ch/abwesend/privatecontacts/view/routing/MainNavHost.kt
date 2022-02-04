@@ -11,12 +11,13 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactList
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.Screen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
+import ch.abwesend.privatecontacts.view.screens.contactlist.Screen
 
 @ExperimentalMaterialApi
 @Composable
 fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {
     NavHost(navController = navController, startDestination = ContactList.key) {
-        composable(ContactList.key) { ContactListScreen(screenContext) }
+        composable(ContactList.key) { ContactListScreen.Screen(screenContext) }
         composable(ContactEdit.key) { ContactEditScreen.Screen(screenContext) }
     }
 }

@@ -18,6 +18,8 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="search">Search</string>
+    <string name="back">Back</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>

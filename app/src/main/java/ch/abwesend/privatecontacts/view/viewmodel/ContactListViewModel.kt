@@ -17,12 +17,16 @@ class ContactListViewModel : ViewModel() {
      * The [State] is necessary to make sure the view is updated on [reloadContacts]
      */
     private val _contacts: MutableState<Flow<PagingData<IContactBase>>> by lazy {
-        mutableStateOf(loadService.loadPagedContacts())
+        mutableStateOf(loadService.loadContacts())
     }
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
 
     fun reloadContacts() {
-        _contacts.value = loadService.loadPagedContacts()
+        _contacts.value = loadService.loadContacts()
+    }
+
+    fun changeSearchQuery(query: String) {
+        _contacts.value = loadService.searchContacts(query)
     }
 
     // TODO it is not very nice to expose the suspend function

@@ -7,9 +7,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
+import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
@@ -21,18 +23,42 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             }
         }
 
-    override suspend fun getContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
-        withDatabase { database ->
-            logger.info("Loading contacts with pageSize = $loadSize and offset = $offsetInRows")
+    override suspend fun getContactsPaged(
+        searchConfig: ContactSearchConfig,
+        loadSize: Int,
+        offsetInRows: Int,
+    ): List<IContactBase> = withDatabase { database ->
+        logger.info("Loading contacts with pageSize = $loadSize and offset = $offsetInRows")
 
-            val result = if (Settings.orderByFirstName) {
-                database.contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
-            } else {
-                database.contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
-            }
+        val result = when (searchConfig) {
+            is ContactSearchConfig.All -> database.getAllContactsPaged(loadSize = loadSize, offsetInRows = offsetInRows)
+            is ContactSearchConfig.Query -> database.searchContactsPaged(
+                config = searchConfig,
+                loadSize = loadSize,
+                offsetInRows = offsetInRows,
+            )
+        }
 
-            logger.info("Loaded ${result.size} contacts with pageSize = $loadSize and offset = $offsetInRows")
-            result
+        logger.info("Loaded ${result.size} contacts with pageSize = $loadSize and offset = $offsetInRows")
+        result
+    }
+
+    private suspend fun AppDatabase.getAllContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
+        if (Settings.orderByFirstName) {
+            contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
+        } else {
+            contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
+        }
+
+    private suspend fun AppDatabase.searchContactsPaged(
+        config: ContactSearchConfig.Query,
+        loadSize: Int,
+        offsetInRows: Int
+    ): List<IContactBase> =
+        if (Settings.orderByFirstName) {
+            contactDao().searchPagedByFirstName(query = config.query, loadSize = loadSize, offsetInRows = offsetInRows)
+        } else {
+            contactDao().searchPagedByLastName(query = config.query, loadSize = loadSize, offsetInRows = offsetInRows)
         }
 
     override suspend fun resolveContact(contact: IContactBase): IContact {

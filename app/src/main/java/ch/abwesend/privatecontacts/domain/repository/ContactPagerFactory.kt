@@ -2,7 +2,8 @@ package ch.abwesend.privatecontacts.domain.repository
 
 import androidx.paging.Pager
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 interface ContactPagerFactory {
-    fun createContactPager(): Pager<Int, IContactBase>
+    fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
 }

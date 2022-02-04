@@ -4,9 +4,6 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
@@ -23,19 +20,20 @@ import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
-import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.isError
 import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/** dummy-object to create separate namespace */
+object ContactListScreen
+
 @Composable
-fun ContactListScreen(screenContext: ScreenContext) {
+fun ContactListScreen.Screen(screenContext: ScreenContext) {
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -43,20 +41,18 @@ fun ContactListScreen(screenContext: ScreenContext) {
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { ContactListTopBar(scaffoldState, coroutineScope) },
+        topBar = {
+            ContactListTopBar(
+                viewModel = screenContext.contactListViewModel,
+                scaffoldState = scaffoldState,
+                coroutineScope = coroutineScope,
+            )
+        },
         drawerContent = { SideDrawerContent(router, Screen.ContactList) },
         floatingActionButton = { AddContactButton(screenContext) }
     ) {
         ContactListContent(screenContext)
     }
-}
-
-@Composable
-private fun ContactListTopBar(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
-        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) }
-    )
 }
 
 @Composable

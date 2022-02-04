@@ -6,12 +6,16 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import java.lang.Exception
 
-class ContactPagingSource : PagingSource<Int, IContactBase>() {
+class ContactPagingSource(
+    private val searchConfig: ContactSearchConfig
+) : PagingSource<Int, IContactBase>() {
+
     private val contactRepository: IContactRepository by injectAnywhere()
 
     override suspend fun load(
@@ -22,9 +26,11 @@ class ContactPagingSource : PagingSource<Int, IContactBase>() {
 
         return try {
             val contacts = contactRepository.getContactsPaged(
+                searchConfig = searchConfig,
                 loadSize = loadSize,
                 offsetInRows = (pageNumber - 1) * PAGE_SIZE,
             )
+
             LoadResult.Page(
                 data = contacts,
                 prevKey = if (pageNumber <= 1) null else pageNumber - 1,
@@ -46,13 +52,13 @@ class ContactPagingSource : PagingSource<Int, IContactBase>() {
     companion object : ContactPagerFactory {
         private const val PAGE_SIZE = 50
 
-        override fun createContactPager() =
+        override fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> =
             Pager(
                 PagingConfig(
                     pageSize = PAGE_SIZE,
                     maxSize = 10 * PAGE_SIZE,
                 ),
-                pagingSourceFactory = { ContactPagingSource() }
+                pagingSourceFactory = { ContactPagingSource(searchConfig) }
             )
     }
 }
