@@ -1,5 +1,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
@@ -137,8 +139,26 @@ class ContactRepositoryTest : TestBase() {
     fun `resolving a contact should try to resolve phone-numbers`() {
         val contact = someContactBase()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id.uuid),
-            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contact.id.uuid, category = PHONE_NUMBER),
+            someContactDataEntity(contactId = contact.id.uuid, category = PHONE_NUMBER),
+        )
+        coEvery { contactDataRepository.loadContactData(any()) } returns contactData
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
+
+        runBlocking { underTest.resolveContact(contact) }
+
+        coVerify { contactDataRepository.loadContactData(contact) }
+        contactData.forEach {
+            coVerify { contactDataRepository.tryResolveContactData(it) }
+        }
+    }
+
+    @Test
+    fun `resolving a contact should try to resolve email-addresses`() {
+        val contact = someContactBase()
+        val contactData = listOf(
+            someContactDataEntity(contactId = contact.id.uuid, category = EMAIL),
+            someContactDataEntity(contactId = contact.id.uuid, category = EMAIL),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         every { contactDataRepository.tryResolveContactData(any()) } returns null
