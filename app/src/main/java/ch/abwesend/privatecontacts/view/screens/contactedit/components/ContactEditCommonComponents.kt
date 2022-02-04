@@ -113,7 +113,7 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
     onChanged: (T) -> Unit,
 ) {
     Row {
-        Column {
+        Column(modifier = Modifier.weight(1.0f)) {
             OutlinedTextField(
                 label = { Text(stringResource(id = label)) },
                 value = contactData.value,
