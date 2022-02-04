@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
@@ -24,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -93,35 +93,35 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
     waitForCustomType: (ContactData) -> Unit,
     onChanged: (T) -> Unit,
 ) {
-    Row {
-        Column(modifier = Modifier.weight(1.0f)) {
+    Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             OutlinedTextField(
                 label = { Text(stringResource(id = label)) },
                 value = contactData.value,
                 singleLine = true,
                 onValueChange = { onChanged(contactData.changeValue(it)) },
-                modifier = textFieldModifier,
+                modifier = textFieldModifier.weight(1.0f),
                 keyboardOptions = KeyboardOptions.Default.copy(
                     keyboardType = keyboardType,
                     imeAction = ImeAction.Next
                 ),
             )
 
-            ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
-                onChanged(contactData.changeType(newType))
+            Box(modifier = secondaryIconModifier) {
+                if (!isLastElement) {
+                    IconButton(onClick = { onChanged(contactData.delete()) }) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            modifier = secondaryIconModifier,
+                            contentDescription = stringResource(id = R.string.remove)
+                        )
+                    }
+                }
             }
         }
 
-        Box(modifier = secondaryIconModifier) {
-            if (!isLastElement) {
-                IconButton(onClick = { onChanged(contactData.delete()) }) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        modifier = secondaryIconModifier.padding(top = 23.dp),
-                        contentDescription = stringResource(id = R.string.remove)
-                    )
-                }
-            }
+        ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
+            onChanged(contactData.changeType(newType))
         }
     }
 }

@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -140,7 +141,11 @@ private fun ContactEditScreen.Notes(
     contact: IContactEditable,
     onChanged: (IContactEditable) -> Unit
 ) {
-    ContactCategory(categoryTitle = R.string.notes, icon = Icons.Default.SpeakerNotes) {
+    ContactCategory(
+        categoryTitle = R.string.notes,
+        icon = Icons.Default.SpeakerNotes,
+        alignContentWithTitle = false,
+    ) {
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.notes)) },
             value = contact.notes,
@@ -150,7 +155,7 @@ private fun ContactEditScreen.Notes(
             },
             singleLine = false,
             maxLines = 10,
-            modifier = Modifier.heightIn(min = 100.dp)
+            modifier = Modifier.heightIn(min = 100.dp).fillMaxWidth()
         )
     }
 }

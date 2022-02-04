@@ -39,6 +39,7 @@ fun ContactEditScreen.ContactCategory(
     @StringRes categoryTitle: Int,
     icon: ImageVector,
     initiallyExpanded: Boolean = true,
+    alignContentWithTitle: Boolean = true,
     content: @Composable () -> Unit
 ) {
     var expanded by remember { mutableStateOf(initiallyExpanded) }
@@ -56,11 +57,12 @@ fun ContactEditScreen.ContactCategory(
                 if (expanded) {
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(modifier = Modifier.fillMaxWidth()) {
-                        Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
-                        Box(modifier = Modifier.weight(1.0f)) {
+                        if (alignContentWithTitle) {
+                            Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
+                        }
+                        Box(modifier = Modifier.padding(horizontal = 5.dp)) {
                             content()
                         }
-                        Spacer(modifier = secondaryIconModifier.padding(start = iconHorizontalPadding))
                     }
                 }
             }
