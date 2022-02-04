@@ -12,12 +12,15 @@ import kotlinx.coroutines.flow.Flow
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val contactPagerFactory: ContactPagerFactory by injectAnywhere()
+    private val easterEggService: EasterEggService by injectAnywhere()
 
     fun loadContacts(): Flow<PagingData<IContactBase>> =
         contactPagerFactory.createContactPager(ContactSearchConfig.All).flow
 
-    fun searchContacts(query: String): Flow<PagingData<IContactBase>> =
-        contactPagerFactory.createContactPager(ContactSearchConfig.Query(query)).flow
+    fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+        easterEggService.checkSearchForEasterEggs(query)
+        return contactPagerFactory.createContactPager(ContactSearchConfig.Query(query)).flow
+    }
 
     suspend fun resolveContact(contact: IContactBase): IContact =
         contactRepository.resolveContact(contact)
