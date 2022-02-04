@@ -22,7 +22,8 @@ fun ContactEditScreen.PhoneNumbers(
 ) {
     ContactDataCategory(
         contact = contact,
-        label = R.string.phone_number,
+        categoryTitle = R.string.phone_numbers,
+        fieldLabel = R.string.phone_number,
         icon = Icons.Default.Phone,
         keyboardType = KeyboardType.Phone,
         factory = { PhoneNumber.createEmpty(it) },
@@ -40,7 +41,8 @@ fun ContactEditScreen.EmailAddresses(
 ) {
     ContactDataCategory(
         contact = contact,
-        label = R.string.email_address,
+        categoryTitle = R.string.email_addresses,
+        fieldLabel = R.string.email_address,
         icon = Icons.Default.Email,
         keyboardType = KeyboardType.Email,
         factory = { EmailAddress.createEmpty(it) },

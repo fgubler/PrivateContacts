@@ -1,13 +1,18 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Card
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ExposedDropdownMenuBox
@@ -18,6 +23,8 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,25 +77,34 @@ fun ContactEditScreen.ContactCategory(
 @Composable
 inline fun <reified T : StringBasedContactData<T>> ContactEditScreen.ContactDataCategory(
     contact: IContactEditable,
-    @StringRes label: Int,
+    @StringRes categoryTitle: Int,
+    @StringRes fieldLabel: Int,
     icon: ImageVector,
     keyboardType: KeyboardType,
     noinline factory: (sortOrder: Int) -> T,
     noinline waitForCustomType: (ContactData) -> Unit,
     crossinline onChanged: (IContactEditable) -> Unit,
 ) {
+    var expanded by remember { mutableStateOf(false) }
+    val onExpandChanged: (Boolean) -> Unit = { expanded = it }
+
     val onEntryChanged: (T) -> Unit = { newEntry ->
         contact.contactDataSet.addOrReplace(newEntry)
         onChanged(contact)
     }
 
-    val dataEntriesToDisplay = contact.contactDataForDisplay(factory)
-    ContactCategory(label = label, icon = icon) {
+    ContactDataCategoryHeader(
+        title = categoryTitle,
+        icon = icon,
+        expanded = expanded,
+        onExpand = onExpandChanged
+    ) {
+        val dataEntriesToDisplay = contact.contactDataForDisplay(factory)
         Column {
             dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
                 StringBasedContactDataEntry(
                     contactData = contactData,
-                    label = label,
+                    label = fieldLabel,
                     keyboardType = keyboardType,
                     isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
                     waitForCustomType = waitForCustomType,
@@ -97,6 +113,47 @@ inline fun <reified T : StringBasedContactData<T>> ContactEditScreen.ContactData
                 if (displayIndex < dataEntriesToDisplay.size - 1) {
                     Spacer(modifier = Modifier.height(10.dp))
                 }
+            }
+        }
+    }
+}
+
+@Suppress("unused")
+@Composable
+fun ContactEditScreen.ContactDataCategoryHeader(
+    @StringRes title: Int,
+    icon: ImageVector,
+    expanded: Boolean,
+    onExpand: (Boolean) -> Unit,
+    content: @Composable () -> Unit,
+) {
+    val expandIcon = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
+    Card(modifier = Modifier.padding(top = 10.dp, start = 5.dp, end = 5.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onExpand(!expanded) }
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = stringResource(id = title),
+                    modifier = Modifier.padding(end = 20.dp),
+                    tint = AppColors.grayText
+                )
+                Column(modifier = Modifier.weight(1.0f)) {
+                    Text(text = stringResource(id = title))
+                    if (expanded) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier.clickable(enabled = false) { } // do not close category on click
+                        ) { content() }
+                    }
+                }
+                Icon(
+                    imageVector = expandIcon,
+                    contentDescription = stringResource(id = R.string.expand),
+                )
             }
         }
     }
@@ -130,13 +187,16 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
                 onChanged(contactData.changeType(newType))
             }
         }
-        if (!isLastElement) {
-            IconButton(onClick = { onChanged(contactData.delete()) }) {
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    modifier = contactDataIconModifier,
-                    contentDescription = stringResource(id = R.string.remove)
-                )
+
+        Box(modifier = Modifier.width(40.dp)) {
+            if (!isLastElement) {
+                IconButton(onClick = { onChanged(contactData.delete()) }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        modifier = contactDataIconModifier,
+                        contentDescription = stringResource(id = R.string.remove)
+                    )
+                }
             }
         }
     }
