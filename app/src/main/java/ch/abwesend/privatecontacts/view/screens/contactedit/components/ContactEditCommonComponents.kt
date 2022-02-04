@@ -30,7 +30,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -49,28 +48,30 @@ import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.getTitle
 
-val contactDataIconModifier = Modifier.padding(top = 23.dp)
 val textFieldModifier = Modifier.padding(bottom = 2.dp)
+
+private val primaryIconModifier = Modifier.width(60.dp)
+private val secondaryIconModifier = Modifier.width(40.dp)
+private val iconHorizontalPadding = 20.dp
 
 @Suppress("unused")
 @Composable
 fun ContactEditScreen.ContactCategory(
-    @StringRes label: Int,
+    @StringRes categoryTitle: Int,
     icon: ImageVector,
+    initiallyExpanded: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    Row(
-        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-        verticalAlignment = Alignment.Top,
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = label),
-            modifier = contactDataIconModifier.padding(end = 20.dp),
-            tint = AppColors.grayText
-        )
-        content()
-    }
+    var expanded by remember { mutableStateOf(initiallyExpanded) }
+    val onExpandChanged: (Boolean) -> Unit = { expanded = it }
+
+    ContactDataCategoryHeader(
+        title = categoryTitle,
+        icon = icon,
+        expanded = expanded,
+        onExpand = onExpandChanged,
+        content = content
+    )
 }
 
 @ExperimentalMaterialApi
@@ -81,11 +82,12 @@ inline fun <reified T : StringBasedContactData<T>> ContactEditScreen.ContactData
     @StringRes fieldLabel: Int,
     icon: ImageVector,
     keyboardType: KeyboardType,
+    initiallyExpanded: Boolean = false,
     noinline factory: (sortOrder: Int) -> T,
     noinline waitForCustomType: (ContactData) -> Unit,
     crossinline onChanged: (IContactEditable) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(initiallyExpanded) }
     val onExpandChanged: (Boolean) -> Unit = { expanded = it }
 
     val onEntryChanged: (T) -> Unit = { newEntry ->
@@ -128,32 +130,39 @@ fun ContactEditScreen.ContactDataCategoryHeader(
     content: @Composable () -> Unit,
 ) {
     val expandIcon = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
-    Card(modifier = Modifier.padding(top = 10.dp, start = 5.dp, end = 5.dp)) {
-        Column(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onExpand(!expanded) }
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = stringResource(id = title),
-                    modifier = Modifier.padding(end = 20.dp),
-                    tint = AppColors.grayText
-                )
-                Column(modifier = Modifier.weight(1.0f)) {
-                    Text(text = stringResource(id = title))
-                    if (expanded) {
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Box(
-                            modifier = Modifier.clickable(enabled = false) { } // do not close category on click
-                        ) { content() }
+    Card(modifier = Modifier.padding(all = 5.dp)) {
+        Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onExpand(!expanded) }
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = stringResource(id = title),
+                        modifier = primaryIconModifier.padding(end = iconHorizontalPadding),
+                        tint = AppColors.grayText
+                    )
+                    Column(modifier = Modifier.weight(1.0f)) {
+                        Text(text = stringResource(id = title))
+                    }
+                    Icon(
+                        imageVector = expandIcon,
+                        contentDescription = stringResource(id = R.string.expand),
+                        modifier = secondaryIconModifier.padding(start = iconHorizontalPadding)
+                    )
+                }
+                if (expanded) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
+                        Box(modifier = Modifier.weight(1.0f)) {
+                            content()
+                        }
+                        Spacer(modifier = secondaryIconModifier.padding(start = iconHorizontalPadding))
                     }
                 }
-                Icon(
-                    imageVector = expandIcon,
-                    contentDescription = stringResource(id = R.string.expand),
-                )
             }
         }
     }
@@ -188,12 +197,12 @@ fun <T : StringBasedContactData<T>> ContactEditScreen.StringBasedContactDataEntr
             }
         }
 
-        Box(modifier = Modifier.width(40.dp)) {
+        Box(modifier = secondaryIconModifier) {
             if (!isLastElement) {
                 IconButton(onClick = { onChanged(contactData.delete()) }) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        modifier = contactDataIconModifier,
+                        modifier = secondaryIconModifier.padding(top = 23.dp),
                         contentDescription = stringResource(id = R.string.remove)
                     )
                 }

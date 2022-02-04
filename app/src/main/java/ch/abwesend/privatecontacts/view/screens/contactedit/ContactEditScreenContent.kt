@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
@@ -88,7 +90,7 @@ private fun ContactEditScreen.PersonalInformation(
     contact: IContactEditable,
     onChanged: (IContactEditable) -> Unit
 ) {
-    ContactCategory(label = R.string.personal_information, icon = Icons.Default.Person) {
+    ContactCategory(categoryTitle = R.string.personal_information, icon = Icons.Default.Person) {
         Column {
             OutlinedTextField(
                 label = { Text(stringResource(id = R.string.first_name)) },
@@ -138,7 +140,7 @@ private fun ContactEditScreen.Notes(
     contact: IContactEditable,
     onChanged: (IContactEditable) -> Unit
 ) {
-    ContactCategory(label = R.string.notes, icon = Icons.Default.SpeakerNotes) {
+    ContactCategory(categoryTitle = R.string.notes, icon = Icons.Default.SpeakerNotes) {
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.notes)) },
             value = contact.notes,
@@ -147,7 +149,8 @@ private fun ContactEditScreen.Notes(
                 onChanged(contact)
             },
             singleLine = false,
-            maxLines = 10
+            maxLines = 10,
+            modifier = Modifier.heightIn(min = 100.dp)
         )
     }
 }
