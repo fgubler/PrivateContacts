@@ -54,19 +54,15 @@ inline fun <reified T : StringBasedContactData<T>> ContactEditScreen.ContactData
     noinline waitForCustomType: (ContactData) -> Unit,
     crossinline onChanged: (IContactEditable) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(initiallyExpanded) }
-    val onExpandChanged: (Boolean) -> Unit = { expanded = it }
-
     val onEntryChanged: (T) -> Unit = { newEntry ->
         contact.contactDataSet.addOrReplace(newEntry)
         onChanged(contact)
     }
 
-    ContactCategoryHeader(
-        title = categoryTitle,
+    ContactCategory(
+        categoryTitle = categoryTitle,
         icon = icon,
-        expanded = expanded,
-        onExpand = onExpandChanged
+        initiallyExpanded = initiallyExpanded,
     ) {
         val dataEntriesToDisplay = contact.contactDataForDisplay(factory)
         Column {
