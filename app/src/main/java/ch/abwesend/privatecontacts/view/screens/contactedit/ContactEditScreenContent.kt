@@ -61,8 +61,11 @@ fun ContactEditScreen.ContactEditContent(screenContext: ScreenContext, contact: 
         contactDataWaitingForCustomType = null
     }
 
+    val scrollState = rememberScrollState()
+    isScrolling = scrollState.isScrollInProgress
+
     Column(
-        modifier = Modifier.verticalScroll(rememberScrollState())
+        modifier = Modifier.verticalScroll(scrollState)
     ) {
         PersonalInformation(contact, onChanged)
         PhoneNumbers(

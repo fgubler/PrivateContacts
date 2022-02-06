@@ -38,7 +38,9 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.flow.collect
 
 /** dummy-object to create separate namespace */
-object ContactEditScreen
+object ContactEditScreen {
+    var isScrolling: Boolean = false // TODO remove once google issue 212091796 is fixed
+}
 
 @ExperimentalMaterialApi
 @Composable

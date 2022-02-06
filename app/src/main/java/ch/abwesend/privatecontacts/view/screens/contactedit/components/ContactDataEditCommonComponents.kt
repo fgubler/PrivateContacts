@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -134,10 +135,15 @@ fun ContactEditScreen.ContactDataTypeDropDown(
     onChanged: (ContactDataType) -> Unit,
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
+    var focused by remember { mutableStateOf(false) }
 
     ExposedDropdownMenuBox(
         expanded = dropdownExpanded,
-        onExpandedChange = { dropdownExpanded = !dropdownExpanded },
+        onExpandedChange = {
+            // ignore clicks while scrolling: see https://issuetracker.google.com/issues/212091796
+            // fallback with focused (in case scrolling should fail at some point)
+            dropdownExpanded = !dropdownExpanded && (focused || !isScrolling)
+        },
         modifier = Modifier.widthIn(min = 100.dp, max = 200.dp)
     ) {
         val context = LocalContext.current
@@ -149,6 +155,7 @@ fun ContactEditScreen.ContactDataTypeDropDown(
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded)
             },
+            modifier = Modifier.onFocusChanged { focused = it.isFocused }
         )
         ExposedDropdownMenu(
             expanded = dropdownExpanded,
