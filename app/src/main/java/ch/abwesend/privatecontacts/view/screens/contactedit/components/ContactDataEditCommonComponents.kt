@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -136,6 +137,12 @@ fun ContactEditScreen.ContactDataTypeDropDown(
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
     var focused by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
+    val closeDropdown = {
+        dropdownExpanded = false
+        focusManager.clearFocus()
+    }
 
     ExposedDropdownMenuBox(
         expanded = dropdownExpanded,
@@ -159,7 +166,7 @@ fun ContactEditScreen.ContactDataTypeDropDown(
         )
         ExposedDropdownMenu(
             expanded = dropdownExpanded,
-            onDismissRequest = { dropdownExpanded = false }
+            onDismissRequest = closeDropdown
         ) {
             data.allowedTypes.forEach { type ->
                 DropdownMenuItem(
@@ -169,7 +176,7 @@ fun ContactEditScreen.ContactDataTypeDropDown(
                         } else {
                             onChanged(type)
                         }
-                        dropdownExpanded = false
+                        closeDropdown()
                     }
                 ) {
                     Text(text = type.getTitle(context))
