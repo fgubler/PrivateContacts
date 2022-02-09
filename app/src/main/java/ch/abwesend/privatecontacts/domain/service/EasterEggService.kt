@@ -9,6 +9,6 @@ class EasterEggService {
     }
 
     companion object {
-        val KEYWORD_CRASH = "CrashThisAppNow"
+        private const val KEYWORD_CRASH = "CrashThisAppNow"
     }
 }
