@@ -1,5 +1,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
+import androidx.annotation.VisibleForTesting
+
 class EasterEggService {
 
     fun checkSearchForEasterEggs(query: String) {
@@ -9,6 +11,7 @@ class EasterEggService {
     }
 
     companion object {
-        private const val KEYWORD_CRASH = "CrashThisAppNow"
+        @VisibleForTesting
+        internal const val KEYWORD_CRASH = "CrashThisAppNow"
     }
 }
