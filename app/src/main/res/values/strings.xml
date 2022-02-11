@@ -21,6 +21,7 @@
     <string name="search">Search</string>
     <string name="back">Back</string>
     <string name="expand">Expand</string>
+    <string name="compress">Compress</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
@@ -53,6 +54,8 @@
     <string name="phone_numbers">Phone numbers</string>
     <string name="email_address">Email address</string>
     <string name="email_addresses">Email addresses</string>
+
+    <string name="show_additional_fields">Show additional fields</string>
 
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>

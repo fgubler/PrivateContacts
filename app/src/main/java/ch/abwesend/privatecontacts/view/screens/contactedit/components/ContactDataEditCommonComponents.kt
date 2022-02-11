@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
@@ -60,34 +62,49 @@ object ContactDataEditCommonComponents {
         @StringRes fieldLabel: Int,
         icon: ImageVector,
         keyboardType: KeyboardType,
+        showIfEmpty: Boolean,
         initiallyExpanded: Boolean = false,
         noinline factory: (sortOrder: Int) -> T,
         noinline waitForCustomType: (ContactData) -> Unit,
-        crossinline onChanged: (IContactEditable) -> Unit,
+        crossinline onChanged: @DisallowComposableCalls (IContactEditable) -> Unit,
     ) {
-        val onEntryChanged: (T) -> Unit = { newEntry ->
-            contact.contactDataSet.addOrReplace(newEntry)
-            onChanged(contact)
+        val onEntryChanged: (T) -> Unit = remember(contact) {
+            { newEntry ->
+                contact.contactDataSet.addOrReplace(newEntry)
+                onChanged(contact)
+            }
         }
 
-        ContactCategory(
-            categoryTitle = categoryTitle,
-            icon = icon,
-            initiallyExpanded = initiallyExpanded,
-        ) {
-            val dataEntriesToDisplay = contact.contactDataForDisplay(factory)
-            Column {
-                dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
-                    StringBasedContactDataEntry(
-                        contactData = contactData,
-                        label = fieldLabel,
-                        keyboardType = keyboardType,
-                        isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
-                        waitForCustomType = waitForCustomType,
-                        onChanged = onEntryChanged,
-                    )
-                    if (displayIndex < dataEntriesToDisplay.size - 1) {
-                        Spacer(modifier = Modifier.height(10.dp))
+        val dataEntriesToDisplay = remember(contact) {
+            contact.contactDataForDisplay(factory)
+        }
+        val somethingToShow = remember(dataEntriesToDisplay) {
+            dataEntriesToDisplay.any { !it.isEmpty }.also { showCategory ->
+                if (!showCategory) {
+                    logger.debug("Hiding category '${T::class.java.simpleName}'")
+                }
+            }
+        }
+
+        if (showIfEmpty || somethingToShow) {
+            ContactCategory(
+                categoryTitle = categoryTitle,
+                icon = icon,
+                initiallyExpanded = initiallyExpanded,
+            ) {
+                Column {
+                    dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
+                        StringBasedContactDataEntry(
+                            contactData = contactData,
+                            label = fieldLabel,
+                            keyboardType = keyboardType,
+                            isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
+                            waitForCustomType = waitForCustomType,
+                            onChanged = onEntryChanged,
+                        )
+                        if (displayIndex < dataEntriesToDisplay.size - 1) {
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
                     }
                 }
             }

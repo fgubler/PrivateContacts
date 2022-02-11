@@ -21,6 +21,7 @@ object ContactDataEditComponents {
     @Composable
     fun PhoneNumbers(
         contact: IContactEditable,
+        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -30,6 +31,7 @@ object ContactDataEditComponents {
             fieldLabel = R.string.phone_number,
             icon = Icons.Default.Phone,
             keyboardType = KeyboardType.Phone,
+            showIfEmpty = showIfEmpty,
             factory = { PhoneNumber.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -39,6 +41,7 @@ object ContactDataEditComponents {
     @Composable
     fun EmailAddresses(
         contact: IContactEditable,
+        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -48,6 +51,7 @@ object ContactDataEditComponents {
             fieldLabel = R.string.email_address,
             icon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
+            showIfEmpty = showIfEmpty,
             factory = { EmailAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged

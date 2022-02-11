@@ -44,7 +44,11 @@ object ContactEditScreenContent {
     private val parent = ContactEditScreen
 
     @Composable
-    fun ContactEditContent(screenContext: ScreenContext, contact: IContactEditable) {
+    fun ContactEditContent(
+        screenContext: ScreenContext,
+        contact: IContactEditable,
+        showAllFields: Boolean
+    ) {
         val onChanged = { newContact: IContactEditable ->
             screenContext.contactEditViewModel.changeContact(newContact)
         }
@@ -81,11 +85,13 @@ object ContactEditScreenContent {
             PersonalInformation(contact, onChanged)
             PhoneNumbers(
                 contact = contact,
+                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             EmailAddresses(
                 contact = contact,
+                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )

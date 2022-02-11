@@ -30,6 +30,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
@@ -49,6 +50,7 @@ object ContactEditScreen {
         val viewModel = screenContext.contactEditViewModel
         val selectedContact = viewModel.selectedContact
 
+        var showAllFields: Boolean by remember { mutableStateOf(false) }
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingError: ContactSavingError? by remember { mutableStateOf(null) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
@@ -68,12 +70,16 @@ object ContactEditScreen {
         selectedContact?.let { contact ->
             Scaffold(
                 topBar = {
-                    ContactEditTopBar(screenContext, contact) {
-                        showDiscardConfirmationDialog = true
-                    }
+                    ContactEditTopBar(
+                        screenContext = screenContext,
+                        contact = contact,
+                        expanded = showAllFields,
+                        showDiscardConfirmationDialog = { showDiscardConfirmationDialog = true },
+                        onToggleExpanded = { showAllFields = !showAllFields }
+                    )
                 }
             ) {
-                ContactEditContent(screenContext, contact)
+                ContactEditContent(screenContext, contact, showAllFields)
 
                 // Dialogs
                 DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
@@ -93,7 +99,9 @@ object ContactEditScreen {
     private fun ContactEditTopBar(
         screenContext: ScreenContext,
         contact: IContactEditable,
+        expanded: Boolean,
         showDiscardConfirmationDialog: () -> Unit,
+        onToggleExpanded: () -> Unit,
     ) {
         @StringRes val title = if (contact.isNew) R.string.screen_contact_edit_create
         else R.string.screen_contact_edit
@@ -104,6 +112,7 @@ object ContactEditScreen {
                 CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
             },
             actions = {
+                ExpandCompressIconButton(expanded = expanded, onClick = onToggleExpanded)
                 SaveIconButton { onSave(screenContext, contact) }
             }
         )

@@ -4,6 +4,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Compress
+import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
@@ -41,5 +43,21 @@ fun BackIcon() {
     Icon(
         imageVector = Icons.Default.ArrowBack,
         contentDescription = stringResource(id = R.string.back)
+    )
+}
+
+@Composable
+fun ExpandIcon() {
+    Icon(
+        imageVector = Icons.Default.Expand,
+        contentDescription = stringResource(id = R.string.expand),
+    )
+}
+
+@Composable
+fun CompressIcon() {
+    Icon(
+        imageVector = Icons.Default.Compress,
+        contentDescription = stringResource(id = R.string.expand),
     )
 }

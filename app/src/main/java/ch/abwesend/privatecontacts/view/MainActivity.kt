@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -16,6 +17,7 @@ import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 
+@ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 class MainActivity : ComponentActivity() {
     private val contactListViewModel: ContactListViewModel by viewModels()
