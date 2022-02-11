@@ -27,18 +27,24 @@ value class ContactDataId(val uuid: UUID) {
     }
 }
 
-interface StringBasedContactDataBase : ContactData {
+interface StringBasedContactDataSimple : ContactData {
     val value: String
     val formattedValue: String
 
     override val isEmpty: Boolean
         get() = value.isEmpty()
+
+    override fun formatValueForSearch(): String = formatValueForSearch(value)
+
+    companion object {
+        fun formatValueForSearch(value: String): String = value
+    }
 }
 
 /**
  * The generics are needed to make the functions return the dynamic type of "this"
  */
-interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataBase {
+interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataSimple {
     fun changeValue(value: String): T
     override fun changeType(type: ContactDataType): T
     override fun delete(): T

@@ -1,69 +1,37 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contact
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
-import ch.abwesend.privatecontacts.testutil.someEmailAddress
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class ContactEntityExtensionsTest : TestBase() {
+    @MockK
+    private lateinit var searchService: FullTextSearchService
+
+    override fun Module.setupKoinModule() {
+        single { searchService }
+    }
+
     @Test
-    fun `fulltext search string should contain the names`() {
+    fun `should compute full text search`() {
         val contact = someContactFull()
+        val fullText = "TestFullText"
+        every { searchService.computeFullTextSearchColumn(any()) } returns fullText
 
         val entity = contact.toEntity()
 
-        assertThat(entity.fullTextSearch).containsSequence(contact.firstName)
-        assertThat(entity.fullTextSearch).containsSequence(contact.lastName)
-        assertThat(entity.fullTextSearch).containsSequence(contact.nickname)
-    }
-
-    @Test
-    fun `fulltext search string should contain the notes`() {
-        val contact = someContactFull()
-
-        val entity = contact.toEntity()
-
-        assertThat(entity.fullTextSearch).containsSequence(contact.notes)
-    }
-
-    @Test
-    fun `fulltext search string should contain the phone numbers`() {
-        val contact = someContactFull(
-            contactData = listOf(
-                somePhoneNumber(value = "12345"),
-                somePhoneNumber(value = "56789"),
-            )
-        )
-
-        val entity = contact.toEntity()
-
-        contact.contactDataSet.forEach { phoneNumber ->
-            assertThat(entity.fullTextSearch).containsSequence((phoneNumber as PhoneNumber).value)
-        }
-    }
-
-    @Test
-    fun `fulltext search string should contain the email addresses`() {
-        val contact = someContactFull(
-            contactData = listOf(
-                someEmailAddress(value = "12345"),
-                someEmailAddress(value = "56789"),
-            )
-        )
-
-        val entity = contact.toEntity()
-
-        contact.contactDataSet.forEach { email ->
-            assertThat(entity.fullTextSearch).containsSequence((email as EmailAddress).value)
-        }
+        verify { searchService.computeFullTextSearchColumn(contact) }
+        assertThat(entity.fullTextSearch).isEqualTo(fullText)
     }
 }

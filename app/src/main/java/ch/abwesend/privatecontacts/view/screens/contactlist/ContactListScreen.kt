@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
@@ -26,86 +27,89 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.isError
 import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** dummy-object to create separate namespace */
-object ContactListScreen
+@ExperimentalComposeUiApi
+@FlowPreview
+object ContactListScreen {
 
-@Composable
-fun ContactListScreen.Screen(screenContext: ScreenContext) {
-    val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
+    @Composable
+    fun Screen(screenContext: ScreenContext) {
+        val scaffoldState = rememberScaffoldState()
+        val coroutineScope = rememberCoroutineScope()
 
-    val router = screenContext.router
+        val router = screenContext.router
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = {
-            ContactListTopBar(
-                viewModel = screenContext.contactListViewModel,
-                scaffoldState = scaffoldState,
-                coroutineScope = coroutineScope,
-            )
-        },
-        drawerContent = { SideDrawerContent(router, Screen.ContactList) },
-        floatingActionButton = { AddContactButton(screenContext) }
-    ) {
-        ContactListContent(screenContext)
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = {
+                ContactListTopBar(
+                    viewModel = screenContext.contactListViewModel,
+                    scaffoldState = scaffoldState,
+                    coroutineScope = coroutineScope,
+                )
+            },
+            drawerContent = { SideDrawerContent(router, Screen.ContactList) },
+            floatingActionButton = { AddContactButton(screenContext) }
+        ) {
+            ContactListContent(screenContext)
+        }
     }
-}
 
-@Composable
-private fun AddContactButton(screenContext: ScreenContext) {
-    FloatingActionButton(onClick = { createContact(screenContext) }) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = stringResource(id = R.string.create_contact),
-            tint = MaterialTheme.colors.onSecondary,
+    @Composable
+    private fun AddContactButton(screenContext: ScreenContext) {
+        FloatingActionButton(onClick = { createContact(screenContext) }) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = stringResource(id = R.string.create_contact),
+                tint = MaterialTheme.colors.onSecondary,
+            )
+        }
+    }
+
+    @Composable
+    private fun ContactListContent(screenContext: ScreenContext) {
+        val viewModel = screenContext.contactListViewModel
+        val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
+
+        when {
+            pagedContacts.isError -> LoadingError(viewModel)
+            pagedContacts.isLoading -> LoadingIndicatorFullScreen(R.string.loading_contacts)
+            else -> ContactList(pagedContacts = pagedContacts) { contact ->
+                selectContact(screenContext, contact)
+            }
+        }
+    }
+
+    @Composable
+    private fun LoadingError(viewModel: ContactListViewModel) {
+        FullScreenError(
+            errorMessage = R.string.data_loading_error,
+            buttonConfig = ButtonConfig(
+                label = R.string.reload_data,
+                icon = Icons.Default.Sync
+            ) { viewModel.reloadContacts() },
         )
     }
-}
 
-@Composable
-private fun ContactListContent(screenContext: ScreenContext) {
-    val viewModel = screenContext.contactListViewModel
-    val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
-
-    when {
-        pagedContacts.isError -> LoadingError(viewModel)
-        pagedContacts.isLoading -> LoadingIndicatorFullScreen(R.string.loading_contacts)
-        else -> ContactList(pagedContacts = pagedContacts) { contact ->
-            selectContact(screenContext, contact)
+    private fun selectContact(screenContext: ScreenContext, contact: IContactBase) {
+        // TODO this should not be done in the view
+        applicationScope.launch {
+            val resolved = screenContext.contactListViewModel.resolveContact(contact)
+            screenContext.contactEditViewModel.selectContact(resolved)
+            val dispatchers: IDispatchers = getAnywhere()
+            withContext(dispatchers.mainImmediate) {
+                screenContext.router.navigateToScreen(Screen.ContactEdit)
+            }
         }
-    }
-}
 
-@Composable
-private fun LoadingError(viewModel: ContactListViewModel) {
-    FullScreenError(
-        errorMessage = R.string.data_loading_error,
-        buttonConfig = ButtonConfig(
-            label = R.string.reload_data,
-            icon = Icons.Default.Sync
-        ) { viewModel.reloadContacts() },
-    )
-}
-
-private fun selectContact(screenContext: ScreenContext, contact: IContactBase) {
-    // TODO this should not be done in the view
-    applicationScope.launch {
-        val resolved = screenContext.contactListViewModel.resolveContact(contact)
-        screenContext.contactEditViewModel.selectContact(resolved)
-        val dispatchers: IDispatchers = getAnywhere()
-        withContext(dispatchers.mainImmediate) {
-            screenContext.router.navigateToScreen(Screen.ContactEdit)
-        }
+        // TODO implement with read-only screen
     }
 
-// TODO implement with read-only screen
-}
-
-private fun createContact(screenContext: ScreenContext) {
-    screenContext.contactEditViewModel.createContact()
-    screenContext.router.navigateToScreen(Screen.ContactEdit)
+    private fun createContact(screenContext: ScreenContext) {
+        screenContext.contactEditViewModel.createContact()
+        screenContext.router.navigateToScreen(Screen.ContactEdit)
+    }
 }

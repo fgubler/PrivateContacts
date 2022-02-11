@@ -32,7 +32,7 @@ data class PhoneNumber(
         return copy(modelStatus = status)
     }
 
-    override fun formatValueForSearch(): String = value.filter { it.isDigit() }
+    override fun formatValueForSearch(): String = formatValueForSearch(value)
 
     companion object {
         private val defaultAllowedTypes = listOf(
@@ -51,5 +51,8 @@ data class PhoneNumber(
                 isMain = (sortOrder == 0),
                 modelStatus = ModelStatus.NEW,
             )
+
+        fun formatValueForSearch(value: String): String =
+            value.filter { it.isDigit() }
     }
 }

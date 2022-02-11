@@ -22,25 +22,41 @@ interface ContactDao {
         """
         SELECT * 
         FROM ContactEntity
-        WHERE fullTextSearch LIKE '%' || :query || '%'
+        WHERE (
+            fullTextSearch LIKE '%' || :query || '%' OR 
+            (:phoneNumberQuery != '' AND fullTextSearch LIKE '%' || :phoneNumberQuery || '%')
+        )
         ORDER BY firstName, lastName, id 
         LIMIT :loadSize 
         OFFSET :offsetInRows 
     """
     )
-    suspend fun searchPagedByFirstName(query: String, loadSize: Int, offsetInRows: Int): List<ContactEntity>
+    suspend fun searchPagedByFirstName(
+        query: String,
+        phoneNumberQuery: String,
+        loadSize: Int,
+        offsetInRows: Int
+    ): List<ContactEntity>
 
     @Query(
         """
         SELECT * 
         FROM ContactEntity
-        WHERE fullTextSearch LIKE '%' || :query || '%'
+        WHERE (
+            fullTextSearch LIKE '%' || :query || '%' OR 
+            (:phoneNumberQuery != '' AND fullTextSearch LIKE '%' || :phoneNumberQuery || '%')
+        )
         ORDER BY lastName, firstName, id 
         LIMIT :loadSize 
         OFFSET :offsetInRows 
     """
     )
-    suspend fun searchPagedByLastName(query: String, loadSize: Int, offsetInRows: Int): List<ContactEntity>
+    suspend fun searchPagedByLastName(
+        query: String,
+        phoneNumberQuery: String,
+        loadSize: Int,
+        offsetInRows: Int
+    ): List<ContactEntity>
 
     @Query("SELECT COUNT(1) FROM ContactEntity")
     suspend fun count(): Int

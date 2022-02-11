@@ -1,6 +1,8 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
@@ -14,21 +16,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
+import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
+@ExperimentalComposeUiApi
 @Composable
-fun ContactListScreen.ContactListTopBar(
+fun ContactListTopBar(
     viewModel: ContactListViewModel,
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
@@ -69,9 +77,11 @@ fun ContactListScreen.ContactListTopBar(
     )
 }
 
+@ExperimentalComposeUiApi
 @Composable
 private fun SearchField(query: String, onQueryChanged: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
+    val manager = createKeyboardAndFocusManager()
 
     TextField(
         value = query,
@@ -85,7 +95,13 @@ private fun SearchField(query: String, onQueryChanged: (String) -> Unit) {
             if (query.isNotEmpty()) {
                 CancelIcon(Modifier.clickable { onQueryChanged("") })
             }
-        }
+        },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            imeAction = ImeAction.Search
+        ),
+        keyboardActions = KeyboardActions(onSearch = {
+            manager.closeKeyboardAndClearFocus()
+        })
     )
 
     LaunchedEffect(Unit) {

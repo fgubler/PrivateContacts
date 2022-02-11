@@ -4,6 +4,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactBase
@@ -12,7 +13,9 @@ import ch.abwesend.privatecontacts.testutil.someContactFull
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -27,14 +30,15 @@ class ContactRepositoryTest : TestBase() {
     @MockK
     private lateinit var contactDataRepository: ContactDataRepository
 
-    private lateinit var underTest: ContactRepository
+    @RelaxedMockK
+    private lateinit var searchService: FullTextSearchService
 
-    override fun setup() {
-        underTest = ContactRepository()
-    }
+    @InjectMockKs
+    private lateinit var underTest: ContactRepository
 
     override fun Module.setupKoinModule() {
         single { contactDataRepository }
+        single { searchService }
     }
 
     @Test

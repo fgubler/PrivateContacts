@@ -9,7 +9,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Cust
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -164,7 +164,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataBase)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
@@ -182,7 +182,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataBase)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)
@@ -202,7 +202,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isNotNull
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataBase)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)

@@ -32,8 +32,6 @@ data class EmailAddress(
         return copy(modelStatus = status)
     }
 
-    override fun formatValueForSearch(): String = value
-
     companion object {
         private val defaultAllowedTypes = listOf(
             ContactDataType.Private,

@@ -42,8 +42,8 @@ fun ContactDataType.getTitle(context: Context = LocalContext.current): String {
 
 @ExperimentalComposeUiApi
 @Composable
-fun createKeyboardAndFocusManager(): KeyboardAndFocusHandler {
+fun createKeyboardAndFocusManager(): KeyboardAndFocusManager {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    return KeyboardAndFocusHandler(keyboardController, focusManager)
+    return KeyboardAndFocusManager(keyboardController, focusManager)
 }

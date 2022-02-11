@@ -11,8 +11,9 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactList
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
-import ch.abwesend.privatecontacts.view.screens.contactlist.Screen
+import kotlinx.coroutines.FlowPreview
 
+@FlowPreview
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @Composable

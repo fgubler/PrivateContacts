@@ -9,12 +9,14 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
+    private val searchService: FullTextSearchService by injectAnywhere()
 
     override suspend fun loadContacts(): List<IContactBase> =
         withDatabase { database ->
@@ -54,12 +56,26 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         config: ContactSearchConfig.Query,
         loadSize: Int,
         offsetInRows: Int
-    ): List<IContactBase> =
-        if (Settings.orderByFirstName) {
-            contactDao().searchPagedByFirstName(query = config.query, loadSize = loadSize, offsetInRows = offsetInRows)
+    ): List<IContactBase> {
+        val phoneNumberQuery = searchService.prepareQueryForPhoneNumberSearch(config.query)
+            .takeIf { searchService.isLongEnough(it) }.orEmpty()
+
+        return if (Settings.orderByFirstName) {
+            contactDao().searchPagedByFirstName(
+                query = config.query,
+                phoneNumberQuery = phoneNumberQuery,
+                loadSize = loadSize,
+                offsetInRows = offsetInRows,
+            )
         } else {
-            contactDao().searchPagedByLastName(query = config.query, loadSize = loadSize, offsetInRows = offsetInRows)
+            contactDao().searchPagedByLastName(
+                query = config.query,
+                phoneNumberQuery = phoneNumberQuery,
+                loadSize = loadSize,
+                offsetInRows = offsetInRows,
+            )
         }
+    }
 
     override suspend fun resolveContact(contact: IContactBase): IContact {
         val contactData = contactDataRepository.loadContactData(contact)

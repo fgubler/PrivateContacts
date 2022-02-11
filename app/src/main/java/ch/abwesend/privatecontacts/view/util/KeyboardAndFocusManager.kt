@@ -5,7 +5,7 @@ import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.platform.SoftwareKeyboardController
 
 @ExperimentalComposeUiApi
-class KeyboardAndFocusHandler(
+class KeyboardAndFocusManager(
     private val keyboardController: SoftwareKeyboardController?,
     private val focusManager: FocusManager,
 ) : FocusManager by focusManager {
