@@ -26,78 +26,79 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.theme.AppColors
 
-val primaryIconModifier = Modifier.width(60.dp)
-val secondaryIconModifier = Modifier.width(40.dp)
-val iconHorizontalPadding = 20.dp
-val textFieldModifier = Modifier.padding(bottom = 2.dp)
+object ContactEditCommonComponents {
+    private val primaryIconModifier = Modifier.width(60.dp)
+    private val iconHorizontalPadding = 20.dp
 
-@Composable
-fun ContactEditScreen.ContactCategory(
-    @StringRes categoryTitle: Int,
-    icon: ImageVector,
-    initiallyExpanded: Boolean = true,
-    alignContentWithTitle: Boolean = true,
-    content: @Composable () -> Unit
-) {
-    var expanded by remember { mutableStateOf(initiallyExpanded) }
-    val onExpandedChanged: (Boolean) -> Unit = { expanded = it }
+    val secondaryIconModifier = Modifier.width(40.dp)
+    val textFieldModifier = Modifier.padding(bottom = 2.dp)
 
-    Card(modifier = Modifier.padding(all = 5.dp)) {
-        Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
-            Column {
-                ContactCategoryHeader(
-                    title = categoryTitle,
-                    icon = icon,
-                    expanded = expanded,
-                    onToggleExpanded = { onExpandedChanged(!expanded) }
-                )
-                if (expanded) {
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        if (alignContentWithTitle) {
-                            Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
-                        }
-                        Box(modifier = Modifier.padding(horizontal = 5.dp)) {
-                            content()
+    @Composable
+    fun ContactCategory(
+        @StringRes categoryTitle: Int,
+        icon: ImageVector,
+        initiallyExpanded: Boolean = true,
+        alignContentWithTitle: Boolean = true,
+        content: @Composable () -> Unit
+    ) {
+        var expanded by remember { mutableStateOf(initiallyExpanded) }
+        val onExpandedChanged: (Boolean) -> Unit = { expanded = it }
+
+        Card(modifier = Modifier.padding(all = 5.dp)) {
+            Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
+                Column {
+                    ContactCategoryHeader(
+                        title = categoryTitle,
+                        icon = icon,
+                        expanded = expanded,
+                        onToggleExpanded = { onExpandedChanged(!expanded) }
+                    )
+                    if (expanded) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            if (alignContentWithTitle) {
+                                Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
+                            }
+                            Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                                content()
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
 
-@Suppress("unused")
-@Composable
-fun ContactEditScreen.ContactCategoryHeader(
-    @StringRes title: Int,
-    icon: ImageVector,
-    expanded: Boolean,
-    onToggleExpanded: () -> Unit,
-) {
-    val expandIcon = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onToggleExpanded() }
+    @Composable
+    fun ContactCategoryHeader(
+        @StringRes title: Int,
+        icon: ImageVector,
+        expanded: Boolean,
+        onToggleExpanded: () -> Unit,
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = title),
-            modifier = primaryIconModifier.padding(end = iconHorizontalPadding),
-            tint = AppColors.grayText
-        )
-        Column(modifier = Modifier.weight(1.0f)) {
-            Text(text = stringResource(id = title))
+        val expandIcon = if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onToggleExpanded() }
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(id = title),
+                modifier = primaryIconModifier.padding(end = iconHorizontalPadding),
+                tint = AppColors.grayText
+            )
+            Column(modifier = Modifier.weight(1.0f)) {
+                Text(text = stringResource(id = title))
+            }
+            Icon(
+                imageVector = expandIcon,
+                contentDescription = stringResource(id = R.string.expand),
+                modifier = secondaryIconModifier.padding(start = iconHorizontalPadding)
+            )
         }
-        Icon(
-            imageVector = expandIcon,
-            contentDescription = stringResource(id = R.string.expand),
-            modifier = secondaryIconModifier.padding(start = iconHorizontalPadding)
-        )
     }
 }

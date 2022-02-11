@@ -27,7 +27,6 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
 
-@Suppress("unused")
 @Composable
 fun ContactListScreen.ContactListTopBar(
     viewModel: ContactListViewModel,
