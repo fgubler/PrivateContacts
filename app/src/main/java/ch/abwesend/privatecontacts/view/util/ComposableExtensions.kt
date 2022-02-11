@@ -2,7 +2,10 @@ package ch.abwesend.privatecontacts.view.util
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
@@ -35,4 +38,12 @@ fun <T> AsyncResource<T>.composeIfError(handler: @Composable (List<Exception>) -
 @Composable
 fun ContactDataType.getTitle(context: Context = LocalContext.current): String {
     return getTitle(context::getString)
+}
+
+@ExperimentalComposeUiApi
+@Composable
+fun createKeyboardAndFocusManager(): KeyboardAndFocusHandler {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    return KeyboardAndFocusHandler(keyboardController, focusManager)
 }
