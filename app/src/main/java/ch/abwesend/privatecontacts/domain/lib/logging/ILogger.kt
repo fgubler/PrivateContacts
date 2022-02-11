@@ -21,3 +21,10 @@ interface ILogger {
     fun error(message: String, t: Throwable)
     fun error(t: Throwable)
 }
+
+/**
+ * Inline to make sure the stack-trace starts at the right place.
+ */
+inline fun ILogger.error(message: String) {
+    error(message, LoggingException(message))
+}
