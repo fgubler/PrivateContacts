@@ -14,10 +14,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.util.applicationScope
-import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
@@ -28,8 +25,6 @@ import ch.abwesend.privatecontacts.view.util.isError
 import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @ExperimentalComposeUiApi
 @FlowPreview
@@ -95,17 +90,8 @@ object ContactListScreen {
     }
 
     private fun selectContact(screenContext: ScreenContext, contact: IContactBase) {
-        // TODO this should not be done in the view
-        applicationScope.launch {
-            val resolved = screenContext.contactListViewModel.resolveContact(contact)
-            screenContext.contactEditViewModel.selectContact(resolved)
-            val dispatchers: IDispatchers = getAnywhere()
-            withContext(dispatchers.mainImmediate) {
-                screenContext.router.navigateToScreen(Screen.ContactEdit)
-            }
-        }
-
-        // TODO implement with read-only screen
+        screenContext.contactDetailViewModel.selectContact(contact)
+        screenContext.router.navigateToScreen(Screen.ContactDetail)
     }
 
     private fun createContact(screenContext: ScreenContext) {

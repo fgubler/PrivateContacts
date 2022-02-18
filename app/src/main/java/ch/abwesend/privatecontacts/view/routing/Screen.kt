@@ -38,7 +38,7 @@ enum class Screen(
     ContactDetail(
         titleRes = R.string.screen_contact_details,
         icon = Icons.Default.ContactPage,
-        key = "ContactDetailsScreen",
+        key = "ContactDetailScreen",
         showInSideDrawer = false,
     ),
 

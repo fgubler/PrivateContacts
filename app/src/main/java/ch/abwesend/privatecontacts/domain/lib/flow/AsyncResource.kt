@@ -3,32 +3,44 @@ package ch.abwesend.privatecontacts.domain.lib.flow
 sealed class AsyncResourceGeneric<TValue, TError> {
     abstract val valueOrNull: TValue?
 
-    open fun ifReady(handler: ReadyHandler<TValue>) {}
-    open fun ifLoading(handler: LoadingHandler) {}
-    open fun ifError(handler: ErrorHandlerGeneric<TError>) {}
-    open fun ifInactive(handler: InactiveHandler) {}
+    open fun ifReady(handler: ReadyHandler<TValue>): AsyncResourceGeneric<TValue, TError> = this
+    open fun ifLoading(handler: LoadingHandler): AsyncResourceGeneric<TValue, TError> = this
+    open fun ifError(handler: ErrorHandlerGeneric<TError>): AsyncResourceGeneric<TValue, TError> = this
+    open fun ifInactive(handler: InactiveHandler): AsyncResourceGeneric<TValue, TError> = this
 }
 
 typealias AsyncResource<TValue> = AsyncResourceGeneric<TValue, Exception>
 
 data class ReadyResource<T>(val value: T) : AsyncResource<T>() {
     override val valueOrNull = value
-    override fun ifReady(handler: ReadyHandler<T>): Unit = handler(value)
+    override fun ifReady(handler: ReadyHandler<T>): ReadyResource<T> {
+        handler(value)
+        return this
+    }
 }
 
 class LoadingResource<T> : AsyncResource<T>() {
     override val valueOrNull: T? = null
-    override fun ifLoading(handler: LoadingHandler): Unit = handler()
+    override fun ifLoading(handler: LoadingHandler): LoadingResource<T> {
+        handler()
+        return this
+    }
 }
 
 data class ErrorResource<T>(val errors: List<Exception>) : AsyncResource<T>() {
     override val valueOrNull: T? = null
-    override fun ifError(handler: ErrorHandlerGeneric<Exception>): Unit = handler(errors)
+    override fun ifError(handler: ErrorHandlerGeneric<Exception>): ErrorResource<T> {
+        handler(errors)
+        return this
+    }
 }
 
 class InactiveResource<T> : AsyncResource<T>() {
     override val valueOrNull: T? = null
-    override fun ifInactive(handler: InactiveHandler): Unit = handler()
+    override fun ifInactive(handler: InactiveHandler): InactiveResource<T> {
+        handler()
+        return this
+    }
 }
 
 fun interface ReadyHandler<T> {
