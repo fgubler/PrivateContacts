@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apartment
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Language
@@ -11,10 +12,12 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.KeyboardType
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
 
 @ExperimentalMaterialApi
@@ -95,7 +98,27 @@ object ContactDataEditComponents {
             icon = Icons.Default.Language,
             keyboardType = KeyboardType.Uri,
             showIfEmpty = showIfEmpty,
-            factory = { PhysicalAddress.createEmpty(it) },
+            factory = { Website.createEmpty(it) },
+            waitForCustomType = waitForCustomType,
+            onChanged = onChanged
+        )
+    }
+
+    @Composable
+    fun Companies(
+        contact: IContactEditable,
+        showIfEmpty: Boolean,
+        waitForCustomType: (ContactData) -> Unit,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
+        ContactDataCategory(
+            contact = contact,
+            categoryTitle = R.string.companies,
+            fieldLabel = R.string.company,
+            icon = Icons.Default.Apartment,
+            keyboardType = KeyboardType.Text,
+            showIfEmpty = showIfEmpty,
+            factory = { Company.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
         )

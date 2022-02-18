@@ -7,6 +7,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
@@ -88,6 +89,15 @@ class ContactDataRepository : RepositoryBase() {
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )
+            ContactDataCategory.COMPANY -> Company(
+                id = ContactDataId(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
+
             ContactDataCategory.DATE -> null // TODO implement
         }
     } catch (e: Exception) {

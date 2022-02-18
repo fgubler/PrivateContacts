@@ -4,6 +4,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
@@ -23,6 +24,7 @@ fun ContactDataTypeEntity.toContactDataType(): ContactDataType {
         MOBILE -> ContactDataType.Mobile
         OTHER -> ContactDataType.Other
         BIRTHDAY -> ContactDataType.Birthday
+        MAIN -> ContactDataType.Main
         CUSTOM -> ContactDataType.CustomValue(customValue.orEmpty())
     }
 }

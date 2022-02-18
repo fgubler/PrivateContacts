@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhysicalAddresses
@@ -104,6 +105,12 @@ object ContactEditScreenContent {
                 onChanged = onChanged
             )
             Websites(
+                contact = contact,
+                showIfEmpty = showAllFields,
+                waitForCustomType = waitForCustomContactDataType,
+                onChanged = onChanged
+            )
+            ContactDataEditComponents.Companies(
                 contact = contact,
                 showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,

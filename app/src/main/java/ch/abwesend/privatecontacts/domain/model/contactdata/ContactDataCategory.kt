@@ -5,5 +5,6 @@ enum class ContactDataCategory {
     PHONE_NUMBER,
     ADDRESS,
     WEBSITE,
+    COMPANY,
     DATE,
 }

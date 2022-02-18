@@ -4,6 +4,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
@@ -42,6 +43,11 @@ sealed class ContactDataType {
         override val titleRes: Int = R.string.type_birthday
     }
 
+    object Main : ContactDataType() {
+        override val key: Key = MAIN
+        override val titleRes: Int = R.string.type_main
+    }
+
     /** The "Custom" which is shown in the dropdown of possible sub-types */
     object Custom : ContactDataType() {
         override val key: Key = CUSTOM
@@ -62,6 +68,7 @@ sealed class ContactDataType {
         MOBILE,
         OTHER,
         BIRTHDAY,
+        MAIN,
         CUSTOM,
     }
 }

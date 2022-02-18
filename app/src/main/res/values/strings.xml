@@ -35,6 +35,7 @@
     <string name="type_other">Other</string>
     <string name="type_custom">Custom</string>
     <string name="type_birthday">Birthday</string>
+    <string name="type_main">Main</string>
 
     <string name="create_contact">Create Contact</string>
 
@@ -58,7 +59,8 @@
     <string name="physical_addresses">Addresses</string>
     <string name="website">Website</string>
     <string name="websites">Websites</string>
-
+    <string name="company">Company</string>
+    <string name="companies">Companies</string>
 
     <string name="show_additional_fields">Show additional fields</string>
 
