@@ -56,6 +56,9 @@
     <string name="email_addresses">Email addresses</string>
     <string name="physical_address">Address</string>
     <string name="physical_addresses">Addresses</string>
+    <string name="website">Website</string>
+    <string name="websites">Websites</string>
+
 
     <string name="show_additional_fields">Show additional fields</string>
 

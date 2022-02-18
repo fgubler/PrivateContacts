@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
@@ -79,7 +80,14 @@ class ContactDataRepository : RepositoryBase() {
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )
-            ContactDataCategory.WEBSITE -> null // TODO implement
+            ContactDataCategory.WEBSITE -> Website(
+                id = ContactDataId(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
             ContactDataCategory.DATE -> null // TODO implement
         }
     } catch (e: Exception) {

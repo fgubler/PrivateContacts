@@ -6,6 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.WEBSITE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
@@ -14,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -226,6 +228,25 @@ class ContactDataRepositoryTest : TestBase() {
 
         assertThat(result).isNotNull
         assertThat(result).isInstanceOf(PhysicalAddress::class.java)
+        assertThat(result!!.id.uuid).isEqualTo(entity.id)
+        assertThat(result.category).isEqualTo(entity.category)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
+        assertThat(result.type.key).isEqualTo(entity.type.key)
+        assertThat(result.isMain).isEqualTo(entity.isMain)
+    }
+
+    @Test
+    fun `resolving an website should return it`() {
+        val entity = someContactDataEntity(
+            category = WEBSITE,
+            type = ContactDataTypeEntity(BUSINESS, null)
+        )
+
+        val result = runBlocking { underTest.tryResolveContactData(entity) }
+
+        assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(Website::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
         assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)

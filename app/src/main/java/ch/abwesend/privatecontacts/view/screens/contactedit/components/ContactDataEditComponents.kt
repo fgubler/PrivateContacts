@@ -4,6 +4,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -73,6 +74,26 @@ object ContactDataEditComponents {
             fieldLabel = R.string.physical_address,
             icon = Icons.Default.Home,
             keyboardType = KeyboardType.Text,
+            showIfEmpty = showIfEmpty,
+            factory = { PhysicalAddress.createEmpty(it) },
+            waitForCustomType = waitForCustomType,
+            onChanged = onChanged
+        )
+    }
+
+    @Composable
+    fun Websites(
+        contact: IContactEditable,
+        showIfEmpty: Boolean,
+        waitForCustomType: (ContactData) -> Unit,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
+        ContactDataCategory(
+            contact = contact,
+            categoryTitle = R.string.websites,
+            fieldLabel = R.string.website,
+            icon = Icons.Default.Language,
+            keyboardType = KeyboardType.Uri,
             showIfEmpty = showIfEmpty,
             factory = { PhysicalAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
