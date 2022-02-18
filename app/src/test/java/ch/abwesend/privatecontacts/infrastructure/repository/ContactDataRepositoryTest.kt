@@ -3,12 +3,16 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
@@ -162,6 +166,7 @@ class ContactDataRepositoryTest : TestBase() {
         val result = runBlocking { underTest.tryResolveContactData(entity) }
 
         assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(PhoneNumber::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
         assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
@@ -180,6 +185,7 @@ class ContactDataRepositoryTest : TestBase() {
         val result = runBlocking { underTest.tryResolveContactData(entity) }
 
         assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(PhoneNumber::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
         assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
@@ -200,6 +206,26 @@ class ContactDataRepositoryTest : TestBase() {
         val result = runBlocking { underTest.tryResolveContactData(entity) }
 
         assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(EmailAddress::class.java)
+        assertThat(result!!.id.uuid).isEqualTo(entity.id)
+        assertThat(result.category).isEqualTo(entity.category)
+        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
+        assertThat(result.type.key).isEqualTo(entity.type.key)
+        assertThat(result.isMain).isEqualTo(entity.isMain)
+    }
+
+    @Test
+    fun `resolving an physical-address should return it`() {
+        val entity = someContactDataEntity(
+            category = ADDRESS,
+            type = ContactDataTypeEntity(BUSINESS, null)
+        )
+
+        val result = runBlocking { underTest.tryResolveContactData(entity) }
+
+        assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(PhysicalAddress::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
         assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)

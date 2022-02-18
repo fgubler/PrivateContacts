@@ -3,6 +3,7 @@ package ch.abwesend.privatecontacts.view.screens.contactedit.components
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -12,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
 
 @ExperimentalMaterialApi
@@ -53,6 +55,26 @@ object ContactDataEditComponents {
             keyboardType = KeyboardType.Email,
             showIfEmpty = showIfEmpty,
             factory = { EmailAddress.createEmpty(it) },
+            waitForCustomType = waitForCustomType,
+            onChanged = onChanged
+        )
+    }
+
+    @Composable
+    fun PhysicalAddresses(
+        contact: IContactEditable,
+        showIfEmpty: Boolean,
+        waitForCustomType: (ContactData) -> Unit,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
+        ContactDataCategory(
+            contact = contact,
+            categoryTitle = R.string.physical_addresses,
+            fieldLabel = R.string.physical_address,
+            icon = Icons.Default.Home,
+            keyboardType = KeyboardType.Text,
+            showIfEmpty = showIfEmpty,
+            factory = { PhysicalAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
         )

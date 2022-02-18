@@ -33,6 +33,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhysicalAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
 import ch.abwesend.privatecontacts.view.util.addOrReplace
@@ -90,6 +91,12 @@ object ContactEditScreenContent {
                 onChanged = onChanged
             )
             EmailAddresses(
+                contact = contact,
+                showIfEmpty = showAllFields,
+                waitForCustomType = waitForCustomContactDataType,
+                onChanged = onChanged
+            )
+            PhysicalAddresses(
                 contact = contact,
                 showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,

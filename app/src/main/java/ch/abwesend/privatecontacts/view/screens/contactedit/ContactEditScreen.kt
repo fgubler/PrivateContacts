@@ -50,7 +50,7 @@ object ContactEditScreen {
         val viewModel = screenContext.contactEditViewModel
         val selectedContact = viewModel.selectedContact
 
-        var showAllFields: Boolean by remember { mutableStateOf(false) }
+        var showAllFields: Boolean by remember { mutableStateOf(true) }
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingError: ContactSavingError? by remember { mutableStateOf(null) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }

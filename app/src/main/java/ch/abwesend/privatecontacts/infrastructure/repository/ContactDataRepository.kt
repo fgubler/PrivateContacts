@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
@@ -70,7 +71,14 @@ class ContactDataRepository : RepositoryBase() {
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )
-            ContactDataCategory.ADDRESS -> null // TODO implement
+            ContactDataCategory.ADDRESS -> PhysicalAddress(
+                id = ContactDataId(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
             ContactDataCategory.WEBSITE -> null // TODO implement
             ContactDataCategory.DATE -> null // TODO implement
         }
