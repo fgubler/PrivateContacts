@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 import androidx.annotation.StringRes
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -50,6 +51,7 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 
+@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactDetailScreen {
