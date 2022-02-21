@@ -24,14 +24,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -82,7 +87,13 @@ object ContactDetailScreen {
         var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false)}
 
         TopAppBar(
-            title = { Text(text = stringResource(id = title)) },
+            title = {
+                Text(
+                    text = contact?.getFullName() ?: stringResource(id = title),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            },
             navigationIcon = {
                 BackIconButton { screenContext.router.navigateUp() }
             },
@@ -111,6 +122,7 @@ object ContactDetailScreen {
         onCloseMenu: () -> Unit
     ) {
         var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+        var deletionError: ContactChangeError? by remember { mutableStateOf(null) }
 
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
             DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
@@ -120,10 +132,15 @@ object ContactDetailScreen {
         DeleteConfirmationDialog(
             screenContext = screenContext,
             contact = contact,
-            visible = deleteConfirmationDialogVisible
-        ) {
-            deleteConfirmationDialogVisible = false
-            onCloseMenu()
+            visible = deleteConfirmationDialogVisible,
+            hideDialog = {
+                deleteConfirmationDialogVisible = false
+                onCloseMenu()
+            },
+            onDeletionFailed = { deletionError = it },
+        )
+        DeleteErrorDialog(error = deletionError) {
+            deletionError = null
         }
     }
 
@@ -132,9 +149,10 @@ object ContactDetailScreen {
         screenContext: ScreenContext,
         contact: IContact,
         visible: Boolean,
-        hideDialog: () -> Unit
+        hideDialog: () -> Unit,
+        onDeletionFailed: (ContactChangeError) -> Unit,
     ) {
-        var deletionFlow: Flow<Unit>? by remember { mutableStateOf(null) }
+        var deletionFlow: Flow<ContactDeleteResult>? by remember { mutableStateOf(null) }
         if (visible) {
             YesNoDialog(
                 title = R.string.delete_contact_title,
@@ -146,8 +164,14 @@ object ContactDetailScreen {
                 onNo = hideDialog
             )
         }
+
         LaunchedEffect(deletionFlow) {
-            deletionFlow?.collect { screenContext.router.navigateUp() }
+            deletionFlow?.collect { result ->
+                when (result) {
+                    is ContactDeleteResult.Success -> screenContext.router.navigateUp()
+                    is ContactDeleteResult.Failure -> onDeletionFailed(result.error)
+                }
+            }
         }
     }
 
@@ -175,5 +199,22 @@ object ContactDetailScreen {
                 viewModel.reloadContact()
             }
         )
+    }
+
+    @Composable
+    private fun DeleteErrorDialog(
+        error: ContactChangeError?,
+        onClose: () -> Unit
+    ) {
+        error?.let { savingError ->
+            OkDialog(
+                title = R.string.error,
+                onClose = onClose
+            ) {
+                val errorText = stringResource(id = savingError.label)
+                val description = stringResource(R.string.delete_contact_error, errorText)
+                Text(text = description)
+            }
+        }
     }
 }

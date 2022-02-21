@@ -21,7 +21,7 @@ object ContactDetailScreenContent {
         Text(
             text = contact.getFullName(),
             modifier = Modifier.padding(start = 20.dp),
-            style = MaterialTheme.typography.h4
+            style = MaterialTheme.typography.h6
         )
         // TODO implement
     }
