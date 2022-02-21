@@ -48,7 +48,6 @@ import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
@@ -59,6 +58,7 @@ object ContactDetailScreen {
     fun Screen(screenContext: ScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
+        var deletionError: ContactChangeError? by remember { mutableStateOf(null) }
 
         Scaffold(
             topBar = {
@@ -73,6 +73,19 @@ object ContactDetailScreen {
                 .composeIfInactive { NoContactLoaded(router = screenContext.router) }
                 .composeIfLoading { LoadingIndicatorFullScreen(R.string.loading_contacts) }
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
+        }
+
+        DeleteErrorDialog(error = deletionError) {
+            deletionError = null
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.deleteResult.collect { result ->
+                when (result) {
+                    is ContactDeleteResult.Success -> screenContext.router.navigateUp()
+                    is ContactDeleteResult.Failure -> deletionError = result.error
+                }
+            }
         }
     }
 
@@ -122,7 +135,6 @@ object ContactDetailScreen {
         onCloseMenu: () -> Unit
     ) {
         var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-        var deletionError: ContactChangeError? by remember { mutableStateOf(null) }
 
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
             DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
@@ -137,11 +149,7 @@ object ContactDetailScreen {
                 deleteConfirmationDialogVisible = false
                 onCloseMenu()
             },
-            onDeletionFailed = { deletionError = it },
         )
-        DeleteErrorDialog(error = deletionError) {
-            deletionError = null
-        }
     }
 
     @Composable
@@ -150,28 +158,17 @@ object ContactDetailScreen {
         contact: IContact,
         visible: Boolean,
         hideDialog: () -> Unit,
-        onDeletionFailed: (ContactChangeError) -> Unit,
     ) {
-        var deletionFlow: Flow<ContactDeleteResult>? by remember { mutableStateOf(null) }
         if (visible) {
             YesNoDialog(
                 title = R.string.delete_contact_title,
                 text = R.string.delete_contact_text,
                 onYes = {
                     hideDialog()
-                    deletionFlow = screenContext.contactDetailViewModel.deleteContact(contact)
+                    screenContext.contactDetailViewModel.deleteContact(contact)
                 },
                 onNo = hideDialog
             )
-        }
-
-        LaunchedEffect(deletionFlow) {
-            deletionFlow?.collect { result ->
-                when (result) {
-                    is ContactDeleteResult.Success -> screenContext.router.navigateUp()
-                    is ContactDeleteResult.Failure -> onDeletionFailed(result.error)
-                }
-            }
         }
     }
 
