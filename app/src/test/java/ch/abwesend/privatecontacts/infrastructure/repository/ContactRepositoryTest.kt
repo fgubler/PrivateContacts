@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.someContactEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -162,6 +163,7 @@ class ContactRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         runBlocking { underTest.resolveContact(contact) }
@@ -170,18 +172,20 @@ class ContactRepositoryTest : TestBase() {
     }
 
     @Test
-    fun `resolving a contact should use the base-data from the base-contact`() {
-        val contact = someContactBase()
+    fun `resolving a contact should also re-load the base-data from the database`() {
+        val contact = someContactBase(firstName = "John")
+        val contactEntity = someContactEntity(firstName = "Jack")
         coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
+        coEvery { contactDao.findById(any()) } returns contactEntity
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         val result = runBlocking { underTest.resolveContact(contact) }
 
-        assertThat(result.firstName).isEqualTo(contact.firstName)
-        assertThat(result.lastName).isEqualTo(contact.lastName)
-        assertThat(result.nickname).isEqualTo(contact.nickname)
-        assertThat(result.notes).isEqualTo(contact.notes)
-        assertThat(result.type).isEqualTo(contact.type)
+        assertThat(result.firstName).isEqualTo(contactEntity.firstName)
+        assertThat(result.lastName).isEqualTo(contactEntity.lastName)
+        assertThat(result.nickname).isEqualTo(contactEntity.nickname)
+        assertThat(result.notes).isEqualTo(contactEntity.notes)
+        assertThat(result.type).isEqualTo(contactEntity.type)
     }
 
     @Test
@@ -192,6 +196,7 @@ class ContactRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid, category = PHONE_NUMBER),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         runBlocking { underTest.resolveContact(contact) }
@@ -210,6 +215,7 @@ class ContactRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid, category = EMAIL),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
         runBlocking { underTest.resolveContact(contact) }
