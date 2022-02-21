@@ -20,13 +20,17 @@ import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import kotlinx.coroutines.FlowPreview
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
+@FlowPreview
 class MainActivity : ComponentActivity() {
     private val contactListViewModel: ContactListViewModel by viewModels()
+    private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +56,7 @@ class MainActivity : ComponentActivity() {
         return ScreenContext(
             router = router,
             contactListViewModel = contactListViewModel,
+            contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,
         )
     }

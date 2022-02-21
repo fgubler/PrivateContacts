@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
 fun someContactId(): ContactId = ContactId.randomId()
 
@@ -32,6 +33,24 @@ fun someContactBase(
     nickname = nickname,
     type = type,
     notes = notes,
+)
+
+fun someContactEntity(
+    id: ContactId = someContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = PRIVATE,
+    notes: String = "Tries to do the right thing. Often badly.",
+    fullTextSearch: String = "TestSearch",
+): ContactEntity = ContactEntity(
+    rawId = id.uuid,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    fullTextSearch = fullTextSearch,
 )
 
 fun someContactFull(

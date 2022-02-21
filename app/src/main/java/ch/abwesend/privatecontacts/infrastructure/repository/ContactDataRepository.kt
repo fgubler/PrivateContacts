@@ -110,4 +110,9 @@ class ContactDataRepository : RepositoryBase() {
         logger.error("Failed to resolve contact-data", e)
         null
     }
+
+    suspend fun deleteContactData(contact: IContactBase) = withDatabase { database ->
+        val dataToDelete = database.contactDataDao().getDataForContact(contact.id.uuid)
+        database.contactDataDao().deleteAll(dataToDelete)
+    }
 }

@@ -11,8 +11,10 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.uuid
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
@@ -84,10 +86,13 @@ class ContactRepository : RepositoryBase(), IContactRepository {
     }
 
     override suspend fun resolveContact(contact: IContactBase): IContact {
+        val refreshedContact = withDatabase { database ->
+            database.contactDao().findById(contact.uuid)
+        } ?: contact
         val contactData = contactDataRepository.loadContactData(contact)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
 
-        return contact.toContactEditable(contactDataSet = resolvedData.toMutableList())
+        return refreshedContact.toContactEditable(contactDataSet = resolvedData.toMutableList())
     }
 
     override suspend fun createContact(contact: IContact): ContactSaveResult =
@@ -98,7 +103,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
-            logger.error("Failed to create contact", e)
+            logger.error("Failed to create contact ${contact.id}", e)
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
@@ -110,7 +115,19 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
-            logger.error("Failed to update contact", e)
+            logger.error("Failed to update contact ${contact.id}", e)
             ContactSaveResult.Failure(UNKNOWN_ERROR)
+        }
+
+    override suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
+        try {
+            withDatabase { database ->
+                contactDataRepository.deleteContactData(contact)
+                database.contactDao().delete(contact.id.uuid)
+                ContactDeleteResult.Success
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to delete contact ${contact.id}", e)
+            ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
 }

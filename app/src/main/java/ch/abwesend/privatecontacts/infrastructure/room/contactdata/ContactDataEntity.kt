@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
@@ -22,7 +23,10 @@ import java.util.UUID
             childColumns = ["contactId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [
+      Index("contactId")
+    ],
 )
 data class ContactDataEntity(
     @PrimaryKey val id: UUID,

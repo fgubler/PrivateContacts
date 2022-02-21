@@ -11,14 +11,16 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
 inline fun <reified T : ContactData> IContact.contactDataForDisplay(
+    addEmptyElement: Boolean = true,
     noinline factory: (sortOrder: Int) -> T
 ): List<T> =
     contactDataSet
         .filterIsInstance<T>()
-        .prepareForDisplay(factory)
+        .prepareForDisplay(addEmptyElement, factory)
 
 fun <T : ContactData> List<T>.prepareForDisplay(
-    factory: (sortOrder: Int) -> T
+    addEmptyElement: Boolean = true,
+    factory: (sortOrder: Int) -> T,
 ): List<T> {
     val sortedList = filter { it.modelStatus != DELETED }
         .sortedBy { it.sortOrder }
@@ -30,7 +32,7 @@ fun <T : ContactData> List<T>.prepareForDisplay(
             listOf(factory(sortOrder))
         }
 
-    return sortedList + emptyElement
+    return (sortedList + emptyElement).filter { addEmptyElement || !it.isEmpty }
 }
 
 fun <T : ContactData> MutableList<T>.addOrReplace(newData: T) {

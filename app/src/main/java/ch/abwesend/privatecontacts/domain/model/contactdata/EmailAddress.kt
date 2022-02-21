@@ -6,6 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 
@@ -39,6 +42,10 @@ data class EmailAddress(
     }
 
     companion object {
+        val icon = Icons.Default.Email
+        const val labelPlural = R.string.email_addresses
+        const val labelSingular = R.string.email_address
+
         private val defaultAllowedTypes = listOf(
             ContactDataType.Private,
             ContactDataType.Business,

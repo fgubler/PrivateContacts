@@ -19,6 +19,8 @@ sealed interface ContactData {
     val isEmpty: Boolean
     val modelStatus: ModelStatus
 
+    val displayValue: String
+
     fun changeType(type: ContactDataType): ContactData
     fun delete(): ContactData
 
@@ -39,6 +41,9 @@ interface StringBasedContactDataSimple : ContactData {
 
     override val isEmpty: Boolean
         get() = value.isEmpty()
+
+    override val displayValue: String
+        get() = value
 
     override fun formatValueForSearch(): String = formatValueForSearch(value)
 

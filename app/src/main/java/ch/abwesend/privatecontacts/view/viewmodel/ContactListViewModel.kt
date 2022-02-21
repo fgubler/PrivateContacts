@@ -53,8 +53,4 @@ class ContactListViewModel : ViewModel() {
             searchQueryDebouncer.newValue(preparedQuery)
         }
     }
-
-    // TODO it is not very nice to expose the suspend function
-    suspend fun resolveContact(contact: IContactBase) =
-        loadService.resolveContact(contact)
 }
