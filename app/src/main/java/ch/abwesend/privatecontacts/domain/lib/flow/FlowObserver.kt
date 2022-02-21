@@ -8,10 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-/**
- * Consider observing in a launched effect instead
- */
-@Deprecated("Don't really have proper LifecycleOwners in Compose...")
 class FlowObserver<out T>(
     lifecycleOwner: LifecycleOwner,
     private val flow: Flow<T>,
@@ -40,6 +36,13 @@ class FlowObserver<out T>(
     }
 }
 
+/**
+ * Consider observing in a launched effect instead
+ */
+@Deprecated(
+    message = "Don't really have proper LifecycleOwners in Compose...",
+    replaceWith = ReplaceWith("observeAsState or LaunchedEffect")
+)
 inline fun <reified T> Flow<T>.observe(
     lifecycleOwner: LifecycleOwner,
     noinline collector: suspend (T) -> Unit
