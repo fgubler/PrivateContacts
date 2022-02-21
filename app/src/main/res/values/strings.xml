@@ -89,5 +89,5 @@
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
     <string name="delete_contact_error">Something went wrong: \"%1$s\". The contact could not be deleted.</string>
 
-
+    <string name="send_sms">Send SMS</string>
 </resources>

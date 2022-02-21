@@ -6,36 +6,43 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ContentAlpha
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
-import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithoutHeader
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataRow
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
+import ch.abwesend.privatecontacts.view.util.getTitle
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
     @Composable
-    private fun labelColor() = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
-
-    @Composable
     fun ScreenContent(contact: IContact) {
-        Column {
+        val scrollState = rememberScrollState()
+        Column(modifier = Modifier.verticalScroll(state = scrollState)) {
             PersonalInformation(contact = contact)
             PhoneNumbers(contact = contact)
             EmailAddresses(contact = contact)
@@ -47,7 +54,7 @@ object ContactDetailScreenContent {
 
     @Composable
     private fun PersonalInformation(contact: IContact) {
-        ContactDetailCommonComponents.ContactCategoryWithHeader(
+        ContactCategoryWithHeader(
             categoryTitle = R.string.personal_information,
             icon = Icons.Default.Person,
             alignContentWithTitle = true,
@@ -75,8 +82,35 @@ object ContactDetailScreenContent {
 
     @Composable
     private fun PhoneNumbers(contact: IContact) {
-        // TODO implement
+        val phoneNumbers = contact.contactDataForDisplay(addEmptyElement = false) { PhoneNumber.createEmpty(it) }
+        val context = LocalContext.current
 
+        if (phoneNumbers.isNotEmpty()) {
+            ContactCategoryWithoutHeader(
+                label = PhoneNumber.labelSingular,
+                icon = PhoneNumber.icon,
+            ) {
+                Column {
+                    phoneNumbers.forEach { phoneNumber ->
+                        ContactDataRow(
+                            primaryText = phoneNumber.value,
+                            secondaryText = phoneNumber.type.getTitle(),
+                            primaryAction = {
+                                // TODO implement
+                                Toast.makeText(context, "Call Contact", Toast.LENGTH_SHORT).show()
+                            },
+                            secondaryActionButton = IconButtonConfig(
+                                label = R.string.send_sms,
+                                icon = Icons.Default.Chat
+                            ) {
+                                // TODO implement
+                                Toast.makeText(context, "Send SMS", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
+                }
+            }
+        }
     }
 
     @Composable
@@ -97,11 +131,10 @@ object ContactDetailScreenContent {
 
     }
 
-
     @Composable
     private fun Notes(contact: IContact) {
         if (contact.notes.isNotEmpty()) {
-            ContactDetailCommonComponents.ContactCategoryWithHeader(
+            ContactCategoryWithHeader(
                 categoryTitle = R.string.notes,
                 icon = Icons.Default.SpeakerNotes,
                 alignContentWithTitle = false,
