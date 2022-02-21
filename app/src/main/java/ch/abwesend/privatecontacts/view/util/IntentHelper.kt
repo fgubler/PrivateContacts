@@ -18,6 +18,7 @@ fun Intent.tryStartActivity(context: Context) {
     if (resolveActivity(context.packageManager) != null) {
         ContextCompat.startActivity(context, this, null)
     } else {
+        logger.warning("No app found for schema '${data?.scheme}'")
         Toast
             .makeText(context, R.string.deeplink_failed_no_appropriate_app, Toast.LENGTH_SHORT)
             .show()

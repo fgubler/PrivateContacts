@@ -27,17 +27,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
 import ch.abwesend.privatecontacts.view.util.tryStartActivity
+import java.net.URLEncoder
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -50,6 +53,7 @@ object ContactDetailScreenContent {
             PhoneNumbers(contact = contact)
             EmailAddresses(contact = contact)
             PhysicalAddresses(contact = contact)
+            Websites(contact = contact)
             Companies(contact = contact)
             Notes(contact = contact)
         }
@@ -91,8 +95,12 @@ object ContactDetailScreenContent {
             label = R.string.send_sms,
             icon = Icons.Default.Chat
         ) { phoneNumber ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phoneNumber.value, null))
-            intent.tryStartActivity(context)
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phoneNumber.value, null))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for SMS", e)
+            }
         }
 
         ContactDataCategory(
@@ -101,50 +109,89 @@ object ContactDetailScreenContent {
             secondaryActionConfig = secondaryActionConfig,
             factory = { PhoneNumber.createEmpty(it) },
         ) { phoneNumber ->
-            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber.value, null))
-            intent.tryStartActivity(context)
+            try {
+                val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber.value, null))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for Call", e)
+            }
         }
     }
 
     @Composable
     private fun EmailAddresses(contact: IContact) {
-        val context = LocalContext.current // TODO remove
+        val context = LocalContext.current
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = EmailAddress.labelSingular, icon = EmailAddress.icon),
             factory = { EmailAddress.createEmpty(it) },
-        ) {
-            // TODO implement
-            Toast.makeText(context, "Send Email", Toast.LENGTH_SHORT).show()
+        ) { email ->
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("mailto", email.value, null))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for Email", e)
+            }
         }
     }
 
     @Composable
     private fun PhysicalAddresses(contact: IContact) {
-        val context = LocalContext.current // TODO remove
+        val context = LocalContext.current
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = PhysicalAddress.labelSingular, icon = PhysicalAddress.icon),
             factory = { PhysicalAddress.createEmpty(it) },
-        ) {
-            // TODO implement
-            Toast.makeText(context, "Find location", Toast.LENGTH_SHORT).show()
+        ) { location ->
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("geo", location.value, null))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for Location", e)
+            }
+        }
+    }
+
+
+    @Composable
+    private fun Websites(contact: IContact) {
+        val context = LocalContext.current
+
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = Website.labelSingular, icon = Website.icon),
+            factory = { Website.createEmpty(it) },
+        ) { website ->
+            try {
+                val url = website.value.takeIf {
+                    website.value.startsWith("http") || website.value.startsWith("https")
+                } ?: "http://${website.value}"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for Website", e)
+            }
         }
     }
 
     @Composable
     private fun Companies(contact: IContact) {
-        val context = LocalContext.current // TODO remove
+        val context = LocalContext.current
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = Company.labelSingular, icon = Company.icon),
             factory = { Company.createEmpty(it) },
-        ) {
-            // TODO implement
-            Toast.makeText(context, "Search for company", Toast.LENGTH_SHORT).show()
+        ) { company ->
+            try {
+                val companyName = URLEncoder.encode(company.value, "utf-8")
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=${company.value}"))
+                intent.tryStartActivity(context)
+            } catch(e: Exception) {
+                logger.error("Failed to send intent for Company", e)
+            }
         }
     }
 
