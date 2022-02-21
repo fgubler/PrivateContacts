@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -41,6 +40,8 @@ import ch.abwesend.privatecontacts.view.screens.contactdetail.components.Contact
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
 import ch.abwesend.privatecontacts.view.util.tryStartActivity
 import java.net.URLEncoder
+
+const val UTF_8 = "utf-8"
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -146,7 +147,9 @@ object ContactDetailScreenContent {
             factory = { PhysicalAddress.createEmpty(it) },
         ) { location ->
             try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("geo", location.value, null))
+                val locationEncoded = URLEncoder.encode(location.value, UTF_8)
+                val uri = "geo:0,0?q=$locationEncoded"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
                 intent.tryStartActivity(context)
             } catch(e: Exception) {
                 logger.error("Failed to send intent for Location", e)
@@ -186,8 +189,8 @@ object ContactDetailScreenContent {
             factory = { Company.createEmpty(it) },
         ) { company ->
             try {
-                val companyName = URLEncoder.encode(company.value, "utf-8")
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=${company.value}"))
+                val companyName = URLEncoder.encode(company.value, UTF_8)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=${companyName}"))
                 intent.tryStartActivity(context)
             } catch(e: Exception) {
                 logger.error("Failed to send intent for Company", e)
