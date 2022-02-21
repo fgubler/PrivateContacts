@@ -26,11 +26,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
 
 @ExperimentalMaterialApi
@@ -89,7 +93,7 @@ object ContactDetailScreenContent {
             Toast.makeText(context, "Send SMS", Toast.LENGTH_SHORT).show()
         }
 
-        ContactDetailCommonComponents.ContactDataCategory(
+        ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
             secondaryActionConfig = secondaryActionConfig,
@@ -102,20 +106,44 @@ object ContactDetailScreenContent {
 
     @Composable
     private fun EmailAddresses(contact: IContact) {
-        // TODO implement
+        val context = LocalContext.current // TODO remove
 
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = EmailAddress.labelSingular, icon = EmailAddress.icon),
+            factory = { EmailAddress.createEmpty(it) },
+        ) {
+            // TODO implement
+            Toast.makeText(context, "Send Email", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @Composable
     private fun PhysicalAddresses(contact: IContact) {
-        // TODO implement
+        val context = LocalContext.current // TODO remove
 
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = PhysicalAddress.labelSingular, icon = PhysicalAddress.icon),
+            factory = { PhysicalAddress.createEmpty(it) },
+        ) {
+            // TODO implement
+            Toast.makeText(context, "Find location", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @Composable
     private fun Companies(contact: IContact) {
-        // TODO implement
+        val context = LocalContext.current // TODO remove
 
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = Company.labelSingular, icon = Company.icon),
+            factory = { Company.createEmpty(it) },
+        ) {
+            // TODO implement
+            Toast.makeText(context, "Search for company", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @Composable

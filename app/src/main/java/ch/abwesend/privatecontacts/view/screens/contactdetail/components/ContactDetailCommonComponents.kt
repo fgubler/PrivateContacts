@@ -60,7 +60,7 @@ object ContactDetailCommonComponents {
                     Icon(
                         imageVector = iconConfig.icon,
                         contentDescription = stringResource(id = iconConfig.label),
-                        modifier = primaryIconModifier.padding(top = 20.dp),
+                        modifier = primaryIconModifier.padding(top = 16.dp),
                     )
                     Box(modifier = Modifier.padding(horizontal = 5.dp).fillMaxWidth()) {
                         content()
