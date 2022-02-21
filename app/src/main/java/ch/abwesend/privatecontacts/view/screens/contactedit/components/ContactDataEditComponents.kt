@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.compose.material.ExperimentalMaterialApi
