@@ -66,8 +66,10 @@ object ContactEditCommonComponents {
                         Row(modifier = Modifier.fillMaxWidth()) {
                             if (alignContentWithTitle) {
                                 Spacer(modifier = primaryIconModifier.padding(end = iconHorizontalPadding))
+                            } else {
+                                Spacer(modifier = Modifier.padding(end = 5.dp))
                             }
-                            Box(modifier = Modifier.padding(horizontal = 5.dp)) {
+                            Box(modifier = Modifier.padding(end = 5.dp)) {
                                 content()
                             }
                         }
