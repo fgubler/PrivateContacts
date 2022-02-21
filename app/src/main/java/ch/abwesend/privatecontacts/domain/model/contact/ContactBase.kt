@@ -32,3 +32,6 @@ value class ContactId(val uuid: UUID) {
         fun randomId(): ContactId = ContactId(UUID.randomUUID())
     }
 }
+
+val IContactBase.uuid: UUID
+    get() = id.uuid

@@ -70,6 +70,9 @@ interface ContactDao {
     @Query("SELECT * FROM ContactEntity WHERE id IN (:ids)")
     suspend fun findByIds(ids: List<UUID>): List<ContactEntity>
 
+    @Query("SELECT * FROM ContactEntity WHERE id = :id")
+    suspend fun findById(id: UUID): ContactEntity?
+
     @Query(
         """
         SELECT * 

@@ -126,7 +126,6 @@ object ContactEditScreen {
 
     private fun onSave(screenContext: ScreenContext, contact: IContactEditable) {
         screenContext.contactEditViewModel.saveContact(contact)
-        screenContext.contactDetailViewModel.reloadContact(contact) // update data there
     }
 
     private fun onSaveResult(
@@ -136,7 +135,10 @@ object ContactEditScreen {
         setSavingError: (ContactChangeError) -> Unit,
     ) {
         when (result) {
-            is Success -> screenContext.router.navigateUp()
+            is Success -> {
+                screenContext.contactDetailViewModel.reloadContact() // update data there
+                screenContext.router.navigateUp()
+            }
             is Failure -> setSavingError(result.error)
             is ValidationFailure -> setValidationErrors(result.validationErrors)
         }
