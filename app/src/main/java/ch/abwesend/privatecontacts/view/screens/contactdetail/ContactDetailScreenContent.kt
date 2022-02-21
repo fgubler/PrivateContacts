@@ -17,7 +17,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Sms
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -29,12 +28,10 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
+import ch.abwesend.privatecontacts.view.model.config.IconConfig
+import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
-import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithoutHeader
-import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataRow
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
-import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
-import ch.abwesend.privatecontacts.view.util.getTitle
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -82,34 +79,24 @@ object ContactDetailScreenContent {
 
     @Composable
     private fun PhoneNumbers(contact: IContact) {
-        val phoneNumbers = contact.contactDataForDisplay(addEmptyElement = false) { PhoneNumber.createEmpty(it) }
-        val context = LocalContext.current
+        val context = LocalContext.current // TODO remove
 
-        if (phoneNumbers.isNotEmpty()) {
-            ContactCategoryWithoutHeader(
-                label = PhoneNumber.labelSingular,
-                icon = PhoneNumber.icon,
-            ) {
-                Column {
-                    phoneNumbers.forEach { phoneNumber ->
-                        ContactDataRow(
-                            primaryText = phoneNumber.value,
-                            secondaryText = phoneNumber.type.getTitle(),
-                            primaryAction = {
-                                // TODO implement
-                                Toast.makeText(context, "Call Contact", Toast.LENGTH_SHORT).show()
-                            },
-                            secondaryActionButton = IconButtonConfig(
-                                label = R.string.send_sms,
-                                icon = Icons.Default.Chat
-                            ) {
-                                // TODO implement
-                                Toast.makeText(context, "Send SMS", Toast.LENGTH_SHORT).show()
-                            }
-                        )
-                    }
-                }
-            }
+        val secondaryActionConfig = IconButtonConfig(
+            label = R.string.send_sms,
+            icon = Icons.Default.Chat
+        ) {
+            // TODO implement
+            Toast.makeText(context, "Send SMS", Toast.LENGTH_SHORT).show()
+        }
+
+        ContactDetailCommonComponents.ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
+            secondaryActionConfig = secondaryActionConfig,
+            factory = { PhoneNumber.createEmpty(it) },
+        ) {
+            // TODO implement
+            Toast.makeText(context, "Call Contact", Toast.LENGTH_SHORT).show()
         }
     }
 

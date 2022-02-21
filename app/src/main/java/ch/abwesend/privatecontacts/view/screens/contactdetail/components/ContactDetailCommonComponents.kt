@@ -31,8 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
+import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.theme.AppColors
+import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
+import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.toIconButton
 
 @ExperimentalComposeUiApi
@@ -46,16 +51,15 @@ object ContactDetailCommonComponents {
 
     @Composable
     fun ContactCategoryWithoutHeader(
-        @StringRes label: Int,
-        icon: ImageVector,
+        iconConfig: IconConfig,
         content: @Composable () -> Unit
     ) {
         Card(modifier = Modifier.padding(all = 5.dp)) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Row {
                     Icon(
-                        imageVector = icon,
-                        contentDescription = stringResource(id = label),
+                        imageVector = iconConfig.icon,
+                        contentDescription = stringResource(id = iconConfig.label),
                         modifier = primaryIconModifier.padding(top = 20.dp),
                     )
                     Box(modifier = Modifier.padding(horizontal = 5.dp).fillMaxWidth()) {
@@ -115,11 +119,37 @@ object ContactDetailCommonComponents {
     }
 
     @Composable
+    inline fun <reified T: ContactData> ContactDataCategory(
+        contact: IContact,
+        iconConfig: IconConfig,
+        secondaryActionConfig: IconButtonConfig? = null,
+        noinline factory: (sortOrder: Int) -> T,
+        noinline primaryAction: () -> Unit,
+    ) {
+        val data = contact.contactDataForDisplay(addEmptyElement = false, factory = factory)
+
+        if (data.isNotEmpty()) {
+            ContactCategoryWithoutHeader(iconConfig = iconConfig) {
+                Column {
+                    data.forEach { element ->
+                        ContactDataRow(
+                            primaryText = element.displayValue,
+                            secondaryText = element.type.getTitle(),
+                            primaryAction = primaryAction,
+                            secondaryActionConfig = secondaryActionConfig,
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
     fun ContactDataRow(
         primaryText: String,
         secondaryText: String?,
         primaryAction: () -> Unit,
-        secondaryActionButton: IconButtonConfig?
+        secondaryActionConfig: IconButtonConfig?
     ) {
         val labelStyle = LocalTextStyle.current.copy(
             fontSize = LocalTextStyle.current.fontSize.times(0.8),
@@ -140,7 +170,7 @@ object ContactDetailCommonComponents {
                     Text(text = it, style = labelStyle)
                 }
             }
-            secondaryActionButton?.toIconButton()
+            secondaryActionConfig?.toIconButton()
         }
     }
 }
