@@ -7,11 +7,14 @@
 package ch.abwesend.privatecontacts.view.util
 
 import android.content.Context
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
@@ -20,6 +23,8 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
 
 @Composable
 fun getLogger(): ILogger = LocalContext.current.logger
@@ -59,4 +64,11 @@ fun createKeyboardAndFocusManager(): KeyboardAndFocusManager {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     return KeyboardAndFocusManager(keyboardController, focusManager)
+}
+
+@Composable
+fun IconButtonConfig.toIconButton() {
+    IconButton(onClick = onClick) {
+        Icon(imageVector = icon, contentDescription = stringResource(id = label))
+    }
 }
