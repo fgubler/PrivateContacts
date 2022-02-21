@@ -13,9 +13,12 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 
@@ -70,6 +73,30 @@ val dummyContacts = mutableListOf(
                 sortOrder = 0,
                 modelStatus = CHANGED,
             ),
+            EmailAddress(
+                id = ContactDataId.randomId(),
+                value = "luke@jedi.com",
+                type = ContactDataType.Business,
+                isMain = true,
+                sortOrder = 0,
+                modelStatus = CHANGED,
+            ),
+            PhysicalAddress(
+                id = ContactDataId.randomId(),
+                value = "A lonely hut",
+                type = ContactDataType.Private,
+                isMain = true,
+                sortOrder = 0,
+                modelStatus = CHANGED,
+            ),
+            Company(
+                id = ContactDataId.randomId(),
+                value = "Jedi Inc.",
+                type = ContactDataType.Other,
+                isMain = true,
+                sortOrder = 0,
+                modelStatus = CHANGED,
+            )
         ),
     ),
     Contact(
