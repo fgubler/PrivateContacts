@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
+import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
@@ -122,7 +122,7 @@ object ContactDetailCommonComponents {
     inline fun <reified T: ContactData> ContactDataCategory(
         contact: IContact,
         iconConfig: IconConfig,
-        secondaryActionConfig: IconButtonConfig? = null,
+        secondaryActionConfig: IconButtonConfigGeneric<String>? = null,
         noinline factory: (sortOrder: Int) -> T,
         noinline primaryAction: () -> Unit,
     ) {
@@ -149,7 +149,7 @@ object ContactDetailCommonComponents {
         primaryText: String,
         secondaryText: String?,
         primaryAction: () -> Unit,
-        secondaryActionConfig: IconButtonConfig?
+        secondaryActionConfig: IconButtonConfigGeneric<String>?
     ) {
         val labelStyle = LocalTextStyle.current.copy(
             fontSize = LocalTextStyle.current.fontSize.times(0.8),
@@ -170,7 +170,7 @@ object ContactDetailCommonComponents {
                     Text(text = it, style = labelStyle)
                 }
             }
-            secondaryActionConfig?.toIconButton()
+            secondaryActionConfig?.toIconButton(primaryText)
         }
     }
 }
