@@ -32,7 +32,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
-import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
@@ -58,7 +58,7 @@ object ContactEditScreen {
 
         var showAllFields: Boolean by remember { mutableStateOf(true) }
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
-        var savingError: ContactSavingError? by remember { mutableStateOf(null) }
+        var savingError: ContactChangeError? by remember { mutableStateOf(null) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
 
         LaunchedEffect(Unit) {
@@ -132,7 +132,7 @@ object ContactEditScreen {
         screenContext: ScreenContext,
         result: ContactSaveResult,
         setValidationErrors: (List<ContactValidationError>) -> Unit,
-        setSavingError: (ContactSavingError) -> Unit,
+        setSavingError: (ContactChangeError) -> Unit,
     ) {
         when (result) {
             is Success -> screenContext.router.navigateUp()
@@ -180,7 +180,7 @@ object ContactEditScreen {
 
     @Composable
     private fun SavingErrorDialog(
-        error: ContactSavingError?,
+        error: ContactChangeError?,
         onClose: () -> Unit
     ) {
         error?.let { savingError ->

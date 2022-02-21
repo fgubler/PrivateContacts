@@ -7,6 +7,8 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
@@ -26,4 +28,7 @@ class ContactSaveService {
             else -> contactRepository.updateContact(contact)
         }
     }
+
+    suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
+        contactRepository.deleteContact(contact)
 }

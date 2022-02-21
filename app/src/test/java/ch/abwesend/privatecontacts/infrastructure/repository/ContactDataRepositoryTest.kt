@@ -87,6 +87,23 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.updateAll(any()) }
     }
 
+
+    @Test
+    fun `delete should delete all data for that contact`() {
+        val contact = someContactFull()
+        val contactDataEntities = listOf(
+            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contact.id.uuid),
+        )
+        coEvery { contactDataDao.getDataForContact(contact.id.uuid) } returns contactDataEntities
+        coEvery { contactDataDao.deleteAll(any()) } just runs
+
+        runBlocking { underTest.deleteContactData(contact) }
+
+        coVerify { contactDataDao.getDataForContact(contactId = contact.id.uuid) }
+        coVerify { contactDataDao.deleteAll(contactDataEntities) }
+    }
+
     @Test
     fun `update should consider phone numbers`() {
         val contact = spyk(someContactFull())

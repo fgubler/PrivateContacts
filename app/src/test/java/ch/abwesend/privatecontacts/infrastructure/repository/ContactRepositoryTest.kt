@@ -9,7 +9,8 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.model.result.ContactSavingError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -23,12 +24,15 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
+import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
@@ -113,6 +117,41 @@ class ContactRepositoryTest : TestBase() {
         val result = runBlocking { underTest.updateContact(contact) }
 
         assertThat(result).isEqualTo(ContactSaveResult.Failure(UNKNOWN_ERROR))
+    }
+
+    @Test
+    fun `deleting a contact should delete it`() {
+        val contact = someContactFull()
+        coEvery { contactDao.delete(ofType<UUID>()) } just runs
+        coEvery { contactDataRepository.deleteContactData(any()) } just runs
+
+        val result = runBlocking { underTest.deleteContact(contact) }
+
+        coVerify { contactDao.delete(contact.id.uuid) }
+        assertThat(result).isEqualTo(ContactDeleteResult.Success)
+    }
+
+    @Test
+    fun `deleting a contact should also delete the contact data`() {
+        val contact = someContactFull()
+        coEvery { contactDao.delete(ofType<UUID>()) } just runs
+        coEvery { contactDataRepository.deleteContactData(any()) } just runs
+
+        val result = runBlocking { underTest.deleteContact(contact) }
+
+        coVerify { contactDataRepository.deleteContactData(contact) }
+        assertThat(result).isEqualTo(ContactDeleteResult.Success)
+    }
+
+    @Test
+    fun `an exception during deletion should return an Error-Result`() {
+        val contact = someContactFull()
+        coEvery { contactDao.delete(ofType<UUID>()) } throws RuntimeException("Test")
+        coEvery { contactDataRepository.deleteContactData(any()) } just runs
+
+        val result = runBlocking { underTest.deleteContact(contact) }
+
+        assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNKNOWN_ERROR))
     }
 
     @Test
