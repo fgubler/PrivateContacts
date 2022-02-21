@@ -6,6 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
+import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 
@@ -39,6 +42,10 @@ data class Website(
     }
 
     companion object {
+        val icon = Icons.Default.Language
+        const val labelPlural = R.string.websites
+        const val labelSingular = R.string.website
+
         private val defaultAllowedTypes = listOf(
             ContactDataType.Private,
             ContactDataType.Business,

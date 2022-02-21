@@ -7,16 +7,9 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Apartment
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.Phone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.KeyboardType
-import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -39,9 +32,9 @@ object ContactDataEditComponents {
     ) {
         ContactDataCategory(
             contact = contact,
-            categoryTitle = R.string.phone_numbers,
-            fieldLabel = R.string.phone_number,
-            icon = Icons.Default.Phone,
+            categoryTitle = PhoneNumber.labelPlural,
+            fieldLabel = PhoneNumber.labelSingular,
+            icon = PhoneNumber.icon,
             keyboardType = KeyboardType.Phone,
             showIfEmpty = showIfEmpty,
             factory = { PhoneNumber.createEmpty(it) },
@@ -59,9 +52,9 @@ object ContactDataEditComponents {
     ) {
         ContactDataCategory(
             contact = contact,
-            categoryTitle = R.string.email_addresses,
-            fieldLabel = R.string.email_address,
-            icon = Icons.Default.Email,
+            categoryTitle = EmailAddress.labelPlural,
+            fieldLabel = EmailAddress.labelSingular,
+            icon = EmailAddress.icon,
             keyboardType = KeyboardType.Email,
             showIfEmpty = showIfEmpty,
             factory = { EmailAddress.createEmpty(it) },
@@ -79,9 +72,9 @@ object ContactDataEditComponents {
     ) {
         ContactDataCategory(
             contact = contact,
-            categoryTitle = R.string.physical_addresses,
-            fieldLabel = R.string.physical_address,
-            icon = Icons.Default.Home,
+            categoryTitle = PhysicalAddress.labelPlural,
+            fieldLabel = PhysicalAddress.labelSingular,
+            icon = PhysicalAddress.icon,
             keyboardType = KeyboardType.Text,
             showIfEmpty = showIfEmpty,
             factory = { PhysicalAddress.createEmpty(it) },
@@ -99,9 +92,9 @@ object ContactDataEditComponents {
     ) {
         ContactDataCategory(
             contact = contact,
-            categoryTitle = R.string.websites,
-            fieldLabel = R.string.website,
-            icon = Icons.Default.Language,
+            categoryTitle = Website.labelPlural,
+            fieldLabel = Website.labelSingular,
+            icon = Website.icon,
             keyboardType = KeyboardType.Uri,
             showIfEmpty = showIfEmpty,
             factory = { Website.createEmpty(it) },
@@ -119,9 +112,9 @@ object ContactDataEditComponents {
     ) {
         ContactDataCategory(
             contact = contact,
-            categoryTitle = R.string.companies,
-            fieldLabel = R.string.company,
-            icon = Icons.Default.Apartment,
+            categoryTitle = Company.labelPlural,
+            fieldLabel = Company.labelSingular,
+            icon = Company.icon,
             keyboardType = KeyboardType.Text,
             showIfEmpty = showIfEmpty,
             factory = { Company.createEmpty(it) },

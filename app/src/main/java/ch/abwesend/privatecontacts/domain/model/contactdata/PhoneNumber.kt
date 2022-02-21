@@ -6,6 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Phone
+import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 
@@ -41,6 +44,10 @@ data class PhoneNumber(
     override fun formatValueForSearch(): String = formatValueForSearch(value)
 
     companion object {
+        val icon = Icons.Default.Phone
+        const val labelSingular = R.string.phone_number
+        const val labelPlural = R.string.phone_numbers
+
         private val defaultAllowedTypes = listOf(
             ContactDataType.Mobile,
             ContactDataType.Private,

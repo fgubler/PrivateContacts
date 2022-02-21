@@ -6,6 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 
@@ -39,6 +42,10 @@ data class PhysicalAddress(
     }
 
     companion object {
+        val icon = Icons.Default.Home
+        const val labelPlural = R.string.physical_addresses
+        const val labelSingular = R.string.physical_address
+
         private val defaultAllowedTypes = listOf(
             ContactDataType.Private,
             ContactDataType.Business,
