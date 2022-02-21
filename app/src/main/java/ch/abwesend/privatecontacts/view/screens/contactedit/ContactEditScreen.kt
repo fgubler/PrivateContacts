@@ -126,6 +126,7 @@ object ContactEditScreen {
 
     private fun onSave(screenContext: ScreenContext, contact: IContactEditable) {
         screenContext.contactEditViewModel.saveContact(contact)
+        screenContext.contactDetailViewModel.reloadContact(contact) // update data there
     }
 
     private fun onSaveResult(
