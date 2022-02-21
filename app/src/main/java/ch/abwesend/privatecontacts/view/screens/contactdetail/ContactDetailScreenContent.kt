@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -27,20 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
-import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
-import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.util.tryStartActivity
 
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
@@ -90,15 +87,12 @@ object ContactDetailScreenContent {
     private fun PhoneNumbers(contact: IContact) {
         val context = LocalContext.current
 
-        val secondaryActionConfig = IconButtonConfigGeneric<String>(
+        val secondaryActionConfig = IconButtonConfigGeneric<PhoneNumber>(
             label = R.string.send_sms,
             icon = Icons.Default.Chat
-        ) { number ->
-            val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", number, null))
-            // TODO add queries block stuff
-            if (intent.resolveActivity(context.packageManager) != null) {
-                ContextCompat.startActivity(context, intent, null)
-            }
+        ) { phoneNumber ->
+            val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phoneNumber.value, null))
+            intent.tryStartActivity(context)
         }
 
         ContactDataCategory(
@@ -106,9 +100,9 @@ object ContactDetailScreenContent {
             iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
             secondaryActionConfig = secondaryActionConfig,
             factory = { PhoneNumber.createEmpty(it) },
-        ) {
-            // TODO implement
-            Toast.makeText(context, "Call Contact", Toast.LENGTH_SHORT).show()
+        ) { phoneNumber ->
+            val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber.value, null))
+            intent.tryStartActivity(context)
         }
     }
 

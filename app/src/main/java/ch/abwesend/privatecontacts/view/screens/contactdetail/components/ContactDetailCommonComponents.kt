@@ -122,9 +122,9 @@ object ContactDetailCommonComponents {
     inline fun <reified T: ContactData> ContactDataCategory(
         contact: IContact,
         iconConfig: IconConfig,
-        secondaryActionConfig: IconButtonConfigGeneric<String>? = null,
+        secondaryActionConfig: IconButtonConfigGeneric<T>? = null,
         noinline factory: (sortOrder: Int) -> T,
-        noinline primaryAction: () -> Unit,
+        noinline primaryAction: (T) -> Unit,
     ) {
         val data = contact.contactDataForDisplay(addEmptyElement = false, factory = factory)
 
@@ -133,6 +133,7 @@ object ContactDetailCommonComponents {
                 Column {
                     data.forEach { element ->
                         ContactDataRow(
+                            data = element,
                             primaryText = element.displayValue,
                             secondaryText = element.type.getTitle(),
                             primaryAction = primaryAction,
@@ -145,11 +146,12 @@ object ContactDetailCommonComponents {
     }
 
     @Composable
-    fun ContactDataRow(
+    fun <T: ContactData> ContactDataRow(
+        data: T,
         primaryText: String,
         secondaryText: String?,
-        primaryAction: () -> Unit,
-        secondaryActionConfig: IconButtonConfigGeneric<String>?
+        primaryAction: (T) -> Unit,
+        secondaryActionConfig: IconButtonConfigGeneric<T>?
     ) {
         val labelStyle = LocalTextStyle.current.copy(
             fontSize = LocalTextStyle.current.fontSize.times(0.8),
@@ -160,7 +162,7 @@ object ContactDetailCommonComponents {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .clickable { primaryAction() }
+                .clickable { primaryAction(data) }
                 .padding(start = iconHorizontalPadding)
                 .padding(vertical = 5.dp)
         ) {
@@ -170,7 +172,7 @@ object ContactDetailCommonComponents {
                     Text(text = it, style = labelStyle)
                 }
             }
-            secondaryActionConfig?.toIconButton(primaryText)
+            secondaryActionConfig?.toIconButton(data)
         }
     }
 }
