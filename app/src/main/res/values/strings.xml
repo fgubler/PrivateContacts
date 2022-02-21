@@ -1,3 +1,9 @@
+<!--
+  ~ Private Contacts
+  ~ Copyright (c) 2022.
+  ~ Florian Gubler
+  -->
+
 <resources>
     <string name="app_name">Private Contacts</string>
     <string name="screen_contact_list">Contacts</string>
