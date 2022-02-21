@@ -82,7 +82,7 @@ object ContactDataEditCommonComponents {
         }
 
         val dataEntriesToDisplay = remember(contact) {
-            contact.contactDataForDisplay(factory)
+            contact.contactDataForDisplay(factory = factory)
         }
         val somethingToShow = remember(dataEntriesToDisplay) {
             dataEntriesToDisplay.any { !it.isEmpty }.also { showCategory ->
