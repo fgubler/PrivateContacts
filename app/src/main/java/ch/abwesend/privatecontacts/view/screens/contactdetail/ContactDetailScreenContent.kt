@@ -6,8 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -26,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
@@ -38,8 +35,12 @@ import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
-import ch.abwesend.privatecontacts.view.util.*
-import java.net.URLEncoder
+import ch.abwesend.privatecontacts.view.util.navigateToBrowser
+import ch.abwesend.privatecontacts.view.util.navigateToDial
+import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
+import ch.abwesend.privatecontacts.view.util.navigateToLocation
+import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
+import ch.abwesend.privatecontacts.view.util.navigateToSms
 
 const val UTF_8 = "utf-8"
 
@@ -126,7 +127,6 @@ object ContactDetailScreenContent {
             factory = { PhysicalAddress.createEmpty(it) },
         ) { location -> location.navigateToLocation(context) }
     }
-
 
     @Composable
     private fun Websites(contact: IContact) {

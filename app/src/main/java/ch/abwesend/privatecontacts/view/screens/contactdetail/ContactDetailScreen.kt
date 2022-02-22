@@ -99,7 +99,7 @@ object ContactDetailScreen {
         val buttonsEnabled = contact != null
         @StringRes val title = R.string.screen_contact_details
 
-        var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false)}
+        var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
         TopAppBar(
             title = {

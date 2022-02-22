@@ -44,7 +44,7 @@ data class Company(
     companion object {
         val icon = Icons.Default.Apartment
         const val labelPlural = R.string.companies
-        const val labelSingular  = R.string.company
+        const val labelSingular = R.string.company
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Main,

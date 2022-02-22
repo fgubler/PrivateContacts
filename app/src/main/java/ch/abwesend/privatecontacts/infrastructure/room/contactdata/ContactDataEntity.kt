@@ -25,7 +25,7 @@ import java.util.UUID
         )
     ],
     indices = [
-      Index("contactId")
+        Index("contactId")
     ],
 )
 data class ContactDataEntity(
