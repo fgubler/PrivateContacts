@@ -38,7 +38,7 @@ import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
-import ch.abwesend.privatecontacts.view.util.tryStartActivity
+import ch.abwesend.privatecontacts.view.util.*
 import java.net.URLEncoder
 
 const val UTF_8 = "utf-8"
@@ -95,28 +95,14 @@ object ContactDetailScreenContent {
         val secondaryActionConfig = IconButtonConfigGeneric<PhoneNumber>(
             label = R.string.send_sms,
             icon = Icons.Default.Chat
-        ) { phoneNumber ->
-            try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("sms", phoneNumber.value, null))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for SMS", e)
-            }
-        }
+        ) { phoneNumber -> phoneNumber.navigateToSms(context) }
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
             secondaryActionConfig = secondaryActionConfig,
             factory = { PhoneNumber.createEmpty(it) },
-        ) { phoneNumber ->
-            try {
-                val intent = Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber.value, null))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for Call", e)
-            }
-        }
+        ) { phoneNumber -> phoneNumber.navigateToDial(context) }
     }
 
     @Composable
@@ -127,14 +113,7 @@ object ContactDetailScreenContent {
             contact = contact,
             iconConfig = IconConfig(label = EmailAddress.labelSingular, icon = EmailAddress.icon),
             factory = { EmailAddress.createEmpty(it) },
-        ) { email ->
-            try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("mailto", email.value, null))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for Email", e)
-            }
-        }
+        ) { email -> email.navigateToEmailClient(context) }
     }
 
     @Composable
@@ -145,16 +124,7 @@ object ContactDetailScreenContent {
             contact = contact,
             iconConfig = IconConfig(label = PhysicalAddress.labelSingular, icon = PhysicalAddress.icon),
             factory = { PhysicalAddress.createEmpty(it) },
-        ) { location ->
-            try {
-                val locationEncoded = URLEncoder.encode(location.value, UTF_8)
-                val uri = "geo:0,0?q=$locationEncoded"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for Location", e)
-            }
-        }
+        ) { location -> location.navigateToLocation(context) }
     }
 
 
@@ -166,17 +136,7 @@ object ContactDetailScreenContent {
             contact = contact,
             iconConfig = IconConfig(label = Website.labelSingular, icon = Website.icon),
             factory = { Website.createEmpty(it) },
-        ) { website ->
-            try {
-                val url = website.value.takeIf {
-                    website.value.startsWith("http") || website.value.startsWith("https")
-                } ?: "http://${website.value}"
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for Website", e)
-            }
-        }
+        ) { website -> website.navigateToBrowser(context) }
     }
 
     @Composable
@@ -187,15 +147,7 @@ object ContactDetailScreenContent {
             contact = contact,
             iconConfig = IconConfig(label = Company.labelSingular, icon = Company.icon),
             factory = { Company.createEmpty(it) },
-        ) { company ->
-            try {
-                val companyName = URLEncoder.encode(company.value, UTF_8)
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=${companyName}"))
-                intent.tryStartActivity(context)
-            } catch(e: Exception) {
-                logger.error("Failed to send intent for Company", e)
-            }
-        }
+        ) { company -> company.navigateToOnlineSearch(context) }
     }
 
     @Composable
