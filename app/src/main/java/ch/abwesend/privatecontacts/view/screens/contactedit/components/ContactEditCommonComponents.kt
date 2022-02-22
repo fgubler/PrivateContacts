@@ -45,6 +45,7 @@ object ContactEditCommonComponents {
     fun ContactCategory(
         @StringRes categoryTitle: Int,
         icon: ImageVector,
+        modifier: Modifier = Modifier,
         initiallyExpanded: Boolean = true,
         alignContentWithTitle: Boolean = true,
         content: @Composable () -> Unit
@@ -52,7 +53,7 @@ object ContactEditCommonComponents {
         var expanded by remember { mutableStateOf(initiallyExpanded) }
         val onExpandedChanged: (Boolean) -> Unit = { expanded = it }
 
-        Card(modifier = Modifier.padding(all = 5.dp)) {
+        Card(modifier = modifier.padding(all = 5.dp)) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Column {
                     ContactCategoryHeader(
