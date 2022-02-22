@@ -56,4 +56,14 @@ class UriUtilityTest : TestBase() {
             assertThat(result).isEqualTo(uris[index])
         }
     }
+
+    @Test
+    fun `should throw to test pipeline behavior`() {
+        throw RuntimeException("Test")
+    }
+
+    @Test
+    fun `should fail to test pipeline behavior`() {
+        assertThat(0).isEqualTo(1)
+    }
 }
