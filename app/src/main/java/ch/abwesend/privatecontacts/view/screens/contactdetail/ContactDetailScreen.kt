@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -81,6 +82,10 @@ object ContactDetailScreen {
             deletionError = null
         }
 
+        BackHandler(enabled = deletionError != null) {
+            deletionError = null
+        }
+
         LaunchedEffect(Unit) {
             viewModel.deleteResult.collect { result ->
                 when (result) {
@@ -99,7 +104,7 @@ object ContactDetailScreen {
         val buttonsEnabled = contact != null
         @StringRes val title = R.string.screen_contact_details
 
-        var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false)}
+        var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
         TopAppBar(
             title = {
@@ -152,6 +157,10 @@ object ContactDetailScreen {
                 onCloseMenu()
             },
         )
+
+        BackHandler(enabled = deleteConfirmationDialogVisible) {
+            deleteConfirmationDialogVisible = false
+        }
     }
 
     @Composable

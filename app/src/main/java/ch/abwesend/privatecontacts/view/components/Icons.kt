@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -42,6 +43,14 @@ fun SaveIcon() {
 fun SearchIcon() {
     Icon(
         imageVector = Icons.Default.Search,
+        contentDescription = stringResource(id = R.string.search)
+    )
+}
+
+@Composable
+fun RefreshIcon() {
+    Icon(
+        imageVector = Icons.Default.Sync,
         contentDescription = stringResource(id = R.string.search)
     )
 }

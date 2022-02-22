@@ -87,7 +87,6 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.updateAll(any()) }
     }
 
-
     @Test
     fun `delete should delete all data for that contact`() {
         val contact = someContactFull()

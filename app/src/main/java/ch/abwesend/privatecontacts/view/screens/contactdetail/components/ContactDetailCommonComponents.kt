@@ -36,9 +36,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.theme.AppColors
+import ch.abwesend.privatecontacts.view.util.AsIconButton
 import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.getTitle
-import ch.abwesend.privatecontacts.view.util.toIconButton
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -119,7 +119,7 @@ object ContactDetailCommonComponents {
     }
 
     @Composable
-    inline fun <reified T: ContactData> ContactDataCategory(
+    inline fun <reified T : ContactData> ContactDataCategory(
         contact: IContact,
         iconConfig: IconConfig,
         secondaryActionConfig: IconButtonConfigGeneric<T>? = null,
@@ -146,7 +146,7 @@ object ContactDetailCommonComponents {
     }
 
     @Composable
-    fun <T: ContactData> ContactDataRow(
+    fun <T : ContactData> ContactDataRow(
         data: T,
         primaryText: String,
         secondaryText: String?,
@@ -172,7 +172,7 @@ object ContactDetailCommonComponents {
                     Text(text = it, style = labelStyle)
                 }
             }
-            secondaryActionConfig?.toIconButton(data)
+            secondaryActionConfig?.AsIconButton(data)
         }
     }
 }

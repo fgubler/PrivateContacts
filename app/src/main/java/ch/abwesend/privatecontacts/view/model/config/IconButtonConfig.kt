@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.view.model.config
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.constraintlayout.compose.override
 
 /**
  * Config for a button which only shows the icon but uses the label as content-description
@@ -23,6 +22,6 @@ data class IconButtonConfigGeneric<T>(
     @StringRes override val label: Int,
     override val icon: ImageVector,
     override val onClick: (T) -> Unit,
-): IIconButtonConfig<T>
+) : IIconButtonConfig<T>
 
 typealias IconButtonConfig = IconButtonConfigGeneric<Unit>

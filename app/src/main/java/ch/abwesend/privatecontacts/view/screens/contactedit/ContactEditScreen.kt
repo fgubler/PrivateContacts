@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -28,11 +29,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
@@ -57,6 +58,7 @@ object ContactEditScreen {
         val selectedContact = viewModel.selectedContact
 
         var showAllFields: Boolean by remember { mutableStateOf(true) }
+
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingError: ContactChangeError? by remember { mutableStateOf(null) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
@@ -96,6 +98,25 @@ object ContactEditScreen {
                 }
                 ValidationErrorDialog(validationErrors) {
                     validationErrors = emptyList()
+                }
+
+                BackHandler(enabled = true) {
+                    val anyDialogShown = showDiscardConfirmationDialog ||
+                        savingError != null ||
+                        validationErrors.isNotEmpty()
+
+                    // close open dialogs
+                    if (anyDialogShown) {
+                        showDiscardConfirmationDialog = false
+                        savingError = null
+                        validationErrors = emptyList()
+                        return@BackHandler
+                    }
+
+                    // trigger discard-changes logic
+                    onDiscard(screenContext) {
+                        showDiscardConfirmationDialog = true
+                    }
                 }
             }
         } ?: NoContactLoaded(viewModel)

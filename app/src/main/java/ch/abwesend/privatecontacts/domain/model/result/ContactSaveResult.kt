@@ -13,4 +13,3 @@ sealed interface ContactSaveResult {
     @JvmInline
     value class Failure(val error: ContactChangeError) : ContactSaveResult
 }
-

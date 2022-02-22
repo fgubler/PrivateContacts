@@ -6,10 +6,10 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -34,6 +34,8 @@ import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
+import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -51,6 +53,11 @@ fun ContactListTopBar(
     var searchText by remember { mutableStateOf("") }
 
     val backgroundColor = if (showSearch) Color.White else MaterialTheme.colors.primary
+    val resetSearch = {
+        showSearch = false
+        searchText = ""
+        viewModel.reloadContacts()
+    }
 
     TopAppBar(
         backgroundColor = backgroundColor,
@@ -66,21 +73,19 @@ fun ContactListTopBar(
         },
         navigationIcon = {
             if (showSearch) {
-                BackIconButton {
-                    showSearch = false
-                    searchText = ""
-                    viewModel.reloadContacts()
-                }
+                BackIconButton { resetSearch() }
             } else {
                 MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope)
             }
         },
         actions = {
             if (!showSearch) {
-                IconButton(onClick = { showSearch = true }) { SearchIcon() }
+                RefreshIconButton { viewModel.reloadContacts() }
+                SearchIconButton { showSearch = true }
             }
         }
     )
+    BackHandler(enabled = showSearch) { resetSearch() }
 }
 
 @ExperimentalComposeUiApi
