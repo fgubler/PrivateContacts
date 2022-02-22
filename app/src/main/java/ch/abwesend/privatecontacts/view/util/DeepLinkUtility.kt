@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.util.addProtocolToUriString
 import ch.abwesend.privatecontacts.view.screens.contactdetail.UTF_8
 import java.net.URLEncoder
 
@@ -79,9 +80,7 @@ fun PhysicalAddress.navigateToLocation(context: Context) {
 
 fun Website.navigateToBrowser(context: Context) {
     try {
-        val url = value.takeIf {
-            value.startsWith("http") || value.startsWith("https")
-        } ?: "http://$value"
+        val url = addProtocolToUriString(value)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.tryStartActivity(context)
     } catch (e: Exception) {
