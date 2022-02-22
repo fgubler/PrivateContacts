@@ -10,7 +10,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -35,6 +34,8 @@ import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
+import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -79,7 +80,8 @@ fun ContactListTopBar(
         },
         actions = {
             if (!showSearch) {
-                IconButton(onClick = { showSearch = true }) { SearchIcon() }
+                RefreshIconButton { viewModel.reloadContacts() }
+                SearchIconButton { showSearch = true }
             }
         }
     )
