@@ -1,70 +1,94 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
-import ch.abwesend.privatecontacts.domain.model.contact.ContactLite
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import io.mockk.every
-import io.mockk.mockk
-import java.util.UUID
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
+
+fun someContactId(): ContactId = ContactId.randomId()
 
 fun someContactBase(
-    id: UUID = UUID.randomUUID(),
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
-): ContactBase = ContactLite(
+): IContactBase = ContactBase(
     id = id,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
     type = type,
     notes = notes,
+)
+
+fun someContactEntity(
+    id: ContactId = someContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = PRIVATE,
+    notes: String = "Tries to do the right thing. Often badly.",
+    fullTextSearch: String = "TestSearch",
+): ContactEntity = ContactEntity(
+    rawId = id.uuid,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    fullTextSearch = fullTextSearch,
 )
 
 fun someContactFull(
-    id: UUID = UUID.randomUUID(),
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
-    phoneNumbers: List<PhoneNumber> = emptyList(),
+    contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
-): Contact = ContactFull(
+): IContact = Contact(
     id = id,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
     type = type,
     notes = notes,
-    phoneNumbers = phoneNumbers.toMutableList(),
+    contactDataSet = contactData,
     isNew = isNew,
 )
 
-fun someContactNonEditable(
-    id: UUID = UUID.randomUUID(),
+fun someContactEditable(
+    id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
     type: ContactType = PRIVATE,
     notes: String = "Tries to do the right thing. Often badly.",
-    phoneNumbers: List<PhoneNumber> = emptyList(),
-): Contact {
-    val mock = mockk<Contact>()
-
-    every { mock.id } returns id
-    every { mock.firstName } returns firstName
-    every { mock.lastName } returns lastName
-    every { mock.nickname } returns nickname
-    every { mock.type } returns type
-    every { mock.notes } returns notes
-    every { mock.phoneNumbers } returns phoneNumbers
-
-    return mock
-}
+    contactData: MutableList<ContactData> = mutableListOf(),
+    isNew: Boolean = false,
+): IContact = ContactEditable(
+    id = id,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    contactDataSet = contactData,
+    isNew = isNew,
+)

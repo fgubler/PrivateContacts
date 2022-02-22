@@ -1,22 +1,25 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.domain.model.contact
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import java.util.UUID
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
-interface Contact : ContactBase {
-    val phoneNumbers: List<PhoneNumber>
+interface IContact : IContactBase {
+    val contactDataSet: List<ContactData>
     val isNew: Boolean
 }
 
-data class ContactFull(
-    override val id: UUID,
+data class Contact(
+    override val id: ContactId,
     override val firstName: String,
     override val lastName: String,
     override val nickname: String,
     override val type: ContactType,
     override val notes: String,
-    override val phoneNumbers: List<PhoneNumber>,
+    override val contactDataSet: List<ContactData>,
     override val isNew: Boolean = false,
-) : Contact {
-    companion object
-}
+) : IContact

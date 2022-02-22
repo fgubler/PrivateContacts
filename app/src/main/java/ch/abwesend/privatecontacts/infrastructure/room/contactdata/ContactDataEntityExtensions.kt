@@ -1,15 +1,32 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import java.util.UUID
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 
-fun PhoneNumber.toEntity(contactId: UUID): ContactDataEntity =
+/**
+ * If this produces a build-error "when needs to be exhaustive", although it is exhaustive,
+ * just run "clean", then it should work
+ */
+fun ContactData.toEntity(contactId: ContactId): ContactDataEntity =
+    when (this) {
+        is StringBasedContactDataSimple -> stringBasedToEntity(contactId)
+    }
+
+private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: ContactId) =
     ContactDataEntity(
-        id = id,
-        contactId = contactId,
-        type = ContactDataType.PHONE_NUMBER,
-        subType = type.toEntity(),
+        id = id.uuid,
+        contactId = contactId.uuid,
+        category = category,
+        type = type.toEntity(),
         sortOrder = sortOrder,
         isMain = isMain,
-        value = value
+        valueRaw = value,
+        valueFormatted = formattedValue,
     )

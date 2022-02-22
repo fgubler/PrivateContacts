@@ -1,8 +1,15 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.domain.service
 
 import androidx.paging.PagingData
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -11,13 +18,16 @@ import kotlinx.coroutines.flow.Flow
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val contactPagerFactory: ContactPagerFactory by injectAnywhere()
+    private val easterEggService: EasterEggService by injectAnywhere()
 
-    fun loadPagedContacts(): Flow<PagingData<ContactBase>> =
-        contactPagerFactory.createContactPager().flow
+    fun loadContacts(): Flow<PagingData<IContactBase>> =
+        contactPagerFactory.createContactPager(ContactSearchConfig.All).flow
 
-    suspend fun loadContacts(): List<ContactBase> =
-        contactRepository.loadContacts()
+    fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+        easterEggService.checkSearchForEasterEggs(query)
+        return contactPagerFactory.createContactPager(ContactSearchConfig.Query(query)).flow
+    }
 
-    suspend fun resolveContact(contact: ContactBase): Contact =
+    suspend fun resolveContact(contact: IContactBase): IContact =
         contactRepository.resolveContact(contact)
 }

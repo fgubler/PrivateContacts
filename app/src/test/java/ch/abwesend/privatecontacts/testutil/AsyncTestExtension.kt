@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.testutil
 
 import android.annotation.SuppressLint

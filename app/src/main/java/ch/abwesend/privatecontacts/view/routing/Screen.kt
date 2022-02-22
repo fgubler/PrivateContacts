@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.view.routing
 
 import androidx.compose.material.icons.Icons
@@ -38,7 +44,7 @@ enum class Screen(
     ContactDetail(
         titleRes = R.string.screen_contact_details,
         icon = Icons.Default.ContactPage,
-        key = "ContactDetailsScreen",
+        key = "ContactDetailScreen",
         showInSideDrawer = false,
     ),
 

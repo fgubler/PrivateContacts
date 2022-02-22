@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -6,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NA
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
-import ch.abwesend.privatecontacts.testutil.KoinTestBase
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactFull
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -22,7 +28,7 @@ import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactSaveServiceTest : KoinTestBase() {
+class ContactSaveServiceTest : TestBase() {
     @MockK
     private lateinit var contactRepository: IContactRepository
 

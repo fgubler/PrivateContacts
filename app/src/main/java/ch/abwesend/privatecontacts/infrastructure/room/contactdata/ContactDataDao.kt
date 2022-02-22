@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
 import androidx.room.Dao
@@ -23,4 +29,7 @@ interface ContactDataDao {
 
     @Delete
     suspend fun delete(data: ContactDataEntity)
+
+    @Delete
+    suspend fun deleteAll(data: List<ContactDataEntity>)
 }

@@ -1,52 +1,82 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.testutil
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Key.PRIVATE
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataSubType.Mobile
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
+import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataSubTypeEntity
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataType.PHONE_NUMBER
+import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import java.util.UUID
+
+fun someContactDataId(): ContactDataId = ContactDataId.randomId()
 
 fun someContactDataEntity(
     id: UUID = UUID.randomUUID(),
     contactId: UUID = UUID.randomUUID(),
     value: String = "1234",
-    type: ContactDataType = PHONE_NUMBER,
-    subType: ContactDataSubTypeEntity = someContactDataSubTypeEntity(),
-    sortOrder: Int? = null,
+    category: ContactDataCategory = PHONE_NUMBER,
+    type: ContactDataTypeEntity = someContactDataTypeEntity(),
+    sortOrder: Int = 0,
     isMain: Boolean = false,
 ): ContactDataEntity = ContactDataEntity(
     id = id,
     contactId = contactId,
-    value = value,
+    valueRaw = value,
+    valueFormatted = value,
+    category = category,
     type = type,
-    subType = subType,
     isMain = isMain,
     sortOrder = sortOrder,
 )
 
-fun someContactDataSubTypeEntity(
-    key: ContactDataSubType.Key = PRIVATE,
+fun someContactDataTypeEntity(
+    key: ContactDataType.Key = PRIVATE,
     customValue: String? = null
-): ContactDataSubTypeEntity =
-    ContactDataSubTypeEntity(
+): ContactDataTypeEntity =
+    ContactDataTypeEntity(
         key = key,
         customValue = customValue
     )
 
 fun somePhoneNumber(
-    id: UUID = UUID.randomUUID(),
+    id: ContactDataId = someContactDataId(),
     value: String = "1234",
-    type: ContactDataSubType = Mobile,
-    sortOrder: Int? = null,
+    type: ContactDataType = Mobile,
+    sortOrder: Int = 0,
     isMainNumber: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): PhoneNumber = PhoneNumber(
     id = id,
     value = value,
     type = type,
     isMain = isMainNumber,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someEmailAddress(
+    id: ContactDataId = someContactDataId(),
+    value: String = "1234",
+    type: ContactDataType = ContactDataType.Private,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): EmailAddress = EmailAddress(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
     sortOrder = sortOrder,
 )

@@ -1,3 +1,9 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.view.viewmodel
 
 import androidx.compose.runtime.getValue
@@ -6,10 +12,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
-import ch.abwesend.privatecontacts.domain.model.contact.ContactFull
-import ch.abwesend.privatecontacts.domain.model.contact.asFull
-import ch.abwesend.privatecontacts.domain.model.contact.createNew
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditableWrapper
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -19,31 +26,31 @@ import kotlinx.coroutines.launch
 class ContactEditViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
 
-    var originalContact: ContactFull? = null
+    var originalContact: IContact? = null
         private set
 
-    var selectedContact: ContactFull? by mutableStateOf(null)
+    var selectedContact: ContactEditableWrapper? by mutableStateOf(null)
         private set
 
     private val _saveResult = EventFlow.createShared<ContactSaveResult>()
     val saveResult: Flow<ContactSaveResult> = _saveResult
 
-    fun selectContact(contact: Contact) {
-        val full = contact.asFull()
-        originalContact = full
-        selectedContact = full
+    fun selectContact(contact: IContact) {
+        val editable = contact.asEditable()
+        originalContact = editable
+        selectedContact = editable.deepCopy().wrap()
     }
 
     fun createContact() {
-        val contact = ContactFull.createNew()
+        val contact = ContactEditable.createNew()
         selectContact(contact)
     }
 
-    fun changeContact(contact: ContactFull) {
-        selectedContact = contact
+    fun changeContact(contact: IContactEditable) {
+        selectedContact = contact.wrap()
     }
 
-    fun saveContact(contact: Contact) {
+    fun saveContact(contact: IContact) {
         viewModelScope.launch {
             val result = saveService.saveContact(contact)
             _saveResult.emit(result)

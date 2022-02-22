@@ -1,9 +1,16 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts
 
 import com.tngtech.archunit.core.importer.ImportOption
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.core.importer.Location
 import com.tngtech.archunit.junit.AnalyzeClasses
+import com.tngtech.archunit.junit.ArchIgnore
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses
@@ -17,6 +24,8 @@ private const val VIEW_PACKAGE = "$ROOT_PACKAGE.view.."
 private const val DOMAIN_PACKAGE = "$ROOT_PACKAGE.domain.."
 private const val DOMAIN_LIB_PACKAGE = "$DOMAIN_PACKAGE.lib.."
 private const val INFRASTRUCTURE_PACKAGE = "$ROOT_PACKAGE.infrastructure.."
+
+private const val EXT_KOIN_PACKAGE = "org.koin.core.component.."
 
 // layers
 private const val APPLICATION_LAYER = "APPLICATION"
@@ -54,6 +63,13 @@ class ArchitectureTest {
     val `only infrastructure layer may access daos`: ArchRule = noClasses()
         .that().resideOutsideOfPackage(INFRASTRUCTURE_PACKAGE)
         .should().dependOnClassesThat().haveSimpleNameEndingWith("Dao")
+
+    @ArchIgnore(reason = "The methods on KoinHelper are all inline-functions => cannot test this...")
+    @ArchTest
+    val `only Koin helper classes may access Koin`: ArchRule = noClasses()
+        .that().haveSimpleNameNotContaining("Koin")
+        .and().haveSimpleNameNotContaining("Application")
+        .should().accessClassesThat().resideInAPackage(EXT_KOIN_PACKAGE)
 
     private fun layers() = Architectures.layeredArchitecture()
         .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)

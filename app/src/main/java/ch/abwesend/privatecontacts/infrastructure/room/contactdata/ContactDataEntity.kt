@@ -1,9 +1,17 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import java.util.UUID
 
@@ -15,14 +23,18 @@ import java.util.UUID
             childColumns = ["contactId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [
+        Index("contactId")
+    ],
 )
 data class ContactDataEntity(
     @PrimaryKey val id: UUID,
     val contactId: UUID,
-    val type: ContactDataType,
-    @Embedded(prefix = "subType") val subType: ContactDataSubTypeEntity,
+    val category: ContactDataCategory,
+    @Embedded(prefix = "type") val type: ContactDataTypeEntity,
     val isMain: Boolean,
-    val value: String,
-    val sortOrder: Int? = null,
+    val valueRaw: String,
+    val valueFormatted: String,
+    val sortOrder: Int,
 )

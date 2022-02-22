@@ -1,3 +1,9 @@
+<!--
+  ~ Private Contacts
+  ~ Copyright (c) 2022.
+  ~ Florian Gubler
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.PrivateContacts" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

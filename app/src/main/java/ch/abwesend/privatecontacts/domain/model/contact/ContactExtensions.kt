@@ -1,40 +1,33 @@
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.Settings
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import java.util.UUID
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
-fun ContactBase.getFullName(
+fun IContactBase.getFullName(
     firstNameFirst: Boolean = Settings.orderByFirstName
 ): String =
     if (firstNameFirst) "$firstName $lastName"
     else "$lastName $firstName"
 
-fun Contact.asFull(): ContactFull =
-    if (this is ContactFull) this
-    else toContactFull(this.phoneNumbers.toMutableList())
+fun IContact.asEditable(): ContactEditable =
+    if (this is ContactEditable) this
+    else toContactEditable(this.contactDataSet.toMutableList())
 
-fun ContactBase.toContactFull(
-    phoneNumbers: MutableList<PhoneNumber>
-): ContactFull =
-    ContactFull(
+fun IContactBase.toContactEditable(
+    contactDataSet: MutableList<ContactData>
+): ContactEditable =
+    ContactEditable(
         id = id,
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,
         type = type,
         notes = notes,
-        phoneNumbers = phoneNumbers,
-    )
-
-fun ContactFull.Companion.createNew(): ContactFull =
-    ContactFull(
-        id = UUID.randomUUID(),
-        firstName = "",
-        lastName = "",
-        nickname = "",
-        type = ContactType.PRIVATE,
-        notes = "",
-        phoneNumbers = mutableListOf(),
-        isNew = true,
+        contactDataSet = contactDataSet,
     )
