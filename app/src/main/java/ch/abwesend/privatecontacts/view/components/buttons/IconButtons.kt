@@ -14,7 +14,9 @@ import ch.abwesend.privatecontacts.view.components.CompressIcon
 import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.ExpandIcon
 import ch.abwesend.privatecontacts.view.components.MoreActionsIcon
+import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.SaveIcon
+import ch.abwesend.privatecontacts.view.components.SearchIcon
 
 @Composable
 fun SaveIconButton(onClick: () -> Unit) {
@@ -36,6 +38,17 @@ fun EditIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { EditIcon() }
 }
 
+@Composable
+fun SearchIconButton(enabled: Boolean = true, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) { SearchIcon() }
+}
+
+@Composable
+fun RefreshIconButton(enabled: Boolean = true, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) { RefreshIcon() }
+}
+
+/** like settings */
 @Composable
 fun MoreActionsIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { MoreActionsIcon() }

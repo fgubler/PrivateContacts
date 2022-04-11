@@ -23,7 +23,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.view.model.config.IconButtonConfig
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 
 @Composable
@@ -67,11 +66,8 @@ fun createKeyboardAndFocusManager(): KeyboardAndFocusManager {
 }
 
 @Composable
-fun <T> IconButtonConfigGeneric<T>.toIconButton(listenerInput: T) {
+fun <T> IconButtonConfigGeneric<T>.AsIconButton(listenerInput: T) {
     IconButton(onClick = { onClick(listenerInput) }) {
         Icon(imageVector = icon, contentDescription = stringResource(id = label))
     }
 }
-
-@Composable
-fun <T> IconButtonConfig.toIconButton() = toIconButton(listenerInput = Unit)

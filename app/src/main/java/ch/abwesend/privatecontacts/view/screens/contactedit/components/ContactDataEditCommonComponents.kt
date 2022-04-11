@@ -7,12 +7,15 @@
 package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.DropdownMenuItem
@@ -30,6 +33,7 @@ import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -52,10 +56,13 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEd
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.secondaryIconModifier
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
 import ch.abwesend.privatecontacts.view.util.addOrReplace
+import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.util.getTitle
+import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 object ContactDataEditCommonComponents {
@@ -128,14 +135,28 @@ object ContactDataEditCommonComponents {
     ) {
         val manager = createKeyboardAndFocusManager()
 
+        val viewRequester = remember { BringIntoViewRequester() }
+        val scope = rememberCoroutineScope()
+
         Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.bringIntoViewRequester(viewRequester)
+            ) {
                 OutlinedTextField(
                     label = { Text(stringResource(id = label)) },
                     value = contactData.value,
                     singleLine = true,
                     onValueChange = { onChanged(contactData.changeValue(it)) },
-                    modifier = textFieldModifier.weight(1.0f),
+                    modifier = textFieldModifier
+                        .weight(1.0f)
+                        .onFocusChanged {
+                            if (it.isFocused) {
+                                scope.launch {
+                                    viewRequester.bringIntoViewDelayed()
+                                }
+                            }
+                        },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = keyboardType,
                     ),

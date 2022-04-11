@@ -6,9 +6,13 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,9 +27,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -37,7 +43,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Companies
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhysicalAddresses
@@ -45,8 +51,11 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDa
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
 import ch.abwesend.privatecontacts.view.util.addOrReplace
+import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
+import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 object ContactEditScreenContent {
@@ -116,7 +125,7 @@ object ContactEditScreenContent {
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
-            ContactDataEditComponents.Companies(
+            Companies(
                 contact = contact,
                 showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
@@ -192,6 +201,7 @@ object ContactEditScreenContent {
                 onSave = onCustomTypeDefined
             )
         }
+        BackHandler(enabled = visible) { hideDialog() }
     }
 
     @Composable
@@ -199,9 +209,13 @@ object ContactEditScreenContent {
         contact: IContactEditable,
         onChanged: (IContactEditable) -> Unit
     ) {
+        val viewRequester = remember { BringIntoViewRequester() }
+        val coroutineScope = rememberCoroutineScope()
+
         ContactCategory(
             categoryTitle = R.string.notes,
             icon = Icons.Default.SpeakerNotes,
+            modifier = Modifier.bringIntoViewRequester(viewRequester),
             alignContentWithTitle = false,
         ) {
             OutlinedTextField(
@@ -216,6 +230,13 @@ object ContactEditScreenContent {
                 modifier = Modifier
                     .heightIn(min = 100.dp)
                     .fillMaxWidth()
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            coroutineScope.launch {
+                                viewRequester.bringIntoViewDelayed()
+                            }
+                        }
+                    }
             )
         }
     }
