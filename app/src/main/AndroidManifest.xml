@@ -32,7 +32,7 @@
             </intent-filter>
         </activity>
         <receiver
-            android:name=".infrastructure.phonestate.PhoneStateReceiver"
+            android:name=".infrastructure.calldetection.PhoneStateReceiver"
             android:exported="false"
             >
             <intent-filter>

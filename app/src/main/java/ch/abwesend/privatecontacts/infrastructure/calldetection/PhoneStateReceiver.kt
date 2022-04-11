@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.phonestate
+package ch.abwesend.privatecontacts.infrastructure.calldetection
 
 import android.content.BroadcastReceiver
 import android.content.Context
