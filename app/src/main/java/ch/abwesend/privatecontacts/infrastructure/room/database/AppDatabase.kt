@@ -18,7 +18,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEn
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Database(
-    version = 15,
+    version = 16,
     exportSchema = true,
     entities = [ContactEntity::class, ContactDataEntity::class],
     autoMigrations = []

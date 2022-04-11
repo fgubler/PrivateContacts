@@ -18,6 +18,16 @@ interface ContactDataDao {
     @Query("SELECT * FROM ContactDataEntity WHERE contactId = :contactId")
     suspend fun getDataForContact(contactId: UUID): List<ContactDataEntity>
 
+    @Query(
+        """
+        SELECT * 
+        FROM ContactDataEntity 
+        WHERE category = 'PHONE_NUMBER'
+        AND valueRaw LIKE ('%' || :endOfPhoneNumber) 
+        """
+    )
+    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): List<ContactDataEntity>
+
     @Update
     suspend fun updateAll(data: List<ContactDataEntity>)
 

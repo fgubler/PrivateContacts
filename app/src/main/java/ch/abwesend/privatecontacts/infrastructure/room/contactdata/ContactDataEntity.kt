@@ -22,10 +22,11 @@ import java.util.UUID
             parentColumns = ["id"],
             childColumns = ["contactId"],
             onDelete = ForeignKey.CASCADE
-        )
+        ),
     ],
     indices = [
-        Index("contactId")
+        Index("contactId"),
+        Index("category", "valueRaw"),
     ],
 )
 data class ContactDataEntity(

@@ -69,3 +69,6 @@ data class PhoneNumber(
             value.filter { it.isDigit() }
     }
 }
+
+@JvmInline
+value class PhoneNumberValue(val value: String)

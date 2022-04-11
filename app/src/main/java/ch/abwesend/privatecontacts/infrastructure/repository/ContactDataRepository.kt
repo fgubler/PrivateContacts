@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
@@ -19,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
@@ -29,6 +31,15 @@ class ContactDataRepository : RepositoryBase() {
     suspend fun loadContactData(contact: IContactBase): List<ContactDataEntity> =
         withDatabase { database ->
             database.contactDataDao().getDataForContact(contact.id.uuid)
+        }
+
+    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): Map<ContactId, List<PhoneNumberValue>> =
+        withDatabase { database ->
+            val data = database.contactDataDao().findPhoneNumbersEndingOn(endOfPhoneNumber)
+            data
+                .groupBy { it.contactId }
+                .mapKeys { ContactId(it.key) }
+                .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
     suspend fun createContactData(contact: IContact) =

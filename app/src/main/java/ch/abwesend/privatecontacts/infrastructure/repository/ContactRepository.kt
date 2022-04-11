@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
@@ -51,6 +52,21 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
         logger.info("Loaded ${result.size} contacts with pageSize = $loadSize and offset = $offsetInRows")
         result
+    }
+
+    override suspend fun findContactsWithNumberEndingOn(endOfPhoneNumber: String): List<ContactWithPhoneNumbers> {
+        val contactData = contactDataRepository.findPhoneNumbersEndingOn(endOfPhoneNumber)
+        return withDatabase { database ->
+            val contactIds = contactData.keys.map { it.uuid }
+            val contacts = database.contactDao().findByIds(contactIds)
+
+            contacts.map { contactEntity ->
+                ContactWithPhoneNumbers(
+                    contactBase = contactEntity,
+                    phoneNumbers = contactData[contactEntity.id].orEmpty()
+                )
+            }
+        }
     }
 
     private suspend fun AppDatabase.getAllContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
