@@ -8,6 +8,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ch.abwesend.privatecontacts">
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name=".application.PrivateContactsApplication"
         android:allowBackup="true"
@@ -17,6 +19,7 @@
         android:roundIcon="@mipmap/app_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PrivateContacts">
+
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
@@ -28,5 +31,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".infrastructure.phonestate.PhoneStateReceiver"
+            android:exported="false"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

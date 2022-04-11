@@ -12,4 +12,10 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 object Settings {
     val orderByFirstName: Boolean = true
     val defaultContactType: ContactType = ContactType.PRIVATE
+
+    val requestPhoneStatePermission: Boolean = true
+
+    fun doNotAskForPhoneStatePermission() {
+        // TODO implement
+    }
 }

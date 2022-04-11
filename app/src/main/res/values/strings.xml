@@ -35,6 +35,9 @@
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
 
+    <string name="do_not_show_dialog_again">Do not show this dialog again</string>
+    <string name="thank_you">Thank you</string>
+
     <string name="type">Type</string>
     <string name="private_contact">Private</string>
     <string name="public_contact">Public</string>
@@ -91,4 +94,8 @@
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
+
+    <string name="show_caller_information_title">Show caller information?</string>
+    <string name="show_caller_information_text">To show caller information during an incoming call, a special permission is needed.\n\nThis permission will be used exclusively to match incoming phone-numbers with stored contacts.\n\nWould you like to activate this feature now?</string>
+
 </resources>

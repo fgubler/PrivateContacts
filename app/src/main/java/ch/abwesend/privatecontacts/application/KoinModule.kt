@@ -23,6 +23,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataReposito
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
+import ch.abwesend.privatecontacts.view.permission.PermissionHandler
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -32,6 +33,7 @@ internal val koinModule = module {
     single { ContactValidationService() }
     single { ContactSaveService() }
     single { FullTextSearchService() }
+    single { PermissionHandler() }
     single { EasterEggService() }
 
     single<IContactRepository> { ContactRepository() }

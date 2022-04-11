@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
@@ -44,6 +45,7 @@ class ContactListViewModel : ViewModel() {
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
 
     fun reloadContacts() {
+        logger.debug("Reloading contacts")
         _contacts.value = loadService.loadContacts().cachedIn(viewModelScope)
     }
 
