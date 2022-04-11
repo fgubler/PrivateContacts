@@ -9,25 +9,31 @@ package ch.abwesend.privatecontacts.infrastructure.phonestate
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.telecom.CallScreeningService
 import android.telephony.TelephonyManager
+import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
-import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
-import ch.abwesend.privatecontacts.domain.util.arePhoneNumbersEquivalent
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
-private const val CONSIDER_LAST_DIGITS = 4 // trade-off between speed and danger of missing a contact
-private const val CONSIDER_MATCHING_CONTACTS = 5 // showing more does not make much sense
-
 // TODO also offer using CallScreeningService
+/**
+ * Handle an incoming call via broadcast-receiver.
+ * Use this as fallback if using [CallScreeningService] is not an option
+ */
 class PhoneStateReceiver : BroadcastReceiver() {
-    private val contactRepository: IContactRepository by injectAnywhere()
+    private val incomingCallService: IncomingCallService by injectAnywhere()
 
     override fun onReceive(context: Context, intent: Intent?) {
         logger.debug("Receiving broadcast")
+
+        if (!Settings.useBroadcastReceiverForIncomingCalls) {
+            logger.debug("Broadcast-Receiver is turned off in settings")
+            return
+        }
 
         if (intent?.action != TelephonyManager.ACTION_PHONE_STATE_CHANGED) {
             // either no intent or an invalid action
@@ -51,32 +57,8 @@ class PhoneStateReceiver : BroadcastReceiver() {
 
     private fun handleIncomingCall(phoneNumber: String, defaultCountryIso: String?) {
         applicationScope.launch {
-            val correspondingContacts = findCorrespondingContacts(phoneNumber, defaultCountryIso)
+            val correspondingContacts = incomingCallService.findCorrespondingContacts(phoneNumber, defaultCountryIso)
             logger.debug("Found corresponding contacts: ${correspondingContacts.map { it.getFullName() }}")
         }
-    }
-
-    /**
-     * Could be several (multiple contacts living together have the same number...)
-     */
-    private suspend fun findCorrespondingContacts(
-        phoneNumber: String,
-        defaultCountryIso: String?,
-    ): List<ContactWithPhoneNumbers> {
-        val ending = phoneNumber.takeLast(CONSIDER_LAST_DIGITS)
-        val contactCandidates = contactRepository.findContactsWithNumberEndingOn(ending)
-
-        return contactCandidates
-            .filter { contact ->
-                contact.phoneNumbers.any {
-                    arePhoneNumbersEquivalent(
-                        phoneNumber1 = phoneNumber,
-                        phoneNumber2 = it.value,
-                        defaultCountryIsoCode = defaultCountryIso,
-                    )
-                }
-            }
-            .take(CONSIDER_MATCHING_CONTACTS)
-            .sortedBy { it.getFullName() }
     }
 }
