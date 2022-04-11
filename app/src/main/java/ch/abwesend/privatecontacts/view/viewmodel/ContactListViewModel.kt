@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
@@ -43,7 +44,7 @@ class ContactListViewModel : ViewModel() {
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
 
     fun reloadContacts() {
-        _contacts.value = loadService.loadContacts()
+        _contacts.value = loadService.loadContacts().cachedIn(viewModelScope)
     }
 
     @FlowPreview
