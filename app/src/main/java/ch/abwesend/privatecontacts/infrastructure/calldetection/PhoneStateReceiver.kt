@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.telecom.CallScreeningService
+import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
 import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -18,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 // TODO also offer using CallScreeningService
 /**
@@ -47,18 +49,25 @@ class PhoneStateReceiver : BroadcastReceiver() {
         if (phoneState == TelephonyManager.EXTRA_STATE_RINGING) {
             val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
             logger.debug("Receiving a call from $incomingNumber")
-
-            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-            val defaultCountryIso = telephonyManager?.networkCountryIso
-
-            incomingNumber?.let { handleIncomingCall(it, defaultCountryIso) }
+            incomingNumber?.let { handleIncomingCall(context, it) }
         }
     }
 
-    private fun handleIncomingCall(phoneNumber: String, defaultCountryIso: String?) {
+    private fun handleIncomingCall(
+        context: Context,
+        phoneNumber: String,
+    ) {
+        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+        val defaultCountryIso = telephonyManager?.networkCountryIso ?: Locale.getDefault().country.lowercase()
+
         applicationScope.launch {
-            val correspondingContacts = incomingCallService.findCorrespondingContacts(phoneNumber, defaultCountryIso)
-            logger.debug("Found corresponding contacts: ${correspondingContacts.map { it.getFullName() }}")
+            val correspondingContacts = incomingCallService
+                .findCorrespondingContacts(phoneNumber, defaultCountryIso)
+                .map { it.getFullName() }
+
+            logger.debug("Found corresponding contacts: $correspondingContacts")
+            val formattedNumber = PhoneNumberUtils.formatNumber(phoneNumber, defaultCountryIso) ?: phoneNumber
+            context.showIncomingCallNotification(formattedNumber, correspondingContacts)
         }
     }
 }

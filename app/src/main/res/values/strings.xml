@@ -98,4 +98,10 @@
     <string name="show_caller_information_title">Show caller information?</string>
     <string name="show_caller_information_text">To show caller information during an incoming call, a special permission is needed.\n\nThis permission will be used exclusively to match incoming phone-numbers with stored contacts.\n\nWould you like to activate this feature now?</string>
 
+    <string name="incoming_call_title">Incoming call</string>
+    <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
+    <string name="incoming_call_text_multiple_matches">\"%1$s\" is calling you. The number \"%2$s\" also matches: %3$s</string>
+    <string name="incoming_call_channel_title">Incoming call</string>
+    <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
+
 </resources>
