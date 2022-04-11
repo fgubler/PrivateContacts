@@ -21,7 +21,6 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-// TODO also offer using CallScreeningService
 /**
  * Handle an incoming call via broadcast-receiver.
  * Use this as fallback if using [CallScreeningService] is not an option

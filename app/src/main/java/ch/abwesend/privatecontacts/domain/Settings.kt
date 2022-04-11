@@ -16,7 +16,6 @@ object Settings {
     val requestPhoneStatePermission: Boolean = true
 
     val useBroadcastReceiverForIncomingCalls: Boolean = true
-    val useCallScreeningServiceForIncomingCalls: Boolean = true
 
     fun doNotAskForPhoneStatePermission() {
         // TODO implement
