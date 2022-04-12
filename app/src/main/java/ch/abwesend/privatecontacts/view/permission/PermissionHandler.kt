@@ -43,6 +43,7 @@ class PermissionHandler {
     fun requestUserPermissionWithExplanation(
         activity: ComponentActivity,
         permission: String,
+        enforceShowingExplanation: Boolean = true,
         onShowExplanation: () -> Unit,
         onPermissionResult: (PermissionRequestResult) -> Unit,
     ) = with(activity) {
@@ -56,7 +57,7 @@ class PermissionHandler {
                 logger.debug("Permission $permission already granted")
                 onPermissionResult(ALREADY_GRANTED)
             }
-            shouldShowRequestPermissionRationale(permission) -> onShowExplanation()
+            enforceShowingExplanation || shouldShowRequestPermissionRationale(permission) -> onShowExplanation()
             else -> showPermissionRequestDialog(permission, onPermissionResult)
         }
     }
