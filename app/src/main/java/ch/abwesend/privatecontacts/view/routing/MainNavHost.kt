@@ -13,8 +13,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
+import ch.abwesend.privatecontacts.view.routing.Screen.ContactDetail
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactList
+import ch.abwesend.privatecontacts.view.screens.about.AboutScreen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
@@ -27,7 +30,8 @@ import kotlinx.coroutines.FlowPreview
 fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {
     NavHost(navController = navController, startDestination = ContactList.key) {
         composable(ContactList.key) { ContactListScreen.Screen(screenContext) }
-        composable(Screen.ContactDetail.key) { ContactDetailScreen.Screen(screenContext) }
+        composable(ContactDetail.key) { ContactDetailScreen.Screen(screenContext) }
         composable(ContactEdit.key) { ContactEditScreen.Screen(screenContext) }
+        composable(AboutTheApp.key) { AboutScreen.Screen() }
     }
 }

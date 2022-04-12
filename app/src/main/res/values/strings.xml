@@ -8,7 +8,7 @@
     <string name="app_name">Private Contacts</string>
     <string name="screen_contact_list">Contacts</string>
     <string name="screen_settings">Settings</string>
-    <string name="screen_contact_developers">Contact</string>
+    <string name="screen_about_the_app">About</string>
     <string name="screen_contact_details">Contact Details</string>
     <string name="screen_contact_edit">Edit Contact</string>
     <string name="screen_contact_edit_create">Create Contact</string>
@@ -103,5 +103,16 @@
     <string name="incoming_call_text_multiple_matches">\"%1$s\" is calling you. The number \"%2$s\" also matches: %3$s</string>
     <string name="incoming_call_channel_title">Incoming call</string>
     <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
+
+    <string name="about_app_title">About the App</string>
+    <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>
+    <string name="contact_developers_title">Contact the Developers</string>
+    <string name="play_store_entry">PlayStore entry</string>
+    <string name="github_page">Github page</string>
+    <string name="report_error">Report a bug</string>
+    <string name="write_email">Write an email</string>
+    <string name="privacy_title">Privacy Declaration</string>
+    <string name="legal_disclaimer_title">Legal Disclaimer</string>
+    <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
 
 </resources>

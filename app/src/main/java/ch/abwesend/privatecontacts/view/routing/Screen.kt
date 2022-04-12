@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.view.routing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Contacts
-import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import ch.abwesend.privatecontacts.R
@@ -34,10 +34,10 @@ enum class Screen(
         showInSideDrawer = true,
     ),
 
-    ContactDevelopers(
-        titleRes = R.string.screen_contact_developers,
-        icon = Icons.Default.Email,
-        key = "ContactDevelopersScreen",
+    AboutTheApp(
+        titleRes = R.string.screen_about_the_app,
+        icon = Icons.Default.Info,
+        key = "AboutTheAppScreen",
         showInSideDrawer = true,
     ),
 
