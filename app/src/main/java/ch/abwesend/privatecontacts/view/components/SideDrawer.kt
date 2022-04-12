@@ -17,18 +17,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -101,35 +105,44 @@ private fun SideDrawerElement(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val modifier =
-        if (isSelected) Modifier.background(color = MaterialTheme.colors.primary)
-        else Modifier.background(color = MaterialTheme.colors.background)
+    val color =
+        if (isSelected) MaterialTheme.colors.primary
+        else MaterialTheme.colors.background
 
     val fontColor =
         if (isSelected) MaterialTheme.colors.onPrimary
         else MaterialTheme.colors.onBackground
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(horizontal = 10.dp)
-            .clickable { onClick() },
+    val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+
+    Surface(
+        modifier = Modifier
+            .padding(end = 10.dp)
+            .clickable { onClick() }
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = titleRes),
-            modifier = modifier,
-            tint = fontColor,
-        )
-        Text(
-            text = stringResource(id = titleRes),
-            color = fontColor,
-            modifier = modifier
-                .padding(start = 20.dp)
-                .weight(1.0f)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clip(RoundedCornerShape(topEnd = 5.dp, bottomEnd = 5.dp))
+                .background(color = color)
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 10.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(id = titleRes),
+                tint = fontColor,
+            )
+            Text(
+                text = stringResource(id = titleRes),
+                color = fontColor,
+                fontWeight = fontWeight,
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .weight(1.0f)
+            )
+        }
     }
 }
 
