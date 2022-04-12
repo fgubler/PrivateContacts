@@ -57,6 +57,7 @@ class MainActivity : ComponentActivity() {
                     screenContext = screenContext,
                 )
 
+                InfoDialogs()
                 PermissionHandler(permissionHelper)
             }
         }

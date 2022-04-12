@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 
 // TODO replace this with something serious
@@ -15,6 +14,8 @@ object Settings {
     val defaultContactType: ContactType = ContactType.PRIVATE
 
     val isDarkTheme: Boolean = false
+
+    val showInitialAppInfoDialog: Boolean = true
 
     val requestPhoneStatePermission: Boolean = true
 
