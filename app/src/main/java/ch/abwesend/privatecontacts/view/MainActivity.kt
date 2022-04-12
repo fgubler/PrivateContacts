@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,7 +56,9 @@ class MainActivity : ComponentActivity() {
         var showPhoneStateExplanation by mutableStateOf(false)
 
         setContent {
-            PrivateContactsTheme {
+            val darkTheme = Settings.isDarkTheme || isSystemInDarkTheme()
+
+            PrivateContactsTheme(darkTheme) {
                 val navController = rememberNavController()
                 val screenContext = createScreenContext(navController)
 
