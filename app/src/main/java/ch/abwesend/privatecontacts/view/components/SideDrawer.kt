@@ -7,24 +7,26 @@
 package ch.abwesend.privatecontacts.view.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -50,21 +52,20 @@ fun SideDrawerContent(router: AppRouter, selectedScreen: Screen) {
 
 @Composable
 fun SideDrawerHeader() {
-    Row(
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(vertical = 10.dp),
     ) {
-        Icon(
-            imageVector = Icons.Rounded.AccountCircle,
-            contentDescription = stringResource(id = R.string.app_name)
+        Image(
+            bitmap = ImageBitmap.imageResource(id = R.drawable.app_logo_large),
+            contentDescription = stringResource(id = R.string.app_name),
+            modifier = Modifier.widthIn(max = 500.dp)
         )
         Text(
             text = stringResource(id = R.string.app_name),
-            modifier = Modifier
-                .padding(start = 20.dp)
-                .weight(1.0f),
+            modifier = Modifier.padding(top = 10.dp),
             color = MaterialTheme.colors.primary,
             style = MaterialTheme.typography.h6
         )
