@@ -17,6 +17,8 @@ object Settings {
 
     val useBroadcastReceiverForIncomingCalls: Boolean = true
 
+    val showIncomingCallsOnLockScreen: Boolean = true
+
     fun doNotAskForPhoneStatePermission() {
         // TODO implement
     }

@@ -11,8 +11,11 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
+import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import androidx.core.app.NotificationManagerCompat
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import java.util.UUID
 
@@ -55,12 +58,17 @@ class NotificationRepository {
             )
         }
 
+        val visibility =
+            if (Settings.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
+            else VISIBILITY_SECRET
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_phone_callback_24)
             .setContentTitle(title)
             .setContentText(text)
             .setStyle(NotificationCompat.BigTextStyle().bigText(text))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(visibility)
             .setTimeoutAfter(MAX_NOTIFICATION_TIMEOUT_MS)
             .setAutoCancel(true)
 
