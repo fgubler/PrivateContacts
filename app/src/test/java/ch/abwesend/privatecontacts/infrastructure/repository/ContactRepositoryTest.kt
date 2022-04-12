@@ -6,8 +6,10 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -18,6 +20,7 @@ import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -224,5 +227,35 @@ class ContactRepositoryTest : TestBase() {
         contactData.forEach {
             coVerify { contactDataRepository.tryResolveContactData(it) }
         }
+    }
+
+    @Test
+    fun `should find contacts with matching phone numbers`() {
+        val contactId1 = someContactId()
+        val contactId2 = someContactId()
+        val phoneNumberEnd = "321"
+        val contactData = mapOf(
+            contactId1 to listOf(
+                PhoneNumberValue("123321"),
+                PhoneNumberValue("444321"),
+            ),
+            contactId2 to listOf(
+                PhoneNumberValue("666321"),
+            )
+        )
+        coEvery { contactDao.findByIds(any()) } answers {
+            firstArg<List<UUID>>().map { someContactEntity(id = ContactId(it)) }
+        }
+        coEvery { contactDataRepository.findPhoneNumbersEndingOn(any()) } returns contactData
+
+        val result = runBlocking { underTest.findContactsWithNumberEndingOn(phoneNumberEnd) }
+
+        coVerify { contactDao.findByIds(listOf(contactId1.uuid, contactId2.uuid)) }
+        coVerify { contactDataRepository.findPhoneNumbersEndingOn(phoneNumberEnd) }
+        assertThat(result).hasSize(2)
+        assertThat(result[0].id).isEqualTo(contactId1)
+        assertThat(result[0].phoneNumbers).hasSize(2)
+        assertThat(result[1].id).isEqualTo(contactId2)
+        assertThat(result[1].phoneNumbers).hasSize(1)
     }
 }

@@ -30,6 +30,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTy
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactId
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -297,5 +298,39 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
+    }
+
+    @Test
+    fun `should group phone numbers by contactId`() {
+        val contactId1 = someContactId()
+        val contactId2 = someContactId()
+        val phoneNumberEnd = "321"
+        val entities = listOf(
+            someContactDataEntity(
+                contactId = contactId1.uuid,
+                category = PHONE_NUMBER,
+                type = ContactDataTypeEntity(MAIN, null),
+                value = "123321",
+            ),
+            someContactDataEntity(
+                contactId = contactId1.uuid,
+                category = PHONE_NUMBER,
+                type = ContactDataTypeEntity(MAIN, null),
+                value = "444433321",
+            ),
+            someContactDataEntity(
+                contactId = contactId2.uuid,
+                category = PHONE_NUMBER,
+                type = ContactDataTypeEntity(MAIN, null),
+                value = "4444321",
+            ),
+        )
+        coEvery { contactDataDao.findPhoneNumbersEndingOn(any()) } returns entities
+
+        val result = runBlocking { underTest.findPhoneNumbersEndingOn(phoneNumberEnd) }
+
+        assertThat(result).hasSize(2)
+        assertThat(result.keys).containsExactly(contactId1, contactId2)
+        coVerify { contactDataDao.findPhoneNumbersEndingOn(phoneNumberEnd) }
     }
 }
