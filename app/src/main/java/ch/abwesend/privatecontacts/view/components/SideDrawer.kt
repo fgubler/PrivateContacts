@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -74,7 +75,6 @@ fun SideDrawerHeader() {
 
 @Composable
 fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) {
-    SideDrawerListHeader(titleRes = R.string.navigation)
     Screen.sideDrawerScreens.forEach { screen ->
         SideDrawerElement(
             titleRes = screen.titleRes,
@@ -113,7 +113,8 @@ private fun SideDrawerElement(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(10.dp)
+            .height(50.dp)
+            .padding(horizontal = 10.dp)
             .clickable { onClick() },
     ) {
         Icon(
