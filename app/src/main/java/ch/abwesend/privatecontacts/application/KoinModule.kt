@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
+import ch.abwesend.privatecontacts.infrastructure.calldetection.NotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
@@ -41,6 +42,8 @@ internal val koinModule = module {
     single<IContactRepository> { ContactRepository() }
     single { ContactDataRepository() }
     single<ContactPagerFactory> { ContactPagingSource.Companion }
+
+    single { NotificationRepository() }
 
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory> { DatabaseFactory }

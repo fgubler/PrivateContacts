@@ -27,6 +27,7 @@ import java.util.Locale
  */
 class PhoneStateReceiver : BroadcastReceiver() {
     private val incomingCallService: IncomingCallService by injectAnywhere()
+    private val notificationRepository: NotificationRepository by injectAnywhere()
 
     override fun onReceive(context: Context, intent: Intent?) {
         logger.debug("Receiving broadcast")
@@ -45,10 +46,16 @@ class PhoneStateReceiver : BroadcastReceiver() {
         val phoneState = intent.getStringExtra(TelephonyManager.EXTRA_STATE)
         logger.debug("Received phone state $phoneState")
 
-        if (phoneState == TelephonyManager.EXTRA_STATE_RINGING) {
-            val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
-            logger.debug("Receiving a call from $incomingNumber")
-            incomingNumber?.let { handleIncomingCall(context, it) }
+        when (phoneState) {
+            TelephonyManager.EXTRA_STATE_RINGING -> {
+                val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
+                logger.debug("Receiving a call from $incomingNumber")
+                incomingNumber?.let { handleIncomingCall(context, it) }
+            }
+            TelephonyManager.EXTRA_STATE_IDLE -> {
+                notificationRepository.cancelNotifications(context)
+            }
+            else -> { }
         }
     }
 
@@ -66,7 +73,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
 
             logger.debug("Found corresponding contacts: $correspondingContacts")
             val formattedNumber = PhoneNumberUtils.formatNumber(phoneNumber, defaultCountryIso) ?: phoneNumber
-            context.showIncomingCallNotification(formattedNumber, correspondingContacts)
+            notificationRepository.showIncomingCallNotification(context, formattedNumber, correspondingContacts)
         }
     }
 }
