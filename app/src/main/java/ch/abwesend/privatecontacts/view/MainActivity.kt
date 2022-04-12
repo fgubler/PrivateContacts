@@ -111,17 +111,20 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val permission = Manifest.permission.READ_PHONE_STATE
+        val permissions = listOf(
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.READ_CALL_LOG,
+        )
 
         showExplanation?.let {
-            permissionHandler.requestUserPermissionWithExplanation(
+            permissionHandler.requestUserPermissionsWithExplanation(
                 activity = this,
-                permission = permission,
+                permissions = permissions,
                 onShowExplanation = showExplanation,
                 onPermissionResult = onPermissionResult
             )
-        } ?: permissionHandler.requestUserPermissionNow(
-            permission = permission,
+        } ?: permissionHandler.requestUserPermissionsNow(
+            permissions = permissions,
             onPermissionResult = onPermissionResult
         )
     }
