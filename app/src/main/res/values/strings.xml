@@ -96,7 +96,7 @@
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
 
     <string name="show_caller_information_title">Show caller information?</string>
-    <string name="show_caller_information_text">To show caller information during an incoming call, a special permission is needed.\n\nThis permission will be used exclusively to match incoming phone-numbers with stored contacts.\n\nWould you like to activate this feature now?</string>
+    <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.\n\nWould you like to activate this feature now?</string>
 
     <string name="incoming_call_title">Incoming call</string>
     <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
