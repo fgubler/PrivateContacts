@@ -24,7 +24,7 @@ enum class PermissionRequestResult {
     DENIED,
 }
 
-class PermissionHandler {
+class PermissionHelper {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
     private lateinit var multipleResultsObserver: ActivityResultLauncher<Array<String>>
 

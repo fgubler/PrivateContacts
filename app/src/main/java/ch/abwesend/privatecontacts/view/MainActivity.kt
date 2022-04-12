@@ -6,30 +6,21 @@
 
 package ch.abwesend.privatecontacts.view
 
-import android.Manifest
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.permission.PermissionHandler
-import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
-import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
+import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
@@ -42,7 +33,7 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalMaterialApi
 @FlowPreview
 class MainActivity : ComponentActivity() {
-    private val permissionHandler: PermissionHandler by injectAnywhere()
+    private val permissionHelper: PermissionHelper by injectAnywhere()
 
     private val contactListViewModel: ContactListViewModel by viewModels()
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
@@ -52,8 +43,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         logger.info("Main activity started")
 
-        permissionHandler.setupObserver(this)
-        var showPhoneStateExplanation by mutableStateOf(false)
+        permissionHelper.setupObserver(this)
 
         setContent {
             val darkTheme = Settings.isDarkTheme || isSystemInDarkTheme()
@@ -67,26 +57,9 @@ class MainActivity : ComponentActivity() {
                     screenContext = screenContext,
                 )
 
-                if (showPhoneStateExplanation) {
-                    YesNoNeverDialog(
-                        title = R.string.show_caller_information_title,
-                        text = R.string.show_caller_information_text,
-                        onYes = {
-                            showPhoneStateExplanation = false
-                            requestPhoneStatePermission(showExplanation = null)
-                        },
-                        onNo = { doNotShowAgain ->
-                            showPhoneStateExplanation = false
-                            if (doNotShowAgain) {
-                                Settings.doNotAskForPhoneStatePermission()
-                            }
-                        }
-                    )
-                }
+                PermissionHandler(permissionHelper)
             }
         }
-
-        requestPhoneStatePermission { showPhoneStateExplanation = true }
     }
 
     private fun createScreenContext(navController: NavHostController): ScreenContext {
@@ -97,35 +70,6 @@ class MainActivity : ComponentActivity() {
             contactListViewModel = contactListViewModel,
             contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,
-        )
-    }
-
-    private fun requestPhoneStatePermission(showExplanation: (() -> Unit)?) {
-        if (!Settings.requestPhoneStatePermission) {
-            return
-        }
-
-        val onPermissionResult: (PermissionRequestResult) -> Unit = { result ->
-            if (result == NEWLY_GRANTED) {
-                Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        val permissions = listOf(
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_CALL_LOG,
-        )
-
-        showExplanation?.let {
-            permissionHandler.requestUserPermissionsWithExplanation(
-                activity = this,
-                permissions = permissions,
-                onShowExplanation = showExplanation,
-                onPermissionResult = onPermissionResult
-            )
-        } ?: permissionHandler.requestUserPermissionsNow(
-            permissions = permissions,
-            onPermissionResult = onPermissionResult
         )
     }
 }
