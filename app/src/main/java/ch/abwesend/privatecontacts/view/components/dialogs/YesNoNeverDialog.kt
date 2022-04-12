@@ -7,22 +7,18 @@
 package ch.abwesend.privatecontacts.view.components.dialogs
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.view.components.inputs.DoNotShowAgainCheckbox
 
 @Composable
 fun YesNoNeverDialog(
@@ -31,38 +27,26 @@ fun YesNoNeverDialog(
     onYes: () -> Unit,
     onNo: (doNotShowAgain: Boolean) -> Unit,
 ) {
-    val doNotShowAgainState = remember { mutableStateOf(false) }
+    var doNotShowAgainState by remember { mutableStateOf(false) }
 
     AlertDialog(
         title = { Text(stringResource(id = title)) },
         text = {
             Column() {
                 Text(stringResource(id = text))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .clickable { doNotShowAgainState.value = !doNotShowAgainState.value }
-                ) {
-                    Checkbox(
-                        checked = doNotShowAgainState.value,
-                        onCheckedChange = { } // click in the entire row triggers that already
-                    )
-                    Text(
-                        text = stringResource(id = R.string.do_not_show_dialog_again),
-                        modifier = Modifier.padding(start = 5.dp),
-                    )
+                DoNotShowAgainCheckbox(checked = doNotShowAgainState) {
+                    doNotShowAgainState = it
                 }
             }
         },
-        onDismissRequest = { onNo(doNotShowAgainState.value) },
+        onDismissRequest = { onNo(doNotShowAgainState) },
         confirmButton = {
             Button(onClick = onYes) {
                 Text(stringResource(id = R.string.yes))
             }
         },
         dismissButton = {
-            Button(onClick = { onNo(doNotShowAgainState.value) }) {
+            Button(onClick = { onNo(doNotShowAgainState) }) {
                 Text(stringResource(id = R.string.no))
             }
         },

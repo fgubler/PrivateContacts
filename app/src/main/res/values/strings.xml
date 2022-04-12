@@ -35,7 +35,7 @@
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
 
-    <string name="do_not_show_dialog_again">Do not show this dialog again</string>
+    <string name="do_not_show_again">Do not show again</string>
     <string name="thank_you">Thank you</string>
 
     <string name="type">Type</string>
@@ -114,5 +114,9 @@
     <string name="privacy_title">Privacy Declaration</string>
     <string name="legal_disclaimer_title">Legal Disclaimer</string>
     <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
+
+    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.
+    </string>
+
 
 </resources>
