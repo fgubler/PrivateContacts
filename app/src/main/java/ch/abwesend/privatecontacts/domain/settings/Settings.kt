@@ -10,5 +10,5 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 object Settings {
     private val provider: SettingsProvider by injectAnywhere()
-    val current = provider
+    val current by lazy { provider }
 }
