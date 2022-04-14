@@ -1,13 +1,11 @@
 package ch.abwesend.privatecontacts.view.screens.about
 
 import android.content.Context
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.BulletPointListItem
 import ch.abwesend.privatecontacts.view.components.LinkText
+import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
@@ -28,32 +27,21 @@ object AboutScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val context = LocalContext.current
-        val bulletPointModifier = Modifier.padding(start = 10.dp)
-
         BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) {
             Column(modifier = Modifier.padding(10.dp)) {
-                AboutTheApp(context, bulletPointModifier)
-                Spacer(modifier = Modifier.height(20.dp))
-                ContactDevelopers(context, bulletPointModifier)
-                Spacer(modifier = Modifier.height(20.dp))
+                AboutTheApp(context)
+                ContactDevelopers(context)
                 LegalDisclaimer()
             }
         }
     }
 
     @Composable
-    private fun SectionTitle(@StringRes titleRes: Int) {
-        Text(
-            text = stringResource(id = titleRes),
-            style = MaterialTheme.typography.h5,
-        )
-    }
-
-    @Composable
-    private fun AboutTheApp(context: Context, bulletPointModifier: Modifier) {
-        SectionTitle(titleRes = R.string.about_app_title)
+    private fun AboutTheApp(context: Context) {
+        SectionTitle(titleRes = R.string.about_app_title, addTopPadding = false)
         Text(text = stringResource(id = R.string.about_app_description))
-        LazyColumn(modifier = bulletPointModifier) {
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyColumn {
             item {
                 BulletPointListItem {
                     LinkText(text = stringResource(id = R.string.play_store_entry)) {
@@ -82,10 +70,11 @@ object AboutScreen {
     }
 
     @Composable
-    private fun ContactDevelopers(context: Context, bulletPointModifier: Modifier) {
+    private fun ContactDevelopers(context: Context) {
         SectionTitle(titleRes = R.string.contact_developers_title)
-
-        LazyColumn(modifier = bulletPointModifier) {
+        Text(text = stringResource(id = R.string.contact_developers_text))
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyColumn {
             item {
                 BulletPointListItem {
                     LinkText(text = stringResource(id = R.string.report_error)) {

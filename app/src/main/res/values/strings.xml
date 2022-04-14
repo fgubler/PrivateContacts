@@ -109,6 +109,7 @@
     <string name="about_app_title">About the App</string>
     <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>
     <string name="contact_developers_title">Contact the Developers</string>
+    <string name="contact_developers_text">We are always happy about feedback about how to improve the app further.</string>
     <string name="play_store_entry">PlayStore entry</string>
     <string name="github_page">Github page</string>
     <string name="report_error">Report a bug</string>
