@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import ch.abwesend.privatecontacts.R
@@ -31,6 +32,13 @@ enum class Screen(
         titleRes = R.string.screen_settings,
         icon = Icons.Default.Settings,
         key = "SettingsScreen",
+        showInSideDrawer = true,
+    ),
+
+    Introduction(
+        titleRes = R.string.screen_introduction,
+        icon = Icons.Default.Lightbulb,
+        key = "Introduction",
         showInSideDrawer = true,
     ),
 

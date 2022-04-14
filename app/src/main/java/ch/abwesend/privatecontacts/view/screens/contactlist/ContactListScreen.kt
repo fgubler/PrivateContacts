@@ -9,7 +9,6 @@ package ch.abwesend.privatecontacts.view.screens.contactlist
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
@@ -23,10 +22,10 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
-import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.Screen
+import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.isError
 import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
@@ -41,10 +40,11 @@ object ContactListScreen {
         val scaffoldState = rememberScaffoldState()
         val coroutineScope = rememberCoroutineScope()
 
-        val router = screenContext.router
-
-        Scaffold(
+        BaseScreen(
+            screenContext = screenContext,
+            selectedScreen = Screen.ContactList,
             scaffoldState = scaffoldState,
+            coroutineScope = coroutineScope,
             topBar = {
                 ContactListTopBar(
                     viewModel = screenContext.contactListViewModel,
@@ -52,7 +52,6 @@ object ContactListScreen {
                     coroutineScope = coroutineScope,
                 )
             },
-            drawerContent = { SideDrawerContent(router, Screen.ContactList) },
             floatingActionButton = { AddContactButton(screenContext) }
         ) {
             ContactListContent(screenContext)

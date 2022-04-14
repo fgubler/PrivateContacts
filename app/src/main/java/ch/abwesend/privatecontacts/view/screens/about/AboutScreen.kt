@@ -18,21 +18,26 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.BulletPointListItem
 import ch.abwesend.privatecontacts.view.components.LinkText
+import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
+import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.openLink
 import ch.abwesend.privatecontacts.view.util.sendEmailMessage
 
 object AboutScreen {
     @Composable
-    fun Screen() {
+    fun Screen(screenContext: ScreenContext) {
         val context = LocalContext.current
         val bulletPointModifier = Modifier.padding(start = 10.dp)
 
-        Column(modifier = Modifier.padding(10.dp)) {
-            AboutTheApp(context, bulletPointModifier)
-            Spacer(modifier = Modifier.height(20.dp))
-            ContactDevelopers(context, bulletPointModifier)
-            Spacer(modifier = Modifier.height(20.dp))
-            LegalDisclaimer()
+        BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) {
+            Column(modifier = Modifier.padding(10.dp)) {
+                AboutTheApp(context, bulletPointModifier)
+                Spacer(modifier = Modifier.height(20.dp))
+                ContactDevelopers(context, bulletPointModifier)
+                Spacer(modifier = Modifier.height(20.dp))
+                LegalDisclaimer()
+            }
         }
     }
 
@@ -97,7 +102,7 @@ object AboutScreen {
             }
         }
     }
-    
+
     @Composable
     private fun LegalDisclaimer() {
         SectionTitle(titleRes = R.string.legal_disclaimer_title)

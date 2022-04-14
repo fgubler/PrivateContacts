@@ -9,6 +9,7 @@
     <string name="screen_contact_list">Contacts</string>
     <string name="screen_settings">Settings</string>
     <string name="screen_about_the_app">About</string>
+    <string name="screen_introduction">Introduction</string>
     <string name="screen_contact_details">Contact Details</string>
     <string name="screen_contact_edit">Edit Contact</string>
     <string name="screen_contact_edit_create">Create Contact</string>
