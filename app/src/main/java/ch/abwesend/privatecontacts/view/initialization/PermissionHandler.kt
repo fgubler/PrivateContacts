@@ -55,6 +55,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
         YesNoNeverDialog(
             title = R.string.show_caller_information_title,
             text = R.string.show_caller_information_text,
+            secondaryTextBlock = R.string.activate_feature,
             onYes = {
                 closeDialog()
                 requestPhoneStatePermission(

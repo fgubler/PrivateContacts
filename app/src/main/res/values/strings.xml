@@ -97,7 +97,8 @@
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
 
     <string name="show_caller_information_title">Show caller information?</string>
-    <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.\n\nWould you like to activate this feature now?</string>
+    <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
+    <string name="activate_feature">Would you like to activate this feature now?</string>
 
     <string name="incoming_call_title">Incoming call</string>
     <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
@@ -116,6 +117,7 @@
     <string name="legal_disclaimer_title">Legal Disclaimer</string>
     <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
 
+    <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.
     </string>
 
