@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.text.*
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -185,12 +189,12 @@ private data class LinkInfo(
     val end: Int
 )
 
-private class SpannableStr(source: CharSequence): SpannableString(source) {
+private class SpannableStr(source: CharSequence) : SpannableString(source) {
     companion object {
         fun getLinkInfos(text: String): List<LinkInfo> {
             val spannableStr = SpannableStr(text)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Linkify.addLinks(spannableStr, Linkify.ALL) { str: String -> URLSpan(str)  }
+                Linkify.addLinks(spannableStr, Linkify.ALL) { str: String -> URLSpan(str) }
             } else {
                 Linkify.addLinks(spannableStr, Linkify.ALL)
             }

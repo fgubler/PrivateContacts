@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
+import ch.abwesend.privatecontacts.view.components.buttons.MenuBackButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
@@ -24,11 +25,15 @@ import kotlinx.coroutines.CoroutineScope
 fun BaseScreen(
     screenContext: ScreenContext,
     selectedScreen: Screen,
+    allowFullNavigation: Boolean = false,
+    /** if false, only back-navigation is allowed */
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     topBar: @Composable () -> Unit = {
         BaseTopBar(
+            screenContext = screenContext,
             selectedScreen = selectedScreen,
+            allowFullNavigation = allowFullNavigation,
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
         )
@@ -39,22 +44,28 @@ fun BaseScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = topBar,
-        drawerContent = { SideDrawerContent(screenContext.router, selectedScreen) },
+        drawerContent = { SideDrawerContent(screenContext.router, selectedScreen, scaffoldState) },
         floatingActionButton = floatingActionButton,
         content = { content() },
     )
 }
 
 @Composable
-fun BaseTopBar(
+private fun BaseTopBar(
+    screenContext: ScreenContext,
     selectedScreen: Screen,
+    allowFullNavigation: Boolean,
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = selectedScreen.titleRes)) },
         navigationIcon = {
-            MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope)
+            if (allowFullNavigation) {
+                MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope)
+            } else {
+                MenuBackButton(router = screenContext.router)
+            }
         },
     )
 }

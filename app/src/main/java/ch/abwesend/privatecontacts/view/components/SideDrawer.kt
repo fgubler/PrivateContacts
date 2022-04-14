@@ -22,9 +22,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,11 +40,18 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun SideDrawerContent(router: AppRouter, selectedScreen: Screen) {
+fun SideDrawerContent(router: AppRouter, selectedScreen: Screen, scaffoldState: ScaffoldState) {
     val scrollState = rememberScrollState()
-    val clickListener = createElementClickListener(router, selectedScreen)
+    val clickListener = createElementClickListener(
+        router = router,
+        selectedScreen = selectedScreen,
+        coroutineScope = rememberCoroutineScope(),
+        scaffoldState = scaffoldState,
+    )
 
     Column(
         modifier = Modifier.verticalScroll(scrollState)
@@ -146,16 +155,20 @@ private fun SideDrawerElement(
     }
 }
 
-private fun createElementClickListener(router: AppRouter, selectedScreen: Screen): (Screen) -> Unit {
+private fun createElementClickListener(
+    router: AppRouter,
+    selectedScreen: Screen,
+    coroutineScope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+): (Screen) -> Unit {
     val logger = selectedScreen.logger
     return { screen: Screen ->
-        val isSelected = screen == selectedScreen
-
-        if (isSelected) {
+        if (screen == selectedScreen) {
             logger.info("Screen '${screen.key}' is already selected")
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             router.navigateToScreen(screen)
+            coroutineScope.launch { scaffoldState.drawerState.close() }
         }
     }
 }

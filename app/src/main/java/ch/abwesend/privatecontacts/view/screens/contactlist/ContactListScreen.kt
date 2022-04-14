@@ -43,6 +43,7 @@ object ContactListScreen {
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
+            allowFullNavigation = true,
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
             topBar = {
