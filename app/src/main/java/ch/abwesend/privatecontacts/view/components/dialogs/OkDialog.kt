@@ -7,12 +7,21 @@
 package ch.abwesend.privatecontacts.view.components.dialogs
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.view.components.inputs.DoNotShowAgainCheckbox
 
 @Composable
 fun OkDialog(
@@ -45,6 +54,34 @@ fun OkDialog(
         onDismissRequest = onClose,
         confirmButton = {
             Button(onClick = onClose) {
+                Text(stringResource(id = R.string.ok))
+            }
+        },
+        dismissButton = {},
+    )
+}
+
+@Composable
+fun OkDoNotShowAgainDialog(
+    @StringRes title: Int,
+    @StringRes text: Int,
+    onClose: (doNotShowAgain: Boolean) -> Unit,
+) {
+    var doNotShowAgainState by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        title = { Text(stringResource(id = title)) },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(stringResource(id = text))
+                DoNotShowAgainCheckbox(checked = doNotShowAgainState) {
+                    doNotShowAgainState = it
+                }
+            }
+        },
+        onDismissRequest = { onClose(doNotShowAgainState) },
+        confirmButton = {
+            Button(onClick = { onClose(doNotShowAgainState) }) {
                 Text(stringResource(id = R.string.ok))
             }
         },

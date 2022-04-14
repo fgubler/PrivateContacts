@@ -66,7 +66,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             onNo = { doNotShowAgain ->
                 closeDialog()
                 if (doNotShowAgain) {
-                    Settings.doNotAskForPhoneStatePermission()
+                    Settings.requestPhoneStatePermission = false
                 }
             }
         )

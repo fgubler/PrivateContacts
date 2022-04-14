@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.view.components.inputs
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
@@ -17,7 +18,8 @@ fun DoNotShowAgainCheckbox(checked: Boolean, onCheckChanged: (Boolean) -> Unit) 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(top = 20.dp)
+            .padding(top = 10.dp)
+            .offset(x = (-12).dp)
             .clickable { onCheckChanged(!checked) }
     ) {
         Checkbox(

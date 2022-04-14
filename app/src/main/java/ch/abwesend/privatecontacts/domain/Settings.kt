@@ -15,15 +15,11 @@ object Settings {
 
     val isDarkTheme: Boolean = false
 
-    val showInitialAppInfoDialog: Boolean = true
+    var showInitialAppInfoDialog: Boolean = true
 
-    val requestPhoneStatePermission: Boolean = true
+    var requestPhoneStatePermission: Boolean = true
 
     val useBroadcastReceiverForIncomingCalls: Boolean = true
 
     val showIncomingCallsOnLockScreen: Boolean = true
-
-    fun doNotAskForPhoneStatePermission() {
-        // TODO implement
-    }
 }
