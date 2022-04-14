@@ -38,6 +38,10 @@ internal val useIncomingCallBroadCastReceiverEntry = SettingsEntry(
     key = booleanPreferencesKey("useIncomingCallBroadCastReceiver"),
     defaultValue = true
 )
+internal val sendErrorsToCrashlyticsEntry = SettingsEntry(
+    key = booleanPreferencesKey("sendErrorsToCrashlytics"),
+    defaultValue = true
+)
 internal val defaultContactTypeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("defaultContactType"),
     defaultValue = ContactType.PRIVATE

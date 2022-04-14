@@ -71,6 +71,10 @@ class DataStoreSettingProvider(context: Context) : SettingsProvider {
         get() = with(useIncomingCallBroadCastReceiverEntry) { currentData?.get(key) ?: defaultValue }
         set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
 
+    override var sendErrorsToCrashlytics: Boolean
+        get() = with(sendErrorsToCrashlyticsEntry) { currentData?.get(key) ?: defaultValue }
+        set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
+
     override var defaultContactType: ContactType
         get() = currentData.tryGetEnum(defaultContactTypeEntry)
         set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)

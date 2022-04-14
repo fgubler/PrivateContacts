@@ -25,4 +25,7 @@ interface SettingsProvider {
     var requestIncomingCallPermissions: Boolean
     var showIncomingCallsOnLockScreen: Boolean
     var useBroadcastReceiverForIncomingCalls: Boolean
+
+    // Others
+    var sendErrorsToCrashlytics: Boolean
 }

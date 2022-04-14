@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.AbstractLogger
 
 class TestLogger : AbstractLogger() {
     override val loggingTag = "Test"
-    override val logToCrashlytics = false
+    override val logToCrashlytics = { false }
 
     override fun verboseImpl(messages: Collection<String>) {
         for (message in messages) {

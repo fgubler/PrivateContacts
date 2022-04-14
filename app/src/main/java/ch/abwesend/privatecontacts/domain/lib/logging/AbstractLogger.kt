@@ -20,7 +20,7 @@ abstract class AbstractLogger : ILogger {
      * Only the log-levels "WARN" and "ERROR" are ever sent to crashlytics
      * Beware: this needs the INTERNET permission and an API-key...
      */
-    protected abstract val logToCrashlytics: Boolean
+    protected abstract val logToCrashlytics: () -> Boolean
 
     protected abstract fun verboseImpl(messages: Collection<String>)
     protected abstract fun debugImpl(messages: Collection<String>)
@@ -63,7 +63,7 @@ abstract class AbstractLogger : ILogger {
     override fun warning(messages: Collection<String>) {
         if (checkLogLevel(Log.WARN)) {
             warningImpl(messages)
-            if (logToCrashlytics) {
+            if (logToCrashlytics()) {
                 val message = messages.joinToString(separator = Constants.linebreak)
                 FirebaseCrashlytics.getInstance().log(message)
             }
@@ -90,7 +90,7 @@ abstract class AbstractLogger : ILogger {
         val warningMessage = createThrowableLogMessage(t, message)
         if (checkLogLevel(Log.WARN)) {
             warningImpl(listOf(warningMessage))
-            if (logToCrashlytics) {
+            if (logToCrashlytics()) {
                 FirebaseCrashlytics.getInstance().recordException(t)
             }
         }
@@ -101,7 +101,7 @@ abstract class AbstractLogger : ILogger {
         t.printStackTrace()
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
-            if (logToCrashlytics) {
+            if (logToCrashlytics()) {
                 FirebaseCrashlytics.getInstance().recordException(t)
             }
         }
@@ -112,7 +112,7 @@ abstract class AbstractLogger : ILogger {
         t.printStackTrace()
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
-            if (logToCrashlytics) {
+            if (logToCrashlytics()) {
                 FirebaseCrashlytics.getInstance().recordException(t)
             }
         }

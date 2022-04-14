@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
+import ch.abwesend.privatecontacts.domain.settings.Settings
 
 private const val LOGGING_TAG = "PrivateContacts"
 
@@ -17,7 +18,7 @@ class LoggerFactory : ILoggerFactory {
     override fun createLogcat(callerClass: Class<*>): ILogger {
         return LogcatLogger(
             loggingTag = LOGGING_TAG,
-            logToCrashlytics = !BuildConfig.DEBUG,
+            logToCrashlytics = { !BuildConfig.DEBUG && Settings.current.sendErrorsToCrashlytics },
             prefix = callerClass.simpleName,
         )
     }
