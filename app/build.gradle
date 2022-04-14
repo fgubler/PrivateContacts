@@ -109,6 +109,7 @@ dependencies {
     // Others
     implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
     implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"

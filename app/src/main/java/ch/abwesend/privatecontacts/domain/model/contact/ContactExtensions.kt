@@ -6,11 +6,11 @@
 
 package ch.abwesend.privatecontacts.domain.model.contact
 
-import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.settings.Settings
 
 fun IContactBase.getFullName(
-    firstNameFirst: Boolean = Settings.orderByFirstName
+    firstNameFirst: Boolean = Settings.current.orderByFirstName
 ): String =
     if (firstNameFirst) "$firstName $lastName"
     else "$lastName $firstName"

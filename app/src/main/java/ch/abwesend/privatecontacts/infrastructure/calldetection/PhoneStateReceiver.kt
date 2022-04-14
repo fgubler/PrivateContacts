@@ -12,10 +12,10 @@ import android.content.Intent
 import android.telecom.CallScreeningService
 import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
-import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         logger.debug("Receiving broadcast")
 
-        if (!Settings.useBroadcastReceiverForIncomingCalls) {
+        if (!Settings.current.useBroadcastReceiverForIncomingCalls) {
             logger.debug("Broadcast-Receiver is turned off in settings")
             return
         }

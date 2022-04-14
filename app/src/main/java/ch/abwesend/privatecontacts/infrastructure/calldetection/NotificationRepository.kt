@@ -15,8 +15,8 @@ import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
 import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import androidx.core.app.NotificationManagerCompat
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
@@ -59,7 +59,7 @@ class NotificationRepository {
         }
 
         val visibility =
-            if (Settings.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
+            if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
             else VISIBILITY_SECRET
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)

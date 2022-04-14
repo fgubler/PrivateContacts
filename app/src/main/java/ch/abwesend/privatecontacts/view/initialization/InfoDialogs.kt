@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.view.initialization
 
 import androidx.compose.runtime.Composable
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.Settings
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDoNotShowAgainDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 
@@ -23,15 +23,17 @@ fun InfoDialogs(initializationState: InitializationState, goToNextState: () -> U
 
 @Composable
 private fun InitialAppInfoDialog(close: () -> Unit) {
-    if (!Settings.showInitialAppInfoDialog) {
+    if (!Settings.current.showInitialAppInfoDialog) {
         return
     }
 
     OkDoNotShowAgainDialog(
         title = R.string.app_name,
         text = R.string.app_introduction_description,
-    ) {
+    ) { doNotShowAgain ->
         close()
-        Settings.showInitialAppInfoDialog = false
+        if (doNotShowAgain) {
+            Settings.current.showInitialAppInfoDialog = false
+        }
     }
 }

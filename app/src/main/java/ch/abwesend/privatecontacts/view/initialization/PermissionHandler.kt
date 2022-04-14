@@ -16,7 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.Settings
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
@@ -67,7 +67,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             onNo = { doNotShowAgain ->
                 closeDialog()
                 if (doNotShowAgain) {
-                    Settings.requestPhoneStatePermission = false
+                    Settings.current.requestIncomingCallPermissions = false
                 }
             }
         )
@@ -79,7 +79,7 @@ private fun ComponentActivity.requestPhoneStatePermission(
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
-    if (!Settings.requestPhoneStatePermission) {
+    if (!Settings.current.requestIncomingCallPermissions) {
         return
     }
 
