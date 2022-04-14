@@ -1,4 +1,10 @@
-package ch.abwesend.privatecontacts.view
+/*
+ * Private Contacts
+ * Copyright (c) 2022.
+ * Florian Gubler
+ */
+
+package ch.abwesend.privatecontacts.view.initialization
 
 import android.Manifest
 import android.widget.Toast
@@ -16,15 +22,26 @@ import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 
 @Composable
-fun ComponentActivity.PermissionHandler(permissionHelper: PermissionHelper) {
+fun ComponentActivity.PermissionHandler(
+    permissionHelper: PermissionHelper,
+    onPermissionsHandled: () -> Unit,
+) {
     var requestIncomingCallPermissions by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        requestPhoneStatePermission(permissionHelper) { requestIncomingCallPermissions = true }
+        requestPhoneStatePermission(
+            permissionHelper = permissionHelper,
+            showExplanation = { requestIncomingCallPermissions = true }
+        ) {
+            if (it == PermissionRequestResult.ALREADY_GRANTED) {
+                onPermissionsHandled()
+            }
+        }
     }
 
     IncomingCallPermissionDialog(permissionHelper = permissionHelper, showDialog = requestIncomingCallPermissions) {
         requestIncomingCallPermissions = false
+        onPermissionsHandled()
     }
 }
 
@@ -40,7 +57,11 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             text = R.string.show_caller_information_text,
             onYes = {
                 closeDialog()
-                requestPhoneStatePermission(permissionHelper, showExplanation = null)
+                requestPhoneStatePermission(
+                    permissionHelper = permissionHelper,
+                    showExplanation = null,
+                    onResult = null,
+                )
             },
             onNo = { doNotShowAgain ->
                 closeDialog()
@@ -54,7 +75,8 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
 
 private fun ComponentActivity.requestPhoneStatePermission(
     permissionHelper: PermissionHelper,
-    showExplanation: (() -> Unit)?
+    showExplanation: (() -> Unit)?,
+    onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
     if (!Settings.requestPhoneStatePermission) {
         return
@@ -64,6 +86,7 @@ private fun ComponentActivity.requestPhoneStatePermission(
         if (result == PermissionRequestResult.NEWLY_GRANTED) {
             Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
         }
+        onResult?.invoke(result)
     }
 
     val permissions = listOf(

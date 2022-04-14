@@ -12,6 +12,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -19,6 +22,10 @@ import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
+import ch.abwesend.privatecontacts.view.initialization.InitializationState
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
+import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
@@ -45,6 +52,16 @@ class MainActivity : ComponentActivity() {
 
         permissionHelper.setupObserver(this)
 
+        var initializationState: InitializationState by mutableStateOf(InitializationState.InitialInfoDialog)
+        val nextState: () -> Unit = {
+            val oldState = initializationState
+            initializationState = initializationState.next()
+            logger.debug(
+                "Changed initializationState from ${oldState::class.java.simpleName} " +
+                    "to ${initializationState::class.java.simpleName}"
+            )
+        }
+
         setContent {
             val darkTheme = Settings.isDarkTheme || isSystemInDarkTheme()
 
@@ -57,8 +74,11 @@ class MainActivity : ComponentActivity() {
                     screenContext = screenContext,
                 )
 
-                InfoDialogs()
-                PermissionHandler(permissionHelper)
+                InfoDialogs(initializationState) { nextState() }
+
+                if (initializationState == CallPermissionsDialog) {
+                    PermissionHandler(permissionHelper) { nextState() }
+                }
             }
         }
     }
