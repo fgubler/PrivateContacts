@@ -13,16 +13,16 @@ interface SettingsProvider {
     val initialized: Flow<Boolean>
 
     // UX
-    val isDarkTheme: Boolean
-    val orderByFirstName: Boolean
+    var isDarkTheme: Boolean
+    var orderByFirstName: Boolean
 
     var showInitialAppInfoDialog: Boolean
 
     // Defaults
-    val defaultContactType: ContactType
+    var defaultContactType: ContactType
 
     // Incoming Call Detection
     var requestIncomingCallPermissions: Boolean
-    val showIncomingCallsOnLockScreen: Boolean
-    val useBroadcastReceiverForIncomingCalls: Boolean
+    var showIncomingCallsOnLockScreen: Boolean
+    var useBroadcastReceiverForIncomingCalls: Boolean
 }

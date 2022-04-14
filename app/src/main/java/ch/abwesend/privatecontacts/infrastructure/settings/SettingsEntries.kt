@@ -12,7 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 
 internal data class SettingsEntry<T>(val key: Preferences.Key<T>, val defaultValue: T)
-internal data class EnumSettingsEntry<T>(val key: Preferences.Key<String>, val defaultValue: T)
+internal data class EnumSettingsEntry<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
 
 internal val darkThemeEntry = SettingsEntry(
     key = booleanPreferencesKey("isDarkTheme"),

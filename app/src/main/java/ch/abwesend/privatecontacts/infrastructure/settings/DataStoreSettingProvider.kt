@@ -47,14 +47,17 @@ class DataStoreSettingProvider(context: Context) : SettingsProvider {
         }
     }
 
-    override val isDarkTheme: Boolean
+    override var isDarkTheme: Boolean
         get() = with(darkThemeEntry) { currentData?.get(key) ?: defaultValue }
+        set(value) = dataStore.setValue(darkThemeEntry, value)
 
-    override val orderByFirstName: Boolean
+    override var orderByFirstName: Boolean
         get() = with(orderByFirstNameEntry) { currentData?.get(key) ?: defaultValue }
+        set(value) = dataStore.setValue(orderByFirstNameEntry, value)
 
-    override val showIncomingCallsOnLockScreen: Boolean
+    override var showIncomingCallsOnLockScreen: Boolean
         get() = with(incomingCallsOnLockScreenEntry) { currentData?.get(key) ?: defaultValue }
+        set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)
 
     override var showInitialAppInfoDialog: Boolean
         get() = with(initialInfoDialogEntry) { currentData?.get(key) ?: defaultValue }
@@ -64,11 +67,13 @@ class DataStoreSettingProvider(context: Context) : SettingsProvider {
         get() = with(requestIncomingCallPermissionsEntry) { currentData?.get(key) ?: defaultValue }
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
 
-    override val defaultContactType: ContactType
-        get() = currentData.tryGetEnum(defaultContactTypeEntry)
-
-    override val useBroadcastReceiverForIncomingCalls: Boolean
+    override var useBroadcastReceiverForIncomingCalls: Boolean
         get() = with(useIncomingCallBroadCastReceiverEntry) { currentData?.get(key) ?: defaultValue }
+        set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
+
+    override var defaultContactType: ContactType
+        get() = currentData.tryGetEnum(defaultContactTypeEntry)
+        set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)
 }
 
 private fun <T> DataStore<Preferences>.setValue(settingsEntry: SettingsEntry<T>, value: T) {
@@ -89,4 +94,12 @@ private inline fun <reified T : Enum<T>> Preferences?.tryGetEnum(
         null
     }
     return parsedValue ?: settingsEntry.defaultValue
+}
+
+private fun <T : Enum<T>> DataStore<Preferences>.setEnumValue(settingsEntry: EnumSettingsEntry<T>, value: T) {
+    applicationScope.launch {
+        edit { preferences ->
+            preferences[settingsEntry.key] = value.name
+        }
+    }
 }
