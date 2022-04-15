@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -53,6 +54,8 @@ object SettingsScreen {
             ) {
                 UxCategory(settingsRepository, currentSettings)
                 Spacer(modifier = Modifier.height(10.dp))
+                DefaultValuesCategory(settingsRepository, currentSettings)
+                Spacer(modifier = Modifier.height(10.dp))
                 MiscellaneousCategory(settingsRepository, currentSettings)
             }
         }
@@ -78,6 +81,22 @@ object SettingsScreen {
                 description = null,
                 value = currentSettings.orderByFirstName,
                 onValueChanged = { settingsRepository.orderByFirstName = it }
+            )
+        }
+    }
+
+    @Composable
+    private fun DefaultValuesCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        val contactTypeOptions = remember {
+            ContactType.values().map { ResDropDownOption(labelRes = it.label, value = it) }
+        }
+        SettingsCategory(titleRes = R.string.settings_category_default_values) {
+            SettingsDropDown(
+                label = R.string.settings_entry_default_contact_type,
+                description = R.string.settings_entry_default_contact_type_description,
+                value = currentSettings.defaultContactType,
+                options = contactTypeOptions,
+                onValueChanged = { settingsRepository.defaultContactType = it }
             )
         }
     }

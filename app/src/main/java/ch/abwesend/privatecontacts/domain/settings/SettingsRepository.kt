@@ -18,7 +18,7 @@ interface SettingsRepository : ISettingsState {
     override var appTheme: AppTheme
     override var orderByFirstName: Boolean
 
-    override var showInitialAppInfoDialog: Boolean
+    override var showInitialAppInfoDialog: Boolean // invisible
 
     // Defaults
     override var defaultContactType: ContactType

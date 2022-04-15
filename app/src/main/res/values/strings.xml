@@ -126,9 +126,13 @@
     <string name="system_default">System default</string>
 
     <string name="settings_category_ux">Display</string>
+    <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
+
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
+    <string name="settings_entry_default_contact_type">Default contact-type</string>
+    <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Private contacts are not.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 
