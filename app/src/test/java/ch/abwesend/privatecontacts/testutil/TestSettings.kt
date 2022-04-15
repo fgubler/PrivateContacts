@@ -15,16 +15,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 data class TestSettings(
-    private val settings: ISettingsState = SettingsState.defaultSettings,
+    override val currentSettings: ISettingsState = SettingsState.defaultSettings,
     override val initialized: Flow<Boolean> = flow { emit(true) },
-    override val currentSettings: Flow<ISettingsState> = flow { emit(settings) },
+    override val settings: Flow<ISettingsState> = flow { emit(currentSettings) },
 ) : SettingsRepository {
-    override var appTheme: AppTheme = settings.appTheme
-    override var orderByFirstName: Boolean = settings.orderByFirstName
-    override var showInitialAppInfoDialog: Boolean = settings.showInitialAppInfoDialog
-    override var defaultContactType: ContactType = settings.defaultContactType
-    override var requestIncomingCallPermissions: Boolean = settings.requestIncomingCallPermissions
-    override var showIncomingCallsOnLockScreen: Boolean = settings.showIncomingCallsOnLockScreen
-    override var useBroadcastReceiverForIncomingCalls: Boolean = settings.useBroadcastReceiverForIncomingCalls
-    override var sendErrorsToCrashlytics: Boolean = settings.sendErrorsToCrashlytics
+    override var appTheme: AppTheme = currentSettings.appTheme
+    override var orderByFirstName: Boolean = currentSettings.orderByFirstName
+    override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
+    override var defaultContactType: ContactType = currentSettings.defaultContactType
+    override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
+    override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
+    override var useBroadcastReceiverForIncomingCalls: Boolean = currentSettings.useBroadcastReceiverForIncomingCalls
+    override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
 }

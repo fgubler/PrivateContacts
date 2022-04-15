@@ -11,7 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository : ISettingsState {
     val initialized: Flow<Boolean>
-    val currentSettings: Flow<ISettingsState>
+    val settings: Flow<ISettingsState>
+    val currentSettings: ISettingsState
 
     // UX
     override var appTheme: AppTheme

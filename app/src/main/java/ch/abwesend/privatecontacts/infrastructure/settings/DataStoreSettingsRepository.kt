@@ -32,53 +32,53 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val coroutineScope = applicationScope
 
-    private var currentState: ISettingsState = defaultSettingsState
+    override var currentSettings: ISettingsState = defaultSettingsState
+        private set
 
+    override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
     override val initialized: Flow<Boolean> = dataStore.data
         .map { true }
         .onStart { emit(false) }
         .take(2)
 
-    override val currentSettings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
-
     init {
         coroutineScope.launch(dispatchers.io) {
-            currentSettings.collectLatest { settings ->
-                currentState = settings
-                logger.debug("New settings: $currentState")
+            settings.collectLatest { settings ->
+                currentSettings = settings
+                logger.debug("New settings: $currentSettings")
             }
         }
     }
 
     override var appTheme: AppTheme
-        get() = currentState.appTheme
+        get() = currentSettings.appTheme
         set(value) = dataStore.setEnumValue(darkThemeEntry, value)
 
     override var orderByFirstName: Boolean
-        get() = currentState.orderByFirstName
+        get() = currentSettings.orderByFirstName
         set(value) = dataStore.setValue(orderByFirstNameEntry, value)
 
     override var showIncomingCallsOnLockScreen: Boolean
-        get() = currentState.showIncomingCallsOnLockScreen
+        get() = currentSettings.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)
 
     override var showInitialAppInfoDialog: Boolean
-        get() = currentState.showInitialAppInfoDialog
+        get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
 
     override var requestIncomingCallPermissions: Boolean
-        get() = currentState.requestIncomingCallPermissions
+        get() = currentSettings.requestIncomingCallPermissions
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
 
     override var useBroadcastReceiverForIncomingCalls: Boolean
-        get() = currentState.useBroadcastReceiverForIncomingCalls
+        get() = currentSettings.useBroadcastReceiverForIncomingCalls
         set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
 
     override var sendErrorsToCrashlytics: Boolean
-        get() = currentState.sendErrorsToCrashlytics
+        get() = currentSettings.sendErrorsToCrashlytics
         set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
 
     override var defaultContactType: ContactType
-        get() = currentState.defaultContactType
+        get() = currentSettings.defaultContactType
         set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)
 }
