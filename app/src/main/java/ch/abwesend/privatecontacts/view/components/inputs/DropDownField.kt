@@ -46,7 +46,6 @@ fun <T> DropDownField(
     onValueChanged: (T) -> Unit,
 ) {
     DropDownComponent(
-        selectedOption = selectedOption,
         options = options,
         isScrolling = isScrolling,
         onValueChanged = onValueChanged

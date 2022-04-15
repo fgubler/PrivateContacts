@@ -121,9 +121,14 @@
     <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
 
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="system_default">System default</string>
+
     <string name="settings_category_ux">Display</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
-    <string name="settings_entry_dark_mode">Dark mode</string>
+    <string name="settings_entry_app_theme">App theme</string>
+    <string name="settings_entry_order_by_first_name">Order by first name</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 

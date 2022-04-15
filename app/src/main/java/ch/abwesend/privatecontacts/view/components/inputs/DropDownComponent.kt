@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
@@ -28,10 +29,10 @@ import ch.abwesend.privatecontacts.view.model.DropDownOption
 @ExperimentalMaterialApi
 @Composable
 fun <T> DropDownComponent(
-    selectedOption: DropDownOption<T>?,
     options: List<DropDownOption<T>>,
     isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
+    maxMenuItemWidth: Dp = 200.dp,
     content: @Composable (dropDownExpanded: Boolean, modifier: Modifier) -> Unit,
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
@@ -50,7 +51,6 @@ fun <T> DropDownComponent(
             // fallback with focused (in case scrolling should fail at some point)
             dropdownExpanded = !dropdownExpanded && (focused || !isScrolling())
         },
-        modifier = Modifier.widthIn(min = 100.dp, max = 200.dp)
     ) {
         content(
             dropDownExpanded = dropdownExpanded,
@@ -58,7 +58,8 @@ fun <T> DropDownComponent(
         )
         ExposedDropdownMenu(
             expanded = dropdownExpanded,
-            onDismissRequest = closeDropdown
+            modifier = Modifier.widthIn(min = 100.dp, max = maxMenuItemWidth),
+            onDismissRequest = closeDropdown,
         ) {
             options.forEach { option ->
                 DropdownMenuItem(
