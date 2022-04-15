@@ -9,23 +9,24 @@ package ch.abwesend.privatecontacts.domain.settings
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import kotlinx.coroutines.flow.Flow
 
-interface SettingsProvider {
+interface SettingsProvider : ISettingsState {
     val initialized: Flow<Boolean>
+    val currentSettings: Flow<ISettingsState>
 
     // UX
-    var isDarkTheme: Boolean
-    var orderByFirstName: Boolean
+    override var isDarkTheme: Boolean
+    override var orderByFirstName: Boolean
 
-    var showInitialAppInfoDialog: Boolean
+    override var showInitialAppInfoDialog: Boolean
 
     // Defaults
-    var defaultContactType: ContactType
+    override var defaultContactType: ContactType
 
     // Incoming Call Detection
-    var requestIncomingCallPermissions: Boolean
-    var showIncomingCallsOnLockScreen: Boolean
-    var useBroadcastReceiverForIncomingCalls: Boolean
+    override var requestIncomingCallPermissions: Boolean
+    override var showIncomingCallsOnLockScreen: Boolean
+    override var useBroadcastReceiverForIncomingCalls: Boolean
 
     // Others
-    var sendErrorsToCrashlytics: Boolean
+    override var sendErrorsToCrashlytics: Boolean
 }

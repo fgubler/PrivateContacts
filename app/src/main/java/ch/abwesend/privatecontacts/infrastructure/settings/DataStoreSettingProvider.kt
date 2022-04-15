@@ -9,11 +9,11 @@ package ch.abwesend.privatecontacts.infrastructure.settings
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsProvider
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -31,79 +31,53 @@ class DataStoreSettingProvider(context: Context) : SettingsProvider {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val coroutineScope = applicationScope
 
-    private var currentData: Preferences? = null
+    private var currentState: ISettingsState = defaultSettingsState
 
     override val initialized: Flow<Boolean> = dataStore.data
         .map { true }
         .onStart { emit(false) }
         .take(2)
 
+    override val currentSettings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
+
     init {
         coroutineScope.launch(dispatchers.io) {
-            context.dataStore.data.collectLatest { preferences ->
-                currentData = preferences
-                logger.debug("New settings: $preferences")
+            currentSettings.collectLatest { settings ->
+                currentState = settings
+                logger.debug("New settings: $currentState")
             }
         }
     }
 
     override var isDarkTheme: Boolean
-        get() = with(darkThemeEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.isDarkTheme
         set(value) = dataStore.setValue(darkThemeEntry, value)
 
     override var orderByFirstName: Boolean
-        get() = with(orderByFirstNameEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.orderByFirstName
         set(value) = dataStore.setValue(orderByFirstNameEntry, value)
 
     override var showIncomingCallsOnLockScreen: Boolean
-        get() = with(incomingCallsOnLockScreenEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)
 
     override var showInitialAppInfoDialog: Boolean
-        get() = with(initialInfoDialogEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
 
     override var requestIncomingCallPermissions: Boolean
-        get() = with(requestIncomingCallPermissionsEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.requestIncomingCallPermissions
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
 
     override var useBroadcastReceiverForIncomingCalls: Boolean
-        get() = with(useIncomingCallBroadCastReceiverEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.useBroadcastReceiverForIncomingCalls
         set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
 
     override var sendErrorsToCrashlytics: Boolean
-        get() = with(sendErrorsToCrashlyticsEntry) { currentData?.get(key) ?: defaultValue }
+        get() = currentState.sendErrorsToCrashlytics
         set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
 
     override var defaultContactType: ContactType
-        get() = currentData.tryGetEnum(defaultContactTypeEntry)
+        get() = currentState.defaultContactType
         set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)
-}
-
-private fun <T> DataStore<Preferences>.setValue(settingsEntry: SettingsEntry<T>, value: T) {
-    applicationScope.launch {
-        edit { preferences ->
-            preferences[settingsEntry.key] = value
-        }
-    }
-}
-
-private inline fun <reified T : Enum<T>> Preferences?.tryGetEnum(
-    settingsEntry: EnumSettingsEntry<T>
-): T {
-    val rawValue = this?.get(settingsEntry.key)
-    val parsedValue = try {
-        rawValue?.let { enumValueOf<T>(rawValue) }
-    } catch (e: IllegalArgumentException) {
-        null
-    }
-    return parsedValue ?: settingsEntry.defaultValue
-}
-
-private fun <T : Enum<T>> DataStore<Preferences>.setEnumValue(settingsEntry: EnumSettingsEntry<T>, value: T) {
-    applicationScope.launch {
-        edit { preferences ->
-            preferences[settingsEntry.key] = value.name
-        }
-    }
 }
