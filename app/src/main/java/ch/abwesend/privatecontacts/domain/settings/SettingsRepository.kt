@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.domain.settings
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import kotlinx.coroutines.flow.Flow
 
-interface SettingsProvider : ISettingsState {
+interface SettingsRepository : ISettingsState {
     val initialized: Flow<Boolean>
     val currentSettings: Flow<ISettingsState>
 

@@ -18,7 +18,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
-import ch.abwesend.privatecontacts.domain.settings.SettingsProvider
+import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.NotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
@@ -26,7 +26,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataReposito
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
-import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingProvider
+import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import org.koin.android.ext.koin.androidContext
@@ -47,7 +47,7 @@ internal val koinModule = module {
 
     single { NotificationRepository() }
 
-    single<SettingsProvider> { DataStoreSettingProvider(androidContext()) }
+    single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
 
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory> { DatabaseFactory }
