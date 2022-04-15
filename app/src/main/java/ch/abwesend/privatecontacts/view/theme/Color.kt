@@ -16,4 +16,5 @@ val secondary = Color(0xFFFF5252)
 object AppColors {
     val grayText = Color(0xFF525252)
     val grayBackground = Color(0xFFBBBBBB)
+    val transparent = Color.Transparent
 }
