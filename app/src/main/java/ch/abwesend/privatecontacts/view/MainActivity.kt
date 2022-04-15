@@ -54,6 +54,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.util.observeAsState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
@@ -88,7 +89,9 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val isDarkTheme = when (Settings.current.appTheme) {
+            val settings by Settings.observeAsState()
+
+            val isDarkTheme = when (settings.appTheme) {
                 AppTheme.LIGHT_MODE -> false
                 AppTheme.DARK_MODE -> true
                 AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()

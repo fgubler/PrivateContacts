@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,10 +26,10 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
-import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.util.observeAsState
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -41,13 +40,17 @@ object SettingsScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val settingsRepository = Settings.current
-        val currentSettings by settingsRepository.currentSettings.collectAsState(initial = SettingsState.defaultSettings)
+        val currentSettings by Settings.observeAsState()
 
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
 
         BaseScreen(screenContext = screenContext, selectedScreen = SettingsScreen) {
-            Column(modifier = Modifier.padding(10.dp).verticalScroll(scrollState)) {
+            Column(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .verticalScroll(scrollState)
+            ) {
                 UxCategory(settingsRepository, currentSettings)
                 Spacer(modifier = Modifier.height(10.dp))
                 MiscellaneousCategory(settingsRepository, currentSettings)

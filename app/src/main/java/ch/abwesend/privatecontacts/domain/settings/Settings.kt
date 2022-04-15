@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.domain.settings
 
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
+// TODO solve differently... (maybe only in view-layer and then with composables?)
 object Settings {
-    private val repository: SettingsRepository by injectAnywhere()
-    val current by lazy { repository }
+    val current: SettingsRepository by injectAnywhere()
 }
