@@ -33,7 +33,7 @@ fun <T> DropDownField(
     @StringRes labelRes: Int,
     value: T,
     options: List<DropDownOption<T>>,
-    isScrolling: Boolean,
+    isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
 ) {
     val selectedOption = options.find { it.value == value }
@@ -54,7 +54,7 @@ fun <T> DropDownField(
     @StringRes labelRes: Int,
     selectedOption: DropDownOption<T>?,
     options: List<DropDownOption<T>>,
-    isScrolling: Boolean,
+    isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
@@ -71,7 +71,7 @@ fun <T> DropDownField(
         onExpandedChange = {
             // ignore clicks while scrolling: see https://issuetracker.google.com/issues/212091796
             // fallback with focused (in case scrolling should fail at some point)
-            dropdownExpanded = !dropdownExpanded && (focused || !isScrolling)
+            dropdownExpanded = !dropdownExpanded && (focused || !isScrolling())
         },
         modifier = Modifier.widthIn(min = 100.dp, max = 200.dp)
     ) {

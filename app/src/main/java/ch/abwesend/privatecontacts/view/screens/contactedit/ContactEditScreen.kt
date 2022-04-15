@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -48,9 +49,10 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 object ContactEditScreen {
-    var isScrolling: Boolean = false // TODO remove once google issue 212091796 is fixed
+    var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
 
     @Composable
     fun Screen(screenContext: ScreenContext) {

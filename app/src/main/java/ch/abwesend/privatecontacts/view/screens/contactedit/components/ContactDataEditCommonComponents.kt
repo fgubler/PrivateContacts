@@ -13,15 +13,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
@@ -30,18 +26,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -51,6 +43,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
+import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
+import ch.abwesend.privatecontacts.view.components.inputs.DropDownOption
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.secondaryIconModifier
@@ -190,53 +184,26 @@ object ContactDataEditCommonComponents {
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (ContactDataType) -> Unit,
     ) {
-        var dropdownExpanded by remember { mutableStateOf(false) }
-        var focused by remember { mutableStateOf(false) }
-        val focusManager = LocalFocusManager.current
-
-        val closeDropdown = {
-            dropdownExpanded = false
-            focusManager.clearFocus()
+        val context = LocalContext.current
+        val selectedOption = with(data.type) {
+            DropDownOption(label = getTitle(context), value = this)
         }
-
-        ExposedDropdownMenuBox(
-            expanded = dropdownExpanded,
-            onExpandedChange = {
-                // ignore clicks while scrolling: see https://issuetracker.google.com/issues/212091796
-                // fallback with focused (in case scrolling should fail at some point)
-                dropdownExpanded = !dropdownExpanded && (focused || !parent.isScrolling)
-            },
-            modifier = Modifier.widthIn(min = 100.dp, max = 200.dp)
-        ) {
-            val context = LocalContext.current
-            OutlinedTextField(
-                label = { Text(stringResource(id = R.string.type)) },
-                value = data.type.getTitle(context),
-                readOnly = true,
-                onValueChange = { }, // read-only...
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded)
-                },
-                modifier = Modifier.onFocusChanged { focused = it.isFocused }
+        val options = data.allowedTypes.map {
+            DropDownOption(
+                label = it.getTitle(context),
+                value = it
             )
-            ExposedDropdownMenu(
-                expanded = dropdownExpanded,
-                onDismissRequest = closeDropdown
-            ) {
-                data.allowedTypes.forEach { type ->
-                    DropdownMenuItem(
-                        onClick = {
-                            if (type == ContactDataType.Custom) {
-                                waitForCustomType(data)
-                            } else {
-                                onChanged(type)
-                            }
-                            closeDropdown()
-                        }
-                    ) {
-                        Text(text = type.getTitle(context))
-                    }
-                }
+        }
+        DropDownField(
+            labelRes = R.string.type,
+            selectedOption = selectedOption,
+            options = options,
+            isScrolling = { parent.isScrolling },
+        ) { newValue ->
+            if (newValue == ContactDataType.Custom) {
+                waitForCustomType(data)
+            } else {
+                onChanged(newValue)
             }
         }
     }
