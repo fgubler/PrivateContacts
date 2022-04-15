@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.routing
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -27,6 +28,7 @@ import ch.abwesend.privatecontacts.view.screens.introduction.IntroductionScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsScreen
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalFoundationApi
 @FlowPreview
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
