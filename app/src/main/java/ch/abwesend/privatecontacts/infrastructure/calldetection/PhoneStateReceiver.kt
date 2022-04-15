@@ -32,7 +32,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         logger.debug("Receiving broadcast")
 
-        if (!Settings.repository.useBroadcastReceiverForIncomingCalls) {
+        if (!Settings.current.useBroadcastReceiverForIncomingCalls) {
             logger.debug("Broadcast-Receiver is turned off in settings")
             return
         }

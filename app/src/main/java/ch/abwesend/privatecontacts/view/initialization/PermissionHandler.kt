@@ -79,7 +79,7 @@ private fun ComponentActivity.requestPhoneStatePermission(
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
-    if (!Settings.repository.requestIncomingCallPermissions) {
+    if (!Settings.current.requestIncomingCallPermissions) {
         return
     }
 

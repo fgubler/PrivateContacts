@@ -40,7 +40,7 @@ data class ContactEditable(
                 firstName = "",
                 lastName = "",
                 nickname = "",
-                type = Settings.repository.defaultContactType,
+                type = Settings.current.defaultContactType,
                 notes = "",
                 contactDataSet = mutableListOf(),
                 isNew = true,
