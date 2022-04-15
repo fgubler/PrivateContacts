@@ -44,7 +44,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
-import ch.abwesend.privatecontacts.view.components.inputs.DropDownOption
+import ch.abwesend.privatecontacts.view.model.StringDropDownOption
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.secondaryIconModifier
@@ -186,10 +186,10 @@ object ContactDataEditCommonComponents {
     ) {
         val context = LocalContext.current
         val selectedOption = with(data.type) {
-            DropDownOption(label = getTitle(context), value = this)
+            StringDropDownOption(label = getTitle(context), value = this)
         }
         val options = data.allowedTypes.map {
-            DropDownOption(
+            StringDropDownOption(
                 label = it.getTitle(context),
                 value = it
             )
