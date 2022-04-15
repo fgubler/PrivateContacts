@@ -67,7 +67,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             onNo = { doNotShowAgain ->
                 closeDialog()
                 if (doNotShowAgain) {
-                    Settings.current.requestIncomingCallPermissions = false
+                    Settings.repository.requestIncomingCallPermissions = false
                 }
             }
         )
@@ -79,7 +79,7 @@ private fun ComponentActivity.requestPhoneStatePermission(
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
-    if (!Settings.current.requestIncomingCallPermissions) {
+    if (!Settings.repository.requestIncomingCallPermissions) {
         return
     }
 

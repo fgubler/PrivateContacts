@@ -39,7 +39,7 @@ object SettingsScreen {
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
-        val settingsRepository = Settings.current
+        val settingsRepository = Settings.repository
         val currentSettings by Settings.observeAsState()
 
         val scrollState = rememberScrollState()

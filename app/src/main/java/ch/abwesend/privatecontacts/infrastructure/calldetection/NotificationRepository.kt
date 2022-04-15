@@ -59,7 +59,7 @@ class NotificationRepository {
         }
 
         val visibility =
-            if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
+            if (Settings.repository.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
             else VISIBILITY_SECRET
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)

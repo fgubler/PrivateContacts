@@ -23,7 +23,7 @@ fun InfoDialogs(initializationState: InitializationState, goToNextState: () -> U
 
 @Composable
 private fun InitialAppInfoDialog(close: () -> Unit) {
-    if (!Settings.current.showInitialAppInfoDialog) {
+    if (!Settings.repository.showInitialAppInfoDialog) {
         return
     }
 
@@ -33,7 +33,7 @@ private fun InitialAppInfoDialog(close: () -> Unit) {
     ) { doNotShowAgain ->
         close()
         if (doNotShowAgain) {
-            Settings.current.showInitialAppInfoDialog = false
+            Settings.repository.showInitialAppInfoDialog = false
         }
     }
 }

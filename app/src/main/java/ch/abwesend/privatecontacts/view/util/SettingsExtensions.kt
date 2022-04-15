@@ -12,4 +12,4 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 
 @Composable
-fun Settings.observeAsState() = current.currentSettings.collectAsState(initial = SettingsState.defaultSettings)
+fun Settings.observeAsState() = repository.currentSettings.collectAsState(initial = SettingsState.defaultSettings)

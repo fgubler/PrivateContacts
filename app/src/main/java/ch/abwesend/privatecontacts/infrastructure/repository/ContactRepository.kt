@@ -70,7 +70,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
     }
 
     private suspend fun AppDatabase.getAllContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
-        if (Settings.current.orderByFirstName) {
+        if (Settings.repository.orderByFirstName) {
             contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
         } else {
             contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
@@ -84,7 +84,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val phoneNumberQuery = searchService.prepareQueryForPhoneNumberSearch(config.query)
             .takeIf { searchService.isLongEnough(it) }.orEmpty()
 
-        return if (Settings.current.orderByFirstName) {
+        return if (Settings.repository.orderByFirstName) {
             contactDao().searchPagedByFirstName(
                 query = config.query,
                 phoneNumberQuery = phoneNumberQuery,

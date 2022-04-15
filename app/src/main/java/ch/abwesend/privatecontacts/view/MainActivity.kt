@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
             }
 
             LaunchedEffect(Unit) {
-                Settings.current.initialized.collectLatest { initialized ->
+                Settings.repository.initialized.collectLatest { initialized ->
                     if (initialized && initializationState == WaitingForSettings) {
                         nextState()
                     }

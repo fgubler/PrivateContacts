@@ -18,7 +18,7 @@ class LoggerFactory : ILoggerFactory {
     override fun createLogcat(callerClass: Class<*>): ILogger {
         return LogcatLogger(
             loggingTag = LOGGING_TAG,
-            logToCrashlytics = { !BuildConfig.DEBUG && Settings.current.sendErrorsToCrashlytics },
+            logToCrashlytics = { !BuildConfig.DEBUG && Settings.repository.sendErrorsToCrashlytics },
             prefix = callerClass.simpleName,
         )
     }
