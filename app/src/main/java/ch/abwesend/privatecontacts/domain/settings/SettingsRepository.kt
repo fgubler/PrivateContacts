@@ -14,7 +14,7 @@ interface SettingsRepository : ISettingsState {
     val currentSettings: Flow<ISettingsState>
 
     // UX
-    override var isDarkTheme: Boolean
+    override var appTheme: AppTheme
     override var orderByFirstName: Boolean
 
     override var showInitialAppInfoDialog: Boolean

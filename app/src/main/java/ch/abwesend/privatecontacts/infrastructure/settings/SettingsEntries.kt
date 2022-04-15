@@ -15,9 +15,9 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 internal data class SettingsEntry<T>(val key: Preferences.Key<T>, val defaultValue: T)
 internal data class EnumSettingsEntry<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
 
-internal val darkThemeEntry = SettingsEntry(
-    key = booleanPreferencesKey("isDarkTheme"),
-    defaultValue = SettingsState.defaultSettings.isDarkTheme
+internal val darkThemeEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("appTheme"),
+    defaultValue = SettingsState.defaultSettings.appTheme
 )
 internal val orderByFirstNameEntry = SettingsEntry(
     key = booleanPreferencesKey("orderByFirstName"),
@@ -49,7 +49,7 @@ internal val defaultContactTypeEntry = EnumSettingsEntry(
 )
 
 internal val defaultSettingsState: ISettingsState = SettingsState(
-    isDarkTheme = darkThemeEntry.defaultValue,
+    appTheme = darkThemeEntry.defaultValue,
     orderByFirstName = orderByFirstNameEntry.defaultValue,
     showIncomingCallsOnLockScreen = incomingCallsOnLockScreenEntry.defaultValue,
     showInitialAppInfoDialog = initialInfoDialogEntry.defaultValue,

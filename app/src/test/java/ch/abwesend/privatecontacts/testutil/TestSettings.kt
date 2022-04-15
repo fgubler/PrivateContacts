@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
@@ -18,7 +19,7 @@ data class TestSettings(
     override val initialized: Flow<Boolean> = flow { emit(true) },
     override val currentSettings: Flow<ISettingsState> = flow { emit(settings) },
 ) : SettingsRepository {
-    override var isDarkTheme: Boolean = settings.isDarkTheme
+    override var appTheme: AppTheme = settings.appTheme
     override var orderByFirstName: Boolean = settings.orderByFirstName
     override var showInitialAppInfoDialog: Boolean = settings.showInitialAppInfoDialog
     override var defaultContactType: ContactType = settings.defaultContactType

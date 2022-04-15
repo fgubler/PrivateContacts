@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 
 interface ISettingsState {
     // UX
-    val isDarkTheme: Boolean
+    val appTheme: AppTheme
     val orderByFirstName: Boolean
 
     val showInitialAppInfoDialog: Boolean
@@ -28,7 +28,7 @@ interface ISettingsState {
 }
 
 data class SettingsState(
-    override val isDarkTheme: Boolean,
+    override val appTheme: AppTheme,
     override val orderByFirstName: Boolean,
 
     override val showInitialAppInfoDialog: Boolean,
@@ -43,7 +43,7 @@ data class SettingsState(
 ) : ISettingsState {
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
-            isDarkTheme = false,
+            appTheme = AppTheme.SYSTEM_SETTINGS,
             orderByFirstName = true,
             showIncomingCallsOnLockScreen = true,
             showInitialAppInfoDialog = true,

@@ -15,14 +15,14 @@ import ch.abwesend.privatecontacts.domain.util.applicationScope
 import kotlinx.coroutines.launch
 
 internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
-    isDarkTheme = getValue(darkThemeEntry),
+    appTheme = tryGetEnumValue(darkThemeEntry),
     orderByFirstName = getValue(orderByFirstNameEntry),
     showIncomingCallsOnLockScreen = getValue(incomingCallsOnLockScreenEntry),
     showInitialAppInfoDialog = getValue(initialInfoDialogEntry),
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),
     useBroadcastReceiverForIncomingCalls = getValue(useIncomingCallBroadCastReceiverEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
-    defaultContactType = tryGetEnum(defaultContactTypeEntry),
+    defaultContactType = tryGetEnumValue(defaultContactTypeEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =
@@ -36,7 +36,7 @@ internal fun <T> DataStore<Preferences>.setValue(settingsEntry: SettingsEntry<T>
     }
 }
 
-internal inline fun <reified T : Enum<T>> Preferences.tryGetEnum(
+internal inline fun <reified T : Enum<T>> Preferences.tryGetEnumValue(
     settingsEntry: EnumSettingsEntry<T>
 ): T {
     val rawValue = this[settingsEntry.key]

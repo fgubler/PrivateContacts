@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.applicationScope
@@ -49,9 +50,9 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         }
     }
 
-    override var isDarkTheme: Boolean
-        get() = currentState.isDarkTheme
-        set(value) = dataStore.setValue(darkThemeEntry, value)
+    override var appTheme: AppTheme
+        get() = currentState.appTheme
+        set(value) = dataStore.setEnumValue(darkThemeEntry, value)
 
     override var orderByFirstName: Boolean
         get() = currentState.orderByFirstName

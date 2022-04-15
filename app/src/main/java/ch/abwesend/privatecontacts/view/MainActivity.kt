@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -85,7 +86,11 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val darkTheme = Settings.current.isDarkTheme || isSystemInDarkTheme()
+            val isDarkTheme = when (Settings.current.appTheme) {
+                AppTheme.LIGHT_MODE -> false
+                AppTheme.DARK_MODE -> true
+                AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()
+            }
 
             LaunchedEffect(Unit) {
                 Settings.current.initialized.collectLatest { initialized ->
@@ -95,7 +100,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            PrivateContactsTheme(darkTheme) {
+            PrivateContactsTheme(isDarkTheme) {
                 if (initializationState.showMainContent) {
                     MainContent(initializationState) { nextState() }
                 } else {
