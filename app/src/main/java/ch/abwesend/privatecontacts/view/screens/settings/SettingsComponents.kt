@@ -86,16 +86,21 @@ fun <T> SettingsDropDown(
         isScrolling = { parent.isScrolling },
         onValueChanged = onValueChanged,
     ) { _, modifier ->
-        Row(horizontalArrangement = Arrangement.SpaceBetween) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = modifier.heightIn(min = 50.dp).weight(1f),
-            ) {
-                SettingsLabel(labelRes = label)
-                description?.let { SettingsDescription(descriptionRes = it) }
-            }
-            selectedOption?.let {
-                Text(it.getLabel(), modifier = Modifier.padding(start = 5.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier.heightIn(min = 50.dp),
+        ) {
+            Row(horizontalArrangement = Arrangement.SpaceBetween,) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.weight(1f),
+                ) {
+                    SettingsLabel(labelRes = label)
+                    description?.let { SettingsDescription(descriptionRes = it) }
+                }
+                selectedOption?.let {
+                    Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+                }
             }
         }
     }
