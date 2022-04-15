@@ -15,7 +15,7 @@ import android.telephony.TelephonyManager
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
-import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
@@ -28,10 +28,14 @@ import java.util.Locale
 class PhoneStateReceiver : BroadcastReceiver() {
     private val incomingCallService: IncomingCallService by injectAnywhere()
     private val notificationRepository: NotificationRepository by injectAnywhere()
+    private val settings: SettingsRepository by injectAnywhere()
+
+    init {
+        settings // just to make sure it is being loaded
+    }
 
     override fun onReceive(context: Context, intent: Intent?) {
         logger.debug("Receiving broadcast")
-        val settings = Settings.current
 
         if (!settings.observeIncomingCalls || !settings.useBroadcastReceiverForIncomingCalls) {
             logger.debug("Broadcast-Receiver is turned off in settings")
