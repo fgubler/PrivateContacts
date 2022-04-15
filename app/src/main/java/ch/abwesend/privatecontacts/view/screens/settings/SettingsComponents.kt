@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -66,7 +67,9 @@ fun SettingsCheckbox(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onValueChanged(!value) },
     ) {
         Column(modifier = Modifier.weight(1f)) {
             SettingsLabel(labelRes = label)
