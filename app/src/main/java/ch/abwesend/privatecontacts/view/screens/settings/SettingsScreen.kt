@@ -7,8 +7,6 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -45,17 +43,23 @@ object SettingsScreen {
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
 
-        BaseScreen(screenContext = screenContext, selectedScreen = SettingsScreen) {
+        BaseScreen(
+            screenContext = screenContext,
+            selectedScreen = SettingsScreen,
+            topBarActions = { SettingsActions() }
+        ) {
             Column(
                 modifier = Modifier
                     .padding(10.dp)
                     .verticalScroll(scrollState)
             ) {
                 UxCategory(settingsRepository, currentSettings)
-                Spacer(modifier = Modifier.height(10.dp))
+                SettingsCategorySpacer()
                 DefaultValuesCategory(settingsRepository, currentSettings)
-                Spacer(modifier = Modifier.height(10.dp))
+                SettingsCategorySpacer()
                 MiscellaneousCategory(settingsRepository, currentSettings)
+
+                SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }
     }

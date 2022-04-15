@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
     val currentSettings: ISettingsState
+    fun overrideSettingsWith(settings: ISettingsState)
 
     // UX
     override var appTheme: AppTheme
@@ -23,9 +24,9 @@ interface SettingsRepository : ISettingsState {
     override var defaultContactType: ContactType
 
     // Incoming Call Detection
-    override var requestIncomingCallPermissions: Boolean
+    override var requestIncomingCallPermissions: Boolean // invisible
     override var showIncomingCallsOnLockScreen: Boolean
-    override var useBroadcastReceiverForIncomingCalls: Boolean
+    override var useBroadcastReceiverForIncomingCalls: Boolean // invisible for now (until CallScreeningService...)
 
     // Others
     override var sendErrorsToCrashlytics: Boolean

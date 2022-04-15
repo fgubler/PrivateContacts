@@ -75,4 +75,15 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var defaultContactType: ContactType
         get() = currentSettings.defaultContactType
         set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)
+
+    override fun overrideSettingsWith(settings: ISettingsState) {
+        appTheme = settings.appTheme
+        orderByFirstName = settings.orderByFirstName
+        showIncomingCallsOnLockScreen = settings.showIncomingCallsOnLockScreen
+        showInitialAppInfoDialog = settings.showInitialAppInfoDialog
+        requestIncomingCallPermissions = settings.requestIncomingCallPermissions
+        useBroadcastReceiverForIncomingCalls = settings.useBroadcastReceiverForIncomingCalls
+        sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
+        defaultContactType = settings.defaultContactType
+    }
 }

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -25,15 +26,17 @@ import kotlinx.coroutines.CoroutineScope
 fun BaseScreen(
     screenContext: ScreenContext,
     selectedScreen: Screen,
-    allowFullNavigation: Boolean = false,
     /** if false, only back-navigation is allowed */
+    allowFullNavigation: Boolean = false,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    topBarActions: @Composable RowScope.() -> Unit = {},
     topBar: @Composable () -> Unit = {
         BaseTopBar(
             screenContext = screenContext,
             selectedScreen = selectedScreen,
             allowFullNavigation = allowFullNavigation,
+            actions = topBarActions,
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
         )
@@ -55,6 +58,7 @@ private fun BaseTopBar(
     screenContext: ScreenContext,
     selectedScreen: Screen,
     allowFullNavigation: Boolean,
+    actions: @Composable RowScope.() -> Unit = {},
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
 ) {
@@ -67,5 +71,6 @@ private fun BaseTopBar(
                 MenuBackButton(router = screenContext.router)
             }
         },
+        actions = actions,
     )
 }

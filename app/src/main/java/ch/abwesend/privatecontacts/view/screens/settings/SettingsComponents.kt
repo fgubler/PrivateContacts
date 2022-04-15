@@ -10,7 +10,9 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
@@ -32,6 +34,9 @@ import ch.abwesend.privatecontacts.view.model.DropDownOption
 
 @ExperimentalMaterialApi
 private val parent = SettingsScreen
+
+@Composable
+fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
 
 @Composable
 fun SettingsCategory(
