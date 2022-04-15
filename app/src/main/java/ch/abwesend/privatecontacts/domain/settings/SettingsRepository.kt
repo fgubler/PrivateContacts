@@ -24,6 +24,7 @@ interface SettingsRepository : ISettingsState {
     override var defaultContactType: ContactType
 
     // Incoming Call Detection
+    override var observeIncomingCalls: Boolean
     override var requestIncomingCallPermissions: Boolean // invisible
     override var showIncomingCallsOnLockScreen: Boolean
     override var useBroadcastReceiverForIncomingCalls: Boolean // invisible for now (until CallScreeningService...)

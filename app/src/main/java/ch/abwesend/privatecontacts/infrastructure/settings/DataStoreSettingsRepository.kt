@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val coroutineScope = applicationScope
 
-    override var currentSettings: ISettingsState = defaultSettingsState
+    override var currentSettings: ISettingsState = SettingsState.defaultSettings
         private set
 
     override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
@@ -64,6 +65,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.requestIncomingCallPermissions
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
 
+    override var observeIncomingCalls: Boolean
+        get() = currentSettings.observeIncomingCalls
+        set(value) = dataStore.setValue(observeIncomingCallsEntry, value)
+
     override var useBroadcastReceiverForIncomingCalls: Boolean
         get() = currentSettings.useBroadcastReceiverForIncomingCalls
         set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
@@ -82,8 +87,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         showIncomingCallsOnLockScreen = settings.showIncomingCallsOnLockScreen
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
+        observeIncomingCalls = settings.observeIncomingCalls
         useBroadcastReceiverForIncomingCalls = settings.useBroadcastReceiverForIncomingCalls
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType
+        // TODO add new properties here
     }
 }

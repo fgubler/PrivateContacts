@@ -20,6 +20,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     showIncomingCallsOnLockScreen = getValue(incomingCallsOnLockScreenEntry),
     showInitialAppInfoDialog = getValue(initialInfoDialogEntry),
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),
+    observeIncomingCalls = getValue(observeIncomingCallsEntry),
     useBroadcastReceiverForIncomingCalls = getValue(useIncomingCallBroadCastReceiverEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
     defaultContactType = tryGetEnumValue(defaultContactTypeEntry),

@@ -20,14 +20,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import org.koin.androidx.compose.get
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -54,6 +58,8 @@ object SettingsScreen {
                     .verticalScroll(scrollState)
             ) {
                 UxCategory(settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+                CallDetectionCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
                 DefaultValuesCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
@@ -85,6 +91,32 @@ object SettingsScreen {
                 value = currentSettings.orderByFirstName,
                 onValueChanged = { settingsRepository.orderByFirstName = it }
             )
+        }
+    }
+
+    @Composable
+    private fun CallDetectionCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        var requestPermissions: Boolean by remember { mutableStateOf(false) }
+
+        SettingsCategory(titleRes = R.string.settings_category_call_detection) {
+            SettingsCheckbox(
+                label = R.string.settings_entry_call_detection,
+                description = R.string.settings_entry_call_detection_description,
+                value = currentSettings.observeIncomingCalls,
+            ) {
+                settingsRepository.observeIncomingCalls = it
+                settingsRepository.requestIncomingCallPermissions = true
+                if (it) { requestPermissions = true }
+            }
+        }
+
+        if (requestPermissions) {
+            getCurrentActivity()?.PermissionHandler(
+                settings = currentSettings,
+                permissionHelper = get()
+            ) {
+                requestPermissions = false
+            } ?: logger.warning("Activity not found: cannot ask for permissions")
         }
     }
 

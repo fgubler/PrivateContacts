@@ -75,6 +75,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             },
             onNo = { doNotShowAgain ->
                 closeDialog()
+                Settings.repository.observeIncomingCalls = false
                 if (doNotShowAgain) {
                     Settings.repository.requestIncomingCallPermissions = false
                 }
@@ -95,6 +96,7 @@ private fun ComponentActivity.requestPhoneStatePermission(
 
     val onPermissionResult: (PermissionRequestResult) -> Unit = { result ->
         if (result == PermissionRequestResult.NEWLY_GRANTED) {
+            Settings.repository.observeIncomingCalls = true
             Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
         }
         onResult?.invoke(result)

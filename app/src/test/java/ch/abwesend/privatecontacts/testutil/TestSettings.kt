@@ -22,6 +22,7 @@ data class TestSettings(
     override var orderByFirstName: Boolean = currentSettings.orderByFirstName
     override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
     override var defaultContactType: ContactType = currentSettings.defaultContactType
+    override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
     override var useBroadcastReceiverForIncomingCalls: Boolean = currentSettings.useBroadcastReceiverForIncomingCalls
