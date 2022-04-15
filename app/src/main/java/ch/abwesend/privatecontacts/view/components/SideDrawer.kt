@@ -76,7 +76,7 @@ fun SideDrawerHeader() {
         Image(
             bitmap = ImageBitmap.imageResource(id = R.drawable.app_logo_large),
             contentDescription = stringResource(id = R.string.app_name),
-            modifier = Modifier.widthIn(max = 500.dp)
+            modifier = Modifier.widthIn(max = 500.dp).clip(RoundedCornerShape(20.dp))
         )
         Text(
             text = stringResource(id = R.string.app_name),
