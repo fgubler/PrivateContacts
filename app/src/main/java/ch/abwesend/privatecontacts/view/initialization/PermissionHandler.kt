@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
@@ -23,6 +24,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 
 @Composable
 fun ComponentActivity.PermissionHandler(
+    settings: ISettingsState,
     permissionHelper: PermissionHelper,
     onPermissionsHandled: () -> Unit,
 ) {
@@ -30,6 +32,7 @@ fun ComponentActivity.PermissionHandler(
 
     LaunchedEffect(Unit) {
         requestPhoneStatePermission(
+            settings = settings,
             permissionHelper = permissionHelper,
             showExplanation = { requestIncomingCallPermissions = true }
         ) {
@@ -39,7 +42,11 @@ fun ComponentActivity.PermissionHandler(
         }
     }
 
-    IncomingCallPermissionDialog(permissionHelper = permissionHelper, showDialog = requestIncomingCallPermissions) {
+    IncomingCallPermissionDialog(
+        settings = settings,
+        permissionHelper = permissionHelper,
+        showDialog = requestIncomingCallPermissions
+    ) {
         requestIncomingCallPermissions = false
         onPermissionsHandled()
     }
@@ -47,6 +54,7 @@ fun ComponentActivity.PermissionHandler(
 
 @Composable
 private fun ComponentActivity.IncomingCallPermissionDialog(
+    settings: ISettingsState,
     permissionHelper: PermissionHelper,
     showDialog: Boolean,
     closeDialog: () -> Unit,
@@ -59,6 +67,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
             onYes = {
                 closeDialog()
                 requestPhoneStatePermission(
+                    settings = settings,
                     permissionHelper = permissionHelper,
                     showExplanation = null,
                     onResult = null,
@@ -75,11 +84,12 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
 }
 
 private fun ComponentActivity.requestPhoneStatePermission(
+    settings: ISettingsState,
     permissionHelper: PermissionHelper,
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
-    if (!Settings.current.requestIncomingCallPermissions) {
+    if (!settings.requestIncomingCallPermissions) {
         return
     }
 

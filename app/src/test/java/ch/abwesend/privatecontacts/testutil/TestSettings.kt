@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.flow
 
 data class TestSettings(
     override val currentSettings: ISettingsState = SettingsState.defaultSettings,
-    override val initialized: Flow<Boolean> = flow { emit(true) },
     override val settings: Flow<ISettingsState> = flow { emit(currentSettings) },
 ) : SettingsRepository {
     override var appTheme: AppTheme = currentSettings.appTheme

@@ -21,8 +21,6 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class DataStoreSettingsRepository(context: Context) : SettingsRepository {
@@ -36,10 +34,6 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         private set
 
     override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
-    override val initialized: Flow<Boolean> = dataStore.data
-        .map { true }
-        .onStart { emit(false) }
-        .take(2)
 
     init {
         coroutineScope.launch(dispatchers.io) {

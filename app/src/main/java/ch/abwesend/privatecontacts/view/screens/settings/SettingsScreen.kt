@@ -30,7 +30,6 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
-import ch.abwesend.privatecontacts.view.util.observeAsState
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -41,7 +40,7 @@ object SettingsScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val settingsRepository = Settings.repository
-        val currentSettings by Settings.observeAsState()
+        val currentSettings = screenContext.settings
 
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress

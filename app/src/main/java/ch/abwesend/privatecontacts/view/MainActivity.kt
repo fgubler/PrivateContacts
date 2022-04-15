@@ -24,7 +24,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,26 +39,27 @@ import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.WaitingForSettings
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
-import ch.abwesend.privatecontacts.view.util.observeAsState
+import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collectLatest
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
 
         permissionHelper.setupObserver(this)
 
-        var initializationState: InitializationState by mutableStateOf(WaitingForSettings)
+        var initializationState: InitializationState by mutableStateOf(InitialInfoDialog)
         val nextState: () -> Unit = {
             val oldState = initializationState
             initializationState = initializationState.next()
@@ -89,46 +89,40 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            val settings by Settings.observeAsState()
+            val settings by Settings.observeAsNullableState()
 
-            val isDarkTheme = when (settings.appTheme) {
+            val isDarkTheme = when (settings?.appTheme ?: SettingsState.defaultSettings.appTheme) {
                 AppTheme.LIGHT_MODE -> false
                 AppTheme.DARK_MODE -> true
                 AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()
             }
 
-            LaunchedEffect(Unit) {
-                Settings.repository.initialized.collectLatest { initialized ->
-                    if (initialized && initializationState == WaitingForSettings) {
-                        nextState()
-                    }
-                }
-            }
-
             PrivateContactsTheme(isDarkTheme) {
-                if (initializationState.showMainContent) {
-                    MainContent(initializationState) { nextState() }
-                } else {
-                    InitialLoadingView()
-                }
+                settings?.let {
+                    MainContent(initializationState, it) { nextState() }
+                } ?: InitialLoadingView()
             }
         }
     }
 
     @Composable
-    private fun MainContent(initializationState: InitializationState, nextState: () -> Unit) {
+    private fun MainContent(
+        initializationState: InitializationState,
+        settings: ISettingsState,
+        nextState: () -> Unit,
+    ) {
         val navController = rememberNavController()
-        val screenContext = createScreenContext(navController)
+        val screenContext = createScreenContext(navController, settings)
 
         MainNavHost(
             navController = navController,
             screenContext = screenContext,
         )
 
-        InfoDialogs(initializationState) { nextState() }
+        InfoDialogs(initializationState, settings) { nextState() }
 
         if (initializationState == CallPermissionsDialog) {
-            PermissionHandler(permissionHelper) { nextState() }
+            PermissionHandler(settings, permissionHelper) { nextState() }
         }
     }
 
@@ -157,11 +151,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun createScreenContext(navController: NavHostController): ScreenContext {
+    private fun createScreenContext(
+        navController: NavHostController,
+        settings: ISettingsState
+    ): ScreenContext {
         val router: AppRouter = getAnywhereWithParams(navController)
 
         return ScreenContext(
             router = router,
+            settings = settings,
             contactListViewModel = contactListViewModel,
             contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,
