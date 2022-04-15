@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,12 +58,17 @@ object SettingsScreen {
             ) {
                 UxCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
+
                 CallDetectionCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
-                DefaultValuesCategory(settingsRepository, currentSettings)
-                SettingsCategorySpacer()
-                MiscellaneousCategory(settingsRepository, currentSettings)
 
+                // TODO re-insert when public contacts are possible
+                if (false) {
+                    DefaultValuesCategory(settingsRepository, currentSettings)
+                    SettingsCategorySpacer()
+                }
+
+                MiscellaneousCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }
@@ -84,7 +88,9 @@ object SettingsScreen {
                 options = appThemeOptions,
                 onValueChanged = { settingsRepository.appTheme = it }
             )
-            Divider()
+
+            SettingsEntryDivider()
+
             SettingsCheckbox(
                 label = R.string.settings_entry_order_by_first_name,
                 description = null,
@@ -108,6 +114,15 @@ object SettingsScreen {
                 settingsRepository.requestIncomingCallPermissions = true
                 if (it) { requestPermissions = true }
             }
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_calls_on_lockscreen,
+                description = R.string.settings_entry_show_calls_on_lockscreen_description,
+                value = currentSettings.observeIncomingCalls && currentSettings.showIncomingCallsOnLockScreen,
+                enabled = currentSettings.observeIncomingCalls
+            ) { settingsRepository.showIncomingCallsOnLockScreen = it }
         }
 
         if (requestPermissions) {

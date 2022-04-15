@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -39,6 +40,9 @@ private val parent = SettingsScreen
 fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
 
 @Composable
+fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.dp))
+
+@Composable
 fun SettingsCategory(
     @StringRes titleRes: Int,
     content: @Composable () -> Unit
@@ -56,6 +60,7 @@ fun SettingsCheckbox(
     @StringRes label: Int,
     @StringRes description: Int?,
     value: Boolean,
+    enabled: Boolean = true,
     onValueChanged: (Boolean) -> Unit,
 ) {
     Row(
@@ -69,6 +74,7 @@ fun SettingsCheckbox(
         }
         Checkbox(
             checked = value,
+            enabled = enabled,
             onCheckedChange = onValueChanged,
             modifier = Modifier.padding(start = 10.dp)
         )
@@ -93,7 +99,7 @@ fun <T> SettingsDropDown(
     ) { _, modifier ->
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.heightIn(min = 50.dp),
+            modifier = modifier.heightIn(min = 45.dp),
         ) {
             Row(horizontalArrangement = Arrangement.SpaceBetween,) {
                 Column(
