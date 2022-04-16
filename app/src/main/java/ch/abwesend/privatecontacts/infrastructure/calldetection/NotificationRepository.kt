@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.calldetection
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationCompat
@@ -17,6 +18,7 @@ import androidx.core.app.NotificationManagerCompat
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.view.util.navigateToCallScreenIntent
 import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
@@ -65,6 +67,9 @@ class NotificationRepository {
             if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
             else VISIBILITY_SECRET
 
+        val intent = navigateToCallScreenIntent
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_phone_callback_24)
             .setContentTitle(title)
@@ -73,6 +78,7 @@ class NotificationRepository {
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(visibility)
             .setTimeoutAfter(MAX_NOTIFICATION_TIMEOUT_MS)
+            .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
         val manager = NotificationManagerCompat.from(context)
