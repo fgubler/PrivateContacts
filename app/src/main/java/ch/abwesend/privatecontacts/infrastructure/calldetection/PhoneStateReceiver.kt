@@ -75,6 +75,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
             val correspondingContacts = incomingCallService
                 .findCorrespondingContacts(phoneNumber, defaultCountryIso)
                 .map { it.getFullName() }
+                .distinct()
 
             logger.debug("Found corresponding contacts: $correspondingContacts")
             val formattedNumber = PhoneNumberUtils.formatNumber(phoneNumber, defaultCountryIso) ?: phoneNumber

@@ -49,12 +49,15 @@ class NotificationRepository {
         val text = if (contactNames.size == 1) {
             context.getString(R.string.incoming_call_text_single_match, contactNames.first())
         } else {
-            val namesConcat = contactNames.joinToString(separator = ", ") { "\"$it\"" }
+            val lastContactName = contactNames.last()
+            val otherContactNames = contactNames
+                .filter { it != lastContactName }
+                .joinToString(separator = ", ")
             context.getString(
                 R.string.incoming_call_text_multiple_matches,
-                contactNames.first(),
+                otherContactNames,
+                lastContactName,
                 callerNumber,
-                namesConcat,
             )
         }
 
