@@ -25,7 +25,7 @@ class IncomingCallService {
      */
     suspend fun findCorrespondingContacts(
         phoneNumber: String,
-        defaultCountryIso: String?,
+        defaultCountryIso: String,
     ): List<ContactWithPhoneNumbers> {
         val ending = phoneNumber.takeLast(CONSIDER_LAST_DIGITS)
         val contactCandidates = contactRepository.findContactsWithNumberEndingOn(ending)

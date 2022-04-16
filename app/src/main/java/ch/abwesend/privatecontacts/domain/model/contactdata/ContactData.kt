@@ -36,8 +36,14 @@ value class ContactDataId(val uuid: UUID) {
 }
 
 interface StringBasedContactDataSimple : ContactData {
+    /** Raw value */
     val value: String
+    /** Formatted for display */
     val formattedValue: String
+        get() = value
+    /** Formatted for automatic processing (e.g. phone-number without spaces) */
+    val sanitizedValue: String
+        get() = value
 
     override val isEmpty: Boolean
         get() = value.isEmpty()

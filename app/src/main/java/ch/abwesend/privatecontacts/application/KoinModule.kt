@@ -12,7 +12,9 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.repository.ITelephoneRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
@@ -24,6 +26,7 @@ import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.TelephoneRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
@@ -39,6 +42,7 @@ internal val koinModule = module {
     single { FullTextSearchService() }
     single { PermissionHelper() }
     single { IncomingCallService() }
+    single { ContactSanitizingService() }
     single { EasterEggService() }
 
     single<IContactRepository> { ContactRepository() }
@@ -48,6 +52,7 @@ internal val koinModule = module {
     single { NotificationRepository() }
 
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
+    single<ITelephoneRepository> { TelephoneRepository(androidContext()) }
 
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory> { DatabaseFactory }

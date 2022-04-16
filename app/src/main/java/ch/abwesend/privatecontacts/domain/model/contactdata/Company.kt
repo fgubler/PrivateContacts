@@ -17,7 +17,6 @@ data class Company(
     override val sortOrder: Int,
     override val type: ContactDataType,
     override val value: String,
-    override val formattedValue: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : StringBasedContactData<Company> {

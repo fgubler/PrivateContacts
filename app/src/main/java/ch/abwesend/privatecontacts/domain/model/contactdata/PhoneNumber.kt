@@ -26,6 +26,9 @@ data class PhoneNumber(
     override val allowedTypes: List<ContactDataType>
         get() = defaultAllowedTypes
 
+    override val sanitizedValue: String
+        get() = value.filter { !it.isWhitespace() }
+
     override fun changeValue(value: String): PhoneNumber {
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(value = value, modelStatus = status)

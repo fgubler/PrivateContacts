@@ -26,7 +26,7 @@ import java.util.UUID
     ],
     indices = [
         Index("contactId"),
-        Index("category", "valueRaw"),
+        Index("category", "valueSanitized"),
     ],
 )
 data class ContactDataEntity(
@@ -36,6 +36,7 @@ data class ContactDataEntity(
     @Embedded(prefix = "type") val type: ContactDataTypeEntity,
     val isMain: Boolean,
     val valueRaw: String,
+    val valueSanitized: String, // e.g. phone-number without spaces
     val valueFormatted: String,
     val sortOrder: Int,
 )

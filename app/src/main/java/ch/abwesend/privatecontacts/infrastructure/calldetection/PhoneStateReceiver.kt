@@ -14,12 +14,12 @@ import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
+import ch.abwesend.privatecontacts.domain.repository.ITelephoneRepository
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 /**
  * Handle an incoming call via broadcast-receiver.
@@ -29,6 +29,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
     private val incomingCallService: IncomingCallService by injectAnywhere()
     private val notificationRepository: NotificationRepository by injectAnywhere()
     private val settings: SettingsRepository by injectAnywhere()
+    private val telephoneService: ITelephoneRepository by injectAnywhere()
 
     init {
         settings // just to make sure it is being loaded
@@ -68,8 +69,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
         context: Context,
         phoneNumber: String,
     ) {
-        val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
-        val defaultCountryIso = telephonyManager?.networkCountryIso ?: Locale.getDefault().country.lowercase()
+        val defaultCountryIso = telephoneService.telephoneDefaultCountryIso
 
         applicationScope.launch {
             val correspondingContacts = incomingCallService

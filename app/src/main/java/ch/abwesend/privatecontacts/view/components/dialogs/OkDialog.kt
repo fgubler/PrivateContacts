@@ -67,21 +67,21 @@ fun OkDoNotShowAgainDialog(
     @StringRes text: Int,
     onClose: (doNotShowAgain: Boolean) -> Unit,
 ) {
-    var doNotShowAgainState by remember { mutableStateOf(false) }
+    var doNotShowAgain by remember { mutableStateOf(false) }
 
     AlertDialog(
         title = { Text(stringResource(id = title)) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(stringResource(id = text))
-                DoNotShowAgainCheckbox(checked = doNotShowAgainState) {
-                    doNotShowAgainState = it
+                DoNotShowAgainCheckbox(checked = doNotShowAgain) {
+                    doNotShowAgain = it
                 }
             }
         },
-        onDismissRequest = { onClose(doNotShowAgainState) },
+        onDismissRequest = { onClose(doNotShowAgain) },
         confirmButton = {
-            Button(onClick = { onClose(doNotShowAgainState) }) {
+            Button(onClick = { onClose(doNotShowAgain) }) {
                 Text(stringResource(id = R.string.ok))
             }
         },
