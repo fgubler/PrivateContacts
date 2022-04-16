@@ -23,7 +23,7 @@ interface ContactDataDao {
         SELECT * 
         FROM ContactDataEntity 
         WHERE category = 'PHONE_NUMBER'
-        AND valueSanitized LIKE ('%' || :endOfPhoneNumber) 
+        AND valueForMatching LIKE ('%' || :endOfPhoneNumber) 
         """
     )
     suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): List<ContactDataEntity>

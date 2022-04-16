@@ -39,17 +39,15 @@ interface StringBasedContactDataSimple : ContactData {
     /** Raw value */
     val value: String
     /** Formatted for display */
-    val formattedValue: String
-        get() = value
-    /** Formatted for automatic processing (e.g. phone-number without spaces) */
-    val sanitizedValue: String
-        get() = value
+    val formattedValue: String get() = value
+    /** Formatted for automatic matching */
+    val valueForMatching: String get() = value
 
     override val isEmpty: Boolean
         get() = value.isEmpty()
 
     override val displayValue: String
-        get() = value
+        get() = formattedValue
 
     override fun formatValueForSearch(): String = formatValueForSearch(value)
 

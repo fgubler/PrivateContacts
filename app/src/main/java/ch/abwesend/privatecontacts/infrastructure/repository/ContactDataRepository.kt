@@ -79,6 +79,7 @@ class ContactDataRepository : RepositoryBase() {
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
+                formattedValue = contactData.valueFormatted,
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )

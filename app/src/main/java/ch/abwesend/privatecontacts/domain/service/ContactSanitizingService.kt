@@ -20,7 +20,7 @@ class ContactSanitizingService {
             val data = contact.contactDataSet[i]
             if (data is PhoneNumber) {
                 val isoCode = telephoneRepository.telephoneDefaultCountryIso
-                val formattedValue = PhoneNumberUtils.formatNumber(data.value, isoCode)
+                val formattedValue = PhoneNumberUtils.formatNumber(data.value, isoCode) ?: data.value
                 contact.contactDataSet[i] = data.copy(formattedValue = formattedValue)
             }
         }
