@@ -60,16 +60,17 @@ class ContactListViewModel : ViewModel() {
         if (resetSearch) {
             resetSearch()
         }
-        logger.debug("Reloading contacts with query '$currentFilter'")
         _contacts.value = currentFilter?.let { searchContacts(it) } ?: loadContacts()
     }
 
     private fun loadContacts(): Flow<PagingData<IContactBase>> {
+        logger.debug("Loading contacts")
         initialEmptyContactsIgnored = false
         return loadService.loadContacts() // do not cache (when returning from detail-screen we want to reload)
     }
 
     private fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+        logger.debug("Searching contacts with query '$query'")
         initialEmptyContactsIgnored = false
         return loadService.searchContacts(query)
     }
