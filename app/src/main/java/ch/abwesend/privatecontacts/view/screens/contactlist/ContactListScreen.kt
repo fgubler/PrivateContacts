@@ -77,12 +77,20 @@ object ContactListScreen {
 
         when {
             pagedContacts.isError -> LoadingError(viewModel)
-            pagedContacts.isLoading -> LoadingIndicatorFullScreen(R.string.loading_contacts)
-            else -> ContactList(pagedContacts = pagedContacts) { contact ->
-                selectContact(screenContext, contact)
+            pagedContacts.isLoading -> ContactLoadingIndicator()
+            else -> {
+                if (pagedContacts.itemCount > 0 || viewModel.initialEmptyContactsIgnored) {
+                    ContactList(pagedContacts = pagedContacts) { contact ->
+                        selectContact(screenContext, contact)
+                    }
+                } else ContactLoadingIndicator()
+                viewModel.initialEmptyContactsIgnored = true
             }
         }
     }
+
+    @Composable
+    private fun ContactLoadingIndicator() = LoadingIndicatorFullScreen(R.string.loading_contacts)
 
     @Composable
     private fun LoadingError(viewModel: ContactListViewModel) {

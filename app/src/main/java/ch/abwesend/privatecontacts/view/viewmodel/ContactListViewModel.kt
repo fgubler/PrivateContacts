@@ -26,13 +26,16 @@ class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
+    /** initially, the contacts are always returned to be empty before loading-state starts */
+    var initialEmptyContactsIgnored: Boolean = false
+
     @FlowPreview
     private val searchQueryDebouncer by lazy {
         Debouncer.debounce<String>(
             scope = viewModelScope,
             debounceMs = 300,
         ) { query ->
-            _contacts.value = loadService.searchContacts(query)
+            _contacts.value = searchContacts(query)
         }
     }
 
@@ -40,13 +43,23 @@ class ContactListViewModel : ViewModel() {
      * The [State] is necessary to make sure the view is updated on [reloadContacts]
      */
     private val _contacts: MutableState<Flow<PagingData<IContactBase>>> by lazy {
-        mutableStateOf(loadService.loadContacts().cachedIn(viewModelScope))
+        mutableStateOf(loadContacts())
     }
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
 
     fun reloadContacts() {
         logger.debug("Reloading contacts")
-        _contacts.value = loadService.loadContacts().cachedIn(viewModelScope)
+        _contacts.value = loadContacts()
+    }
+
+    private fun loadContacts(): Flow<PagingData<IContactBase>> {
+        initialEmptyContactsIgnored = false
+        return loadService.loadContacts().cachedIn(viewModelScope)
+    }
+
+    private fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+        initialEmptyContactsIgnored = false
+        return loadService.searchContacts(query)
     }
 
     @FlowPreview
