@@ -40,7 +40,7 @@ class ContactListViewModel : ViewModel() {
      * The [State] is necessary to make sure the view is updated on [reloadContacts]
      */
     private val _contacts: MutableState<Flow<PagingData<IContactBase>>> by lazy {
-        mutableStateOf(loadService.loadContacts())
+        mutableStateOf(loadService.loadContacts().cachedIn(viewModelScope))
     }
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
 
