@@ -6,10 +6,17 @@
 
 package ch.abwesend.privatecontacts.view.permission
 
+import android.app.Activity
+import android.app.role.RoleManager
+import android.content.Context.ROLE_SERVICE
+import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.os.Build
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
@@ -27,11 +34,20 @@ enum class PermissionRequestResult {
 class PermissionHelper {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
     private lateinit var multipleResultsObserver: ActivityResultLauncher<Array<String>>
+    private lateinit var roleResultObserver: ActivityResultLauncher<Intent>
 
     private var currentPermissions: List<String> = emptyList()
     private var currentResultCallback: (PermissionRequestResult) -> Unit = {
         logger.debug("No result callback registered")
     }
+
+    /**
+     * Starting with version Q, the CallScreeningService is available.
+     * Until version O, the incoming phone-number can be read from a broadcast without CALL_LOG permission.
+     * Google does not want to give me the CALL_LOG permission...
+     */
+    val callIdentificationPossible: Boolean
+        get() = Build.VERSION.SDK_INT != Build.VERSION_CODES.P
 
     /** needs to be called before [activity] reaches resumed-state */
     fun setupObserver(activity: ComponentActivity) = with(activity) {
@@ -51,6 +67,13 @@ class PermissionHelper {
             }
             logger.debug("Permission '$currentPermissions' $result")
             currentResultCallback(result)
+        }
+
+        val roleContract = ActivityResultContracts.StartActivityForResult()
+        roleResultObserver = registerForActivityResult(roleContract) { result: ActivityResult ->
+            val resultCode = if (result.resultCode == Activity.RESULT_OK) NEWLY_GRANTED else DENIED
+            logger.debug("Role request result: $resultCode")
+            currentResultCallback(resultCode)
         }
     }
 
@@ -98,4 +121,39 @@ class PermissionHelper {
             multipleResultsObserver.launch(permissions.toTypedArray())
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun requestCallerIdRoleWithExplanation(
+        activity: ComponentActivity,
+        showExplanation: () -> Unit,
+        onPermissionResult: (PermissionRequestResult) -> Unit,
+    ) {
+        currentResultCallback = onPermissionResult
+
+        if (activity.hasCallScreeningRole) onPermissionResult(ALREADY_GRANTED)
+        else showExplanation()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.Q)
+    fun requestCallerIdRoleNow(
+        activity: ComponentActivity,
+        onPermissionResult: (PermissionRequestResult) -> Unit,
+    ) {
+        currentResultCallback = onPermissionResult
+
+        if (activity.hasCallScreeningRole) {
+            onPermissionResult(ALREADY_GRANTED)
+        } else {
+            val roleManager = activity.getSystemService(ROLE_SERVICE) as RoleManager?
+            val intent = roleManager?.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
+            intent?.let { roleResultObserver.launch(it) }
+        }
+    }
+
+    private val ComponentActivity.hasCallScreeningRole: Boolean
+        @RequiresApi(Build.VERSION_CODES.Q)
+        get() {
+            val roleManager = getSystemService(ROLE_SERVICE) as RoleManager?
+            return roleManager?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) == true
+        }
 }

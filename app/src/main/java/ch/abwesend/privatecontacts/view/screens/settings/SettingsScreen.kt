@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -25,9 +27,11 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import org.koin.androidx.compose.get
@@ -38,6 +42,8 @@ object SettingsScreen {
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
         private set
 
+    val permissionHelper: PermissionHelper by injectAnywhere()
+
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val settingsRepository = Settings.repository
@@ -45,6 +51,8 @@ object SettingsScreen {
 
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
+
+        val callDetectionPossible = remember { permissionHelper.callIdentificationPossible }
 
         BaseScreen(
             screenContext = screenContext,
@@ -59,7 +67,8 @@ object SettingsScreen {
                 UxCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                CallDetectionCategory(settingsRepository, currentSettings)
+                if (callDetectionPossible) CallDetectionCategory(settingsRepository, currentSettings)
+                else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
 
                 // TODO re-insert when public contacts are possible
@@ -132,6 +141,13 @@ object SettingsScreen {
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")
+        }
+    }
+
+    @Composable
+    private fun CallDetectionCategoryDummy() {
+        SettingsCategory(titleRes = R.string.settings_category_call_detection) {
+            Text(text = stringResource(id = R.string.settings_category_call_detection_excuse))
         }
     }
 

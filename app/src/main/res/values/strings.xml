@@ -129,6 +129,7 @@
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
+    <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
