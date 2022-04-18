@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
@@ -107,7 +108,7 @@ fun someContactEditable(
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: MutableList<ContactData> = mutableListOf(),
     isNew: Boolean = false,
-): IContact = ContactEditable(
+): IContactEditable = ContactEditable(
     id = id,
     firstName = firstName,
     lastName = lastName,

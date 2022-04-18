@@ -34,6 +34,7 @@ fun someContactDataEntity(
     contactId = contactId,
     valueRaw = value,
     valueFormatted = value,
+    valueForMatching = value,
     category = category,
     type = type,
     isMain = isMain,
