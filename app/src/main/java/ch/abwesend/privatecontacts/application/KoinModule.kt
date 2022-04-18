@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.calldetection.NotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
@@ -49,6 +50,7 @@ internal val koinModule = module {
     single { ContactDataRepository() }
     single<ContactPagerFactory> { ContactPagingSource.Companion }
 
+    single { IncomingCallHelper() }
     single { NotificationRepository() }
 
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }

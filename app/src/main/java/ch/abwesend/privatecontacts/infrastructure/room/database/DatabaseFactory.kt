@@ -68,7 +68,7 @@ val dummyContacts
             contactDataSet = mutableListOf(
                 PhoneNumber(
                     id = ContactDataId.randomId(),
-                    value = "1234",
+                    value = "(650) 555-1212",
                     type = ContactDataType.Personal,
                     isMain = true,
                     sortOrder = 0,

@@ -24,7 +24,6 @@
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.PrivateContacts.NoActionBar">
             <intent-filter>
@@ -40,5 +39,12 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+        <service android:name=".infrastructure.calldetection.CallerIdentificationService"
+            android:permission="android.permission.BIND_SCREENING_SERVICE"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.telecom.CallScreeningService"/>
+            </intent-filter>
+        </service>
     </application>
 </manifest>
