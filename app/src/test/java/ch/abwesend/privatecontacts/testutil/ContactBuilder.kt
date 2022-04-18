@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -26,7 +26,7 @@ fun someContactBase(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
 ): IContactBase = ContactBase(
     id = id,
@@ -42,7 +42,7 @@ fun someContactEntity(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     fullTextSearch: String = "TestSearch",
 ): ContactEntity = ContactEntity(
@@ -60,7 +60,7 @@ fun someContactWithPhoneNumbers(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     phoneNumbers: List<String> = emptyList(),
 ): ContactWithPhoneNumbers {
@@ -83,7 +83,7 @@ fun someContactFull(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
@@ -103,7 +103,7 @@ fun someContactEditable(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: MutableList<ContactData> = mutableListOf(),
     isNew: Boolean = false,

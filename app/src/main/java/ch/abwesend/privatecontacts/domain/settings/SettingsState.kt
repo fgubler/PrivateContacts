@@ -63,7 +63,7 @@ data class SettingsState(
             observeIncomingCalls = true,
             useBroadcastReceiverForIncomingCalls = true,
             sendErrorsToCrashlytics = true,
-            defaultContactType = ContactType.PRIVATE,
+            defaultContactType = ContactType.SECRET,
         )
     }
 }

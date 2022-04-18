@@ -10,6 +10,6 @@ import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R
 
 enum class ContactType(@StringRes val label: Int) {
-    PRIVATE(R.string.private_contact),
+    SECRET(R.string.secret_contact),
     PUBLIC(R.string.public_contact),
 }

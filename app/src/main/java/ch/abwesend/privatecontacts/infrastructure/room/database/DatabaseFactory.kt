@@ -54,7 +54,7 @@ val dummyContacts
             firstName = "Darth",
             lastName = "Vader",
             nickname = "Darthy",
-            type = ContactType.PRIVATE,
+            type = ContactType.SECRET,
             notes = "Evil but not very good at it",
             contactDataSet = mutableListOf(),
         ),
@@ -131,7 +131,7 @@ val dummyContacts
             firstName = "Yoda",
             lastName = "",
             nickname = "Yo-Da",
-            type = ContactType.PRIVATE,
+            type = ContactType.SECRET,
             notes = "Small and green",
             contactDataSet = mutableListOf(
                 PhoneNumber(

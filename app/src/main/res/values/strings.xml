@@ -40,7 +40,7 @@
     <string name="thank_you">Thank you</string>
 
     <string name="type">Type</string>
-    <string name="private_contact">Private</string>
+    <string name="secret_contact">Secret</string>
     <string name="public_contact">Public</string>
     <string name="type_private">Private</string>
     <string name="type_business">Business</string>
@@ -133,7 +133,7 @@
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
     <string name="settings_entry_default_contact_type">Default contact-type</string>
-    <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Private contacts are not.</string>
+    <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
     <string name="settings_entry_call_detection">Match incoming calls with contacts</string>
     <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen.</string>
@@ -145,5 +145,5 @@
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restored all settings to their default values?</string>
 
     <string name="settings_action_reset_database">Reset contact database</string>
-    <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all private contacts? Contacts shared with other apps will not be affected but all private ones will be deleted.</string>
+    <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all secret contacts? Contacts shared with other apps will not be affected but all secret ones will be deleted.</string>
 </resources>
