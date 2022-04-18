@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
-import android.telephony.PhoneNumberUtils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import ch.abwesend.privatecontacts.R
@@ -19,6 +18,7 @@ data class PhoneNumber(
     override val type: ContactDataType,
     override val value: String,
     override val formattedValue: String = value,
+    override val valueForMatching: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : StringBasedContactData<PhoneNumber> {
@@ -26,9 +26,6 @@ data class PhoneNumber(
 
     override val allowedTypes: List<ContactDataType>
         get() = defaultAllowedTypes
-
-    override val valueForMatching: String
-        get() = PhoneNumberUtils.stripSeparators(value) ?: value
 
     override fun changeValue(value: String): PhoneNumber {
         val status = modelStatus.tryChangeTo(CHANGED)
