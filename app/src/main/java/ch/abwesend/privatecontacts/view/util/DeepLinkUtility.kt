@@ -101,6 +101,3 @@ fun StringBasedContactDataSimple.navigateToOnlineSearch(context: Context) {
         logger.error("Failed to send intent for ${javaClass.simpleName}", e)
     }
 }
-
-val navigateToCallScreenIntent
-    get() = Intent(Intent.ACTION_CALL_BUTTON)

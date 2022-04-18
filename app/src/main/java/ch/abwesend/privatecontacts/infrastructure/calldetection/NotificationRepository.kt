@@ -10,6 +10,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.VISIBILITY_PUBLIC
@@ -18,7 +19,6 @@ import androidx.core.app.NotificationManagerCompat
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.view.util.navigateToCallScreenIntent
 import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
@@ -101,4 +101,7 @@ class NotificationRepository {
 
     private val Context.notificationManager: NotificationManager
         get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    private val navigateToCallScreenIntent
+        get() = Intent(Intent.ACTION_CALL_BUTTON)
 }
