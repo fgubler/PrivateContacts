@@ -19,7 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Cust
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
@@ -188,7 +188,7 @@ class ContactDataRepositoryTest : TestBase() {
     fun `resolving a phone-number should return it for normal types`() {
         val entity = someContactDataEntity(
             category = PHONE_NUMBER,
-            type = ContactDataTypeEntity(PRIVATE, null)
+            type = ContactDataTypeEntity(PERSONAL, null)
         )
 
         val result = runBlocking { underTest.tryResolveContactData(entity) }

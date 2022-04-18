@@ -42,7 +42,7 @@
     <string name="type">Type</string>
     <string name="secret_contact">Secret</string>
     <string name="public_contact">Public</string>
-    <string name="type_private">Private</string>
+    <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
     <string name="type_mobile">Mobile</string>
     <string name="type_other">Other</string>

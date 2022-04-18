@@ -54,7 +54,7 @@ data class PhoneNumber(
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Mobile,
-            ContactDataType.Private,
+            ContactDataType.Personal,
             ContactDataType.Business,
             ContactDataType.Other,
             ContactDataType.Custom,

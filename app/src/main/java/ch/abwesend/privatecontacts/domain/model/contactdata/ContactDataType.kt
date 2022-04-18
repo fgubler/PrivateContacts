@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 
 sealed class ContactDataType {
@@ -29,9 +29,9 @@ sealed class ContactDataType {
         override val titleRes: Int = R.string.type_mobile
     }
 
-    object Private : ContactDataType() {
-        override val key: Key = PRIVATE
-        override val titleRes: Int = R.string.type_private
+    object Personal : ContactDataType() {
+        override val key: Key = PERSONAL
+        override val titleRes: Int = R.string.type_personal
     }
 
     object Business : ContactDataType() {
@@ -69,7 +69,7 @@ sealed class ContactDataType {
     }
 
     enum class Key {
-        PRIVATE,
+        PERSONAL,
         BUSINESS,
         MOBILE,
         OTHER,

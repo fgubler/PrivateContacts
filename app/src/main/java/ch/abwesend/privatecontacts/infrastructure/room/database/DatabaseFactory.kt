@@ -69,7 +69,7 @@ val dummyContacts
                 PhoneNumber(
                     id = ContactDataId.randomId(),
                     value = "1234",
-                    type = ContactDataType.Private,
+                    type = ContactDataType.Personal,
                     isMain = true,
                     sortOrder = 0,
                     modelStatus = CHANGED,
@@ -85,7 +85,7 @@ val dummyContacts
                 PhysicalAddress(
                     id = ContactDataId.randomId(),
                     value = "A lonely hut",
-                    type = ContactDataType.Private,
+                    type = ContactDataType.Personal,
                     isMain = true,
                     sortOrder = 0,
                     modelStatus = CHANGED,
@@ -111,7 +111,7 @@ val dummyContacts
                 PhoneNumber(
                     id = ContactDataId.randomId(),
                     value = "12345",
-                    type = ContactDataType.Private,
+                    type = ContactDataType.Personal,
                     isMain = true,
                     modelStatus = CHANGED,
                     sortOrder = 0,
@@ -137,7 +137,7 @@ val dummyContacts
                 PhoneNumber(
                     id = ContactDataId.randomId(),
                     value = "123456",
-                    type = ContactDataType.Private,
+                    type = ContactDataType.Personal,
                     isMain = false,
                     modelStatus = CHANGED,
                     sortOrder = 0,

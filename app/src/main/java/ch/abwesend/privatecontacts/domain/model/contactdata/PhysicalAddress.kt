@@ -46,7 +46,7 @@ data class PhysicalAddress(
         const val labelSingular = R.string.physical_address
 
         private val defaultAllowedTypes = listOf(
-            ContactDataType.Private,
+            ContactDataType.Personal,
             ContactDataType.Business,
             ContactDataType.Other,
             ContactDataType.Custom,
@@ -55,7 +55,7 @@ data class PhysicalAddress(
             PhysicalAddress(
                 id = ContactDataId.randomId(),
                 sortOrder = sortOrder,
-                type = ContactDataType.Private,
+                type = ContactDataType.Personal,
                 value = "",
                 isMain = (sortOrder == 0),
                 modelStatus = ModelStatus.NEW,

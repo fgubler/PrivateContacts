@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -41,7 +41,7 @@ fun someContactDataEntity(
 )
 
 fun someContactDataTypeEntity(
-    key: ContactDataType.Key = PRIVATE,
+    key: ContactDataType.Key = PERSONAL,
     customValue: String? = null
 ): ContactDataTypeEntity =
     ContactDataTypeEntity(
@@ -68,7 +68,7 @@ fun somePhoneNumber(
 fun someEmailAddress(
     id: ContactDataId = someContactDataId(),
     value: String = "1234",
-    type: ContactDataType = ContactDataType.Private,
+    type: ContactDataType = ContactDataType.Personal,
     sortOrder: Int = 0,
     isMain: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
