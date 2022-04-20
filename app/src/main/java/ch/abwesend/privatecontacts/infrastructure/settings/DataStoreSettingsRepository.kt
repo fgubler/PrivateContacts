@@ -69,10 +69,6 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.observeIncomingCalls
         set(value) = dataStore.setValue(observeIncomingCallsEntry, value)
 
-    override var useBroadcastReceiverForIncomingCalls: Boolean
-        get() = currentSettings.useBroadcastReceiverForIncomingCalls
-        set(value) = dataStore.setValue(useIncomingCallBroadCastReceiverEntry, value)
-
     override var sendErrorsToCrashlytics: Boolean
         get() = currentSettings.sendErrorsToCrashlytics
         set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
@@ -88,7 +84,6 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
-        useBroadcastReceiverForIncomingCalls = settings.useBroadcastReceiverForIncomingCalls
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType
         // TODO add new properties here

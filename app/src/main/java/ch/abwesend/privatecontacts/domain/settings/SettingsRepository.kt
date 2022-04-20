@@ -27,7 +27,6 @@ interface SettingsRepository : ISettingsState {
     override var observeIncomingCalls: Boolean
     override var requestIncomingCallPermissions: Boolean // invisible
     override var showIncomingCallsOnLockScreen: Boolean
-    override var useBroadcastReceiverForIncomingCalls: Boolean // invisible for now (until CallScreeningService...)
 
     // Others
     override var sendErrorsToCrashlytics: Boolean

@@ -33,11 +33,6 @@ interface ISettingsState {
      * Depends on [observeIncomingCalls]
      */
     val showIncomingCallsOnLockScreen: Boolean
-    /**
-     * Whether to to use the broad-cast observer (rather than another mechanism) for call-detection
-     * Depends on [observeIncomingCalls]
-     */
-    val useBroadcastReceiverForIncomingCalls: Boolean
 
     // Others
     val sendErrorsToCrashlytics: Boolean
@@ -54,7 +49,6 @@ data class SettingsState(
     override val requestIncomingCallPermissions: Boolean,
     override val observeIncomingCalls: Boolean,
     override val showIncomingCallsOnLockScreen: Boolean,
-    override val useBroadcastReceiverForIncomingCalls: Boolean,
 
     override val sendErrorsToCrashlytics: Boolean,
 ) : ISettingsState {
@@ -66,7 +60,6 @@ data class SettingsState(
             showInitialAppInfoDialog = true,
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
-            useBroadcastReceiverForIncomingCalls = true,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.SECRET,
         )

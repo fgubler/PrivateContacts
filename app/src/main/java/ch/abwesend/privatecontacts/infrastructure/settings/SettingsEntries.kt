@@ -38,10 +38,6 @@ internal val observeIncomingCallsEntry = SettingsEntry(
     key = booleanPreferencesKey("observeIncomingCalls"),
     defaultValue = SettingsState.defaultSettings.observeIncomingCalls
 )
-internal val useIncomingCallBroadCastReceiverEntry = SettingsEntry(
-    key = booleanPreferencesKey("useIncomingCallBroadCastReceiver"),
-    defaultValue = SettingsState.defaultSettings.useBroadcastReceiverForIncomingCalls
-)
 internal val sendErrorsToCrashlyticsEntry = SettingsEntry(
     key = booleanPreferencesKey("sendErrorsToCrashlytics"),
     defaultValue = SettingsState.defaultSettings.sendErrorsToCrashlytics
