@@ -18,12 +18,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
+import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIED
+import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
+import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
 @Composable
 fun ComponentActivity.PermissionHandler(
@@ -105,9 +109,19 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
     }
 
     val onPermissionResult: (PermissionRequestResult) -> Unit = { result ->
-        if (result == PermissionRequestResult.NEWLY_GRANTED) {
-            Settings.repository.observeIncomingCalls = true
-            Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
+        when (result) {
+            NEWLY_GRANTED, PARTIALLY_NEWLY_GRANTED -> {
+                Settings.repository.observeIncomingCalls = true
+                Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
+                logger.debug("Call detection: permission/role granted (at least partially)")
+            }
+            DENIED -> {
+                Settings.repository.observeIncomingCalls = false
+                logger.debug("Call detection: permission/role denied")
+            }
+            ALREADY_GRANTED -> {
+                logger.debug("Call detection: permission/role already granted")
+            }
         }
         onResult?.invoke(result)
     }
