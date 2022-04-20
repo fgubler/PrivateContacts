@@ -19,9 +19,14 @@ interface ISettingsState {
     val defaultContactType: ContactType
 
     // Incoming Call Detection
-    /** Whether call-detection should be attempted */
+    /**
+     * Whether call-detection should be attempted
+     */
     val observeIncomingCalls: Boolean
-    /** Whether the user should be asked for the necessary permissions on startup */
+    /**
+     * Whether the user should be asked for the necessary permissions on startup.
+     * If this is true and [observeIncomingCalls] is false, the user will still be asked.
+     */
     val requestIncomingCallPermissions: Boolean
     /**
      * Whether to show the notification for incoming calls on the lock-screen.

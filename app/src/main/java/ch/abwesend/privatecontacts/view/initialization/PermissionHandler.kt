@@ -100,7 +100,7 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
-    if (!settings.observeIncomingCalls || !settings.requestIncomingCallPermissions) {
+    if (!settings.requestIncomingCallPermissions) {
         return
     }
 
