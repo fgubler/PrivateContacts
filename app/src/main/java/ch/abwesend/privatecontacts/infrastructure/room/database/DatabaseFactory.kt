@@ -34,7 +34,7 @@ object DatabaseFactory : IDatabaseFactory {
             AppDatabase::class.java,
             "private_contacts_database"
         )
-            // .fallbackToDestructiveMigration() // insert to recreate DB if migrations fail
+            // .fallbackToDestructiveMigration() // DO NOT USE ONCE PRODUCTIVE!
             .addMigrations(*DatabaseMigrations.allMigrations)
             .build()
 
