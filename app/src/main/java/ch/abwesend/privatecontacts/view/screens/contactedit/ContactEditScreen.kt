@@ -9,10 +9,18 @@ package ch.abwesend.privatecontacts.view.screens.contactedit
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -24,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -89,7 +98,16 @@ object ContactEditScreen {
                     )
                 }
             ) {
-                ContactEditContent(screenContext, contact, showAllFields)
+                // The actual content
+                Column {
+                    ContactEditContent(
+                        screenContext = screenContext,
+                        contact = contact,
+                        showAllFields = showAllFields,
+                        modifier = Modifier.weight(1F)
+                    )
+                    ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+                }
 
                 // Dialogs
                 DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
@@ -122,6 +140,39 @@ object ContactEditScreen {
                 }
             }
         } ?: NoContactLoaded(viewModel)
+    }
+
+    @Composable
+    private fun ButtonFooter(
+        screenContext: ScreenContext,
+        contact: IContactEditable,
+        modifier: Modifier = Modifier,
+        showDiscardDialog: () -> Unit,
+    ) {
+        val buttonModifier = remember {
+            Modifier.heightIn(min = 50.dp)
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(15.dp),
+        ) {
+            OutlinedButton(
+                onClick = { onDiscard(screenContext, showDiscardDialog) },
+                modifier = buttonModifier.weight(1F),
+            ) {
+                Text(text = stringResource(id = R.string.cancel))
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+            Button(
+                onClick = { onSave(screenContext, contact) },
+                modifier = buttonModifier.weight(1F),
+            ) {
+                Text(text = stringResource(id = R.string.save))
+            }
+        }
     }
 
     @Composable
