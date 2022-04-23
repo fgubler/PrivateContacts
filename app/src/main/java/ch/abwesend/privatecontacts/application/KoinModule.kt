@@ -13,16 +13,25 @@ import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
+import ch.abwesend.privatecontacts.domain.service.IncomingCallService
+import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
+import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
+import ch.abwesend.privatecontacts.infrastructure.calldetection.NotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
+import ch.abwesend.privatecontacts.infrastructure.service.TelephoneService
+import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
+import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -32,11 +41,20 @@ internal val koinModule = module {
     single { ContactValidationService() }
     single { ContactSaveService() }
     single { FullTextSearchService() }
+    single { PermissionHelper() }
+    single { IncomingCallService() }
+    single { ContactSanitizingService() }
     single { EasterEggService() }
 
     single<IContactRepository> { ContactRepository() }
     single { ContactDataRepository() }
     single<ContactPagerFactory> { ContactPagingSource.Companion }
+
+    single { IncomingCallHelper() }
+    single { NotificationRepository() }
+
+    single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
+    single<ITelephoneService> { TelephoneService(androidContext()) }
 
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory> { DatabaseFactory }

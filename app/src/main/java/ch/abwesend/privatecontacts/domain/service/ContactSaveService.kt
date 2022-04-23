@@ -6,8 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -17,16 +17,19 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
+    private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
 
-    suspend fun saveContact(contact: IContact): ContactSaveResult {
+    suspend fun saveContact(contact: IContactEditable): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
 
-        return when {
-            validationResult is Failure -> ValidationFailure(validationResult.validationErrors)
-            contact.isNew -> contactRepository.createContact(contact)
-            else -> contactRepository.updateContact(contact)
+        if (validationResult is Failure) {
+            return ValidationFailure(validationResult.validationErrors)
         }
+        sanitizingService.sanitizeContact(contact)
+
+        return if (contact.isNew) contactRepository.createContact(contact)
+        else contactRepository.updateContact(contact)
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =

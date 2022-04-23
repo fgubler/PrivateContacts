@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.testutil
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
+import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -61,6 +62,7 @@ abstract class TestBase : KoinTest {
                 single { loggerFactory }
                 single { database }
                 single<IDispatchers> { TestDispatchers }
+                single<SettingsRepository> { TestSettings() }
                 setupKoinModule()
             }
         )

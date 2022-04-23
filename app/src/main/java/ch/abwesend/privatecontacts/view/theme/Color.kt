@@ -8,16 +8,13 @@ package ch.abwesend.privatecontacts.view.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple200 = Color(0xFFBB86FC)
-val Purple500 = Color(0xFF6200EE)
-val Purple700 = Color(0xFF3700B3)
-val Teal200 = Color(0xFF03DAC5)
-
-val primaryLight = Color(0xFF607D8B)
-val primaryDark = Color(0xFFADCAD8) // TODO re-consider?
-val primaryVariant = Color(0xFF455A64)
-val secondary = Color(0xFFFDD835)
+val primaryLight = Color(0xFF3F51B5)
+val primaryDark = Color(0xFFC5CAE9)
+val primaryVariant = Color(0xFF303F9F)
+val secondary = Color(0xFFFF5252)
 
 object AppColors {
     val grayText = Color(0xFF525252)
+    val grayBackground = Color(0xFFBBBBBB)
+    val transparent = Color.Transparent
 }

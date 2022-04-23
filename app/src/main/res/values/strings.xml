@@ -8,7 +8,8 @@
     <string name="app_name">Private Contacts</string>
     <string name="screen_contact_list">Contacts</string>
     <string name="screen_settings">Settings</string>
-    <string name="screen_contact_developers">Contact</string>
+    <string name="screen_about_the_app">About</string>
+    <string name="screen_introduction">Introduction</string>
     <string name="screen_contact_details">Contact Details</string>
     <string name="screen_contact_edit">Edit Contact</string>
     <string name="screen_contact_edit_create">Create Contact</string>
@@ -26,19 +27,24 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="search">Search</string>
+    <string name="info">Info</string>
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="more_actions">More actions</string>
     <string name="expand">Expand</string>
     <string name="compress">Compress</string>
+    <string name="send">Send</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
 
+    <string name="do_not_show_again">Do not show again</string>
+    <string name="thank_you">Thank you</string>
+
     <string name="type">Type</string>
-    <string name="private_contact">Private</string>
+    <string name="secret_contact">Secret</string>
     <string name="public_contact">Public</string>
-    <string name="type_private">Private</string>
+    <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
     <string name="type_mobile">Mobile</string>
     <string name="type_other">Other</string>
@@ -91,4 +97,59 @@
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
+
+    <string name="show_caller_information_title">Show caller information?</string>
+    <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
+    <string name="activate_feature">Would you like to activate this feature now?</string>
+
+    <string name="incoming_call_title">Incoming call</string>
+    <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
+    <string name="incoming_call_text_multiple_matches">%1$s or %2$s is calling you. The number %3$s matches all of those contacts.</string>
+    <string name="incoming_call_channel_title">Incoming call</string>
+    <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
+
+    <string name="about_app_title">About the App</string>
+    <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>
+    <string name="contact_developers_title">Contact the Developers</string>
+    <string name="contact_developers_text">We are always happy about feedback about how to improve the app further.</string>
+    <string name="play_store_entry">PlayStore entry</string>
+    <string name="github_page">Github page</string>
+    <string name="report_error_github">Report a bug on Github</string>
+    <string name="report_error">Report a bug</string>
+    <string name="write_email">Write an email</string>
+    <string name="privacy_title">Privacy Declaration</string>
+    <string name="legal_disclaimer_title">Legal Disclaimer</string>
+    <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
+
+    <string name="permissions">Permissions</string>
+    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
+
+    <string name="light_theme">Light</string>
+    <string name="dark_theme">Dark</string>
+    <string name="system_default">System default</string>
+
+    <string name="settings_category_ux">Display</string>
+    <string name="settings_category_default_values">Default values</string>
+    <string name="settings_category_miscellaneous">Miscellaneous</string>
+    <string name="settings_category_call_detection">Call detection</string>
+    <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
+
+    <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
+
+    <string name="settings_entry_app_theme">App theme</string>
+    <string name="settings_entry_order_by_first_name">Order by first name</string>
+    <string name="settings_entry_default_contact_type">Default contact-type</string>
+    <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
+    <string name="settings_entry_call_detection">Match incoming calls with contacts</string>
+    <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
+    <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen.</string>
+    <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
+    <string name="settings_entry_error_reports">Send anonymous error reports</string>
+    <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
+
+    <string name="settings_action_restore_default">Restore default settings</string>
+    <string name="settings_action_restore_default_confirmation">Are you sure you want to restored all settings to their default values?</string>
+
+    <string name="settings_action_reset_database">Reset contact database</string>
+    <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all secret contacts? Contacts shared with other apps will not be affected but all secret ones will be deleted.</string>
 </resources>

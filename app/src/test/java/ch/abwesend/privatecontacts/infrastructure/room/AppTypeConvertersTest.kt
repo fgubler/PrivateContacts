@@ -33,7 +33,7 @@ class AppTypeConvertersTest {
 
     @Test
     fun `should convert ContactType`() {
-        val nonNullValue = ContactType.PRIVATE
+        val nonNullValue = ContactType.SECRET
         val nullValue: ContactType? = null
 
         val serializedNonNull = underTest.serializeContactType(nonNullValue)

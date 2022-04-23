@@ -19,14 +19,14 @@ android {
     compileSdk 31
 
     defaultConfig {
+        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 30
-        versionCode 6
-        versionName "0.1.5"
+        versionCode 13
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
         vectorDrawables {
             useSupportLibrary true
         }
@@ -76,8 +76,8 @@ dependencies {
 
     // Android Core
     implementation "androidx.core:core-ktx:1.7.0"
-    implementation "androidx.appcompat:appcompat:1.4.0"
-    implementation "com.google.android.material:material:1.4.0"
+    implementation "androidx.appcompat:appcompat:1.4.1"
+    implementation "com.google.android.material:material:1.5.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -94,7 +94,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
     implementation "androidx.activity:activity-compose:1.4.0"
     implementation "androidx.navigation:navigation-compose:2.4.0-rc01"
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:29.0.3")
@@ -104,11 +104,12 @@ dependencies {
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"
-    implementation "androidx.room:room-paging:2.4.0"
+    implementation "androidx.room:room-paging:$roomVersion"
 
     // Others
     implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
     implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"

@@ -29,4 +29,5 @@ private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: ContactI
         isMain = isMain,
         valueRaw = value,
         valueFormatted = formattedValue,
+        valueForMatching = valueForMatching,
     )

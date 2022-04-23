@@ -58,12 +58,14 @@ fun PhoneNumber.navigateToDial(context: Context) {
     }
 }
 
-fun EmailAddress.navigateToEmailClient(context: Context) {
+fun EmailAddress.navigateToEmailClient(context: Context) = sendEmailMessage(context, value)
+
+fun sendEmailMessage(context: Context, address: String) {
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("mailto", value, null))
+        val intent = Intent(Intent.ACTION_VIEW, Uri.fromParts("mailto", address, null))
         intent.tryStartActivity(context)
     } catch (e: Exception) {
-        logger.error("Failed to send intent for Email", e)
+        address.logger.error("Failed to send intent for Email", e)
     }
 }
 
@@ -78,13 +80,15 @@ fun PhysicalAddress.navigateToLocation(context: Context) {
     }
 }
 
-fun Website.navigateToBrowser(context: Context) {
+fun Website.navigateToBrowser(context: Context) = openLink(context, value)
+
+fun openLink(context: Context, link: String) {
     try {
-        val url = addProtocolToUriString(value)
+        val url = addProtocolToUriString(link)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         intent.tryStartActivity(context)
     } catch (e: Exception) {
-        logger.error("Failed to send intent for Website", e)
+        link.logger.error("Failed to open link", e)
     }
 }
 

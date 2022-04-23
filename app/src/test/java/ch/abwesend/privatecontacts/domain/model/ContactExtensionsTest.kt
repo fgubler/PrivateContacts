@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
+import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactFull
@@ -18,12 +19,14 @@ import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
+@ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactExtensionsTest {
+class ContactExtensionsTest : TestBase() {
     @Test
     fun `should get full name`() {
         val contact = someContactBase()

@@ -10,10 +10,9 @@ import android.util.Log
 
 class LogcatLogger(
     override val loggingTag: String,
-    override val logToCrashlytics: Boolean,
+    override val logToCrashlytics: () -> Boolean,
     private val prefix: String? = null,
 ) : AbstractLogger() {
-
     override fun verboseImpl(messages: Collection<String>) {
         for (message in messages) {
             Log.v(loggingTag, prefix(message))

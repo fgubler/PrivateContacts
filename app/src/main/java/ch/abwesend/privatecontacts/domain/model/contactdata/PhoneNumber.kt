@@ -18,6 +18,7 @@ data class PhoneNumber(
     override val type: ContactDataType,
     override val value: String,
     override val formattedValue: String = value,
+    override val valueForMatching: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
 ) : StringBasedContactData<PhoneNumber> {
@@ -50,7 +51,7 @@ data class PhoneNumber(
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Mobile,
-            ContactDataType.Private,
+            ContactDataType.Personal,
             ContactDataType.Business,
             ContactDataType.Other,
             ContactDataType.Custom,
@@ -69,3 +70,6 @@ data class PhoneNumber(
             value.filter { it.isDigit() }
     }
 }
+
+@JvmInline
+value class PhoneNumberValue(val value: String)

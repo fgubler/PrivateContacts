@@ -65,7 +65,8 @@ object ContactEditScreenContent {
     fun ContactEditContent(
         screenContext: ScreenContext,
         contact: IContactEditable,
-        showAllFields: Boolean
+        showAllFields: Boolean,
+        modifier: Modifier = Modifier,
     ) {
         val onChanged = { newContact: IContactEditable ->
             screenContext.contactEditViewModel.changeContact(newContact)
@@ -98,7 +99,7 @@ object ContactEditScreenContent {
         parent.isScrolling = scrollState.isScrollInProgress
 
         Column(
-            modifier = Modifier.verticalScroll(scrollState)
+            modifier = modifier.verticalScroll(scrollState)
         ) {
             PersonalInformation(contact, onChanged)
             PhoneNumbers(

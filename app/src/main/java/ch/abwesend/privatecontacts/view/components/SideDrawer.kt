@@ -7,35 +7,52 @@
 package ch.abwesend.privatecontacts.view.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
-fun SideDrawerContent(router: AppRouter, selectedScreen: Screen) {
+fun SideDrawerContent(router: AppRouter, selectedScreen: Screen, scaffoldState: ScaffoldState) {
     val scrollState = rememberScrollState()
-    val clickListener = createElementClickListener(router, selectedScreen)
+    val clickListener = createElementClickListener(
+        router = router,
+        selectedScreen = selectedScreen,
+        coroutineScope = rememberCoroutineScope(),
+        scaffoldState = scaffoldState,
+    )
 
     Column(
         modifier = Modifier.verticalScroll(scrollState)
@@ -50,21 +67,20 @@ fun SideDrawerContent(router: AppRouter, selectedScreen: Screen) {
 
 @Composable
 fun SideDrawerHeader() {
-    Row(
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(vertical = 10.dp),
     ) {
-        Icon(
-            imageVector = Icons.Rounded.AccountCircle,
-            contentDescription = stringResource(id = R.string.app_name)
+        Image(
+            bitmap = ImageBitmap.imageResource(id = R.drawable.app_logo_large),
+            contentDescription = stringResource(id = R.string.app_name),
+            modifier = Modifier.widthIn(max = 500.dp).clip(RoundedCornerShape(20.dp))
         )
         Text(
             text = stringResource(id = R.string.app_name),
-            modifier = Modifier
-                .padding(start = 20.dp)
-                .weight(1.0f),
+            modifier = Modifier.padding(top = 10.dp),
             color = MaterialTheme.colors.primary,
             style = MaterialTheme.typography.h6
         )
@@ -73,7 +89,6 @@ fun SideDrawerHeader() {
 
 @Composable
 fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) {
-    SideDrawerListHeader(titleRes = R.string.navigation)
     Screen.sideDrawerScreens.forEach { screen ->
         SideDrawerElement(
             titleRes = screen.titleRes,
@@ -100,47 +115,61 @@ private fun SideDrawerElement(
     isSelected: Boolean,
     onClick: () -> Unit,
 ) {
-    val modifier =
-        if (isSelected) Modifier.background(color = MaterialTheme.colors.primary)
-        else Modifier.background(color = MaterialTheme.colors.background)
+    val color =
+        if (isSelected) MaterialTheme.colors.primary
+        else Color.Transparent // just show the background of the parent
 
     val fontColor =
         if (isSelected) MaterialTheme.colors.onPrimary
         else MaterialTheme.colors.onBackground
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(10.dp)
-            .clickable { onClick() },
+    val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+
+    Surface(
+        modifier = Modifier
+            .padding(end = 10.dp)
+            .clickable { onClick() }
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = stringResource(id = titleRes),
-            modifier = modifier,
-            tint = fontColor,
-        )
-        Text(
-            text = stringResource(id = titleRes),
-            color = fontColor,
-            modifier = modifier
-                .padding(start = 20.dp)
-                .weight(1.0f)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .clip(RoundedCornerShape(topEnd = 5.dp, bottomEnd = 5.dp))
+                .background(color = color)
+                .fillMaxWidth()
+                .height(50.dp)
+                .padding(horizontal = 10.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = stringResource(id = titleRes),
+                tint = fontColor,
+            )
+            Text(
+                text = stringResource(id = titleRes),
+                color = fontColor,
+                fontWeight = fontWeight,
+                modifier = Modifier
+                    .padding(start = 20.dp)
+                    .weight(1.0f)
+            )
+        }
     }
 }
 
-private fun createElementClickListener(router: AppRouter, selectedScreen: Screen): (Screen) -> Unit {
+private fun createElementClickListener(
+    router: AppRouter,
+    selectedScreen: Screen,
+    coroutineScope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+): (Screen) -> Unit {
     val logger = selectedScreen.logger
     return { screen: Screen ->
-        val isSelected = screen == selectedScreen
-
-        if (isSelected) {
+        if (screen == selectedScreen) {
             logger.info("Screen '${screen.key}' is already selected")
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             router.navigateToScreen(screen)
+            coroutineScope.launch { scaffoldState.drawerState.close() }
         }
     }
 }

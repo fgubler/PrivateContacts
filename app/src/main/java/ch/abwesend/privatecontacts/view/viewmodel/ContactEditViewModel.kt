@@ -50,7 +50,7 @@ class ContactEditViewModel : ViewModel() {
         selectedContact = contact.wrap()
     }
 
-    fun saveContact(contact: IContact) {
+    fun saveContact(contact: IContactEditable) {
         viewModelScope.launch {
             val result = saveService.saveContact(contact)
             _saveResult.emit(result)

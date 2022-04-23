@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -34,7 +33,7 @@ private val LightColorPalette = lightColors(
 )
 
 @Composable
-fun PrivateContactsTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
+fun PrivateContactsTheme(darkTheme: Boolean, content: @Composable() () -> Unit) {
     val colors = if (darkTheme) {
         DarkColorPalette
     } else {

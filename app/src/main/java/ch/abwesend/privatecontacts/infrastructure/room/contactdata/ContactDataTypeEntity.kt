@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 
 /**
  * Not a real entity but embedded...
@@ -25,7 +25,7 @@ data class ContactDataTypeEntity(
 
 fun ContactDataTypeEntity.toContactDataType(): ContactDataType {
     return when (key) {
-        PRIVATE -> ContactDataType.Private
+        PERSONAL -> ContactDataType.Personal
         BUSINESS -> ContactDataType.Business
         MOBILE -> ContactDataType.Mobile
         OTHER -> ContactDataType.Other

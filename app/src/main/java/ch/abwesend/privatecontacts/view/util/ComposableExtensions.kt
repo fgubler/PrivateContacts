@@ -7,6 +7,8 @@
 package ch.abwesend.privatecontacts.view.util
 
 import android.content.Context
+import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
@@ -70,4 +72,13 @@ fun <T> IconButtonConfigGeneric<T>.AsIconButton(listenerInput: T) {
     IconButton(onClick = { onClick(listenerInput) }) {
         Icon(imageVector = icon, contentDescription = stringResource(id = label))
     }
+}
+
+@Composable
+fun getCurrentActivity(): ComponentActivity? = LocalContext.current.getActivityRecursive()
+
+private fun Context.getActivityRecursive(): ComponentActivity? = when (this) {
+    is ComponentActivity -> this
+    is ContextWrapper -> baseContext.getActivityRecursive()
+    else -> null
 }

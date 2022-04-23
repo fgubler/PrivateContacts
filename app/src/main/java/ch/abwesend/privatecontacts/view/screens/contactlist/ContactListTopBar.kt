@@ -19,7 +19,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -49,22 +48,20 @@ fun ContactListTopBar(
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
 ) {
-    var showSearch by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
+    val showSearchState = viewModel.showSearch
+    val searchTextState = viewModel.searchText
+
+    var showSearch by showSearchState
+    val searchText by searchTextState
 
     val backgroundColor = if (showSearch) Color.White else MaterialTheme.colors.primary
-    val resetSearch = {
-        showSearch = false
-        searchText = ""
-        viewModel.reloadContacts()
-    }
+    val resetSearch = { viewModel.reloadContacts(resetSearch = true) }
 
     TopAppBar(
         backgroundColor = backgroundColor,
         title = {
             if (showSearch) {
                 SearchField(searchText) {
-                    searchText = it
                     viewModel.changeSearchQuery(it)
                 }
             } else {

@@ -6,8 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.model.contact
 
-import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.settings.Settings
 
 interface IContactEditable : IContact {
     override var firstName: String
@@ -40,7 +40,7 @@ data class ContactEditable(
                 firstName = "",
                 lastName = "",
                 nickname = "",
-                type = Settings.defaultContactType,
+                type = Settings.current.defaultContactType,
                 notes = "",
                 contactDataSet = mutableListOf(),
                 isNew = true,

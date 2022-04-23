@@ -22,10 +22,11 @@ import java.util.UUID
             parentColumns = ["id"],
             childColumns = ["contactId"],
             onDelete = ForeignKey.CASCADE
-        )
+        ),
     ],
     indices = [
-        Index("contactId")
+        Index("contactId"),
+        Index("category", "valueForMatching"),
     ],
 )
 data class ContactDataEntity(
@@ -36,5 +37,6 @@ data class ContactDataEntity(
     val isMain: Boolean,
     val valueRaw: String,
     val valueFormatted: String,
+    val valueForMatching: String, // for automatic matching
     val sortOrder: Int,
 )

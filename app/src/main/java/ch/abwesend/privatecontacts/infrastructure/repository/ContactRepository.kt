@@ -6,8 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
-import ch.abwesend.privatecontacts.domain.Settings
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -53,8 +54,23 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         result
     }
 
+    override suspend fun findContactsWithNumberEndingOn(endOfPhoneNumber: String): List<ContactWithPhoneNumbers> {
+        val contactData = contactDataRepository.findPhoneNumbersEndingOn(endOfPhoneNumber)
+        return withDatabase { database ->
+            val contactIds = contactData.keys.map { it.uuid }
+            val contacts = database.contactDao().findByIds(contactIds)
+
+            contacts.map { contactEntity ->
+                ContactWithPhoneNumbers(
+                    contactBase = contactEntity,
+                    phoneNumbers = contactData[contactEntity.id].orEmpty()
+                )
+            }
+        }
+    }
+
     private suspend fun AppDatabase.getAllContactsPaged(loadSize: Int, offsetInRows: Int): List<IContactBase> =
-        if (Settings.orderByFirstName) {
+        if (Settings.current.orderByFirstName) {
             contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
         } else {
             contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
@@ -68,7 +84,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val phoneNumberQuery = searchService.prepareQueryForPhoneNumberSearch(config.query)
             .takeIf { searchService.isLongEnough(it) }.orEmpty()
 
-        return if (Settings.orderByFirstName) {
+        return if (Settings.current.orderByFirstName) {
             contactDao().searchPagedByFirstName(
                 query = config.query,
                 phoneNumberQuery = phoneNumberQuery,

@@ -13,12 +13,15 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
+import io.mockk.runs
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -35,20 +38,25 @@ class ContactSaveServiceTest : TestBase() {
     @MockK
     private lateinit var validationService: ContactValidationService
 
+    @MockK
+    private lateinit var sanitizingService: ContactSanitizingService
+
     private lateinit var underTest: ContactSaveService
 
     override fun setup() {
         underTest = ContactSaveService()
+        every { sanitizingService.sanitizeContact(any()) } just runs
     }
 
     override fun Module.setupKoinModule() {
         single { contactRepository }
         single { validationService }
+        single { sanitizingService }
     }
 
     @Test
     fun `should not save if validation fails`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         val validationErrors = listOf(NAME_NOT_SET)
         coEvery { validationService.validateContact(any()) } returns Failure(validationErrors)
 
@@ -61,7 +69,7 @@ class ContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create new contact`() {
-        val contact = someContactFull(isNew = true)
+        val contact = someContactEditable(isNew = true)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
         coEvery { contactRepository.createContact(any()) } returns ContactSaveResult.Success
 
@@ -75,7 +83,7 @@ class ContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should update existing contact`() {
-        val contact = someContactFull(isNew = false)
+        val contact = someContactEditable(isNew = false)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
         coEvery { contactRepository.updateContact(any()) } returns ContactSaveResult.Success
 

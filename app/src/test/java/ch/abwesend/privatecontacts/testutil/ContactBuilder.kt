@@ -11,10 +11,13 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PRIVATE
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
 fun someContactId(): ContactId = ContactId.randomId()
@@ -24,7 +27,7 @@ fun someContactBase(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
 ): IContactBase = ContactBase(
     id = id,
@@ -40,7 +43,7 @@ fun someContactEntity(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     fullTextSearch: String = "TestSearch",
 ): ContactEntity = ContactEntity(
@@ -53,12 +56,35 @@ fun someContactEntity(
     fullTextSearch = fullTextSearch,
 )
 
+fun someContactWithPhoneNumbers(
+    id: ContactId = someContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = SECRET,
+    notes: String = "Tries to do the right thing. Often badly.",
+    phoneNumbers: List<String> = emptyList(),
+): ContactWithPhoneNumbers {
+    val base = ContactBase(
+        id = id,
+        firstName = firstName,
+        lastName = lastName,
+        nickname = nickname,
+        type = type,
+        notes = notes,
+    )
+    return ContactWithPhoneNumbers(
+        contactBase = base,
+        phoneNumbers = phoneNumbers.map { PhoneNumberValue(it) }
+    )
+}
+
 fun someContactFull(
     id: ContactId = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
@@ -78,11 +104,11 @@ fun someContactEditable(
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
-    type: ContactType = PRIVATE,
+    type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: MutableList<ContactData> = mutableListOf(),
     isNew: Boolean = false,
-): IContact = ContactEditable(
+): IContactEditable = ContactEditable(
     id = id,
     firstName = firstName,
     lastName = lastName,

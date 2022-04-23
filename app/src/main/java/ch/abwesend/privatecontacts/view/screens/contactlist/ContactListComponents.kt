@@ -18,6 +18,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,8 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
+
+private const val EASTER_EGG_LOVE = "love"
 
 @Composable
 fun ContactList(
@@ -69,12 +72,16 @@ private fun ListWithResults(
                     .clickable { nullableContact?.let { onContactSelected(it) } }
             ) {
                 nullableContact?.let { contact ->
+                    val name = contact.getFullName()
+                    val icon =
+                        if (name.lowercase().contains(EASTER_EGG_LOVE)) Icons.Filled.Favorite
+                        else Icons.Filled.AccountCircle
                     Icon(
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = contact.getFullName(),
+                        imageVector = icon,
+                        contentDescription = name,
                         modifier = Modifier.padding(start = 10.dp, end = 20.dp)
                     )
-                    Text(text = contact.getFullName())
+                    Text(text = name)
                 }
             }
             Spacer(modifier = Modifier.height(6.dp))
