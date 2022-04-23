@@ -10,15 +10,15 @@ import android.content.Context
 import android.telephony.PhoneNumberUtils
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
-import ch.abwesend.privatecontacts.domain.repository.ITelephoneRepository
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
+import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class IncomingCallHelper {
     private val incomingCallService: IncomingCallService by injectAnywhere()
-    private val telephoneService: ITelephoneRepository by injectAnywhere()
+    private val telephoneService: ITelephoneService by injectAnywhere()
     private val notificationRepository: NotificationRepository by injectAnywhere()
 
     fun handleIncomingCall(

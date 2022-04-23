@@ -6,22 +6,20 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import android.telephony.PhoneNumberUtils
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import ch.abwesend.privatecontacts.domain.repository.ITelephoneRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class ContactSanitizingService {
-    private val telephoneRepository: ITelephoneRepository by injectAnywhere()
+    private val telephoneService: ITelephoneService by injectAnywhere()
 
     fun sanitizeContact(contact: IContactEditable) {
         contact.contactDataSet.indices.forEach { i ->
             val data = contact.contactDataSet[i]
             if (data is PhoneNumber) {
-                val isoCode = telephoneRepository.telephoneDefaultCountryIso
-                val formattedValue = PhoneNumberUtils.formatNumber(data.value, isoCode) ?: data.value
-                val valueForMatching = PhoneNumberUtils.stripSeparators(data.value) ?: data.value
+                val formattedValue = telephoneService.formatPhoneNumberForDisplay(data.value)
+                val valueForMatching = telephoneService.formatPhoneNumberForMatching(data.value)
                 contact.contactDataSet[i] = data.copy(
                     formattedValue = formattedValue,
                     valueForMatching = valueForMatching
