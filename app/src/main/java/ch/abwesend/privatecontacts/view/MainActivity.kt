@@ -25,7 +25,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -48,7 +47,6 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
@@ -59,6 +57,7 @@ import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import kotlinx.coroutines.FlowPreview
 
 @ExperimentalFoundationApi
@@ -68,6 +67,7 @@ import kotlinx.coroutines.FlowPreview
 class MainActivity : ComponentActivity() {
     private val permissionHelper: PermissionHelper by injectAnywhere()
 
+    private val viewModel: MainViewModel by viewModels()
     private val contactListViewModel: ContactListViewModel by viewModels()
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
@@ -78,17 +78,8 @@ class MainActivity : ComponentActivity() {
 
         permissionHelper.setupObserver(this)
 
-        var initializationState: InitializationState by mutableStateOf(InitialInfoDialog)
-        val nextState: () -> Unit = {
-            val oldState = initializationState
-            initializationState = initializationState.next()
-            logger.debug(
-                "Changed initializationState from ${oldState::class.java.simpleName} " +
-                    "to ${initializationState::class.java.simpleName}"
-            )
-        }
-
         setContent {
+            val initializationState by viewModel.initializationState
             val settings by Settings.observeAsNullableState()
 
             val isDarkTheme = when (settings?.appTheme ?: SettingsState.defaultSettings.appTheme) {
@@ -99,7 +90,7 @@ class MainActivity : ComponentActivity() {
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
-                    MainContent(initializationState, it) { nextState() }
+                    MainContent(initializationState, it) { viewModel.goToNextState() }
                 } ?: InitialLoadingView()
             }
         }
