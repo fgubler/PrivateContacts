@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -30,17 +31,31 @@ class IncomingCallService {
         val ending = phoneNumber.takeLast(CONSIDER_LAST_DIGITS)
         val contactCandidates = contactRepository.findContactsWithNumberEndingOn(ending)
 
-        return contactCandidates
-            .filter { contact ->
-                contact.phoneNumbers.any {
-                    arePhoneNumbersEquivalent(
-                        phoneNumber1 = phoneNumber,
-                        phoneNumber2 = it.value,
-                        defaultCountryIsoCode = defaultCountryIso,
-                    )
-                }
-            }
+        logger.debug("Found ${contactCandidates.size} candidate(s) for calling phone-number")
+
+        val matchingCandidates = filterCandidates(phoneNumber, defaultCountryIso, contactCandidates).ifEmpty {
+            filterCandidates(phoneNumber, defaultCountryIso, contactCandidates, forceLegacyComparison = true)
+        }
+
+        return matchingCandidates
             .take(CONSIDER_MATCHING_CONTACTS)
             .sortedBy { it.getFullName() }
     }
+
+    private fun filterCandidates(
+        phoneNumber: String,
+        defaultCountryIso: String,
+        candidates: List<ContactWithPhoneNumbers>,
+        forceLegacyComparison: Boolean = false,
+    ) =
+        candidates.filter { contact ->
+            contact.phoneNumbers.any {
+                arePhoneNumbersEquivalent(
+                    phoneNumber1 = phoneNumber,
+                    phoneNumber2 = it.value,
+                    defaultCountryIsoCode = defaultCountryIso,
+                    forceLegacyComparison = forceLegacyComparison,
+                )
+            }
+        }
 }
