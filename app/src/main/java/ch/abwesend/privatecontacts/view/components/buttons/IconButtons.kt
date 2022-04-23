@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.CompressIcon
 import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.ExpandIcon
+import ch.abwesend.privatecontacts.view.components.InfoIcon
 import ch.abwesend.privatecontacts.view.components.MoreActionsIcon
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.SaveIcon
@@ -46,6 +47,10 @@ fun SearchIconButton(enabled: Boolean = true, onClick: () -> Unit) {
 @Composable
 fun RefreshIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { RefreshIcon() }
+}
+@Composable
+fun InfoIconButton(enabled: Boolean = true, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) { InfoIcon() }
 }
 
 /** like settings */

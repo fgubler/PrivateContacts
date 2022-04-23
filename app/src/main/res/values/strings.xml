@@ -27,6 +27,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="search">Search</string>
+    <string name="info">Info</string>
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="more_actions">More actions</string>
@@ -130,6 +131,8 @@
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
+
+    <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior.\n\nWe apologize for any inconvenience caused.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>

@@ -7,12 +7,15 @@
 package ch.abwesend.privatecontacts.view.components
 
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
@@ -52,6 +55,15 @@ fun RefreshIcon() {
     Icon(
         imageVector = Icons.Default.Sync,
         contentDescription = stringResource(id = R.string.search)
+    )
+}
+
+@Composable
+fun InfoIcon() {
+    Icon(
+        imageVector = Icons.Default.Help,
+        contentDescription = stringResource(id = R.string.info),
+        tint = LocalContentColor.current.copy(alpha = LocalContentAlpha.current / 2)
     )
 }
 

@@ -23,16 +23,24 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
 import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.model.DropDownOption
+import ch.abwesend.privatecontacts.view.util.disabledContentColor
+import ch.abwesend.privatecontacts.view.util.normalContentColor
 
 @ExperimentalMaterialApi
 private val parent = SettingsScreen
@@ -46,13 +54,32 @@ fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.d
 @Composable
 fun SettingsCategory(
     @StringRes titleRes: Int,
-    content: @Composable () -> Unit
+    @StringRes infoPopupText: Int? = null,
+    content: @Composable () -> Unit,
 ) {
+    var showInfoPopup: Boolean by remember { mutableStateOf(false) }
+
     Card {
         Column(modifier = Modifier.padding(10.dp)) {
-            SectionSubtitle(titleRes = titleRes, addTopPadding = false)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                SectionSubtitle(titleRes = titleRes, addTopPadding = false)
+                infoPopupText?.let {
+                    InfoIconButton { showInfoPopup = true }
+                }
+            }
             content()
         }
+    }
+
+    if (showInfoPopup && infoPopupText != null) {
+        OkDialog(
+            title = titleRes,
+            text = infoPopupText,
+        ) { showInfoPopup = false }
     }
 }
 
@@ -64,6 +91,8 @@ fun SettingsCheckbox(
     enabled: Boolean = true,
     onValueChanged: (Boolean) -> Unit,
 ) {
+    val textColor = if (enabled) normalContentColor() else disabledContentColor()
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -72,8 +101,8 @@ fun SettingsCheckbox(
             .clickable { onValueChanged(!value) },
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            SettingsLabel(labelRes = label)
-            description?.let { SettingsDescription(descriptionRes = it) }
+            SettingsLabel(labelRes = label, textColor = textColor)
+            description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
         }
         Checkbox(
             checked = value,
@@ -121,21 +150,31 @@ fun <T> SettingsDropDown(
 }
 
 @Composable
-private fun SettingsLabel(@StringRes labelRes: Int, modifier: Modifier = Modifier) {
+private fun SettingsLabel(
+    @StringRes labelRes: Int,
+    modifier: Modifier = Modifier,
+    textColor: Color = normalContentColor(),
+) {
     Text(
         text = stringResource(id = labelRes),
         fontWeight = FontWeight.SemiBold,
         style = MaterialTheme.typography.body1,
         modifier = modifier,
+        color = textColor,
     )
 }
 
 @Composable
-private fun SettingsDescription(@StringRes descriptionRes: Int, modifier: Modifier = Modifier) {
+private fun SettingsDescription(
+    @StringRes descriptionRes: Int,
+    modifier: Modifier = Modifier,
+    textColor: Color = normalContentColor(),
+) {
     Text(
         text = stringResource(id = descriptionRes),
         fontStyle = FontStyle.Italic,
         style = MaterialTheme.typography.body2,
+        color = textColor,
         modifier = modifier,
     )
 }

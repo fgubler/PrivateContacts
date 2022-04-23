@@ -114,7 +114,7 @@ object SettingsScreen {
     private fun CallDetectionCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
-        SettingsCategory(titleRes = R.string.settings_category_call_detection) {
+        SettingsCategory(titleRes = R.string.settings_category_call_detection, infoPopupText = R.string.settings_info_dialog_call_detection) {
             SettingsCheckbox(
                 label = R.string.settings_entry_call_detection,
                 description = R.string.settings_entry_call_detection_description,
