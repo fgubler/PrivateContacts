@@ -39,13 +39,15 @@ fun ComponentActivity.PermissionHandler(
 ) {
     var requestIncomingCallPermissions by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(settings) { // check again when settings change
         if (!callIdentificationPossible) {
             Settings.repository.observeIncomingCalls = false
             Settings.repository.requestIncomingCallPermissions = false
             onPermissionsHandled()
             return@LaunchedEffect
         }
+
+        logger.debug("Checking permissions for caller identification")
 
         requestPermissionsForCallerIdentification(
             settings = settings,
