@@ -27,6 +27,8 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
@@ -34,7 +36,6 @@ import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
-import org.koin.androidx.compose.get
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -52,7 +53,7 @@ object SettingsScreen {
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
 
-        val callDetectionPossible = remember { permissionHelper.callIdentificationPossible }
+        val callDetectionPossible = remember { callIdentificationPossible }
 
         BaseScreen(
             screenContext = screenContext,
@@ -135,9 +136,11 @@ object SettingsScreen {
         }
 
         if (requestPermissions) {
+            val permissionHelper: PermissionHelper by remember { mutableStateOf(getAnywhere()) }
+
             getCurrentActivity()?.PermissionHandler(
                 settings = currentSettings,
-                permissionHelper = get()
+                permissionHelper = permissionHelper
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")

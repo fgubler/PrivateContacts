@@ -21,6 +21,8 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.domain.util.canUseCallScreeningService
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
@@ -38,7 +40,7 @@ fun ComponentActivity.PermissionHandler(
     var requestIncomingCallPermissions by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        if (!permissionHelper.callIdentificationPossible) {
+        if (!callIdentificationPossible) {
             Settings.repository.observeIncomingCalls = false
             Settings.repository.requestIncomingCallPermissions = false
             onPermissionsHandled()
@@ -126,12 +128,23 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
         onResult?.invoke(result)
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (canUseCallScreeningService) {
         requestCallScreeningServiceRole(
             permissionHelper = permissionHelper,
             showExplanation = showExplanation,
-            onPermissionResult = onPermissionResult,
-        )
+        ) { serviceRolePermissionResult ->
+            if (serviceRolePermissionResult.usable) {
+                requestPhoneStatePermission(
+                    permissionHelper = permissionHelper,
+                    showExplanation = showExplanation,
+                ) { phoneStatePermissionResult ->
+                    logger.debug("Permission result for phone-state with call-screening: $phoneStatePermissionResult")
+                    onPermissionResult(serviceRolePermissionResult) // this is actually what counts more...
+                }
+            } else {
+                onPermissionResult(serviceRolePermissionResult)
+            }
+        }
     } else {
         requestPhoneStatePermission(
             permissionHelper = permissionHelper,

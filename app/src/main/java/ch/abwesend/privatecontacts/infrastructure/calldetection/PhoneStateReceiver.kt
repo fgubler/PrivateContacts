@@ -13,6 +13,7 @@ import android.telecom.CallScreeningService
 import android.telephony.TelephonyManager
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.canReadCallingNumberFromPhoneState
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 /**
@@ -47,11 +48,14 @@ class PhoneStateReceiver : BroadcastReceiver() {
 
         when (phoneState) {
             TelephonyManager.EXTRA_STATE_RINGING -> {
-                val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
-                logger.debug("Receiving a call from $incomingNumber")
-                incomingNumber?.let { incomingCallHelper.handleIncomingCall(context, it) }
+                if (canReadCallingNumberFromPhoneState) {
+                    val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
+                    logger.debug("Receiving a call from $incomingNumber")
+                    incomingNumber?.let { incomingCallHelper.handleIncomingCall(context, it) }
+                }
             }
             TelephonyManager.EXTRA_STATE_IDLE -> {
+                logger.debug("Phone state idle: close notifications")
                 notificationRepository.cancelNotifications(context)
             }
             else -> { }

@@ -24,13 +24,6 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIE
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
-enum class PermissionRequestResult {
-    ALREADY_GRANTED,
-    NEWLY_GRANTED,
-    PARTIALLY_NEWLY_GRANTED,
-    DENIED,
-}
-
 class PermissionHelper {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
     private lateinit var multipleResultsObserver: ActivityResultLauncher<Array<String>>
@@ -40,14 +33,6 @@ class PermissionHelper {
     private var currentResultCallback: (PermissionRequestResult) -> Unit = {
         logger.debug("No result callback registered")
     }
-
-    /**
-     * Starting with version Q, the CallScreeningService is available.
-     * Until version O, the incoming phone-number can be read from a broadcast without CALL_LOG permission.
-     * Google does not want to give me the CALL_LOG permission...
-     */
-    val callIdentificationPossible: Boolean
-        get() = Build.VERSION.SDK_INT != Build.VERSION_CODES.P
 
     /** needs to be called before [activity] reaches resumed-state */
     fun setupObserver(activity: ComponentActivity) = with(activity) {
