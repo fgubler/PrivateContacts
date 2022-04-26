@@ -144,7 +144,7 @@ object AboutScreen {
     }
 
     private fun sendUserReportAsException(text: String) {
-        logger.error(UserFeedbackPseudoException(text))
+        logger.logToCrashlytics(UserFeedbackPseudoException(text))
     }
 
     @Composable

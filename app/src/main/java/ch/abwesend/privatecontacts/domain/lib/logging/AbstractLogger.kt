@@ -118,6 +118,11 @@ abstract class AbstractLogger : ILogger {
         }
     }
 
+    /** always logs to crashlytics, independent of the settings */
+    override fun logToCrashlytics(t: Throwable) {
+        FirebaseCrashlytics.getInstance().recordException(t)
+    }
+
     private fun createThrowableLogMessage(t: Throwable, message: String? = null): String {
         val throwableMessage: String = t.message ?: "[No Throwable Message]"
         return message?.let {
