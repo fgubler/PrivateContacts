@@ -32,3 +32,4 @@ The app supports caller-detection, displaying a notification if a known contact 
 ## Contact
 * Florian Gubler
 * 2Gusoft@gmail.com
+* App entry in Google Play Store: [PrivateContacts](https://play.google.com/store/apps/details?id=ch.abwesend.privatecontacts)
