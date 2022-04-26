@@ -27,6 +27,7 @@ import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
+import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.TelephoneService
@@ -63,7 +64,7 @@ internal val koinModule = module {
     single { ApplicationScope() }
     factory { AppRouter(get()) }
 
-    single {
+    single<AppDatabase> {
         val context = androidContext()
         val factory: IDatabaseFactory = get()
         factory.createDatabase(context)

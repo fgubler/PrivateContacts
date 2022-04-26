@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 import android.content.Context
 import androidx.room.Room
 import ch.abwesend.privatecontacts.BuildConfig
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
@@ -21,10 +22,14 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
+import java.io.File
+
+private const val DATABASE_NAME = "private_contacts_database"
 
 interface IDatabaseFactory {
     fun createDatabase(context: Context): AppDatabase
     suspend fun initializeDatabase()
+    suspend fun resetDatabase(context: Context): Boolean
 }
 
 object DatabaseFactory : IDatabaseFactory {
@@ -32,7 +37,7 @@ object DatabaseFactory : IDatabaseFactory {
         Room.databaseBuilder(
             context.applicationContext,
             AppDatabase::class.java,
-            "private_contacts_database"
+            DATABASE_NAME
         )
             // .fallbackToDestructiveMigration() // DO NOT USE ONCE PRODUCTIVE!
             .addMigrations(*DatabaseMigrations.allMigrations)
@@ -45,6 +50,37 @@ object DatabaseFactory : IDatabaseFactory {
             dummyContacts.forEach { contactRepository.createContact(it) }
         }
     }
+
+    override suspend fun resetDatabase(context: Context): Boolean = try {
+        val deleted = deleteDatabase(context) || deleteDatabaseFromFileSystem(context)
+
+        if (deleted) {
+            // TODO restart database or app
+        }
+
+        deleted
+    } catch (t: Throwable) {
+        logger.error("Failed to reset database", t)
+        false
+    }
+
+    private fun deleteDatabase(context: Context): Boolean = try {
+        context.deleteDatabase(DATABASE_NAME)
+    } catch (t: Throwable) {
+        logger.error("Failed to delete database", t)
+        false
+    }
+
+    private fun deleteDatabaseFromFileSystem(context: Context): Boolean = try {
+        val databasesDir = File(context.databaseDirectoryPath)
+        File(databasesDir, "$DATABASE_NAME.db").delete()
+    } catch (t: Throwable) {
+        logger.error("Failed to delete database from filesystem", t)
+        false
+    }
+
+    private val Context.databaseDirectoryPath: String
+        get() = applicationInfo.dataDir.toString() + "/databases"
 }
 
 val dummyContacts
