@@ -22,10 +22,7 @@ fun DoNotShowAgainCheckbox(checked: Boolean, onCheckChanged: (Boolean) -> Unit) 
             .offset(x = (-12).dp)
             .clickable { onCheckChanged(!checked) }
     ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { } // click in the entire row triggers that already
-        )
+        Checkbox(checked = checked, onCheckedChange = onCheckChanged)
         Text(
             text = stringResource(id = R.string.do_not_show_again),
             modifier = Modifier.padding(start = 5.dp),
