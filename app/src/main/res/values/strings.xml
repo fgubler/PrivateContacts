@@ -34,6 +34,8 @@
     <string name="expand">Expand</string>
     <string name="compress">Compress</string>
     <string name="send">Send</string>
+    <string name="success">Success</string>
+    <string name="failure">Failure</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
@@ -153,4 +155,9 @@
 
     <string name="settings_action_reset_database">Reset contact database</string>
     <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all secret contacts? Contacts shared with other apps will not be affected but all secret ones will be deleted.</string>
+
+    <string name="resetting_database">Resetting database</string>
+    <string name="resetting_database_successful">The database was reset successfully.</string>
+    <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug.\n\nWe apologize for the inconvenience.</string>
+    <string name="run_in_background">Run in background</string>
 </resources>
