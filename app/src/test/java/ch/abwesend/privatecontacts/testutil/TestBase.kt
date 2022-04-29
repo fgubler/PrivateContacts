@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
+import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
@@ -44,6 +45,7 @@ import org.koin.test.junit5.mock.MockProviderExtension
 @ExtendWith(MockKExtension::class)
 abstract class TestBase : KoinTest {
     private lateinit var loggerFactory: ILoggerFactory
+    private lateinit var databaseHolder: DatabaseHolder
     private lateinit var database: AppDatabase
     private lateinit var testLogger: ILogger
 
@@ -60,7 +62,7 @@ abstract class TestBase : KoinTest {
         modules(
             module {
                 single { loggerFactory }
-                single { database }
+                single { databaseHolder }
                 single<IDispatchers> { TestDispatchers }
                 single<SettingsRepository> { TestSettings() }
                 setupKoinModule()
@@ -82,8 +84,10 @@ abstract class TestBase : KoinTest {
         every { loggerFactory.createDefault(any()) } returns spyk(testLogger)
         every { loggerFactory.createLogcat(any()) } returns spyk(testLogger)
 
+        databaseHolder = mockk()
         database = mockk()
-        coEvery { database.ensureInitialized() } returns Unit
+        coEvery { databaseHolder.ensureInitialized() } returns Unit
+        every { databaseHolder.database } returns database
         every { database.contactDao() } returns contactDao
         every { database.contactDataDao() } returns contactDataDao
 
