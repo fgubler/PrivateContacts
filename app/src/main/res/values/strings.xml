@@ -158,6 +158,6 @@
 
     <string name="resetting_database">Resetting database</string>
     <string name="resetting_database_successful">The database was reset successfully.</string>
-    <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug.\n\nWe apologize for the inconvenience.</string>
+    <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug. If this does not work, you can also go to the system-settings and delete all data of this app. This will delete the database for sure.\n\nWe apologize for the inconvenience.</string>
     <string name="run_in_background">Run in background</string>
 </resources>
