@@ -18,7 +18,7 @@ import kotlin.reflect.KProperty
 class DatabaseHolder(context: Context) {
     private val databaseFactory: IDatabaseFactory<AppDatabase> by injectAnywhere()
     private val databaseInitializer: DatabaseInitializer by injectAnywhere()
-    private val databaseResetter: DatabaseResetter by injectAnywhere()
+    private val deletionHelper: DatabaseDeletionHelper by injectAnywhere()
 
     var database: AppDatabase
         private set
@@ -33,7 +33,7 @@ class DatabaseHolder(context: Context) {
         val context: Context = getAnywhere()
 
         database.close()
-        val success = databaseResetter.resetDatabase(context)
+        val success = deletionHelper.resetDatabase(context)
         database = databaseFactory.createDatabase(context)
         ensureInitialized()
 

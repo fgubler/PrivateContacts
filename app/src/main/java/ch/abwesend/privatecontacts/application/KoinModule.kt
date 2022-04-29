@@ -31,10 +31,10 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataReposito
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
+import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseInitializer
-import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseResetter
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
@@ -77,6 +77,6 @@ internal val koinModule = module {
 
     // Database
     single { DatabaseInitializer() }
-    single { DatabaseResetter() }
+    single { DatabaseDeletionHelper() }
     single { DatabaseHolder(androidContext()) }
 }

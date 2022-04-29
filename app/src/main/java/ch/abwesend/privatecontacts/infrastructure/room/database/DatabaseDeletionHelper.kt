@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory.Companion.DATABASE_NAME
 import java.io.File
 
-class DatabaseResetter {
+class DatabaseDeletionHelper {
     fun resetDatabase(context: Context): Boolean {
         return (deleteSqLiteDatabase(context) || deleteDatabaseFromFileSystem(context)).also {
             logger.debug("database deletion ${successText(it)}")
