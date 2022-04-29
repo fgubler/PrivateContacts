@@ -149,7 +149,7 @@
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 
     <string name="settings_action_restore_default">Restore default settings</string>
-    <string name="settings_action_restore_default_confirmation">Are you sure you want to restored all settings to their default values?</string>
+    <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
 
     <string name="settings_action_reset_database">Reset contact database</string>
     <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all secret contacts? Contacts shared with other apps will not be affected but all secret ones will be deleted.</string>
