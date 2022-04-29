@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
@@ -54,6 +53,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
+import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.flow.collect
 
@@ -149,9 +149,7 @@ object ContactEditScreen {
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
     ) {
-        val buttonModifier = remember {
-            Modifier.heightIn(min = 50.dp)
-        }
+        val buttonModifier = remember { GlobalModifiers.buttonHeightLarge }
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,

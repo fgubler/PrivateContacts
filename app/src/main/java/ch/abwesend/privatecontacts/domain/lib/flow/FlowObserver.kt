@@ -41,7 +41,7 @@ class FlowObserver<out T>(
  */
 @Deprecated(
     message = "Don't really have proper LifecycleOwners in Compose...",
-    replaceWith = ReplaceWith("observeAsState or LaunchedEffect")
+    replaceWith = ReplaceWith("rememberCoroutineScope, observeAsState or LaunchedEffect")
 )
 inline fun <reified T> Flow<T>.observe(
     lifecycleOwner: LifecycleOwner,

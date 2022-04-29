@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -53,7 +54,7 @@ fun YesNoNeverDialog(
             }
         },
         dismissButton = {
-            Button(onClick = { onNo(doNotShowAgainState) }) {
+            OutlinedButton(onClick = { onNo(doNotShowAgainState) }) {
                 Text(stringResource(id = R.string.no))
             }
         },
