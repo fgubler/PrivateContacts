@@ -1,12 +1,15 @@
 package ch.abwesend.privatecontacts.view.screens.about
 
 import android.content.Context
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -14,9 +17,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -30,9 +35,12 @@ import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.openLink
 import ch.abwesend.privatecontacts.view.util.sendEmailMessage
+import kotlinx.coroutines.launch
 
+@ExperimentalFoundationApi
 object AboutScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
@@ -97,6 +105,10 @@ object AboutScreen {
     @Composable
     private fun ReportBugField() {
         var errorText: String by remember { mutableStateOf("") }
+        val context = LocalContext.current
+
+        val viewRequester = remember { BringIntoViewRequester() }
+        val coroutineScope = rememberCoroutineScope()
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -110,11 +122,19 @@ object AboutScreen {
                 modifier = Modifier
                     .heightIn(min = 100.dp)
                     .weight(1F)
+                    .onFocusChanged {
+                        if (it.isFocused) {
+                            coroutineScope.launch {
+                                viewRequester.bringIntoViewDelayed()
+                            }
+                        }
+                    }
             )
             Button(
                 modifier = Modifier.padding(start = 5.dp),
                 onClick = {
                     sendUserReportAsException(errorText)
+                    Toast.makeText(context, R.string.error_report_sent_confirmation, Toast.LENGTH_SHORT).show()
                     errorText = ""
                 },
             ) {
@@ -124,7 +144,7 @@ object AboutScreen {
     }
 
     private fun sendUserReportAsException(text: String) {
-        logger.error(UserFeedbackPseudoException(text))
+        logger.logToCrashlytics(UserFeedbackPseudoException(text))
     }
 
     @Composable

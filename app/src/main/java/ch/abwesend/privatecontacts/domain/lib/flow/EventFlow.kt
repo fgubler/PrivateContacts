@@ -45,4 +45,8 @@ class EventFlow<T>private constructor(
     override suspend fun emit(value: T) {
         internalChannel.send(value)
     }
+
+    fun close(): Boolean = internalChannel.close()
+
+    fun asFlow(): Flow<T> = this
 }

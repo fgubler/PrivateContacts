@@ -58,6 +58,7 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 
 @ExperimentalFoundationApi
@@ -71,6 +72,7 @@ class MainActivity : ComponentActivity() {
     private val contactListViewModel: ContactListViewModel by viewModels()
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,6 +156,7 @@ class MainActivity : ComponentActivity() {
             contactListViewModel = contactListViewModel,
             contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,
+            settingsViewModel = settingsViewModel,
         )
     }
 }

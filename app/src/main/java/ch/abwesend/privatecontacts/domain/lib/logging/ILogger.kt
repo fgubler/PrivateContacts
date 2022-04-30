@@ -26,6 +26,7 @@ interface ILogger {
     fun warning(message: String, t: Throwable)
     fun error(message: String, t: Throwable)
     fun error(t: Throwable)
+    fun logToCrashlytics(t: Throwable)
 }
 
 /**

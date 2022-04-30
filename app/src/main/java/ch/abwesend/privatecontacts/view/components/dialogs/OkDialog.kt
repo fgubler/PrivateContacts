@@ -27,6 +27,7 @@ import ch.abwesend.privatecontacts.view.components.inputs.DoNotShowAgainCheckbox
 fun OkDialog(
     @StringRes title: Int,
     @StringRes text: Int,
+    @StringRes okButtonLabel: Int = R.string.ok,
     onClose: () -> Unit,
 ) {
     AlertDialog(
@@ -35,7 +36,7 @@ fun OkDialog(
         onDismissRequest = onClose,
         confirmButton = {
             Button(onClick = onClose) {
-                Text(stringResource(id = R.string.ok))
+                Text(stringResource(id = okButtonLabel))
             }
         },
         dismissButton = {},
@@ -46,6 +47,7 @@ fun OkDialog(
 fun OkDialog(
     @StringRes title: Int,
     onClose: () -> Unit,
+    @StringRes okButtonLabel: Int = R.string.ok,
     content: @Composable () -> Unit,
 ) {
     AlertDialog(
@@ -54,7 +56,7 @@ fun OkDialog(
         onDismissRequest = onClose,
         confirmButton = {
             Button(onClick = onClose) {
-                Text(stringResource(id = R.string.ok))
+                Text(stringResource(id = okButtonLabel))
             }
         },
         dismissButton = {},

@@ -29,7 +29,6 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
@@ -42,8 +41,6 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScree
 object SettingsScreen {
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
         private set
-
-    val permissionHelper: PermissionHelper by injectAnywhere()
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
@@ -58,7 +55,7 @@ object SettingsScreen {
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = SettingsScreen,
-            topBarActions = { SettingsActions() }
+            topBarActions = { SettingsActions(screenContext.settingsViewModel) }
         ) {
             Column(
                 modifier = Modifier

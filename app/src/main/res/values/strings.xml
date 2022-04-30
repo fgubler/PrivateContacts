@@ -34,9 +34,12 @@
     <string name="expand">Expand</string>
     <string name="compress">Compress</string>
     <string name="send">Send</string>
+    <string name="success">Success</string>
+    <string name="failure">Failure</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="error_report_sent_confirmation">Error report sent to developers</string>
 
     <string name="do_not_show_again">Do not show again</string>
     <string name="thank_you">Thank you</string>
@@ -148,8 +151,13 @@
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 
     <string name="settings_action_restore_default">Restore default settings</string>
-    <string name="settings_action_restore_default_confirmation">Are you sure you want to restored all settings to their default values?</string>
+    <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
 
     <string name="settings_action_reset_database">Reset contact database</string>
     <string name="settings_action_reset_database_confirmation">Are you sure you want to delete all secret contacts? Contacts shared with other apps will not be affected but all secret ones will be deleted.</string>
+
+    <string name="resetting_database">Resetting database</string>
+    <string name="resetting_database_successful">The database was reset successfully.</string>
+    <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug. If this does not work, you can also go to the system-settings and delete all data of this app. This will delete the database for sure.\n\nWe apologize for the inconvenience.</string>
+    <string name="run_in_background">Run in background</string>
 </resources>

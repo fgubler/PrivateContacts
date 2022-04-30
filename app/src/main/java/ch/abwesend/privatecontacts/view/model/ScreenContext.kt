@@ -11,11 +11,13 @@ import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 
 data class ScreenContext(
     val router: AppRouter,
     val contactListViewModel: ContactListViewModel,
     val contactDetailViewModel: ContactDetailViewModel,
     val contactEditViewModel: ContactEditViewModel,
+    val settingsViewModel: SettingsViewModel,
     val settings: ISettingsState,
 )
