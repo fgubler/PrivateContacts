@@ -70,7 +70,7 @@ class ContactListViewModel : ViewModel() {
             scope = viewModelScope,
             debounceMs = 300,
         ) { query ->
-            currentFilter = query
+            currentFilter = query.ifEmpty { null }
             _contacts.value = searchContacts(query)
         }
     }
@@ -123,7 +123,7 @@ class ContactListViewModel : ViewModel() {
     fun changeSearchQuery(query: String) {
         searchText = query
         val preparedQuery = searchService.prepareQuery(query)
-        if (searchService.isLongEnough(preparedQuery)) {
+        if (preparedQuery.isEmpty() || searchService.isLongEnough(preparedQuery)) {
             searchQueryDebouncer.newValue(preparedQuery)
         }
     }
