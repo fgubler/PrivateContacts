@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.Screen
@@ -70,13 +71,15 @@ object ContactListScreen {
     private fun ContactListContent(screenContext: ScreenContext) {
         val viewModel = screenContext.contactListViewModel
         val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
+        val selectedContacts = (viewModel.screenState.value as? ContactListScreenState.BulkMode)
+            ?.selectedContacts.orEmpty()
 
         when {
             pagedContacts.isError -> LoadingError(viewModel)
             pagedContacts.isLoading -> ContactLoadingIndicator()
             else -> {
                 if (pagedContacts.itemCount > 0 || viewModel.initialEmptyContactsIgnored) {
-                    ContactList(pagedContacts = pagedContacts) { contact ->
+                    ContactList(pagedContacts = pagedContacts, selectedContacts = selectedContacts) { contact ->
                         selectContact(screenContext, contact)
                     }
                 } else ContactLoadingIndicator()
