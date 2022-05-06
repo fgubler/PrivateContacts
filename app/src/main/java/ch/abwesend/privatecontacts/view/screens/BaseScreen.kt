@@ -47,7 +47,7 @@ fun BaseScreen(
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = topBar,
-        drawerContent = { SideDrawerContent(screenContext.router, selectedScreen, scaffoldState) },
+        drawerContent = { SideDrawerContent(selectedScreen, scaffoldState, screenContext.router::navigateToScreen) },
         floatingActionButton = floatingActionButton,
         content = { content() },
     )
