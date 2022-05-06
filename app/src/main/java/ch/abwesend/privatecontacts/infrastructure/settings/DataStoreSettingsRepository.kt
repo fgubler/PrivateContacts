@@ -72,6 +72,9 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var sendErrorsToCrashlytics: Boolean
         get() = currentSettings.sendErrorsToCrashlytics
         set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
+    override var currentVersion: Int
+        get() = currentSettings.currentVersion
+        set(value) = dataStore.setValue(currentVersionEntry, value)
 
     override var defaultContactType: ContactType
         get() = currentSettings.defaultContactType

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.settings
 
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 
 interface ISettingsState {
@@ -36,6 +37,7 @@ interface ISettingsState {
 
     // Others
     val sendErrorsToCrashlytics: Boolean
+    val currentVersion: Int
 }
 
 data class SettingsState(
@@ -51,6 +53,7 @@ data class SettingsState(
     override val showIncomingCallsOnLockScreen: Boolean,
 
     override val sendErrorsToCrashlytics: Boolean,
+    override val currentVersion: Int,
 ) : ISettingsState {
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
@@ -62,6 +65,7 @@ data class SettingsState(
             observeIncomingCalls = true,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.SECRET,
+            currentVersion = BuildConfig.VERSION_CODE,
         )
     }
 }
