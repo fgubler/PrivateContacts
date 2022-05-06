@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -38,19 +37,16 @@ object ContactListScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val scaffoldState = rememberScaffoldState()
-        val coroutineScope = rememberCoroutineScope()
 
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
             allowFullNavigation = true,
             scaffoldState = scaffoldState,
-            coroutineScope = coroutineScope,
             topBar = {
                 ContactListTopBar(
                     viewModel = screenContext.contactListViewModel,
                     scaffoldState = scaffoldState,
-                    coroutineScope = coroutineScope,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
