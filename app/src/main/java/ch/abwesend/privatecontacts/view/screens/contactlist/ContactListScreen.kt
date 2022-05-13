@@ -15,13 +15,16 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -93,6 +96,15 @@ object ContactListScreen {
                 } else ContactLoadingIndicator()
                 viewModel.initialEmptyContactsIgnored = true
             }
+        }
+
+        val deletionErrors = viewModel.deleteResult
+            .collectAsState(initial = ContactDeleteResult.Inactive)
+            .let { it.value as? ContactDeleteResult.Failure }
+            ?.errors.orEmpty()
+
+        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
+            viewModel.resetDeletionResult()
         }
     }
 

@@ -9,10 +9,15 @@ package ch.abwesend.privatecontacts.domain.model.result
 sealed interface ContactDeleteResult {
     fun combine(other: ContactDeleteResult): ContactDeleteResult
 
+    object Inactive : ContactDeleteResult {
+        override fun combine(other: ContactDeleteResult): ContactDeleteResult = other
+    }
+
     object Success : ContactDeleteResult {
         override fun combine(other: ContactDeleteResult): ContactDeleteResult =
             when (other) {
                 is Success -> Success
+                is Inactive -> this
                 is Failure -> other
             }
     }
@@ -22,7 +27,7 @@ sealed interface ContactDeleteResult {
         constructor(error: ContactChangeError) : this(listOf(error))
 
         override fun combine(other: ContactDeleteResult): ContactDeleteResult = when (other) {
-            is Success -> this
+            is Success, is Inactive -> this
             is Failure -> Failure(errors = errors + other.errors)
         }
     }

@@ -38,7 +38,7 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -78,11 +78,7 @@ object ContactDetailScreen {
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
         }
 
-        DeleteErrorDialog(errors = deletionErrors) {
-            deletionErrors = emptyList()
-        }
-
-        BackHandler(enabled = deletionErrors.isNotEmpty()) {
+        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
             deletionErrors = emptyList()
         }
 
@@ -91,6 +87,7 @@ object ContactDetailScreen {
                 when (result) {
                     is ContactDeleteResult.Success -> screenContext.router.navigateUp()
                     is ContactDeleteResult.Failure -> deletionErrors = result.errors
+                    is ContactDeleteResult.Inactive -> { /* nothing to do */ }
                 }
             }
         }
@@ -207,22 +204,5 @@ object ContactDetailScreen {
                 viewModel.reloadContact()
             }
         )
-    }
-
-    @Composable
-    private fun DeleteErrorDialog(
-        errors: List<ContactChangeError>,
-        onClose: () -> Unit
-    ) {
-        if (errors.isNotEmpty()) {
-            OkDialog(
-                title = R.string.error,
-                onClose = onClose
-            ) {
-                val errorTexts = errors.map { stringResource(id = it.label) }.joinToString { " - $it \n" }
-                val description = stringResource(R.string.delete_contact_error) + "\n" + errorTexts
-                Text(text = description)
-            }
-        }
     }
 }
