@@ -25,6 +25,7 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
@@ -135,5 +136,30 @@ class ContactListViewModel : ViewModel() {
             else -> Normal
         }
         _screenState.value = newState
+    }
+
+    fun toggleContactSelected(contact: IContactBase) {
+        if (!bulkModeEnabled) {
+            logger.warning("Tried to toggle contact-selection but bulk-mode is disabled.")
+            return
+        }
+
+        val contactId = contact.id
+        val selectedContacts = bulkModeSelectedContacts
+        bulkModeSelectedContacts = if (selectedContacts.contains(contactId)) {
+            logger.debug("unselecting contact $contactId")
+            selectedContacts.minus(contactId)
+        } else {
+            logger.debug("selecting contact $contactId")
+            selectedContacts.plus(contactId)
+        }
+    }
+
+    fun deleteContacts(contactIds: Set<ContactId>) {
+        viewModelScope.launch {
+            // TODO implement
+
+            setBulkMode(enabled = false) // bulk-action is over
+        }
     }
 }

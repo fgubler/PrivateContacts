@@ -6,8 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,14 +36,17 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
+import ch.abwesend.privatecontacts.view.theme.selectedElement
 
 private const val EASTER_EGG_LOVE = "love"
 
+@ExperimentalFoundationApi
 @Composable
 fun ContactList(
     pagedContacts: LazyPagingItems<IContactBase>,
     selectedContacts: Set<ContactId>,
-    onContactSelected: (IContactBase) -> Unit,
+    onContactClicked: (IContactBase) -> Unit,
+    onContactLongClicked: (IContactBase) -> Unit,
 ) {
     if (pagedContacts.itemCount <= 0) {
         NoResults()
@@ -49,7 +54,8 @@ fun ContactList(
         ListOfContacts(
             pagedContacts = pagedContacts,
             selectedContacts = selectedContacts,
-            onContactSelected = onContactSelected
+            onContactClicked = onContactClicked,
+            onContactLongClicked = onContactLongClicked,
         )
     }
 }
@@ -59,11 +65,13 @@ private fun NoResults() {
     FullScreenError(errorMessage = R.string.no_contacts_found)
 }
 
+@ExperimentalFoundationApi
 @Composable
 private fun ListOfContacts(
     pagedContacts: LazyPagingItems<IContactBase>,
     selectedContacts: Set<ContactId>,
-    onContactSelected: (IContactBase) -> Unit,
+    onContactClicked: (IContactBase) -> Unit,
+    onContactLongClicked: (IContactBase) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -72,19 +80,29 @@ private fun ListOfContacts(
     ) {
         items(pagedContacts) { nullableContact ->
             val selected = nullableContact?.let { selectedContacts.contains(it.id) } ?: false
-            Contact(nullableContact, selected = selected, onContactSelected = onContactSelected)
+            Contact(
+                nullableContact = nullableContact,
+                selected = selected,
+                onClicked = onContactClicked,
+                onLongClicked = onContactLongClicked,
+            )
         }
     }
 }
 
+/** Beware: Need to draw the row even for null, otherwise, loading new pages does not work properly */
+@ExperimentalFoundationApi
 @Composable
 private fun Contact(
     nullableContact: IContactBase?,
     selected: Boolean,
-    onContactSelected: (IContactBase) -> Unit,
+    onClicked: (IContactBase) -> Unit,
+    onLongClicked: (IContactBase) -> Unit,
 ) {
-    // Beware: Need to draw the row even for null, otherwise, loading new pages does not work properly
-    val background = if (selected) MaterialTheme.colors.primary else MaterialTheme.colors.background // TODO rethink the color
+    val background =
+        if (selected) MaterialTheme.colors.selectedElement
+        else MaterialTheme.colors.background
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -92,13 +110,18 @@ private fun Contact(
             .height(50.dp)
             .clip(RoundedCornerShape(5.dp))
             .background(background)
-            .clickable { nullableContact?.let { onContactSelected(it) } }
+            .combinedClickable(
+                onClick = { nullableContact?.let { onClicked(it) } },
+                onLongClick = { nullableContact?.let { onLongClicked(it) } }
+            )
     ) {
         nullableContact?.let { contact ->
             val name = contact.getFullName()
-            val icon =
-                if (name.lowercase().contains(EASTER_EGG_LOVE)) Icons.Filled.Favorite
-                else Icons.Filled.AccountCircle
+            val icon = when {
+                selected -> Icons.Default.TaskAlt
+                name.lowercase().contains(EASTER_EGG_LOVE) -> Icons.Filled.Favorite
+                else -> Icons.Filled.AccountCircle
+            }
             Icon(
                 imageVector = icon,
                 contentDescription = name,

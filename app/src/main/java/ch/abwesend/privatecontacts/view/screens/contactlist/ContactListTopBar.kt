@@ -10,6 +10,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -17,8 +19,11 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -27,13 +32,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
+import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
@@ -61,7 +69,8 @@ fun ContactListTopBar(
             resetSearch = { viewModel.reloadContacts(resetSearch = true) }
         )
         is BulkMode -> BulkModeTopBar(
-            numberOfSelectedItems = screenState.selectedContacts.size,
+            viewModel = viewModel,
+            selectedContacts = screenState.selectedContacts,
             disableBulkMode = { viewModel.setBulkMode(enabled = false) }
         )
     }
@@ -101,14 +110,76 @@ private fun SearchTopBar(
 
 @Composable
 private fun BulkModeTopBar(
-    numberOfSelectedItems: Int,
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
     disableBulkMode: () -> Unit
 ) {
+    var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
+
     TopAppBar(
-        title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, numberOfSelectedItems)) },
+        title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
         navigationIcon = { CancelIconButton { disableBulkMode() } },
+        actions = {
+            MoreActionsIconButton { dropDownMenuExpanded = true }
+            ActionsMenu(
+                viewModel = viewModel,
+                selectedContacts = selectedContacts,
+                expanded = dropDownMenuExpanded
+            ) {
+                dropDownMenuExpanded = false
+            }
+        }
     )
     BackHandler { disableBulkMode() }
+}
+
+@Composable
+fun ActionsMenu(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
+    expanded: Boolean,
+    onCloseMenu: () -> Unit
+) {
+    var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+
+    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+        DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
+            Text(stringResource(id = R.string.delete_contacts))
+        }
+    }
+    DeleteConfirmationDialog(
+        viewModel = viewModel,
+        selectedContacts = selectedContacts,
+        visible = deleteConfirmationDialogVisible,
+        hideDialog = {
+            deleteConfirmationDialogVisible = false
+            onCloseMenu()
+        },
+    )
+
+    BackHandler(enabled = deleteConfirmationDialogVisible) {
+        deleteConfirmationDialogVisible = false
+    }
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
+    visible: Boolean,
+    hideDialog: () -> Unit,
+) {
+    if (visible) {
+        YesNoDialog(
+            title = R.string.delete_contacts_title,
+            text = { Text(text = stringResource(id = R.string.delete_contacts_text, selectedContacts.size)) },
+            onYes = {
+                hideDialog()
+                viewModel.deleteContacts(selectedContacts)
+            },
+            onNo = hideDialog
+        )
+    }
 }
 
 @ExperimentalComposeUiApi
