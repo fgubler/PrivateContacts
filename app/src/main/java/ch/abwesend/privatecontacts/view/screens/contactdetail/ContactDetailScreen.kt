@@ -61,7 +61,7 @@ object ContactDetailScreen {
     fun Screen(screenContext: ScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
-        var deletionError: ContactChangeError? by remember { mutableStateOf(null) }
+        var deletionErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
 
         Scaffold(
             topBar = {
@@ -78,19 +78,19 @@ object ContactDetailScreen {
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
         }
 
-        DeleteErrorDialog(error = deletionError) {
-            deletionError = null
+        DeleteErrorDialog(errors = deletionErrors) {
+            deletionErrors = emptyList()
         }
 
-        BackHandler(enabled = deletionError != null) {
-            deletionError = null
+        BackHandler(enabled = deletionErrors.isNotEmpty()) {
+            deletionErrors = emptyList()
         }
 
         LaunchedEffect(Unit) {
             viewModel.deleteResult.collect { result ->
                 when (result) {
                     is ContactDeleteResult.Success -> screenContext.router.navigateUp()
-                    is ContactDeleteResult.Failure -> deletionError = result.error
+                    is ContactDeleteResult.Failure -> deletionErrors = result.errors
                 }
             }
         }
@@ -211,16 +211,16 @@ object ContactDetailScreen {
 
     @Composable
     private fun DeleteErrorDialog(
-        error: ContactChangeError?,
+        errors: List<ContactChangeError>,
         onClose: () -> Unit
     ) {
-        error?.let { savingError ->
+        if (errors.isNotEmpty()) {
             OkDialog(
                 title = R.string.error,
                 onClose = onClose
             ) {
-                val errorText = stringResource(id = savingError.label)
-                val description = stringResource(R.string.delete_contact_error, errorText)
+                val errorTexts = errors.map { stringResource(id = it.label) }.joinToString { " - $it \n" }
+                val description = stringResource(R.string.delete_contact_error) + "\n" + errorTexts
                 Text(text = description)
             }
         }

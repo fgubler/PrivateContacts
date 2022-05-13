@@ -96,4 +96,7 @@ interface ContactDao {
 
     @Query("DELETE FROM ContactEntity WHERE id = :contactId")
     suspend fun delete(contactId: UUID)
+
+    @Query("DELETE FROM ContactEntity WHERE id IN (:contactIds)")
+    suspend fun delete(contactIds: Collection<UUID>)
 }

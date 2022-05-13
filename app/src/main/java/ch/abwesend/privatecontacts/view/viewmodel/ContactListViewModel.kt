@@ -13,10 +13,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
+import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
@@ -29,6 +32,7 @@ import kotlinx.coroutines.launch
 
 class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
+    private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
     /** initially, the contacts are always returned to be empty before loading-state starts */
@@ -83,6 +87,9 @@ class ContactListViewModel : ViewModel() {
         mutableStateOf(loadContacts())
     }
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
+
+    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
+    val deleteResult: Flow<ContactDeleteResult> = _deleteResult
 
     fun reloadContacts(resetSearch: Boolean = false) {
         if (resetSearch) {
@@ -157,9 +164,10 @@ class ContactListViewModel : ViewModel() {
 
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
-            // TODO implement
-
+            val result = saveService.deleteContacts(contactIds)
+            launch { reloadContacts() }
             setBulkMode(enabled = false) // bulk-action is over
+            _deleteResult.emit(result) // TODO make sure this is observed
         }
     }
 }

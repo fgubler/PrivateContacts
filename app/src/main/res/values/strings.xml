@@ -98,12 +98,12 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
-    <string name="delete_contact_error">Something went wrong: \"%1$s\". The contact could not be deleted.</string>
+    <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
 
     <string name="delete_contacts">Delete Contacts</string>
     <string name="delete_contacts_title">Delete Contacts</string>
     <string name="delete_contacts_text">Deleted contacts cannot be restored. Are you sure you would like to delete these %1$s contacts?</string>
-    <string name="delete_contacts_error">Something went wrong: \"%1$s\". The contacts could not be deleted.</string>
+    <string name="delete_contacts_error">Something went wrong. The contacts could not be deleted.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>

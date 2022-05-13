@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -22,6 +23,8 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
+
+private const val MAX_BULK_OPERATION_SIZE = 500 // rather arbitrary, SQLite should be able to handle 999
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
@@ -135,15 +138,29 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
+    override suspend fun deleteContacts(contactIds: Collection<ContactId>): ContactDeleteResult =
         try {
             withDatabase { database ->
-                contactDataRepository.deleteContactData(contact)
-                database.contactDao().delete(contact.id.uuid)
+                if (contactIds.size > MAX_BULK_OPERATION_SIZE) {
+                    logger.debug("Trying to delete ${contactIds.size} contacts: splitting up into chunks")
+                    val firstBatch = contactIds.take(MAX_BULK_OPERATION_SIZE)
+                    val rest = contactIds.minus(firstBatch)
+                    val results = listOf(
+                        deleteContacts(firstBatch),
+                        deleteContacts(rest),
+                    )
+
+                    val result = results.reduce { first, second -> first.combine(second) }
+                    logger.debug("Deletion result of ${contactIds.size} contacts: $result")
+                    return@withDatabase result
+                }
+
+                contactDataRepository.deleteContactData(contactIds)
+                database.contactDao().delete(contactIds = contactIds.map { it.uuid })
                 ContactDeleteResult.Success
             }
         } catch (e: Exception) {
-            logger.error("Failed to delete contact ${contact.id}", e)
+            logger.error("Failed to delete ${contactIds.size} contacts", e)
             ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
 }

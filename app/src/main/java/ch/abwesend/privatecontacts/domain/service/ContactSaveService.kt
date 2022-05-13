@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
@@ -33,5 +34,8 @@ class ContactSaveService {
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
-        contactRepository.deleteContact(contact)
+        deleteContacts(setOf(contact.id))
+
+    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactDeleteResult =
+        contactRepository.deleteContacts(contactIds)
 }
