@@ -37,32 +37,11 @@ class NotificationRepository {
 
     fun showIncomingCallNotification(
         context: Context,
-        callerNumber: String,
-        contactNames: List<String>
+        notificationText: String,
     ) {
-        if (contactNames.isEmpty()) {
-            logger.debug("No matching contacts: do not show a notification.")
-            return
-        }
-
         context.createNotificationChannel()
 
         val title = context.getString(R.string.incoming_call_title)
-        val text = if (contactNames.size == 1) {
-            context.getString(R.string.incoming_call_text_single_match, contactNames.first())
-        } else {
-            val lastContactName = contactNames.last()
-            val otherContactNames = contactNames
-                .filter { it != lastContactName }
-                .joinToString(separator = ", ")
-            context.getString(
-                R.string.incoming_call_text_multiple_matches,
-                otherContactNames,
-                lastContactName,
-                callerNumber,
-            )
-        }
-
         val visibility =
             if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
             else VISIBILITY_SECRET
@@ -73,8 +52,8 @@ class NotificationRepository {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_phone_callback_24)
             .setContentTitle(title)
-            .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentText(notificationText)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(visibility)
             .setTimeoutAfter(MAX_NOTIFICATION_TIMEOUT_MS)
