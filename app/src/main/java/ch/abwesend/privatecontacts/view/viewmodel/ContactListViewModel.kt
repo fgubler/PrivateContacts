@@ -165,9 +165,12 @@ class ContactListViewModel : ViewModel() {
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
             val result = saveService.deleteContacts(contactIds)
-            launch { reloadContacts() }
-            setBulkMode(enabled = false) // bulk-action is over
             _deleteResult.emit(result)
+
+            if (result is ContactDeleteResult.Success) {
+                launch { reloadContacts() }
+                setBulkMode(enabled = false) // bulk-action is over
+            }
         }
     }
 

@@ -31,11 +31,18 @@ fun DeleteContactsErrorDialog(
                 if (multipleContacts) R.string.delete_contacts_error
                 else R.string.delete_contact_error
 
-            val errorTexts = errors.map { stringResource(id = it.label) }.joinToString { " - $it \n" }
-            val description = stringResource(descriptionResource) + "\n" + errorTexts
+            val description = if (errors.size <= 1) {
+                stringResource(id = descriptionResource) + " ${errors.first().getLabel()}"
+            } else {
+                val errorTexts = errors.map { it.getLabel() }.joinToString { " - $it \n" }
+                stringResource(descriptionResource) + "\n\n" + errorTexts
+            }
             Text(text = description)
         }
 
         BackHandler { onClose() }
     }
 }
+
+@Composable
+private fun ContactChangeError.getLabel() = stringResource(id = label)

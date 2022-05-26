@@ -103,7 +103,7 @@ object ContactListScreen {
             .let { it.value as? ContactDeleteResult.Failure }
             ?.errors.orEmpty()
 
-        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
+        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = selectedContacts.size > 1) {
             viewModel.resetDeletionResult()
         }
     }
