@@ -25,13 +25,13 @@ private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotifica
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
 
 class NotificationRepository {
-    private val potentiallyActiveNotifications = mutableSetOf<Int>()
+    private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
         // cancelAll may be expensive: do not call if clearly unnecessary
         if (potentiallyActiveNotifications.isNotEmpty()) {
             context.notificationManager.cancelAll()
-            potentiallyActiveNotifications.clear()
+            potentiallyActiveNotifications = mutableSetOf()
         }
     }
 
@@ -85,6 +85,7 @@ class NotificationRepository {
         val notificationId = UUID.randomUUID().hashCode()
         manager.notify(notificationId, builder.build())
         potentiallyActiveNotifications.add(notificationId)
+        logger.debug("Showing notification for incoming call")
     }
 
     private fun Context.createNotificationChannel() {
