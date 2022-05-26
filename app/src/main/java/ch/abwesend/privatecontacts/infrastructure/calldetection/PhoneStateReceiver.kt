@@ -47,18 +47,23 @@ class PhoneStateReceiver : BroadcastReceiver() {
         logger.debug("Received phone state $phoneState")
 
         when (phoneState) {
-            TelephonyManager.EXTRA_STATE_RINGING -> {
-                if (canReadCallingNumberFromPhoneState) {
-                    val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
-                    logger.debug("Receiving a call from $incomingNumber")
-                    incomingNumber?.let { incomingCallHelper.handleIncomingCall(context, it) }
-                }
-            }
-            TelephonyManager.EXTRA_STATE_IDLE -> {
-                logger.debug("Phone state idle: close notifications")
-                notificationRepository.cancelNotifications(context)
-            }
+            TelephonyManager.EXTRA_STATE_RINGING -> onRinging(context, intent)
+            TelephonyManager.EXTRA_STATE_IDLE -> onIdle(context)
             else -> { }
         }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun onRinging(context: Context, intent: Intent) {
+        if (canReadCallingNumberFromPhoneState) {
+            val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
+            logger.debug("Receiving a call from $incomingNumber")
+            incomingNumber?.let { incomingCallHelper.handleIncomingCall(context, it) }
+        }
+    }
+
+    private fun onIdle(context: Context) {
+        logger.debug("Phone state idle: close notifications")
+        notificationRepository.cancelNotifications(context)
     }
 }
