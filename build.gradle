@@ -8,7 +8,7 @@
 buildscript {
     ext {
         kotlinVersion = "1.6.10"
-        composeVersion = "1.1.0"
+        composeVersion = "1.1.1"
         coroutinesVersion = "1.5.2"
         androidLifecycleVersion = "2.4.1"
 
