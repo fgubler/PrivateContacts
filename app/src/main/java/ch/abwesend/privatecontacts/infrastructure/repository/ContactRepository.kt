@@ -138,29 +138,20 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun deleteContacts(contactIds: Collection<ContactId>): ContactDeleteResult =
-        try {
-            withDatabase { database ->
-                if (contactIds.size > MAX_BULK_OPERATION_SIZE) {
-                    logger.debug("Trying to delete ${contactIds.size} contacts: splitting up into chunks")
-                    val firstBatch = contactIds.take(MAX_BULK_OPERATION_SIZE)
-                    val rest = contactIds.minus(firstBatch)
-                    val results = listOf(
-                        deleteContacts(firstBatch),
-                        deleteContacts(rest),
-                    )
-
-                    val result = results.reduce { first, second -> first.combine(second) }
-                    logger.debug("Deletion result of ${contactIds.size} contacts: $result")
-                    return@withDatabase result
-                }
-
-                contactDataRepository.deleteContactData(contactIds)
-                database.contactDao().delete(contactIds = contactIds.map { it.uuid })
+    override suspend fun deleteContacts(contactIds: Collection<ContactId>): ContactDeleteResult {
+        val results = bulkOperation(contactIds) { database, chunkedContactIds ->
+            try {
+                database.contactDao().delete(contactIds = chunkedContactIds.map { it.uuid })
+                // ContactData should be deleted by cascade-delete
                 ContactDeleteResult.Success
+            } catch (e: Exception) {
+                logger.error("Failed to delete ${contactIds.size} contacts", e)
+                ContactDeleteResult.Failure(UNKNOWN_ERROR)
             }
-        } catch (e: Exception) {
-            logger.error("Failed to delete ${contactIds.size} contacts", e)
-            ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
+
+        return results.reduce { first, second -> first.combine(second) }.also {
+            logger.debug("Deletion result of ${contactIds.size} contacts: $it")
+        }
+    }
 }
