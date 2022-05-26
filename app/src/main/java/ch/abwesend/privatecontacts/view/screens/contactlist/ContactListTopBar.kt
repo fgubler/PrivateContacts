@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -141,12 +142,17 @@ fun ActionsMenu(
     onCloseMenu: () -> Unit
 ) {
     var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+    val multipleContacts = selectedContacts.size > 1
 
-    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-        DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
-            Text(stringResource(id = R.string.delete_contacts))
+    if (selectedContacts.isNotEmpty()) {
+        DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+            DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
+                @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
+                Text(stringResource(id = text))
+            }
         }
     }
+
     DeleteConfirmationDialog(
         viewModel = viewModel,
         selectedContacts = selectedContacts,
