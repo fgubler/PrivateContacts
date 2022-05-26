@@ -95,12 +95,12 @@ class ContactDataRepositoryTest : TestBase() {
             someContactDataEntity(contactId = contact.id.uuid),
             someContactDataEntity(contactId = contact.id.uuid),
         )
-        coEvery { contactDataDao.getDataForContact(contact.id.uuid) } returns contactDataEntities
+        coEvery { contactDataDao.getDataForContacts(any()) } returns contactDataEntities
         coEvery { contactDataDao.deleteAll(any()) } just runs
 
         runBlocking { underTest.deleteContactData(contact) }
 
-        coVerify { contactDataDao.getDataForContact(contactId = contact.id.uuid) }
+        coVerify { contactDataDao.getDataForContacts(listOf(contact.id.uuid)) }
         coVerify { contactDataDao.deleteAll(contactDataEntities) }
     }
 

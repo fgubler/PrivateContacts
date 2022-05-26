@@ -126,24 +126,11 @@ class ContactRepositoryTest : TestBase() {
     @Test
     fun `deleting a contact should delete it`() {
         val contact = someContactFull()
-        coEvery { contactDao.delete(ofType<UUID>()) } just runs
-        coEvery { contactDataRepository.deleteContactData(any()) } just runs
+        coEvery { contactDao.delete(ofType<Collection<UUID>>()) } just runs
 
-        val result = runBlocking { underTest.deleteContact(contact) }
+        val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
 
-        coVerify { contactDao.delete(contact.id.uuid) }
-        assertThat(result).isEqualTo(ContactDeleteResult.Success)
-    }
-
-    @Test
-    fun `deleting a contact should also delete the contact data`() {
-        val contact = someContactFull()
-        coEvery { contactDao.delete(ofType<UUID>()) } just runs
-        coEvery { contactDataRepository.deleteContactData(any()) } just runs
-
-        val result = runBlocking { underTest.deleteContact(contact) }
-
-        coVerify { contactDataRepository.deleteContactData(contact) }
+        coVerify { contactDao.delete(listOf(contact.id.uuid)) }
         assertThat(result).isEqualTo(ContactDeleteResult.Success)
     }
 
@@ -151,9 +138,8 @@ class ContactRepositoryTest : TestBase() {
     fun `an exception during deletion should return an Error-Result`() {
         val contact = someContactFull()
         coEvery { contactDao.delete(ofType<UUID>()) } throws RuntimeException("Test")
-        coEvery { contactDataRepository.deleteContactData(any()) } just runs
 
-        val result = runBlocking { underTest.deleteContact(contact) }
+        val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
 
         assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNKNOWN_ERROR))
     }
