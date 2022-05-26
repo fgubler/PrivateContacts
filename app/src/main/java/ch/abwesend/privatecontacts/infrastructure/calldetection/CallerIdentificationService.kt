@@ -16,6 +16,7 @@ class CallerIdentificationService : CallScreeningService() {
     private val incomingCallHelper: IncomingCallHelper by injectAnywhere()
 
     override fun onScreenCall(callDetails: Call.Details) {
+        logger.debug("Receiving incoming call")
         val response = CallResponse.Builder().build() // we don't want to interfere with anything here...
         respondToCall(callDetails, response)
 
