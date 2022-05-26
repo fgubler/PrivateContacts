@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
  * Use this as fallback if using [CallScreeningService] is not an option
  */
 class PhoneStateReceiver : BroadcastReceiver() {
-    private val notificationRepository: NotificationRepository by injectAnywhere()
+    private val notificationRepository: CallNotificationRepository by injectAnywhere()
     private val settings: SettingsRepository by injectAnywhere()
     private val incomingCallHelper: IncomingCallHelper by injectAnywhere()
 

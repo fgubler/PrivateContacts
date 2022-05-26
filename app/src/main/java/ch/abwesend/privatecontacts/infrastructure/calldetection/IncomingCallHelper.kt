@@ -14,12 +14,13 @@ import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import kotlinx.coroutines.launch
 
 class IncomingCallHelper {
     private val incomingCallService: IncomingCallService by injectAnywhere()
     private val telephoneService: ITelephoneService by injectAnywhere()
-    private val notificationRepository: NotificationRepository by injectAnywhere()
+    private val notificationRepository: CallNotificationRepository by injectAnywhere()
     private val toastRepository: ToastRepository by injectAnywhere()
 
     fun handleIncomingCall(

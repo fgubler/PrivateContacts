@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.calldetection
+package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.content.Context
 import android.os.Looper

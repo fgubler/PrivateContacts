@@ -24,7 +24,7 @@ import java.util.UUID
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
 
-class NotificationRepository {
+class CallNotificationRepository {
     private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
