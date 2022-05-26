@@ -24,8 +24,6 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
-private const val MAX_BULK_OPERATION_SIZE = 500 // rather arbitrary, SQLite should be able to handle 999
-
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()

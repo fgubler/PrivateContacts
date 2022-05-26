@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import kotlinx.coroutines.withContext
 
-private const val MAX_BULK_OPERATION_SIZE = 500 // rather arbitrary, SQLite should be able to handle 999
+internal const val MAX_BULK_OPERATION_SIZE = 500 // rather arbitrary, SQLite should be able to handle 999
 
 abstract class RepositoryBase {
     private val dispatchers: IDispatchers by injectAnywhere()
@@ -34,12 +34,9 @@ abstract class RepositoryBase {
             logger.debug("Trying bulk-operation with ${data.size} elements: splitting up into chunks")
             val firstBatch = data.take(MAX_BULK_OPERATION_SIZE)
             val rest = data.minus(firstBatch.toSet())
-            listOf(
-                operation(database, firstBatch),
-                operation(database, rest),
-            ).also {
-                logger.debug("Executed bulk-operation with result $it")
-            }
+            val results = listOf(operation(database, firstBatch)) + bulkOperation(rest, operation)
+
+            results.also { logger.debug("Executed bulk-operation with result $it") }
         } else {
             listOf(operation(database, data))
         }
