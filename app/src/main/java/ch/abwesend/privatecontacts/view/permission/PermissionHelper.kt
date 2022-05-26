@@ -48,7 +48,11 @@ class PermissionHelper {
             val result = when {
                 isGranted.none { it.value } -> DENIED
                 isGranted.all { it.value } -> NEWLY_GRANTED
-                else -> PARTIALLY_NEWLY_GRANTED
+                else -> PARTIALLY_NEWLY_GRANTED.also {
+                    isGranted.forEach { (permission, granted) ->
+                        logger.debug("Permission $permission ${if (granted) "granted" else "denied"}")
+                    }
+                }
             }
             logger.debug("Permission '$currentPermissions' $result")
             currentResultCallback(result)
