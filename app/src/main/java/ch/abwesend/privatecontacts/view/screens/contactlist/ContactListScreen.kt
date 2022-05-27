@@ -81,8 +81,9 @@ object ContactListScreen {
 
         val context = LocalContext.current
         val hasContactsPermission = permissionHelper.hasContactReadPermission(context)
+        val androidContactsEnabled = screenContext.settings.showAndroidContacts
 
-        if (hasContactsPermission) {
+        if (androidContactsEnabled && hasContactsPermission) {
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
                     LeadingIconTab(

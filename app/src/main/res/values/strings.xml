@@ -139,6 +139,7 @@
     <string name="system_default">System default</string>
 
     <string name="settings_category_ux">Display</string>
+    <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
@@ -152,8 +153,10 @@
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
     <string name="settings_entry_call_detection">Match incoming calls with contacts</string>
     <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
-    <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen.</string>
+    <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
+    <string name="settings_entry_show_android_contacts">Show public contacts</string>
+    <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 

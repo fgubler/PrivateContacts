@@ -69,11 +69,11 @@ object SettingsScreen {
                 else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
 
-                // TODO re-insert when public contacts are possible
-                if (false) {
-                    DefaultValuesCategory(settingsRepository, currentSettings)
-                    SettingsCategorySpacer()
-                }
+                AndroidContactsCategory(settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+
+                DefaultValuesCategory(settingsRepository, currentSettings)
+                SettingsCategorySpacer()
 
                 MiscellaneousCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
@@ -152,6 +152,17 @@ object SettingsScreen {
     }
 
     @Composable
+    private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        SettingsCategory(titleRes = R.string.settings_category_contacts) {
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_android_contacts,
+                description = R.string.settings_entry_show_android_contacts_description,
+                value = currentSettings.showAndroidContacts,
+            ) { settingsRepository.showAndroidContacts = it }
+        }
+    }
+
+    @Composable
     private fun DefaultValuesCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         val contactTypeOptions = remember {
             ContactType.values().map { ResDropDownOption(labelRes = it.label, value = it) }
@@ -166,16 +177,16 @@ object SettingsScreen {
             )
         }
     }
+}
 
-    @Composable
-    private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
-            SettingsCheckbox(
-                label = R.string.settings_entry_error_reports,
-                description = R.string.settings_entry_error_reports_description,
-                value = currentSettings.sendErrorsToCrashlytics,
-                onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
-            )
-        }
+@Composable
+private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
+        SettingsCheckbox(
+            label = R.string.settings_entry_error_reports,
+            description = R.string.settings_entry_error_reports_description,
+            value = currentSettings.sendErrorsToCrashlytics,
+            onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
+        )
     }
 }

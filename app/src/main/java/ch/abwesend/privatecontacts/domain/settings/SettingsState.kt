@@ -20,9 +20,7 @@ interface ISettingsState {
     val defaultContactType: ContactType
 
     // Incoming Call Detection
-    /**
-     * Whether call-detection should be attempted
-     */
+    /** Whether call-detection should be attempted */
     val observeIncomingCalls: Boolean
     /**
      * Whether the user should be asked for the necessary permissions on startup.
@@ -34,6 +32,11 @@ interface ISettingsState {
      * Depends on [observeIncomingCalls]
      */
     val showIncomingCallsOnLockScreen: Boolean
+
+    // Android Contacts
+    val showAndroidContacts: Boolean
+
+    val requestAndroidContactPermissions: Boolean
 
     // Others
     val sendErrorsToCrashlytics: Boolean
@@ -52,6 +55,9 @@ data class SettingsState(
     override val observeIncomingCalls: Boolean,
     override val showIncomingCallsOnLockScreen: Boolean,
 
+    override val showAndroidContacts: Boolean,
+    override val requestAndroidContactPermissions: Boolean,
+
     override val sendErrorsToCrashlytics: Boolean,
     override val currentVersion: Int,
 ) : ISettingsState {
@@ -63,6 +69,8 @@ data class SettingsState(
             showInitialAppInfoDialog = true,
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
+            showAndroidContacts = true,
+            requestAndroidContactPermissions = true,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.SECRET,
             currentVersion = BuildConfig.VERSION_CODE,

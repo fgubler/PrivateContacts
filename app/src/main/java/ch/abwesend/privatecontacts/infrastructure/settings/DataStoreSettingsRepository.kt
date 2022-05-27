@@ -57,6 +57,13 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)
 
+    override var showAndroidContacts: Boolean
+        get() = currentSettings.showAndroidContacts
+        set(value) = dataStore.setValue(showAndroidContactsEntry, value)
+    override var requestAndroidContactPermissions: Boolean
+        get() = currentSettings.requestAndroidContactPermissions
+        set(value) = dataStore.setValue(requestAndroidContactPermissionsEntry, value)
+
     override var showInitialAppInfoDialog: Boolean
         get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
@@ -87,6 +94,8 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
+        showAndroidContacts = settings.showAndroidContacts
+        requestAndroidContactPermissions = settings.requestAndroidContactPermissions
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType
         // TODO add new properties here

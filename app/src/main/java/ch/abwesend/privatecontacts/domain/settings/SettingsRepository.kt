@@ -28,6 +28,10 @@ interface SettingsRepository : ISettingsState {
     override var requestIncomingCallPermissions: Boolean // invisible
     override var showIncomingCallsOnLockScreen: Boolean
 
+    // Android Contacts
+    override var showAndroidContacts: Boolean
+    override var requestAndroidContactPermissions: Boolean
+
     // Others
     override var sendErrorsToCrashlytics: Boolean
     override var currentVersion: Int
