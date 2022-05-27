@@ -107,7 +107,8 @@ private fun ComponentActivity.requestAndroidContactPermissions(
             NEWLY_GRANTED, PARTIALLY_NEWLY_GRANTED -> {
                 Settings.repository.showAndroidContacts = true
                 Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
-                logger.debug("Android contacts: permissions granted (at least partially)")
+                val postfix = if (result == NEWLY_GRANTED) "" else " partially"
+                logger.debug("Android contacts: permissions granted$postfix")
             }
             DENIED -> {
                 Settings.repository.showAndroidContacts = false

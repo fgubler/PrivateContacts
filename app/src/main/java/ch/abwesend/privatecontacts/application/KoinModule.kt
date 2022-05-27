@@ -52,12 +52,12 @@ internal val koinModule = module {
     single { ContactValidationService() }
     single { ContactSaveService() }
     single { FullTextSearchService() }
-    single { PermissionHelper() }
     single { IncomingCallService() }
     single { ContactSanitizingService() }
     single { EasterEggService() }
     single { DatabaseService() }
     single<ITelephoneService> { TelephoneService(androidContext()) }
+    factory { PermissionHelper() } // has state => always use a new one (just to be safe)
 
     // Repositories
     single<IAndroidContactRepository> { AndroidContactRepository() }

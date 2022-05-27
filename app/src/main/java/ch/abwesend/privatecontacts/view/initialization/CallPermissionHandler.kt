@@ -117,7 +117,8 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
             NEWLY_GRANTED, PARTIALLY_NEWLY_GRANTED -> {
                 Settings.repository.observeIncomingCalls = true
                 Toast.makeText(this, R.string.thank_you, Toast.LENGTH_SHORT).show()
-                logger.debug("Call detection: permission/role granted (at least partially)")
+                val postfix = if (result == NEWLY_GRANTED) "" else " partially"
+                logger.debug("Call detection: permission/role granted$postfix")
             }
             DENIED -> {
                 Settings.repository.observeIncomingCalls = false

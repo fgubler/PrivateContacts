@@ -48,8 +48,8 @@ class PermissionHelper {
         val multipleContract = ActivityResultContracts.RequestMultiplePermissions()
         multipleResultsObserver = registerForActivityResult(multipleContract) { isGranted: Map<String, Boolean> ->
             val result = when {
-                isGranted.none { it.value } -> DENIED
-                isGranted.all { it.value } -> NEWLY_GRANTED
+                isGranted.none { it.value } -> DENIED.also { logger.debug("All permissions denied") }
+                isGranted.all { it.value } -> NEWLY_GRANTED.also { logger.debug("All permissions granted") }
                 else -> PARTIALLY_NEWLY_GRANTED.also {
                     isGranted.forEach { (permission, granted) ->
                         logger.debug("Permission $permission ${if (granted) "granted" else "denied"}")

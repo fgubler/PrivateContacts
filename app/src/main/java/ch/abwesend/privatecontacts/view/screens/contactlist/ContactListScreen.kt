@@ -76,14 +76,14 @@ object ContactListScreen {
 
     @Composable
     private fun TabBox(screenContext: ScreenContext) {
-        val viewModel = remember { screenContext.contactListViewModel }
-        val selectedTab = viewModel.selectedTab.value
-
         val context = LocalContext.current
         val hasContactsPermission = permissionHelper.hasContactReadPermission(context)
         val androidContactsEnabled = screenContext.settings.showAndroidContacts
 
         if (androidContactsEnabled && hasContactsPermission) {
+            val viewModel = remember { screenContext.contactListViewModel }
+            val selectedTab = viewModel.selectedTab.value
+
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
                     LeadingIconTab(
