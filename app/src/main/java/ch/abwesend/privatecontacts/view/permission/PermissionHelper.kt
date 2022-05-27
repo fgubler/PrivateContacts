@@ -6,8 +6,10 @@
 
 package ch.abwesend.privatecontacts.view.permission
 
+import android.Manifest
 import android.app.Activity
 import android.app.role.RoleManager
+import android.content.Context
 import android.content.Context.ROLE_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -138,6 +140,15 @@ class PermissionHelper {
             intent?.let { roleResultObserver.launch(it) }
         }
     }
+
+    fun hasContactReadPermission(context: Context): Boolean =
+        hasPermission(context, Manifest.permission.READ_CONTACTS)
+
+    fun hasContactWritePermission(context: Context): Boolean =
+        hasPermission(context, Manifest.permission.WRITE_CONTACTS)
+
+    private fun hasPermission(context: Context, permission: String): Boolean =
+        ContextCompat.checkSelfPermission(context, permission) == PERMISSION_GRANTED
 
     private val ComponentActivity.hasCallScreeningRole: Boolean
         @RequiresApi(Build.VERSION_CODES.Q)
