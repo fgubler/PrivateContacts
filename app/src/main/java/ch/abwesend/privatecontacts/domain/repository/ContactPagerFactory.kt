@@ -11,5 +11,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 interface ContactPagerFactory {
-    fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
+    fun createSecretContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
+    fun createAllContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
 }

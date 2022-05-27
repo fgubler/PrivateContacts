@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import androidx.paging.Pager
 import androidx.paging.PagingData
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -20,14 +21,25 @@ class ContactLoadService {
     private val contactPagerFactory: ContactPagerFactory by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
 
-    fun loadContacts(): Flow<PagingData<IContactBase>> =
-        contactPagerFactory.createContactPager(ContactSearchConfig.All).flow
+    fun loadSecretContacts(): Flow<PagingData<IContactBase>> =
+        contactPagerFactory.createSecretContactPager(ContactSearchConfig.All).loadContacts()
 
-    fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
-        easterEggService.checkSearchForEasterEggs(query)
-        return contactPagerFactory.createContactPager(ContactSearchConfig.Query(query)).flow
-    }
+    fun searchSecretContacts(query: String): Flow<PagingData<IContactBase>> =
+        contactPagerFactory.createSecretContactPager(ContactSearchConfig.Query(query)).searchContacts(query)
+
+    fun loadAllContacts(): Flow<PagingData<IContactBase>> =
+        contactPagerFactory.createAllContactPager(ContactSearchConfig.All).loadContacts()
+
+    fun searchAllContacts(query: String): Flow<PagingData<IContactBase>> =
+        contactPagerFactory.createAllContactPager(ContactSearchConfig.Query(query)).searchContacts(query)
 
     suspend fun resolveContact(contact: IContactBase): IContact =
         contactRepository.resolveContact(contact)
+
+    private fun Pager<Int, IContactBase>.loadContacts(): Flow<PagingData<IContactBase>> = flow
+
+    private fun Pager<Int, IContactBase>.searchContacts(query: String): Flow<PagingData<IContactBase>> {
+        easterEggService.checkSearchForEasterEggs(query)
+        return flow
+    }
 }

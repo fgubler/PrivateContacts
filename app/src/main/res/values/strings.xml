@@ -169,4 +169,8 @@
     <string name="run_in_background">Run in background</string>
     <string name="version">Version</string>
 
+    <string name="secret_contacts_tab_title">Secret Contacts</string>
+    <string name="all_contacts_tab_title">All Contacts</string>
+
+
 </resources>

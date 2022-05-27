@@ -58,7 +58,7 @@ class ContactPagingSource(
     companion object : ContactPagerFactory {
         private const val PAGE_SIZE = 50
 
-        override fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> =
+        override fun createSecretContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> =
             Pager(
                 PagingConfig(
                     pageSize = PAGE_SIZE,
@@ -66,5 +66,10 @@ class ContactPagingSource(
                 ),
                 pagingSourceFactory = { ContactPagingSource(searchConfig) }
             )
+
+        override fun createAllContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> {
+            // TODO implement
+            return createSecretContactPager(searchConfig)
+        }
     }
 }

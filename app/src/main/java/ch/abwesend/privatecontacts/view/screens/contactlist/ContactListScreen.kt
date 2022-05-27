@@ -7,15 +7,21 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.LeadingIconTab
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TabRow
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -57,7 +63,27 @@ object ContactListScreen {
             },
             floatingActionButton = { AddContactButton(screenContext) }
         ) {
-            ContactListContent(screenContext)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                TabBox(screenContext)
+                ContactListContent(screenContext)
+            }
+        }
+    }
+
+    @Composable
+    private fun TabBox(screenContext: ScreenContext) {
+        val viewModel = remember { screenContext.contactListViewModel }
+        val selectedTab = viewModel.selectedTab.value
+
+        TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
+            ContactListTab.valuesSorted.forEach { tab ->
+                LeadingIconTab(
+                    selected = selectedTab == tab,
+                    onClick = { viewModel.selectTab(tab) },
+                    text = { Text(text = stringResource(id = tab.label)) },
+                    icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) }
+                )
+            }
         }
     }
 
