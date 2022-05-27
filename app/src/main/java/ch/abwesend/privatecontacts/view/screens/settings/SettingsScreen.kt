@@ -28,8 +28,9 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.domain.util.getAnywhere
-import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.initialization.AndroidContactPermissionHandler
+import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
@@ -39,6 +40,8 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScree
 
 @ExperimentalMaterialApi
 object SettingsScreen {
+    private val permissionHelper: PermissionHelper by injectAnywhere()
+
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
         private set
 
@@ -133,9 +136,7 @@ object SettingsScreen {
         }
 
         if (requestPermissions) {
-            val permissionHelper: PermissionHelper by remember { mutableStateOf(getAnywhere()) }
-
-            getCurrentActivity()?.PermissionHandler(
+            getCurrentActivity()?.CallPermissionHandler(
                 settings = currentSettings,
                 permissionHelper = permissionHelper
             ) {
@@ -153,12 +154,31 @@ object SettingsScreen {
 
     @Composable
     private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        SettingsCategory(titleRes = R.string.settings_category_contacts) {
+        var requestPermissions: Boolean by remember { mutableStateOf(false) }
+
+        SettingsCategory(
+            titleRes = R.string.settings_category_contacts,
+            infoPopupText = R.string.settings_info_dialog_android_contacts,
+            hideInfoPopup = currentSettings.showAndroidContacts,
+        ) {
             SettingsCheckbox(
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
                 value = currentSettings.showAndroidContacts,
-            ) { settingsRepository.showAndroidContacts = it }
+            ) {
+                settingsRepository.showAndroidContacts = it
+                settingsRepository.requestAndroidContactPermissions = true
+                if (it) { requestPermissions = true }
+            }
+        }
+
+        if (requestPermissions) {
+            getCurrentActivity()?.AndroidContactPermissionHandler(
+                settings = currentSettings,
+                permissionHelper = permissionHelper
+            ) {
+                requestPermissions = false
+            } ?: logger.warning("Activity not found: cannot ask for permissions")
         }
     }
 

@@ -55,6 +55,7 @@ fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.d
 fun SettingsCategory(
     @StringRes titleRes: Int,
     @StringRes infoPopupText: Int? = null,
+    hideInfoPopup: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     var showInfoPopup: Boolean by remember { mutableStateOf(false) }
@@ -67,7 +68,7 @@ fun SettingsCategory(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 SectionSubtitle(titleRes = titleRes, addTopPadding = false)
-                infoPopupText?.let {
+                infoPopupText?.takeIf { !hideInfoPopup }?.let {
                     InfoIconButton { showInfoPopup = true }
                 }
             }

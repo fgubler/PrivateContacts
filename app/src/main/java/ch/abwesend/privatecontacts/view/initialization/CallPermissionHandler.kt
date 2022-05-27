@@ -32,12 +32,12 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
 @Composable
-fun ComponentActivity.PermissionHandler(
+fun ComponentActivity.CallPermissionHandler(
     settings: ISettingsState,
     permissionHelper: PermissionHelper,
     onPermissionsHandled: () -> Unit,
 ) {
-    var requestIncomingCallPermissions by remember { mutableStateOf(false) }
+    var requestPermissions by remember { mutableStateOf(false) }
 
     LaunchedEffect(settings) { // check again when settings change
         if (!callIdentificationPossible) {
@@ -52,7 +52,7 @@ fun ComponentActivity.PermissionHandler(
         requestPermissionsForCallerIdentification(
             settings = settings,
             permissionHelper = permissionHelper,
-            showExplanation = { requestIncomingCallPermissions = true }
+            showExplanation = { requestPermissions = true }
         ) {
             if (it == ALREADY_GRANTED) {
                 onPermissionsHandled()
@@ -63,9 +63,9 @@ fun ComponentActivity.PermissionHandler(
     IncomingCallPermissionDialog(
         settings = settings,
         permissionHelper = permissionHelper,
-        showDialog = requestIncomingCallPermissions
+        showDialog = requestPermissions
     ) {
-        requestIncomingCallPermissions = false
+        requestPermissions = false
         onPermissionsHandled()
     }
 }

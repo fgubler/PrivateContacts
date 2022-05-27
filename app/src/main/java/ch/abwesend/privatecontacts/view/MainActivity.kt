@@ -44,10 +44,15 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
+import ch.abwesend.privatecontacts.view.initialization.AndroidContactPermissionHandler
+import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.AndroidContactPermissionsDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
-import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
@@ -114,10 +119,11 @@ class MainActivity : ComponentActivity() {
             screenContext = screenContext,
         )
 
-        InfoDialogs(initializationState, settings) { nextState() }
-
-        if (initializationState == CallPermissionsDialog) {
-            PermissionHandler(settings, permissionHelper) { nextState() }
+        when (initializationState) {
+            InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
+            AndroidContactPermissionsDialog -> AndroidContactPermissionHandler(settings, permissionHelper) { nextState() }
+            CallPermissionsDialog -> CallPermissionHandler(settings, permissionHelper) { nextState() }
+            Initialized -> { /* nothing to do */ }
         }
     }
 

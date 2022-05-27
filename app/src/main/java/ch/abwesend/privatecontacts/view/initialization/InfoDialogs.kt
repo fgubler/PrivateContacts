@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDoNotShowAgainDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 
 @Composable
 fun InfoDialogs(
@@ -21,7 +22,7 @@ fun InfoDialogs(
 ) {
     when (initializationState) {
         InitialInfoDialog -> InitialAppInfoDialog(settings, goToNextState)
-        InitializationState.NewFeaturesDialog -> goToNextState() // TODO implement
+        NewFeaturesDialog -> goToNextState() // TODO implement
         else -> Unit
     }
 }

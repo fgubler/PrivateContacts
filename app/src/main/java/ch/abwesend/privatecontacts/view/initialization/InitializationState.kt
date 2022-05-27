@@ -14,6 +14,10 @@ sealed interface InitializationState {
     }
 
     object NewFeaturesDialog : InitializationState {
+        override fun next(): InitializationState = AndroidContactPermissionsDialog
+    }
+
+    object AndroidContactPermissionsDialog : InitializationState {
         override fun next(): InitializationState = CallPermissionsDialog
     }
 

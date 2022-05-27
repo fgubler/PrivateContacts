@@ -112,6 +112,9 @@
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
     <string name="activate_feature">Would you like to activate this feature now?</string>
 
+    <string name="show_android_contacts">Show public contacts?</string>
+    <string name="show_android_contacts_text">To also manage the contacts from the "normal" Android contacts app, some permissions are needed.\n\nIf wish to use this app only to manage your secret contacts, these permissions are not needed.</string>
+
     <string name="incoming_call_title">Incoming call</string>
     <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
     <string name="incoming_call_text_multiple_matches">%1$s or %2$s is calling you. The number %3$s matches all of those contacts.</string>
@@ -146,6 +149,7 @@
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
 
     <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
+    <string name="settings_info_dialog_android_contacts">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
