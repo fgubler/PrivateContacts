@@ -10,8 +10,11 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +29,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,31 +41,35 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SideDrawerContent(router: AppRouter, selectedScreen: Screen, scaffoldState: ScaffoldState) {
+fun SideDrawerContent(selectedScreen: Screen, scaffoldState: ScaffoldState, navigate: (Screen) -> Unit) {
     val scrollState = rememberScrollState()
     val clickListener = createElementClickListener(
-        router = router,
         selectedScreen = selectedScreen,
         coroutineScope = rememberCoroutineScope(),
         scaffoldState = scaffoldState,
+        navigate = navigate,
     )
 
     Column(
-        modifier = Modifier.verticalScroll(scrollState)
+        modifier = Modifier
+            .verticalScroll(scrollState)
+            .fillMaxSize()
     ) {
         SideDrawerHeader()
 
         Divider(modifier = Modifier.padding(bottom = 20.dp))
 
         SideDrawerElements(selectedScreen, clickListener)
+
+        SideDrawerFooter()
     }
 }
 
@@ -76,7 +84,9 @@ fun SideDrawerHeader() {
         Image(
             bitmap = ImageBitmap.imageResource(id = R.drawable.app_logo_large),
             contentDescription = stringResource(id = R.string.app_name),
-            modifier = Modifier.widthIn(max = 500.dp).clip(RoundedCornerShape(20.dp))
+            modifier = Modifier
+                .widthIn(max = 500.dp)
+                .clip(RoundedCornerShape(20.dp))
         )
         Text(
             text = stringResource(id = R.string.app_name),
@@ -88,14 +98,38 @@ fun SideDrawerHeader() {
 }
 
 @Composable
+fun SideDrawerFooter() {
+    val version = remember { BuildConfig.VERSION_NAME }
+    Column(
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            val versionText = "${stringResource(id = R.string.version)} $version"
+            Text(text = versionText)
+        }
+    }
+}
+
+@Composable
 fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) {
-    Screen.sideDrawerScreens.forEach { screen ->
-        SideDrawerElement(
-            titleRes = screen.titleRes,
-            icon = screen.icon,
-            isSelected = screen == selectedScreen,
-            onClick = { clickListener(screen) }
-        )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Screen.sideDrawerScreens.forEach { screen ->
+            SideDrawerElement(
+                titleRes = screen.titleRes,
+                icon = screen.icon,
+                isSelected = screen == selectedScreen,
+                onClick = { clickListener(screen) }
+            )
+        }
     }
 }
 
@@ -157,10 +191,10 @@ private fun SideDrawerElement(
 }
 
 private fun createElementClickListener(
-    router: AppRouter,
     selectedScreen: Screen,
     coroutineScope: CoroutineScope,
     scaffoldState: ScaffoldState,
+    navigate: (Screen) -> Unit,
 ): (Screen) -> Unit {
     val logger = selectedScreen.logger
     return { screen: Screen ->
@@ -168,7 +202,7 @@ private fun createElementClickListener(
             logger.info("Screen '${screen.key}' is already selected")
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
-            router.navigateToScreen(screen)
+            navigate(screen)
             coroutineScope.launch { scaffoldState.drawerState.close() }
         }
     }

@@ -26,6 +26,7 @@ data class TestSettings(
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
+    override var currentVersion: Int = 0
 
     override fun overrideSettingsWith(settings: ISettingsState) {
         // Do nothing

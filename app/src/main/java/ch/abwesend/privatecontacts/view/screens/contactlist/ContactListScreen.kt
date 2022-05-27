@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -14,14 +15,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.Screen
@@ -31,6 +35,7 @@ import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactListScreen {
@@ -38,19 +43,16 @@ object ContactListScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val scaffoldState = rememberScaffoldState()
-        val coroutineScope = rememberCoroutineScope()
 
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
             allowFullNavigation = true,
             scaffoldState = scaffoldState,
-            coroutineScope = coroutineScope,
             topBar = {
                 ContactListTopBar(
                     viewModel = screenContext.contactListViewModel,
                     scaffoldState = scaffoldState,
-                    coroutineScope = coroutineScope,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
@@ -75,17 +77,34 @@ object ContactListScreen {
         val viewModel = screenContext.contactListViewModel
         val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
 
+        val screenState = viewModel.screenState.value
+        val bulkMode = screenState is ContactListScreenState.BulkMode
+        val selectedContacts = (screenState as? ContactListScreenState.BulkMode)
+            ?.selectedContacts.orEmpty()
+
         when {
             pagedContacts.isError -> LoadingError(viewModel)
             pagedContacts.isLoading -> ContactLoadingIndicator()
             else -> {
                 if (pagedContacts.itemCount > 0 || viewModel.initialEmptyContactsIgnored) {
-                    ContactList(pagedContacts = pagedContacts) { contact ->
-                        selectContact(screenContext, contact)
-                    }
+                    ContactList(
+                        pagedContacts = pagedContacts,
+                        selectedContacts = selectedContacts,
+                        onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
+                        onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
+                    )
                 } else ContactLoadingIndicator()
                 viewModel.initialEmptyContactsIgnored = true
             }
+        }
+
+        val deletionErrors = viewModel.deleteResult
+            .collectAsState(initial = ContactDeleteResult.Inactive)
+            .let { it.value as? ContactDeleteResult.Failure }
+            ?.errors.orEmpty()
+
+        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = selectedContacts.size > 1) {
+            viewModel.resetDeletionResult()
         }
     }
 
@@ -103,9 +122,18 @@ object ContactListScreen {
         )
     }
 
-    private fun selectContact(screenContext: ScreenContext, contact: IContactBase) {
-        screenContext.contactDetailViewModel.selectContact(contact)
-        screenContext.router.navigateToScreen(Screen.ContactDetail)
+    private fun selectContact(screenContext: ScreenContext, contact: IContactBase, bulkMode: Boolean) {
+        if (bulkMode) {
+            screenContext.contactListViewModel.toggleContactSelected(contact)
+        } else {
+            screenContext.contactDetailViewModel.selectContact(contact)
+            screenContext.router.navigateToScreen(Screen.ContactDetail)
+        }
+    }
+
+    private fun longClickContact(screenContext: ScreenContext, contact: IContactBase) {
+        screenContext.contactListViewModel.setBulkMode(enabled = true)
+        selectContact(screenContext, contact, bulkMode = true)
     }
 
     private fun createContact(screenContext: ScreenContext) {

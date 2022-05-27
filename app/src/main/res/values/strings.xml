@@ -84,6 +84,8 @@
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 
+    <string name="contact_list_bulk_mode_title">%1$s items selected</string>
+
     <string name="show_additional_fields">Show additional fields</string>
 
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
@@ -96,7 +98,12 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
-    <string name="delete_contact_error">Something went wrong: \"%1$s\". The contact could not be deleted.</string>
+    <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
+
+    <string name="delete_contacts">Delete Contacts</string>
+    <string name="delete_contacts_title">Delete Contacts</string>
+    <string name="delete_contacts_text">Deleted contacts cannot be restored. Are you sure you would like to delete these %1$s contact(s)?</string>
+    <string name="delete_contacts_error">Something went wrong. The contacts could not be deleted.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
@@ -160,4 +167,6 @@
     <string name="resetting_database_successful">The database was reset successfully.</string>
     <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug. If this does not work, you can also go to the system-settings and delete all data of this app. This will delete the database for sure.\n\nWe apologize for the inconvenience.</string>
     <string name="run_in_background">Run in background</string>
+    <string name="version">Version</string>
+
 </resources>

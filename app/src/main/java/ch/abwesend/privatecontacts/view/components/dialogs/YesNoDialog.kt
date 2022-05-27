@@ -21,10 +21,23 @@ fun YesNoDialog(
     @StringRes text: Int,
     onYes: () -> Unit,
     onNo: () -> Unit,
+) = YesNoDialog(
+    title = title,
+    text = { Text(text = stringResource(id = text)) },
+    onYes = onYes,
+    onNo = onNo,
+)
+
+@Composable
+fun YesNoDialog(
+    @StringRes title: Int,
+    text: @Composable () -> Unit,
+    onYes: () -> Unit,
+    onNo: () -> Unit,
 ) {
     AlertDialog(
         title = { Text(stringResource(id = title)) },
-        text = { Text(stringResource(id = text)) },
+        text = text,
         onDismissRequest = onNo,
         confirmButton = {
             Button(onClick = onYes) {

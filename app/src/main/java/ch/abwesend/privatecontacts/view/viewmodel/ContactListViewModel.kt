@@ -13,26 +13,58 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
+import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
+    private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
     /** initially, the contacts are always returned to be empty before loading-state starts */
     var initialEmptyContactsIgnored: Boolean = false
 
-    val showSearch: MutableState<Boolean> = mutableStateOf(false)
+    private var showSearch: Boolean = false
+        set(value) {
+            field = value
+            updateScreenState()
+        }
 
     /** current content of the search-field (might not have started filtering for it yet) */
-    private val _searchText: MutableState<String> = mutableStateOf("")
-    val searchText: State<String> = _searchText
+    private var searchText: String = ""
+        set(value) {
+            field = value
+            updateScreenState()
+        }
+
+    private var bulkModeEnabled: Boolean = false
+        set(value) {
+            field = value
+            updateScreenState()
+        }
+
+    private var bulkModeSelectedContacts: Set<ContactId> = emptySet()
+        set(value) {
+            field = value
+            updateScreenState()
+        }
+
+    private val _screenState: MutableState<ContactListScreenState> = mutableStateOf(Normal)
+    val screenState: State<ContactListScreenState> = _screenState
 
     /** the currently applied search-filter for the list */
     private var currentFilter: String? = null
@@ -43,7 +75,7 @@ class ContactListViewModel : ViewModel() {
             scope = viewModelScope,
             debounceMs = 300,
         ) { query ->
-            currentFilter = query
+            currentFilter = query.ifEmpty { null }
             _contacts.value = searchContacts(query)
         }
     }
@@ -55,6 +87,9 @@ class ContactListViewModel : ViewModel() {
         mutableStateOf(loadContacts())
     }
     val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
+
+    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
+    val deleteResult: Flow<ContactDeleteResult> = _deleteResult
 
     fun reloadContacts(resetSearch: Boolean = false) {
         if (resetSearch) {
@@ -76,17 +111,72 @@ class ContactListViewModel : ViewModel() {
     }
 
     private fun resetSearch() {
-        showSearch.value = false
-        _searchText.value = ""
+        showSearch = false
+        searchText = ""
         currentFilter = null
+    }
+
+    fun showSearch() {
+        showSearch = true
+    }
+
+    fun setBulkMode(enabled: Boolean) {
+        bulkModeEnabled = enabled
+        if (!enabled) {
+            bulkModeSelectedContacts = emptySet()
+        }
     }
 
     @FlowPreview
     fun changeSearchQuery(query: String) {
-        _searchText.value = query
+        searchText = query
         val preparedQuery = searchService.prepareQuery(query)
-        if (searchService.isLongEnough(preparedQuery)) {
+        if (preparedQuery.isEmpty() || searchService.isLongEnough(preparedQuery)) {
             searchQueryDebouncer.newValue(preparedQuery)
+        }
+    }
+
+    private fun updateScreenState() {
+        val newState: ContactListScreenState = when {
+            bulkModeEnabled -> BulkMode(selectedContacts = bulkModeSelectedContacts)
+            showSearch -> Search(searchText = searchText)
+            else -> Normal
+        }
+        _screenState.value = newState
+    }
+
+    fun toggleContactSelected(contact: IContactBase) {
+        if (!bulkModeEnabled) {
+            logger.warning("Tried to toggle contact-selection but bulk-mode is disabled.")
+            return
+        }
+
+        val contactId = contact.id
+        val selectedContacts = bulkModeSelectedContacts
+        bulkModeSelectedContacts = if (selectedContacts.contains(contactId)) {
+            logger.debug("unselecting contact $contactId")
+            selectedContacts.minus(contactId)
+        } else {
+            logger.debug("selecting contact $contactId")
+            selectedContacts.plus(contactId)
+        }
+    }
+
+    fun deleteContacts(contactIds: Set<ContactId>) {
+        viewModelScope.launch {
+            val result = saveService.deleteContacts(contactIds)
+            _deleteResult.emit(result)
+
+            if (result is ContactDeleteResult.Success) {
+                launch { reloadContacts() }
+                setBulkMode(enabled = false) // bulk-action is over
+            }
+        }
+    }
+
+    fun resetDeletionResult() {
+        viewModelScope.launch {
+            _deleteResult.emit(ContactDeleteResult.Inactive)
         }
     }
 }

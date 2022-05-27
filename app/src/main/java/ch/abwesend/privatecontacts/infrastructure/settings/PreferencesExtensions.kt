@@ -23,6 +23,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     observeIncomingCalls = getValue(observeIncomingCallsEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
     defaultContactType = tryGetEnumValue(defaultContactTypeEntry),
+    currentVersion = getValue(currentVersionEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =

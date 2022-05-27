@@ -18,6 +18,9 @@ interface ContactDataDao {
     @Query("SELECT * FROM ContactDataEntity WHERE contactId = :contactId")
     suspend fun getDataForContact(contactId: UUID): List<ContactDataEntity>
 
+    @Query("SELECT * FROM ContactDataEntity WHERE contactId in (:contactIds)")
+    suspend fun getDataForContacts(contactIds: Collection<UUID>): List<ContactDataEntity>
+
     @Query(
         """
         SELECT * 

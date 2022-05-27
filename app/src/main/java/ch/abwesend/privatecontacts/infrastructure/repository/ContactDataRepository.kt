@@ -123,8 +123,10 @@ class ContactDataRepository : RepositoryBase() {
         null
     }
 
-    suspend fun deleteContactData(contact: IContactBase) = withDatabase { database ->
-        val dataToDelete = database.contactDataDao().getDataForContact(contact.id.uuid)
+    suspend fun deleteContactData(contact: IContactBase) = deleteContactData(listOf(contact.id))
+
+    suspend fun deleteContactData(contactIds: Collection<ContactId>) = withDatabase { database ->
+        val dataToDelete = database.contactDataDao().getDataForContacts(contactIds.map { it.uuid })
         database.contactDataDao().deleteAll(dataToDelete)
     }
 }

@@ -7,10 +7,12 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -19,7 +21,9 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -29,15 +33,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
+import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
+import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
@@ -46,43 +56,136 @@ import kotlinx.coroutines.FlowPreview
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
     scaffoldState: ScaffoldState,
-    coroutineScope: CoroutineScope,
 ) {
-    val showSearchState = viewModel.showSearch
-    val searchTextState = viewModel.searchText
+    val screenStateState = viewModel.screenState
+    when (val screenState = screenStateState.value) {
+        is Normal -> NormalTopBar(
+            scaffoldState = scaffoldState,
+            reloadContacts = { viewModel.reloadContacts() },
+            showSearch = { viewModel.showSearch() }
+        )
+        is Search -> SearchTopBar(
+            searchText = screenState.searchText,
+            changeSearchText = { viewModel.changeSearchQuery(it) },
+            resetSearch = { viewModel.reloadContacts(resetSearch = true) }
+        )
+        is BulkMode -> BulkModeTopBar(
+            viewModel = viewModel,
+            selectedContacts = screenState.selectedContacts,
+            disableBulkMode = { viewModel.setBulkMode(enabled = false) }
+        )
+    }
+}
 
-    var showSearch by showSearchState
-    val searchText by searchTextState
+@Composable
+private fun NormalTopBar(
+    scaffoldState: ScaffoldState,
+    reloadContacts: () -> Unit,
+    showSearch: () -> Unit,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
+        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
+        actions = {
+            RefreshIconButton { reloadContacts() }
+            SearchIconButton { showSearch() }
+        }
+    )
+}
 
-    val backgroundColor = if (showSearch) Color.White else MaterialTheme.colors.primary
-    val resetSearch = { viewModel.reloadContacts(resetSearch = true) }
+@ExperimentalComposeUiApi
+@Composable
+private fun SearchTopBar(
+    searchText: String,
+    changeSearchText: (String) -> Unit,
+    resetSearch: () -> Unit
+) {
+    TopAppBar(
+        backgroundColor = Color.White,
+        title = { SearchField(searchText) { changeSearchText(it) } },
+        navigationIcon = { BackIconButton { resetSearch() } },
+    )
+    BackHandler { resetSearch() }
+}
+
+@Composable
+private fun BulkModeTopBar(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
+    disableBulkMode: () -> Unit
+) {
+    var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
     TopAppBar(
-        backgroundColor = backgroundColor,
-        title = {
-            if (showSearch) {
-                SearchField(searchText) {
-                    viewModel.changeSearchQuery(it)
-                }
-            } else {
-                Text(text = stringResource(id = R.string.screen_contact_list))
-            }
-        },
-        navigationIcon = {
-            if (showSearch) {
-                BackIconButton { resetSearch() }
-            } else {
-                MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope)
-            }
-        },
+        title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
+        navigationIcon = { CancelIconButton { disableBulkMode() } },
         actions = {
-            if (!showSearch) {
-                RefreshIconButton { viewModel.reloadContacts() }
-                SearchIconButton { showSearch = true }
+            MoreActionsIconButton { dropDownMenuExpanded = true }
+            ActionsMenu(
+                viewModel = viewModel,
+                selectedContacts = selectedContacts,
+                expanded = dropDownMenuExpanded
+            ) {
+                dropDownMenuExpanded = false
             }
         }
     )
-    BackHandler(enabled = showSearch) { resetSearch() }
+    BackHandler { disableBulkMode() }
+}
+
+@Composable
+fun ActionsMenu(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
+    expanded: Boolean,
+    onCloseMenu: () -> Unit
+) {
+    var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+    val multipleContacts = selectedContacts.size > 1
+
+    if (selectedContacts.isNotEmpty()) {
+        DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+            DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
+                @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
+                Text(stringResource(id = text))
+            }
+        }
+    }
+
+    DeleteConfirmationDialog(
+        viewModel = viewModel,
+        selectedContacts = selectedContacts,
+        visible = deleteConfirmationDialogVisible,
+        hideDialog = {
+            deleteConfirmationDialogVisible = false
+            onCloseMenu()
+        },
+    )
+
+    BackHandler(enabled = deleteConfirmationDialogVisible) {
+        deleteConfirmationDialogVisible = false
+    }
+}
+
+@Composable
+private fun DeleteConfirmationDialog(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<ContactId>,
+    visible: Boolean,
+    hideDialog: () -> Unit,
+) {
+    if (visible) {
+        YesNoDialog(
+            title = R.string.delete_contacts_title,
+            text = { Text(text = stringResource(id = R.string.delete_contacts_text, selectedContacts.size)) },
+            onYes = {
+                hideDialog()
+                viewModel.deleteContacts(selectedContacts)
+            },
+            onNo = hideDialog
+        )
+    }
 }
 
 @ExperimentalComposeUiApi

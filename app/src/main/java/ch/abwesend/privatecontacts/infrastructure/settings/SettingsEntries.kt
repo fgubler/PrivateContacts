@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.settings
 
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 
@@ -45,4 +46,8 @@ internal val sendErrorsToCrashlyticsEntry = SettingsEntry(
 internal val defaultContactTypeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("defaultContactType"),
     defaultValue = SettingsState.defaultSettings.defaultContactType
+)
+internal val currentVersionEntry = SettingsEntry(
+    key = intPreferencesKey("currentVersion"),
+    defaultValue = SettingsState.defaultSettings.currentVersion
 )

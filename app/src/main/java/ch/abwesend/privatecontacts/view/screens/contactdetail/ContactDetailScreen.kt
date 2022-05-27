@@ -38,7 +38,7 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -61,7 +61,7 @@ object ContactDetailScreen {
     fun Screen(screenContext: ScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
-        var deletionError: ContactChangeError? by remember { mutableStateOf(null) }
+        var deletionErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
 
         Scaffold(
             topBar = {
@@ -78,19 +78,16 @@ object ContactDetailScreen {
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
         }
 
-        DeleteErrorDialog(error = deletionError) {
-            deletionError = null
-        }
-
-        BackHandler(enabled = deletionError != null) {
-            deletionError = null
+        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
+            deletionErrors = emptyList()
         }
 
         LaunchedEffect(Unit) {
             viewModel.deleteResult.collect { result ->
                 when (result) {
                     is ContactDeleteResult.Success -> screenContext.router.navigateUp()
-                    is ContactDeleteResult.Failure -> deletionError = result.error
+                    is ContactDeleteResult.Failure -> deletionErrors = result.errors
+                    is ContactDeleteResult.Inactive -> { /* nothing to do */ }
                 }
             }
         }
@@ -207,22 +204,5 @@ object ContactDetailScreen {
                 viewModel.reloadContact()
             }
         )
-    }
-
-    @Composable
-    private fun DeleteErrorDialog(
-        error: ContactChangeError?,
-        onClose: () -> Unit
-    ) {
-        error?.let { savingError ->
-            OkDialog(
-                title = R.string.error,
-                onClose = onClose
-            ) {
-                val errorText = stringResource(id = savingError.label)
-                val description = stringResource(R.string.delete_contact_error, errorText)
-                Text(text = description)
-            }
-        }
     }
 }

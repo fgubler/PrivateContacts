@@ -7,8 +7,28 @@
 package ch.abwesend.privatecontacts.domain.model.result
 
 sealed interface ContactDeleteResult {
-    object Success : ContactDeleteResult
+    fun combine(other: ContactDeleteResult): ContactDeleteResult
+
+    object Inactive : ContactDeleteResult {
+        override fun combine(other: ContactDeleteResult): ContactDeleteResult = other
+    }
+
+    object Success : ContactDeleteResult {
+        override fun combine(other: ContactDeleteResult): ContactDeleteResult =
+            when (other) {
+                is Success -> Success
+                is Inactive -> this
+                is Failure -> other
+            }
+    }
 
     @JvmInline
-    value class Failure(val error: ContactChangeError) : ContactDeleteResult
+    value class Failure(val errors: List<ContactChangeError>) : ContactDeleteResult {
+        constructor(error: ContactChangeError) : this(listOf(error))
+
+        override fun combine(other: ContactDeleteResult): ContactDeleteResult = when (other) {
+            is Success, is Inactive -> this
+            is Failure -> Failure(errors = errors + other.errors)
+        }
+    }
 }

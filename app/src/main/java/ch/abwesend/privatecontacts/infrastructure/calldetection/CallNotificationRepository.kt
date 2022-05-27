@@ -24,45 +24,24 @@ import java.util.UUID
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
 
-class NotificationRepository {
-    private val potentiallyActiveNotifications = mutableSetOf<Int>()
+class CallNotificationRepository {
+    private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
         // cancelAll may be expensive: do not call if clearly unnecessary
         if (potentiallyActiveNotifications.isNotEmpty()) {
             context.notificationManager.cancelAll()
-            potentiallyActiveNotifications.clear()
+            potentiallyActiveNotifications = mutableSetOf()
         }
     }
 
     fun showIncomingCallNotification(
         context: Context,
-        callerNumber: String,
-        contactNames: List<String>
+        notificationText: String,
     ) {
-        if (contactNames.isEmpty()) {
-            logger.debug("No matching contacts: do not show a notification.")
-            return
-        }
-
         context.createNotificationChannel()
 
         val title = context.getString(R.string.incoming_call_title)
-        val text = if (contactNames.size == 1) {
-            context.getString(R.string.incoming_call_text_single_match, contactNames.first())
-        } else {
-            val lastContactName = contactNames.last()
-            val otherContactNames = contactNames
-                .filter { it != lastContactName }
-                .joinToString(separator = ", ")
-            context.getString(
-                R.string.incoming_call_text_multiple_matches,
-                otherContactNames,
-                lastContactName,
-                callerNumber,
-            )
-        }
-
         val visibility =
             if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
             else VISIBILITY_SECRET
@@ -73,8 +52,8 @@ class NotificationRepository {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_baseline_phone_callback_24)
             .setContentTitle(title)
-            .setContentText(text)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+            .setContentText(notificationText)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(visibility)
             .setTimeoutAfter(MAX_NOTIFICATION_TIMEOUT_MS)
@@ -85,6 +64,7 @@ class NotificationRepository {
         val notificationId = UUID.randomUUID().hashCode()
         manager.notify(notificationId, builder.build())
         potentiallyActiveNotifications.add(notificationId)
+        logger.debug("Showing notification for incoming call")
     }
 
     private fun Context.createNotificationChannel() {
