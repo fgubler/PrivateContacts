@@ -33,14 +33,18 @@ import ch.abwesend.privatecontacts.view.initialization.AndroidContactPermissionH
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
 object SettingsScreen {
-    private val permissionHelper: PermissionHelper by injectAnywhere()
+    private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+    private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
 
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
         private set
@@ -138,7 +142,8 @@ object SettingsScreen {
         if (requestPermissions) {
             getCurrentActivity()?.CallPermissionHandler(
                 settings = currentSettings,
-                permissionHelper = permissionHelper
+                permissionHelper = callPermissionHelper,
+                roleHelper = callScreeningRoleHelper,
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")
@@ -175,7 +180,7 @@ object SettingsScreen {
         if (requestPermissions) {
             getCurrentActivity()?.AndroidContactPermissionHandler(
                 settings = currentSettings,
-                permissionHelper = permissionHelper
+                permissionHelper = contactPermissionHelper,
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")

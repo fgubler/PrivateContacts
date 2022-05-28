@@ -54,7 +54,9 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initi
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
@@ -71,7 +73,9 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalMaterialApi
 @FlowPreview
 class MainActivity : ComponentActivity() {
-    private val permissionHelper: PermissionHelper by injectAnywhere()
+    private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+    private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
 
     private val viewModel: MainViewModel by viewModels()
     private val contactListViewModel: ContactListViewModel by viewModels()
@@ -83,7 +87,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         logger.info("Main activity started")
 
-        permissionHelper.setupObservers(this)
+        callPermissionHelper.setupObservers(this)
+        contactPermissionHelper.setupObservers(this)
+        callScreeningRoleHelper.setupObserver(this)
 
         Settings.repository.currentVersion = BuildConfig.VERSION_CODE
 
@@ -121,8 +127,15 @@ class MainActivity : ComponentActivity() {
 
         when (initializationState) {
             InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
-            AndroidContactPermissionsDialog -> AndroidContactPermissionHandler(settings, permissionHelper) { nextState() }
-            CallPermissionsDialog -> CallPermissionHandler(settings, permissionHelper) { nextState() }
+            AndroidContactPermissionsDialog -> AndroidContactPermissionHandler(
+                settings = settings,
+                permissionHelper = contactPermissionHelper
+            ) { nextState() }
+            CallPermissionsDialog -> CallPermissionHandler(
+                settings = settings,
+                permissionHelper = callPermissionHelper,
+                roleHelper = callScreeningRoleHelper,
+            ) { nextState() }
             Initialized -> { /* nothing to do */ }
         }
     }

@@ -43,7 +43,9 @@ import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidPermissionService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidTelephoneService
 import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -60,7 +62,10 @@ internal val koinModule = module {
     single { DatabaseService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
-    single { PermissionHelper() } // needs to be as singleton for initialization with the Activity
+
+    single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
+    single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
+    single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
 
     // Repositories
     single<IAndroidContactRepository> { AndroidContactRepository() }

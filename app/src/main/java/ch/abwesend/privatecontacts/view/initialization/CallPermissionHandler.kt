@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.initialization
 
-import android.Manifest.permission.READ_PHONE_STATE
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -24,7 +23,8 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.domain.util.canUseCallScreeningService
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIED
@@ -34,7 +34,8 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTI
 @Composable
 fun ComponentActivity.CallPermissionHandler(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: CallPermissionHelper,
+    roleHelper: CallScreeningRoleHelper,
     onPermissionsHandled: () -> Unit,
 ) {
     var requestPermissions by remember { mutableStateOf(false) }
@@ -52,6 +53,7 @@ fun ComponentActivity.CallPermissionHandler(
         requestPermissionsForCallerIdentification(
             settings = settings,
             permissionHelper = permissionHelper,
+            roleHelper = roleHelper,
             showExplanation = { requestPermissions = true }
         ) {
             if (it == ALREADY_GRANTED) {
@@ -63,6 +65,7 @@ fun ComponentActivity.CallPermissionHandler(
     IncomingCallPermissionDialog(
         settings = settings,
         permissionHelper = permissionHelper,
+        roleHelper = roleHelper,
         showDialog = requestPermissions
     ) {
         requestPermissions = false
@@ -73,7 +76,8 @@ fun ComponentActivity.CallPermissionHandler(
 @Composable
 private fun ComponentActivity.IncomingCallPermissionDialog(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: CallPermissionHelper,
+    roleHelper: CallScreeningRoleHelper,
     showDialog: Boolean,
     closeDialog: () -> Unit,
 ) {
@@ -87,6 +91,7 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
                 requestPermissionsForCallerIdentification(
                     settings = settings,
                     permissionHelper = permissionHelper,
+                    roleHelper = roleHelper,
                     showExplanation = null,
                     onResult = null,
                 )
@@ -104,7 +109,8 @@ private fun ComponentActivity.IncomingCallPermissionDialog(
 
 private fun ComponentActivity.requestPermissionsForCallerIdentification(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: CallPermissionHelper,
+    roleHelper: CallScreeningRoleHelper,
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
@@ -133,7 +139,7 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
 
     if (canUseCallScreeningService) {
         requestCallScreeningServiceRole(
-            permissionHelper = permissionHelper,
+            roleHelper = roleHelper,
             showExplanation = showExplanation,
         ) { serviceRolePermissionResult ->
             if (serviceRolePermissionResult.usable) {
@@ -159,38 +165,34 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
 
 @RequiresApi(Build.VERSION_CODES.Q)
 private fun ComponentActivity.requestCallScreeningServiceRole(
-    permissionHelper: PermissionHelper,
+    roleHelper: CallScreeningRoleHelper,
     showExplanation: (() -> Unit)?,
     onPermissionResult: (PermissionRequestResult) -> Unit,
 ) {
     showExplanation?.let {
-        permissionHelper.requestCallerIdRoleWithExplanation(
+        roleHelper.requestCallerIdRoleWithExplanation(
             activity = this,
             showExplanation = it,
             onPermissionResult = onPermissionResult
         )
-    } ?: permissionHelper.requestCallerIdRoleNow(
+    } ?: roleHelper.requestCallerIdRoleNow(
         activity = this,
         onPermissionResult = onPermissionResult,
     )
 }
 
 private fun ComponentActivity.requestPhoneStatePermission(
-    permissionHelper: PermissionHelper,
+    permissionHelper: CallPermissionHelper,
     showExplanation: (() -> Unit)?,
     onPermissionResult: (PermissionRequestResult) -> Unit,
 ) {
-    val permissions = listOf(READ_PHONE_STATE)
-
     showExplanation?.let {
         permissionHelper.requestUserPermissionsWithExplanation(
             activity = this,
-            permissions = permissions,
             onShowExplanation = showExplanation,
             onPermissionResult = onPermissionResult
         )
     } ?: permissionHelper.requestUserPermissionsNow(
-        permissions = permissions,
         onPermissionResult = onPermissionResult
     )
 }

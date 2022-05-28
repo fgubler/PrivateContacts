@@ -6,8 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.initialization
 
-import android.Manifest.permission.READ_CONTACTS
-import android.Manifest.permission.WRITE_CONTACTS
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
@@ -21,7 +19,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIED
@@ -31,7 +29,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTI
 @Composable
 fun ComponentActivity.AndroidContactPermissionHandler(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: AndroidContactPermissionHelper,
     onPermissionsHandled: () -> Unit,
 ) {
     var requestPermissions by remember { mutableStateOf(false) }
@@ -63,7 +61,7 @@ fun ComponentActivity.AndroidContactPermissionHandler(
 @Composable
 private fun ComponentActivity.AndroidContactPermissionDialog(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: AndroidContactPermissionHelper,
     showDialog: Boolean,
     closeDialog: () -> Unit,
 ) {
@@ -94,7 +92,7 @@ private fun ComponentActivity.AndroidContactPermissionDialog(
 
 private fun ComponentActivity.requestAndroidContactPermissions(
     settings: ISettingsState,
-    permissionHelper: PermissionHelper,
+    permissionHelper: AndroidContactPermissionHelper,
     showExplanation: (() -> Unit)?,
     onResult: ((PermissionRequestResult) -> Unit)?,
 ) {
@@ -129,21 +127,15 @@ private fun ComponentActivity.requestAndroidContactPermissions(
 }
 
 private fun ComponentActivity.requestAndroidContactPermissions(
-    permissionHelper: PermissionHelper,
+    permissionHelper: AndroidContactPermissionHelper,
     showExplanation: (() -> Unit)?,
     onPermissionResult: (PermissionRequestResult) -> Unit,
 ) {
-    val permissions = listOf(READ_CONTACTS, WRITE_CONTACTS)
-
     showExplanation?.let {
         permissionHelper.requestUserPermissionsWithExplanation(
             activity = this,
-            permissions = permissions,
             onShowExplanation = showExplanation,
             onPermissionResult = onPermissionResult
         )
-    } ?: permissionHelper.requestUserPermissionsNow(
-        permissions = permissions,
-        onPermissionResult = onPermissionResult
-    )
+    } ?: permissionHelper.requestUserPermissionsNow(onPermissionResult)
 }

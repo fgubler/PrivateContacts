@@ -6,17 +6,10 @@
 
 package ch.abwesend.privatecontacts.view.permission
 
-import android.app.Activity
-import android.app.role.RoleManager
-import android.content.Context.ROLE_SERVICE
-import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
-import android.os.Build
 import androidx.activity.ComponentActivity
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
@@ -25,17 +18,18 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
 /**
- * Beware: needs to be injected as a Singleton for [setupObservers] to work properly
+ * Beware: subclasses need to be injected as a Singleton for [setupObservers] to work properly
  */
-class PermissionHelper {
+abstract class PermissionHelperBase {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
     private lateinit var multipleResultsObserver: ActivityResultLauncher<Array<String>>
-    private lateinit var roleResultObserver: ActivityResultLauncher<Intent>
 
     private var currentPermissions: List<String> = emptyList()
     private var currentResultCallback: (PermissionRequestResult) -> Unit = {
         logger.debug("No result callback registered")
     }
+
+    protected abstract val permissions: List<String>
 
     /** needs to be called before [activity] reaches resumed-state */
     fun setupObservers(activity: ComponentActivity) = with(activity) {
@@ -49,29 +43,25 @@ class PermissionHelper {
         val multipleContract = ActivityResultContracts.RequestMultiplePermissions()
         multipleResultsObserver = registerForActivityResult(multipleContract) { isGranted: Map<String, Boolean> ->
             val result = when {
-                isGranted.none { it.value } -> DENIED.also { logger.debug("All permissions denied") }
-                isGranted.all { it.value } -> NEWLY_GRANTED.also { logger.debug("All permissions granted") }
+                isGranted.none { it.value } -> DENIED.also {
+                    logger.debug("All permissions denied: ${ isGranted.keys }")
+                }
+                isGranted.all { it.value } -> NEWLY_GRANTED.also {
+                    logger.debug("All permissions granted: ${ isGranted.keys }")
+                }
                 else -> PARTIALLY_NEWLY_GRANTED.also {
                     isGranted.forEach { (permission, granted) ->
-                        logger.debug("Permission $permission ${if (granted) "granted" else "denied"}")
+                        logger.debug("Permission $permission ${ if (granted) "granted" else "denied" }")
                     }
                 }
             }
             logger.debug("Permission '$currentPermissions' $result")
             currentResultCallback(result)
         }
-
-        val roleContract = ActivityResultContracts.StartActivityForResult()
-        roleResultObserver = registerForActivityResult(roleContract) { result: ActivityResult ->
-            val resultCode = if (result.resultCode == Activity.RESULT_OK) NEWLY_GRANTED else DENIED
-            logger.debug("Role request result: $resultCode")
-            currentResultCallback(resultCode)
-        }
     }
 
     fun requestUserPermissionsWithExplanation(
         activity: ComponentActivity,
-        permissions: List<String>,
         enforceShowingExplanation: Boolean = true,
         onShowExplanation: () -> Unit,
         onPermissionResult: (PermissionRequestResult) -> Unit,
@@ -91,19 +81,15 @@ class PermissionHelper {
                 onPermissionResult(ALREADY_GRANTED)
             }
             showExplanation -> onShowExplanation()
-            else -> showPermissionRequestDialog(permissions, onPermissionResult)
+            else -> showPermissionRequestDialog(onPermissionResult)
         }
     }
 
     fun requestUserPermissionsNow(
-        permissions: List<String>,
         onPermissionResult: (PermissionRequestResult) -> Unit,
-    ) = showPermissionRequestDialog(permissions, onPermissionResult)
+    ) = showPermissionRequestDialog(onPermissionResult)
 
-    private fun showPermissionRequestDialog(
-        permissions: List<String>,
-        onPermissionResult: (PermissionRequestResult) -> Unit,
-    ) {
+    private fun showPermissionRequestDialog(onPermissionResult: (PermissionRequestResult) -> Unit) {
         currentPermissions = permissions
         currentResultCallback = onPermissionResult
 
@@ -113,39 +99,4 @@ class PermissionHelper {
             multipleResultsObserver.launch(permissions.toTypedArray())
         }
     }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun requestCallerIdRoleWithExplanation(
-        activity: ComponentActivity,
-        showExplanation: () -> Unit,
-        onPermissionResult: (PermissionRequestResult) -> Unit,
-    ) {
-        currentResultCallback = onPermissionResult
-
-        if (activity.hasCallScreeningRole) onPermissionResult(ALREADY_GRANTED)
-        else showExplanation()
-    }
-
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun requestCallerIdRoleNow(
-        activity: ComponentActivity,
-        onPermissionResult: (PermissionRequestResult) -> Unit,
-    ) {
-        currentResultCallback = onPermissionResult
-
-        if (activity.hasCallScreeningRole) {
-            onPermissionResult(ALREADY_GRANTED)
-        } else {
-            val roleManager = activity.getSystemService(ROLE_SERVICE) as RoleManager?
-            val intent = roleManager?.createRequestRoleIntent(RoleManager.ROLE_CALL_SCREENING)
-            intent?.let { roleResultObserver.launch(it) }
-        }
-    }
-
-    private val ComponentActivity.hasCallScreeningRole: Boolean
-        @RequiresApi(Build.VERSION_CODES.Q)
-        get() {
-            val roleManager = getSystemService(ROLE_SERVICE) as RoleManager?
-            return roleManager?.isRoleHeld(RoleManager.ROLE_CALL_SCREENING) == true
-        }
 }
