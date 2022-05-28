@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         logger.info("Main activity started")
 
-        permissionHelper.setupObserver(this)
+        permissionHelper.setupObservers(this)
 
         Settings.repository.currentVersion = BuildConfig.VERSION_CODE
 

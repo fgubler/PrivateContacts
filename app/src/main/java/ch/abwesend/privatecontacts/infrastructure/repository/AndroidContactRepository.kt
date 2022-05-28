@@ -9,9 +9,9 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.coroutines.asFlow
 import kotlinx.coroutines.flow.take
@@ -20,14 +20,14 @@ import kotlinx.coroutines.flow.take
  * Repository to access the android ContactsProvider
  */
 class AndroidContactRepository : IAndroidContactRepository {
-    private val permissionHelper: PermissionHelper by injectAnywhere() // extract to domain package?
+    private val permissionService: PermissionService by injectAnywhere()
 
     private val contactStore: ContactStore by lazy {
         ContactStore.newInstance(getAnywhere())
     }
 
     override suspend fun loadContacts(): List<IContactBase> {
-        if (!permissionHelper.hasContactReadPermission(getAnywhere())) {
+        if (!permissionService.hasContactReadPermission()) {
             logger.warning("Trying to load android contacts without read-permission.")
             return emptyList()
         }

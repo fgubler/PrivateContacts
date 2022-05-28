@@ -6,10 +6,8 @@
 
 package ch.abwesend.privatecontacts.view.permission
 
-import android.Manifest
 import android.app.Activity
 import android.app.role.RoleManager
-import android.content.Context
 import android.content.Context.ROLE_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -26,6 +24,9 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIE
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
+/**
+ * Beware: needs to be injected as a Singleton for [setupObservers] to work properly
+ */
 class PermissionHelper {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
     private lateinit var multipleResultsObserver: ActivityResultLauncher<Array<String>>
@@ -37,7 +38,7 @@ class PermissionHelper {
     }
 
     /** needs to be called before [activity] reaches resumed-state */
-    fun setupObserver(activity: ComponentActivity) = with(activity) {
+    fun setupObservers(activity: ComponentActivity) = with(activity) {
         val singleContract = ActivityResultContracts.RequestPermission()
         singleResultObserver = registerForActivityResult(singleContract) { isGranted: Boolean ->
             val result = if (isGranted) NEWLY_GRANTED else DENIED
@@ -140,15 +141,6 @@ class PermissionHelper {
             intent?.let { roleResultObserver.launch(it) }
         }
     }
-
-    fun hasContactReadPermission(context: Context): Boolean =
-        hasPermission(context, Manifest.permission.READ_CONTACTS)
-
-    fun hasContactWritePermission(context: Context): Boolean =
-        hasPermission(context, Manifest.permission.WRITE_CONTACTS)
-
-    private fun hasPermission(context: Context, permission: String): Boolean =
-        ContextCompat.checkSelfPermission(context, permission) == PERMISSION_GRANTED
 
     private val ComponentActivity.hasCallScreeningRole: Boolean
         @RequiresApi(Build.VERSION_CODES.Q)

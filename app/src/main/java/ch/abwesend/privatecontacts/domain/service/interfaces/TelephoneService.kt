@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service.interfaces
 
-interface ITelephoneService {
+interface TelephoneService {
     val telephoneDefaultCountryIso: String
 
     fun formatPhoneNumberForDisplay(number: String): String

@@ -115,7 +115,7 @@ private fun ComponentActivity.requestAndroidContactPermissions(
                 logger.debug("Android contacts: permissions denied")
             }
             ALREADY_GRANTED -> {
-                logger.debug("Android contacts: permission already granted")
+                logger.debug("Android contacts: permissions already granted")
             }
         }
         onResult?.invoke(result)

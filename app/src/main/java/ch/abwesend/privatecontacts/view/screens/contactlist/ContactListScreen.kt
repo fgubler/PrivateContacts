@@ -23,12 +23,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -36,7 +36,6 @@ import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDi
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.isError
@@ -48,7 +47,7 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactListScreen {
-    private val permissionHelper: PermissionHelper by injectAnywhere()
+    private val permissionService: PermissionService by injectAnywhere()
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
@@ -76,8 +75,7 @@ object ContactListScreen {
 
     @Composable
     private fun TabBox(screenContext: ScreenContext) {
-        val context = LocalContext.current
-        val hasContactsPermission = permissionHelper.hasContactReadPermission(context)
+        val hasContactsPermission = permissionService.hasContactReadPermission()
         val androidContactsEnabled = screenContext.settings.showAndroidContacts
 
         if (androidContactsEnabled && hasContactsPermission) {

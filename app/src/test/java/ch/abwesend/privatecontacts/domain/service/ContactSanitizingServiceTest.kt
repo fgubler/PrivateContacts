@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
-import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someEmailAddress
@@ -27,7 +27,7 @@ import org.koin.core.module.Module
 @ExtendWith(MockKExtension::class)
 class ContactSanitizingServiceTest : TestBase() {
     @MockK
-    private lateinit var telephoneService: ITelephoneService
+    private lateinit var telephoneService: TelephoneService
 
     private lateinit var underTest: ContactSanitizingService
 
