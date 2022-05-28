@@ -19,6 +19,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTI
 
 /**
  * Beware: subclasses need to be injected as a Singleton for [setupObservers] to work properly
+ * TODO: this is a mess: fix it and use the Warden library for nicer permission-requests
  */
 abstract class PermissionHelperBase {
     private lateinit var singleResultObserver: ActivityResultLauncher<String>
