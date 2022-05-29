@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
@@ -106,7 +105,7 @@ object ContactDetailScreen {
         TopAppBar(
             title = {
                 Text(
-                    text = contact?.getFullName() ?: stringResource(id = title),
+                    text = contact?.displayName ?: stringResource(id = title),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )

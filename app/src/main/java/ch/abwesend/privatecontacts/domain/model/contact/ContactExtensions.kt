@@ -6,22 +6,11 @@
 
 package ch.abwesend.privatecontacts.domain.model.contact
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.settings.Settings
-
-fun IContactBase.getFullName(
-    firstNameFirst: Boolean = Settings.current.orderByFirstName
-): String =
-    if (firstNameFirst) "$firstName $lastName"
-    else "$lastName $firstName"
-
 fun IContact.asEditable(): ContactEditable =
     if (this is ContactEditable) this
-    else toContactEditable(this.contactDataSet.toMutableList())
+    else toContactEditable()
 
-fun IContactBase.toContactEditable(
-    contactDataSet: MutableList<ContactData>
-): ContactEditable =
+fun IContact.toContactEditable(): ContactEditable =
     ContactEditable(
         id = id,
         firstName = firstName,
@@ -29,5 +18,5 @@ fun IContactBase.toContactEditable(
         nickname = nickname,
         type = type,
         notes = notes,
-        contactDataSet = contactDataSet,
+        contactDataSet = contactDataSet.toMutableList(),
     )

@@ -7,15 +7,13 @@
 package ch.abwesend.privatecontacts.domain.model
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.someTestContact
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
@@ -27,17 +25,33 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class ContactExtensionsTest : TestBase() {
+    /**
+     * These two tests must not run in parallel because the settings are shared...
+     */
     @Test
-    fun `should get full name`() {
-        val contact = someContactBase()
+    fun `should get displayName in correct order`() {
+        `should get displayName with first name first`()
+        `should get displayName with last name first`()
+    }
 
-        val fullNameStartingWithFirst = contact.getFullName(firstNameFirst = true)
-        val fullNameStartingWithLast = contact.getFullName(firstNameFirst = false)
+    private fun `should get displayName with first name first`() {
+        val contact = someTestContact()
+        testSettings.orderByFirstName = true
+
+        val fullNameStartingWithFirst = contact.displayName
 
         assertThat(fullNameStartingWithFirst)
             .startsWith(contact.firstName)
             .endsWith(contact.lastName)
-        assertThat(fullNameStartingWithLast)
+    }
+
+    private fun `should get displayName with last name first`() {
+        val contact = someTestContact()
+        testSettings.orderByFirstName = false
+
+        val fullNameStartingWithFirst = contact.displayName
+
+        assertThat(fullNameStartingWithFirst)
             .startsWith(contact.lastName)
             .endsWith(contact.firstName)
     }
@@ -53,20 +67,20 @@ class ContactExtensionsTest : TestBase() {
 
     @Test
     fun `should create editable contact if not already`() {
-        val contact = someContactFull()
-        mockkStatic(IContactBase::toContactEditable)
+        val contact = someTestContact()
+        mockkStatic(IContact::toContactEditable)
 
         contact.asEditable()
 
-        verify { contact.toContactEditable(any()) }
+        verify { contact.toContactEditable() }
     }
 
     @Test
     fun `should create editable contact from base contact`() {
-        val contact = someContactBase()
         val phoneNumber = somePhoneNumber()
+        val contact = someTestContact(contactData = listOf(phoneNumber))
 
-        val result = contact.toContactEditable(mutableListOf(phoneNumber))
+        val result = contact.toContactEditable()
 
         assertThat(result.id).isEqualTo(contact.id)
         assertThat(result.firstName).isEqualTo(contact.firstName)
@@ -74,7 +88,6 @@ class ContactExtensionsTest : TestBase() {
         assertThat(result.nickname).isEqualTo(contact.nickname)
         assertThat(result.type).isEqualTo(contact.type)
         assertThat(result.notes).isEqualTo(contact.notes)
-
         assertThat(result.contactDataSet).isEqualTo(mutableListOf(phoneNumber))
     }
 

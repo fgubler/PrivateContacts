@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.testutil
 
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
@@ -24,18 +23,12 @@ fun someContactId(): ContactId = ContactId.randomId()
 
 fun someContactBase(
     id: ContactId = someContactId(),
-    firstName: String = "John",
-    lastName: String = "Snow",
-    nickname: String = "Lord Snow",
+    displayName: String = "John Snow",
     type: ContactType = SECRET,
-    notes: String = "Tries to do the right thing. Often badly.",
 ): IContactBase = ContactBase(
     id = id,
-    firstName = firstName,
-    lastName = lastName,
-    nickname = nickname,
     type = type,
-    notes = notes,
+    displayName = displayName,
 )
 
 fun someContactEntity(
@@ -58,46 +51,20 @@ fun someContactEntity(
 
 fun someContactWithPhoneNumbers(
     id: ContactId = someContactId(),
-    firstName: String = "John",
-    lastName: String = "Snow",
-    nickname: String = "Lord Snow",
     type: ContactType = SECRET,
-    notes: String = "Tries to do the right thing. Often badly.",
+    displayName: String = "John Snow",
     phoneNumbers: List<String> = emptyList(),
 ): ContactWithPhoneNumbers {
     val base = ContactBase(
         id = id,
-        firstName = firstName,
-        lastName = lastName,
-        nickname = nickname,
         type = type,
-        notes = notes,
+        displayName = displayName,
     )
     return ContactWithPhoneNumbers(
         contactBase = base,
         phoneNumbers = phoneNumbers.map { PhoneNumberValue(it) }
     )
 }
-
-fun someContactFull(
-    id: ContactId = someContactId(),
-    firstName: String = "John",
-    lastName: String = "Snow",
-    nickname: String = "Lord Snow",
-    type: ContactType = SECRET,
-    notes: String = "Tries to do the right thing. Often badly.",
-    contactData: List<ContactData> = emptyList(),
-    isNew: Boolean = false,
-): IContact = Contact(
-    id = id,
-    firstName = firstName,
-    lastName = lastName,
-    nickname = nickname,
-    type = type,
-    notes = notes,
-    contactDataSet = contactData,
-    isNew = isNew,
-)
 
 fun someContactEditable(
     id: ContactId = someContactId(),
@@ -106,9 +73,29 @@ fun someContactEditable(
     nickname: String = "Lord Snow",
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
-    contactData: MutableList<ContactData> = mutableListOf(),
+    contactData: List<ContactData> = mutableListOf(),
     isNew: Boolean = false,
 ): IContactEditable = ContactEditable(
+    id = id,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    contactDataSet = contactData.toMutableList(),
+    isNew = isNew,
+)
+
+fun someTestContact(
+    id: ContactId = someContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = SECRET,
+    notes: String = "Tries to do the right thing. Often badly.",
+    contactData: List<ContactData> = emptyList(),
+    isNew: Boolean = false,
+): IContact = TestContact(
     id = id,
     firstName = firstName,
     lastName = lastName,

@@ -29,7 +29,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEn
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactId
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.coEvery
@@ -58,7 +58,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `create should insert the data into the database`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDataDao.insertAll(any()) } returns Unit
 
         runBlocking { underTest.createContactData(contact) }
@@ -68,7 +68,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `create should consider phone numbers`() {
-        val contact = spyk(someContactFull())
+        val contact = spyk(someContactEditable())
         coEvery { contactDataDao.insertAll(any()) } returns Unit
 
         runBlocking { underTest.createContactData(contact) }
@@ -78,7 +78,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `update should update the data in the database`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -90,7 +90,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `delete should delete all data for that contact`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         val contactDataEntities = listOf(
             someContactDataEntity(contactId = contact.id.uuid),
             someContactDataEntity(contactId = contact.id.uuid),
@@ -106,7 +106,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `update should consider phone numbers`() {
-        val contact = spyk(someContactFull())
+        val contact = spyk(someContactEditable())
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -119,7 +119,7 @@ class ContactDataRepositoryTest : TestBase() {
     @Test
     fun `update should update existing phone numbers `() {
         val existingNumber = somePhoneNumber(value = "5678", modelStatus = CHANGED)
-        val contact = spyk(someContactFull(contactData = listOf(existingNumber)))
+        val contact = spyk(someContactEditable(contactData = listOf(existingNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -139,7 +139,7 @@ class ContactDataRepositoryTest : TestBase() {
     @Test
     fun `update should insert new phone numbers`() {
         val newNumber = somePhoneNumber(value = "1234", modelStatus = NEW)
-        val contact = spyk(someContactFull(contactData = listOf(newNumber)))
+        val contact = spyk(someContactEditable(contactData = listOf(newNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -158,7 +158,7 @@ class ContactDataRepositoryTest : TestBase() {
     @Test
     fun `update should delete deleted phone numbers`() {
         val deletedNumber = somePhoneNumber(value = "1234", modelStatus = DELETED)
-        val contact = spyk(someContactFull(contactData = listOf(deletedNumber)))
+        val contact = spyk(someContactEditable(contactData = listOf(deletedNumber)))
         coEvery { contactDataDao.updateAll(any()) } just runs
         coEvery { contactDataDao.insertAll(any()) } just runs
         coEvery { contactDataDao.deleteAll(any()) } just runs
@@ -176,7 +176,7 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `load should load the contact-data`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDataDao.getDataForContact(any()) } returns emptyList()
 
         runBlocking { underTest.loadContactData(contact) }

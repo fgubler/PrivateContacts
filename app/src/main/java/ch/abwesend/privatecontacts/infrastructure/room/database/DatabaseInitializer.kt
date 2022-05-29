@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
@@ -41,7 +41,7 @@ class DatabaseInitializer {
 
     private val dummyContacts
         get() = mutableListOf(
-            Contact(
+            ContactEditable(
                 id = ContactId.randomId(),
                 firstName = "Darth",
                 lastName = "Vader",
@@ -50,7 +50,7 @@ class DatabaseInitializer {
                 notes = "Evil but not very good at it",
                 contactDataSet = mutableListOf(),
             ),
-            Contact(
+            ContactEditable(
                 id = ContactId.randomId(),
                 firstName = "Luke",
                 lastName = "Skywalker",
@@ -92,7 +92,7 @@ class DatabaseInitializer {
                     )
                 ),
             ),
-            Contact(
+            ContactEditable(
                 id = ContactId.randomId(),
                 firstName = "Obi-Wan",
                 lastName = "Kenobi",
@@ -118,7 +118,7 @@ class DatabaseInitializer {
                     ),
                 ),
             ),
-            Contact(
+            ContactEditable(
                 id = ContactId.randomId(),
                 firstName = "Yoda",
                 lastName = "",

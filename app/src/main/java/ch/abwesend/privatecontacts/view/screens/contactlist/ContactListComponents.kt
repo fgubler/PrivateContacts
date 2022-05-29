@@ -34,7 +34,6 @@ import androidx.paging.compose.items
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.theme.selectedElement
 
@@ -116,7 +115,7 @@ private fun Contact(
             )
     ) {
         nullableContact?.let { contact ->
-            val name = contact.getFullName()
+            val name = contact.displayName
             val icon = when {
                 selected -> Icons.Default.TaskAlt
                 name.lowercase().contains(EASTER_EGG_LOVE) -> Icons.Filled.Favorite

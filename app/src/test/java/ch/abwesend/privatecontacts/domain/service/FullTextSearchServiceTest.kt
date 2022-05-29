@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import io.mockk.impl.annotations.InjectMockKs
@@ -41,7 +41,7 @@ class FullTextSearchServiceTest : TestBase() {
 
     @Test
     fun `fulltext search string should contain the names`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
 
         val result = underTest.computeFullTextSearchColumn(contact)
 
@@ -52,7 +52,7 @@ class FullTextSearchServiceTest : TestBase() {
 
     @Test
     fun `fulltext search string should contain the notes`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
 
         val result = underTest.computeFullTextSearchColumn(contact)
 
@@ -61,7 +61,7 @@ class FullTextSearchServiceTest : TestBase() {
 
     @Test
     fun `fulltext search string should contain the phone numbers`() {
-        val contact = someContactFull(
+        val contact = someContactEditable(
             contactData = listOf(
                 somePhoneNumber(value = "12345"),
                 somePhoneNumber(value = "56789"),
@@ -77,7 +77,7 @@ class FullTextSearchServiceTest : TestBase() {
 
     @Test
     fun `fulltext search string should contain the email addresses`() {
-        val contact = someContactFull(
+        val contact = someContactEditable(
             contactData = listOf(
                 someEmailAddress(value = "12345"),
                 someEmailAddress(value = "56789"),

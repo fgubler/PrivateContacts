@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 data class TestSettings(
-    override val currentSettings: ISettingsState = SettingsState.defaultSettings,
+    private val currentSettings: ISettingsState = SettingsState.defaultSettings,
     override val settings: Flow<ISettingsState> = flow { emit(currentSettings) },
 ) : SettingsRepository {
     override var appTheme: AppTheme = currentSettings.appTheme
@@ -25,6 +25,8 @@ data class TestSettings(
     override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
+    override var showAndroidContacts: Boolean = currentSettings.showAndroidContacts
+    override var requestAndroidContactPermissions: Boolean = currentSettings.requestAndroidContactPermissions
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
     override var currentVersion: Int = 0
 

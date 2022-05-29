@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NA
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Success
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -31,7 +31,7 @@ class ContactValidationServiceTest : TestBase() {
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "  "])
     fun `should not allow both first- and last-name to be empty or blank`(name: String) {
-        val contact = someContactFull(firstName = name, lastName = name,)
+        val contact = someContactEditable(firstName = name, lastName = name,)
 
         val result = runBlocking { underTest.validateContact(contact) }
 
@@ -42,8 +42,8 @@ class ContactValidationServiceTest : TestBase() {
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "  "])
     fun `should allow the first-name or last-name to be empty or blank`(name: String) {
-        val contactFirst = someContactFull(firstName = name, lastName = "Test")
-        val contactLast = someContactFull(firstName = "Test", lastName = name)
+        val contactFirst = someContactEditable(firstName = name, lastName = "Test")
+        val contactLast = someContactEditable(firstName = "Test", lastName = name)
 
         val resultFirst = runBlocking { underTest.validateContact(contactFirst) }
         val resultLast = runBlocking { underTest.validateContact(contactLast) }

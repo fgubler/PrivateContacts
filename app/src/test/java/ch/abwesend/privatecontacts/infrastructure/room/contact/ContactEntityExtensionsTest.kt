@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contact
 
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -31,7 +31,7 @@ class ContactEntityExtensionsTest : TestBase() {
 
     @Test
     fun `should compute full text search`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         val fullText = "TestFullText"
         every { searchService.computeFullTextSearchColumn(any()) } returns fullText
 

@@ -18,8 +18,8 @@ import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactEntity
-import ch.abwesend.privatecontacts.testutil.someContactFull
 import ch.abwesend.privatecontacts.testutil.someContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -57,7 +57,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `creating a contact should insert it into the database`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.insert(any()) } returns Unit
         coEvery { contactDataRepository.createContactData(any()) } returns Unit
 
@@ -69,7 +69,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `creating a contact should also create contact data`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.insert(any()) } returns Unit
         coEvery { contactDataRepository.createContactData(any()) } returns Unit
 
@@ -81,7 +81,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `an exception during creation should return an Error-Result`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.insert(any()) } throws RuntimeException("Test")
 
         val result = runBlocking { underTest.createContact(contact) }
@@ -91,7 +91,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `updating a contact should update it in the database`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.update(any()) } returns Unit
         coEvery { contactDataRepository.updateContactData(any()) } returns Unit
 
@@ -103,7 +103,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `updating a contact should also update the contact data`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.update(any()) } returns Unit
         coEvery { contactDataRepository.updateContactData(any()) } returns Unit
 
@@ -115,7 +115,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `an exception during update should return an Error-Result`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.update(any()) } throws RuntimeException("Test")
 
         val result = runBlocking { underTest.updateContact(contact) }
@@ -125,7 +125,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `deleting a contact should delete it`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.delete(ofType<Collection<UUID>>()) } just runs
 
         val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
@@ -136,7 +136,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `an exception during deletion should return an Error-Result`() {
-        val contact = someContactFull()
+        val contact = someContactEditable()
         coEvery { contactDao.delete(ofType<UUID>()) } throws RuntimeException("Test")
 
         val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
@@ -162,7 +162,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `resolving a contact should also re-load the base-data from the database`() {
-        val contact = someContactBase(firstName = "John")
+        val contact = someContactBase(displayName = "John Snow")
         val contactEntity = someContactEntity(firstName = "Jack")
         coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
         coEvery { contactDao.findById(any()) } returns contactEntity

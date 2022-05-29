@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
@@ -24,7 +23,7 @@ class ContactValidationService {
     private fun validateName(contact: IContact): List<ContactValidationError> {
         val validationErrors = mutableListOf<ContactValidationError>()
 
-        if (contact.getFullName().trim().isEmpty()) {
+        if (contact.firstName.trim().isEmpty() && contact.lastName.trim().isEmpty()) {
             validationErrors.add(NAME_NOT_SET)
         }
 

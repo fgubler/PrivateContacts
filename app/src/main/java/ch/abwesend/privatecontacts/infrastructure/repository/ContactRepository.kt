@@ -7,11 +7,12 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.uuid
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
@@ -21,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
@@ -30,9 +32,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
     override suspend fun loadContacts(): List<IContactBase> =
         withDatabase { database ->
-            database.contactDao().getAll().also {
-                logger.info("Loaded ${it.size} contacts")
-            }
+            database.contactDao().getAll()
+                .map { it.toContactBase() }
+                .also { logger.info("Loaded ${it.size} contacts") }
         }
 
     override suspend fun getContactsPaged(
@@ -63,7 +65,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
             contacts.map { contactEntity ->
                 ContactWithPhoneNumbers(
-                    contactBase = contactEntity,
+                    contactBase = contactEntity.toContactBase(),
                     phoneNumbers = contactData[contactEntity.id].orEmpty()
                 )
             }
@@ -75,7 +77,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             contactDao().getPagedByFirstName(loadSize = loadSize, offsetInRows = offsetInRows)
         } else {
             contactDao().getPagedByLastName(loadSize = loadSize, offsetInRows = offsetInRows)
-        }
+        }.map { it.toContactBase() }
 
     private suspend fun AppDatabase.searchContactsPaged(
         config: ContactSearchConfig.Query,
@@ -99,17 +101,27 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 loadSize = loadSize,
                 offsetInRows = offsetInRows,
             )
-        }
+        }.map { it.toContactBase() }
     }
 
     override suspend fun resolveContact(contact: IContactBase): IContact {
-        val refreshedContact = withDatabase { database ->
+        val contactEntity = withDatabase { database ->
             database.contactDao().findById(contact.uuid)
-        } ?: contact
+        } ?: throw IllegalArgumentException("Contact $contact not found in database")
+
         val contactData = contactDataRepository.loadContactData(contact)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
 
-        return refreshedContact.toContactEditable(contactDataSet = resolvedData.toMutableList())
+        return ContactEditable(
+            id = contactEntity.id,
+            firstName = contactEntity.firstName,
+            lastName = contactEntity.lastName,
+            nickname = contactEntity.nickname,
+            type = contactEntity.type,
+            notes = contactEntity.notes,
+            contactDataSet = resolvedData.toMutableList(),
+            isNew = false,
+        )
     }
 
     override suspend fun createContact(contact: IContact): ContactSaveResult =
@@ -153,3 +165,13 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }
     }
 }
+
+private val ContactEntity.displayName: String
+    get() {
+        val firstNameFirst = Settings.current.orderByFirstName
+        return if (firstNameFirst) "$firstName $lastName"
+        else "$lastName $firstName"
+    }
+
+private fun ContactEntity.toContactBase(): ContactBase =
+    ContactBase(id = id, type = type, displayName = displayName)
