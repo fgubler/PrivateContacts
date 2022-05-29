@@ -6,6 +6,14 @@
 
 package ch.abwesend.privatecontacts.domain.model.contact
 
+import ch.abwesend.privatecontacts.domain.settings.Settings
+
+fun IContactBase.getFullName(
+    firstNameFirst: Boolean = Settings.current.orderByFirstName
+): String =
+    if (firstNameFirst) "$firstName $lastName"
+    else "$lastName $firstName"
+
 fun IContact.asEditable(): ContactEditable =
     if (this is ContactEditable) this
     else toContactEditable()

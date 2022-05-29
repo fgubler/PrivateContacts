@@ -50,9 +50,10 @@ abstract class TestBase : KoinTest {
     private lateinit var testLogger: ILogger
 
     /**
-     * Beware: the [testSettings] are shared between tests running in parallel...
+     * Beware: the [testSettings] are shared between tests running in parallel
+     * => should not be changed by individual tests
      */
-    protected lateinit var testSettings: TestSettings
+    private lateinit var testSettings: TestSettings
 
     @MockK
     protected lateinit var contactDao: ContactDao

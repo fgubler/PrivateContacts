@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
@@ -22,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
+import ch.abwesend.privatecontacts.infrastructure.room.contact.toContactBase
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
@@ -165,13 +164,3 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }
     }
 }
-
-private val ContactEntity.displayName: String
-    get() {
-        val firstNameFirst = Settings.current.orderByFirstName
-        return if (firstNameFirst) "$firstName $lastName"
-        else "$lastName $firstName"
-    }
-
-private fun ContactEntity.toContactBase(): ContactBase =
-    ContactBase(id = id, type = type, displayName = displayName)

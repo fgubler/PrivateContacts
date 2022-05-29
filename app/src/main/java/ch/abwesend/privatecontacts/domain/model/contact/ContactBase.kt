@@ -11,13 +11,15 @@ import java.util.UUID
 interface IContactBase {
     val id: ContactId
     val type: ContactType
-    val displayName: String
+    val firstName: String
+    val lastName: String
 }
 
 data class ContactBase(
     override val id: ContactId,
     override val type: ContactType,
-    override val displayName: String,
+    override val firstName: String,
+    override val lastName: String,
 ) : IContactBase
 
 @JvmInline

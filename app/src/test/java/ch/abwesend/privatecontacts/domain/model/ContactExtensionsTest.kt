@@ -9,8 +9,10 @@ package ch.abwesend.privatecontacts.domain.model
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.someTestContact
@@ -25,33 +27,17 @@ import org.junit.jupiter.api.extension.ExtendWith
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class ContactExtensionsTest : TestBase() {
-    /**
-     * These two tests must not run in parallel because the settings are shared...
-     */
     @Test
-    fun `should get displayName in correct order`() {
-        `should get displayName with first name first`()
-        `should get displayName with last name first`()
-    }
+    fun `should get display name`() {
+        val contact = someContactBase()
 
-    private fun `should get displayName with first name first`() {
-        val contact = someTestContact()
-        testSettings.orderByFirstName = true
-
-        val fullNameStartingWithFirst = contact.displayName
+        val fullNameStartingWithFirst = contact.getFullName(firstNameFirst = true)
+        val fullNameStartingWithLast = contact.getFullName(firstNameFirst = false)
 
         assertThat(fullNameStartingWithFirst)
             .startsWith(contact.firstName)
             .endsWith(contact.lastName)
-    }
-
-    private fun `should get displayName with last name first`() {
-        val contact = someTestContact()
-        testSettings.orderByFirstName = false
-
-        val fullNameStartingWithFirst = contact.displayName
-
-        assertThat(fullNameStartingWithFirst)
+        assertThat(fullNameStartingWithLast)
             .startsWith(contact.lastName)
             .endsWith(contact.firstName)
     }

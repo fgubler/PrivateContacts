@@ -7,12 +7,13 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 
 class ContactValidationService {
-    suspend fun validateContact(contact: IContact): ContactValidationResult {
+    fun validateContact(contact: IContact): ContactValidationResult {
         val validationErrors = mutableListOf<ContactValidationError>()
 
         validationErrors.addAll(validateName(contact))
@@ -20,7 +21,10 @@ class ContactValidationService {
         return ContactValidationResult.fromErrors(validationErrors)
     }
 
-    private fun validateName(contact: IContact): List<ContactValidationError> {
+    fun validateContactBase(contact: IContactBase): List<ContactValidationError> =
+        validateName(contact)
+
+    private fun validateName(contact: IContactBase): List<ContactValidationError> {
         val validationErrors = mutableListOf<ContactValidationError>()
 
         if (contact.firstName.trim().isEmpty() && contact.lastName.trim().isEmpty()) {
@@ -30,3 +34,6 @@ class ContactValidationService {
         return validationErrors
     }
 }
+
+val List<ContactValidationError>.valid: Boolean
+    get() = isEmpty()

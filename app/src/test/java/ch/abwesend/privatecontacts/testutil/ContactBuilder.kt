@@ -11,24 +11,24 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
-import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
 fun someContactId(): ContactId = ContactId.randomId()
 
 fun someContactBase(
     id: ContactId = someContactId(),
-    displayName: String = "John Snow",
+    firstName: String = "John",
+    lastName: String = "Snow",
     type: ContactType = SECRET,
 ): IContactBase = ContactBase(
     id = id,
     type = type,
-    displayName = displayName,
+    firstName = firstName,
+    lastName = lastName,
 )
 
 fun someContactEntity(
@@ -48,23 +48,6 @@ fun someContactEntity(
     notes = notes,
     fullTextSearch = fullTextSearch,
 )
-
-fun someContactWithPhoneNumbers(
-    id: ContactId = someContactId(),
-    type: ContactType = SECRET,
-    displayName: String = "John Snow",
-    phoneNumbers: List<String> = emptyList(),
-): ContactWithPhoneNumbers {
-    val base = ContactBase(
-        id = id,
-        type = type,
-        displayName = displayName,
-    )
-    return ContactWithPhoneNumbers(
-        contactBase = base,
-        phoneNumbers = phoneNumbers.map { PhoneNumberValue(it) }
-    )
-}
 
 fun someContactEditable(
     id: ContactId = someContactId(),

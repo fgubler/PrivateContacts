@@ -162,7 +162,7 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `resolving a contact should also re-load the base-data from the database`() {
-        val contact = someContactBase(displayName = "John Snow")
+        val contact = someContactBase(firstName = "John")
         val contactEntity = someContactEntity(firstName = "Jack")
         coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
         coEvery { contactDao.findById(any()) } returns contactEntity

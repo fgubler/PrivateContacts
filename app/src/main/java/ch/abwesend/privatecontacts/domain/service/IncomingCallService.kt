@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.arePhoneNumbersEquivalent
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -38,7 +39,7 @@ class IncomingCallService {
 
         return matchingCandidates
             .take(CONSIDER_MATCHING_CONTACTS)
-            .sortedBy { it.displayName }
+            .sortedBy { it.getFullName() }
     }
 
     private fun filterCandidates(
