@@ -49,6 +49,11 @@ abstract class TestBase : KoinTest {
     private lateinit var database: AppDatabase
     private lateinit var testLogger: ILogger
 
+    /**
+     * Beware: the [testSettings] are shared between tests running in parallel...
+     */
+    protected lateinit var testSettings: TestSettings
+
     @MockK
     protected lateinit var contactDao: ContactDao
 
@@ -64,7 +69,7 @@ abstract class TestBase : KoinTest {
                 single { loggerFactory }
                 single { databaseHolder }
                 single<IDispatchers> { TestDispatchers }
-                single<SettingsRepository> { TestSettings() }
+                single<SettingsRepository> { testSettings }
                 setupKoinModule()
             }
         )
@@ -79,6 +84,8 @@ abstract class TestBase : KoinTest {
 
     @BeforeEach
     fun baseSetup() {
+        testSettings = TestSettings()
+
         loggerFactory = mockk()
         testLogger = TestLogger()
         every { loggerFactory.createDefault(any()) } returns spyk(testLogger)
