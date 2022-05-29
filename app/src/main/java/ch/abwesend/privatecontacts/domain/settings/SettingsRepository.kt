@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
-    val currentSettings: ISettingsState
     fun overrideSettingsWith(settings: ISettingsState)
 
     // UX

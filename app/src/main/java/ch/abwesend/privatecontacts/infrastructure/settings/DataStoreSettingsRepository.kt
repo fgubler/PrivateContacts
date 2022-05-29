@@ -31,8 +31,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val coroutineScope = applicationScope
 
-    override var currentSettings: ISettingsState = SettingsState.defaultSettings
-        private set
+    private var currentSettings: ISettingsState = SettingsState.defaultSettings
 
     override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
 

@@ -13,7 +13,7 @@ object Settings {
     val repository: SettingsRepository by injectAnywhere()
 
     val current: ISettingsState
-        get() = repository.currentSettings
+        get() = repository
 
     val flow: Flow<ISettingsState>
         get() = repository.settings
