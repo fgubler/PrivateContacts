@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactdetail.components
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,9 @@ import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.util.AsIconButton
 import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.getTitle
+import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 
+@ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 object ContactDetailCommonComponents {
@@ -75,9 +77,10 @@ object ContactDetailCommonComponents {
         @StringRes categoryTitle: Int,
         icon: ImageVector,
         alignContentWithTitle: Boolean,
+        modifier: Modifier = Modifier,
         content: @Composable () -> Unit
     ) {
-        Card(modifier = Modifier.padding(all = 5.dp)) {
+        Card(modifier = modifier.padding(all = 5.dp)) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Column {
                     ContactCategoryHeader(
@@ -157,12 +160,14 @@ object ContactDetailCommonComponents {
             fontSize = LocalTextStyle.current.fontSize.times(0.8),
             color = labelColor(),
         )
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
-                .clickable { primaryAction(data) }
+                .longClickForCopyToClipboard(
+                    textToCopy = data.displayValue,
+                    onClick = { primaryAction(data) }
+                )
                 .padding(start = iconHorizontalPadding)
                 .padding(vertical = 5.dp)
         ) {
