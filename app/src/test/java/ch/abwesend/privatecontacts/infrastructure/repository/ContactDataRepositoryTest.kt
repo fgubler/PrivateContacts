@@ -90,17 +90,17 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `delete should delete all data for that contact`() {
-        val contact = someContactEditable()
+        val contactId = someContactId()
         val contactDataEntities = listOf(
-            someContactDataEntity(contactId = contact.id.uuid),
-            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contactId.uuid),
+            someContactDataEntity(contactId = contactId.uuid),
         )
         coEvery { contactDataDao.getDataForContacts(any()) } returns contactDataEntities
         coEvery { contactDataDao.deleteAll(any()) } just runs
 
-        runBlocking { underTest.deleteContactData(contact) }
+        runBlocking { underTest.deleteContactData(contactId) }
 
-        coVerify { contactDataDao.getDataForContacts(listOf(contact.id.uuid)) }
+        coVerify { contactDataDao.getDataForContacts(listOf(contactId.uuid)) }
         coVerify { contactDataDao.deleteAll(contactDataEntities) }
     }
 
@@ -176,12 +176,12 @@ class ContactDataRepositoryTest : TestBase() {
 
     @Test
     fun `load should load the contact-data`() {
-        val contact = someContactEditable()
+        val contactId = someContactId()
         coEvery { contactDataDao.getDataForContact(any()) } returns emptyList()
 
-        runBlocking { underTest.loadContactData(contact) }
+        runBlocking { underTest.loadContactData(contactId) }
 
-        coVerify { contactDataDao.getDataForContact(contact.id.uuid) }
+        coVerify { contactDataDao.getDataForContact(contactId.uuid) }
     }
 
     @Test
