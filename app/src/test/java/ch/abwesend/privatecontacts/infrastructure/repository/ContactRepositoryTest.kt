@@ -17,7 +17,7 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
-import ch.abwesend.privatecontacts.testutil.someContactEditable
+import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.someContactEntity
 import ch.abwesend.privatecontacts.testutil.someContactId
 import io.mockk.coEvery
@@ -56,68 +56,68 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `creating a contact should insert it into the database`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.insert(any()) } returns Unit
-        coEvery { contactDataRepository.createContactData(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
 
-        val result = runBlocking { underTest.createContact(contact) }
+        val result = runBlocking { underTest.createContact(contactId, contact) }
 
-        coVerify { contactDao.insert(contact.toEntity()) }
+        coVerify { contactDao.insert(contact.toEntity(contactId)) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
     @Test
     fun `creating a contact should also create contact data`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.insert(any()) } returns Unit
-        coEvery { contactDataRepository.createContactData(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
 
-        val result = runBlocking { underTest.createContact(contact) }
+        val result = runBlocking { underTest.createContact(contactId, contact) }
 
-        coVerify { contactDataRepository.createContactData(contact) }
+        coVerify { contactDataRepository.createContactData(contactId, contact) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
     @Test
     fun `an exception during creation should return an Error-Result`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.insert(any()) } throws RuntimeException("Test")
 
-        val result = runBlocking { underTest.createContact(contact) }
+        val result = runBlocking { underTest.createContact(contactId, contact) }
 
         assertThat(result).isEqualTo(ContactSaveResult.Failure(UNKNOWN_ERROR))
     }
 
     @Test
     fun `updating a contact should update it in the database`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.update(any()) } returns Unit
-        coEvery { contactDataRepository.updateContactData(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
 
-        val result = runBlocking { underTest.updateContact(contact) }
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
 
-        coVerify { contactDao.update(contact.toEntity()) }
+        coVerify { contactDao.update(contact.toEntity(contactId)) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
     @Test
     fun `updating a contact should also update the contact data`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.update(any()) } returns Unit
-        coEvery { contactDataRepository.updateContactData(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
 
-        val result = runBlocking { underTest.updateContact(contact) }
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
 
-        coVerify { contactDataRepository.updateContactData(contact) }
+        coVerify { contactDataRepository.updateContactData(contactId, contact) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
     @Test
     fun `an exception during update should return an Error-Result`() {
-        val contact = someContactEditable()
+        val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.update(any()) } throws RuntimeException("Test")
 
-        val result = runBlocking { underTest.updateContact(contact) }
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
 
         assertThat(result).isEqualTo(ContactSaveResult.Failure(UNKNOWN_ERROR))
     }

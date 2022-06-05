@@ -16,6 +16,7 @@ class InvalidContactIdException(
         "but should be of type ${requiredType.java.simpleName}"
 )
 
+@Deprecated("Cannot be used in tests due to some unboxing issue")
 fun IContactBase.requireInternalId(): IContactIdInternal = id.let { contactId ->
     if (contactId !is IContactIdInternal) {
         throw InvalidContactIdException(requiredType = IContactIdInternal::class, actualType = id::class)

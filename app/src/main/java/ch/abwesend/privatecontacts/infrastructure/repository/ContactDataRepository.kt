@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.contact.requireInternalId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
@@ -43,18 +42,17 @@ class ContactDataRepository : RepositoryBase() {
                 .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
-    suspend fun createContactData(contact: IContact) =
+    suspend fun createContactData(contactId: IContactIdInternal, contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.map { contactData ->
-                contactData.toEntity(contact.requireInternalId())
+                contactData.toEntity(contactId)
             }
 
             database.contactDataDao().insertAll(contactData)
         }
 
-    suspend fun updateContactData(contact: IContact) =
+    suspend fun updateContactData(contactId: IContactIdInternal, contact: IContact) =
         withDatabase { database ->
-            val contactId = contact.requireInternalId()
             val contactData = contact.contactDataSet.filter { !it.isEmpty }
 
             val newData = contactData

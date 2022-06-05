@@ -124,11 +124,11 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         )
     }
 
-    override suspend fun createContact(contact: IContact): ContactSaveResult =
+    override suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult =
         try {
             withDatabase { database ->
-                database.contactDao().insert(contact.toEntity())
-                contactDataRepository.createContactData(contact)
+                database.contactDao().insert(contact.toEntity(contactId))
+                contactDataRepository.createContactData(contactId, contact)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -136,11 +136,11 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun updateContact(contact: IContact): ContactSaveResult =
+    override suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult =
         try {
             withDatabase { database ->
-                database.contactDao().update(contact.toEntity())
-                contactDataRepository.updateContactData(contact)
+                database.contactDao().update(contact.toEntity(contactId))
+                contactDataRepository.updateContactData(contactId, contact)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {

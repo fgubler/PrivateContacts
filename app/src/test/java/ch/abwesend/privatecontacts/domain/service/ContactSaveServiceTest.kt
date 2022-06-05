@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.F
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
+import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -69,28 +70,28 @@ class ContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create new contact`() {
-        val contact = someContactEditable(isNew = true)
+        val (contactId, contact) = someContactEditableWithId(isNew = true)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
-        coEvery { contactRepository.createContact(any()) } returns ContactSaveResult.Success
+        coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
 
         val result = runBlocking { underTest.saveContact(contact) }
 
         coVerify { validationService.validateContact(contact) }
-        coVerify { contactRepository.createContact(contact) }
+        coVerify { contactRepository.createContact(contactId, contact) }
         confirmVerified(contactRepository)
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
     @Test
     fun `should update existing contact`() {
-        val contact = someContactEditable(isNew = false)
+        val (contactId, contact) = someContactEditableWithId(isNew = false)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
-        coEvery { contactRepository.updateContact(any()) } returns ContactSaveResult.Success
+        coEvery { contactRepository.updateContact(any(), any()) } returns ContactSaveResult.Success
 
         val result = runBlocking { underTest.saveContact(contact) }
 
         coVerify { validationService.validateContact(contact) }
-        coVerify { contactRepository.updateContact(contact) }
+        coVerify { contactRepository.updateContact(contactId, contact) }
         confirmVerified(contactRepository)
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }

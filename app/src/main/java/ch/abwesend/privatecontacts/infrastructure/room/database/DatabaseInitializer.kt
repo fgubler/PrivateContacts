@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
@@ -29,7 +30,10 @@ class DatabaseInitializer {
         if (!hasData && BuildConfig.DEBUG) {
             logger.debug("Initializing database")
             val contactRepository: IContactRepository = getAnywhere()
-            dummyContacts.forEach { contactRepository.createContact(it) }
+            dummyContacts.forEach { contact ->
+                val contactId = (contact.id as? IContactIdInternal) ?: ContactIdInternal.randomId()
+                contactRepository.createContact(contactId, contact)
+            }
             logger.debug("Initialized database successfully")
         }
 

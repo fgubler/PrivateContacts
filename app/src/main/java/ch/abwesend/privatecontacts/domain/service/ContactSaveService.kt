@@ -32,9 +32,10 @@ class ContactSaveService {
         }
         sanitizingService.sanitizeContact(contact)
 
-        return if (contact.id is IContactIdInternal) {
-            if (contact.isNew) contactRepository.createContact(contact)
-            else contactRepository.updateContact(contact)
+        val contactId = contact.id
+        return if (contactId is IContactIdInternal) {
+            if (contact.isNew) contactRepository.createContact(contactId, contact)
+            else contactRepository.updateContact(contactId, contact)
         } else TODO("Saving android contacts is not yet implemented")
     }
 

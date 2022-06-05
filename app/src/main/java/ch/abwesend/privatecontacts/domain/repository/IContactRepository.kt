@@ -14,6 +14,10 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
+/**
+ * Methods demanding both a contactId and a contact are declared this way to
+ * restrict the type of the ID. The contact.id property will be ignored.
+ */
 interface IContactRepository {
     suspend fun loadContacts(): List<IContactBase>
 
@@ -26,7 +30,7 @@ interface IContactRepository {
     suspend fun findContactsWithNumberEndingOn(endOfPhoneNumber: String): List<ContactWithPhoneNumbers>
 
     suspend fun resolveContact(contactId: IContactIdInternal): IContact
-    suspend fun createContact(contact: IContact): ContactSaveResult
-    suspend fun updateContact(contact: IContact): ContactSaveResult
+    suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
+    suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactDeleteResult
 }

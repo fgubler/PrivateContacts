@@ -18,10 +18,12 @@ sealed interface IContactIdExternal : IContactId {
     val contactNo: Long
 }
 
-/** using value classes unfortunately breaks testing */
-data class ContactIdInternal(override val uuid: UUID) : IContactIdInternal {
+@JvmInline
+value class ContactIdInternal(override val uuid: UUID) : IContactIdInternal {
     companion object {
         fun randomId(): ContactIdInternal = ContactIdInternal(UUID.randomUUID())
     }
 }
-data class ContactIdAndroid(override val contactNo: Long) : IContactIdExternal
+
+@JvmInline
+value class ContactIdAndroid(override val contactNo: Long) : IContactIdExternal

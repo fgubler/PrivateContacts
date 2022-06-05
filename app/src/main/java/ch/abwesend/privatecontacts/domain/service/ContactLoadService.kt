@@ -16,8 +16,10 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
@@ -31,8 +33,12 @@ class ContactLoadService {
     fun searchSecretContacts(query: String): Flow<PagingData<IContactBase>> =
         contactPagerFactory.createSecretContactPager(ContactSearchConfig.Query(query)).searchContacts(query)
 
-    fun loadAllContacts(): Flow<PagingData<IContactBase>> =
-        contactPagerFactory.createAllContactPager(ContactSearchConfig.All).loadContacts()
+    fun loadAllContacts(): Flow<PagingData<IContactBase>> {
+        applicationScope.launch {
+            androidContactRepository.loadContacts() // TODO remove
+        }
+        return contactPagerFactory.createAllContactPager(ContactSearchConfig.All).loadContacts()
+    }
 
     fun searchAllContacts(query: String): Flow<PagingData<IContactBase>> =
         contactPagerFactory.createAllContactPager(ContactSearchConfig.Query(query)).searchContacts(query)
