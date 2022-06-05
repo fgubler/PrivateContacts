@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -35,6 +37,7 @@ import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 import ch.abwesend.privatecontacts.view.util.navigateToBrowser
 import ch.abwesend.privatecontacts.view.util.navigateToDial
 import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
@@ -44,6 +47,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToSms
 
 const val UTF_8 = "utf-8"
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
@@ -67,6 +71,7 @@ object ContactDetailScreenContent {
             categoryTitle = R.string.personal_information,
             icon = Icons.Default.Person,
             alignContentWithTitle = true,
+            modifier = Modifier.longClickForCopyToClipboard(contact.getFullName())
         ) {
             Row {
                 Column {
@@ -157,6 +162,7 @@ object ContactDetailScreenContent {
                 categoryTitle = R.string.notes,
                 icon = Icons.Default.SpeakerNotes,
                 alignContentWithTitle = false,
+                modifier = Modifier.longClickForCopyToClipboard(contact.notes),
             ) {
                 Text(text = contact.notes)
             }

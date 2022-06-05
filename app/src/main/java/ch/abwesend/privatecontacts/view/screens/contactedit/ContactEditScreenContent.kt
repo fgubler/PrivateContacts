@@ -34,6 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Sentences
+import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Words
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -165,7 +167,8 @@ object ContactEditScreenContent {
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
+                        imeAction = ImeAction.Next,
+                        capitalization = Words
                     ),
                     modifier = textFieldModifier,
                 )
@@ -178,6 +181,7 @@ object ContactEditScreenContent {
                     },
                     singleLine = true,
                     modifier = textFieldModifier,
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
                     keyboardActions = KeyboardActions(onDone = {
                         manager.closeKeyboardAndClearFocus()
                     }),
@@ -228,6 +232,7 @@ object ContactEditScreenContent {
                 },
                 singleLine = false,
                 maxLines = 10,
+                keyboardOptions = KeyboardOptions.Default.copy(capitalization = Sentences),
                 modifier = Modifier
                     .heightIn(min = 100.dp)
                     .fillMaxWidth()

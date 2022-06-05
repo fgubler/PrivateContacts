@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -50,8 +51,8 @@ import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
