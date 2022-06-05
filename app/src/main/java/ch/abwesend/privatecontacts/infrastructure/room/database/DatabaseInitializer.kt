@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
@@ -42,7 +42,7 @@ class DatabaseInitializer {
     private val dummyContacts
         get() = mutableListOf(
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "Darth",
                 lastName = "Vader",
                 nickname = "Darthy",
@@ -51,7 +51,7 @@ class DatabaseInitializer {
                 contactDataSet = mutableListOf(),
             ),
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "Luke",
                 lastName = "Skywalker",
                 nickname = "Lucky Luke",
@@ -93,7 +93,7 @@ class DatabaseInitializer {
                 ),
             ),
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "Obi-Wan",
                 lastName = "Kenobi",
                 nickname = "Obi",
@@ -119,7 +119,7 @@ class DatabaseInitializer {
                 ),
             ),
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "Yoda",
                 lastName = "",
                 nickname = "Yo-Da",

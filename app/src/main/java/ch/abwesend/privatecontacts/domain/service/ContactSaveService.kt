@@ -6,9 +6,12 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.IContactId
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -29,13 +32,29 @@ class ContactSaveService {
         }
         sanitizingService.sanitizeContact(contact)
 
-        return if (contact.isNew) contactRepository.createContact(contact)
-        else contactRepository.updateContact(contact)
+        return if (contact.id is IContactIdInternal) {
+            if (contact.isNew) contactRepository.createContact(contact)
+            else contactRepository.updateContact(contact)
+        } else TODO("Saving android contacts is not yet implemented")
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
         deleteContacts(setOf(contact.id))
 
-    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactDeleteResult =
-        contactRepository.deleteContacts(contactIds)
+    suspend fun deleteContacts(contactIds: Set<IContactId>): ContactDeleteResult {
+        val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>()
+        val externalContactIds = contactIds.filterIsInstance<IContactIdExternal>()
+
+        val internalResult = if (internalContactIds.isNotEmpty()) {
+            contactRepository.deleteContacts(internalContactIds)
+        } else ContactDeleteResult.Inactive
+
+        val externalResult = if (externalContactIds.isNotEmpty()) {
+            logger.warning("Tried to delete android contacts but that is not yet supported")
+            ContactDeleteResult.Failure(emptyList())
+            // TODO implement
+        } else ContactDeleteResult.Inactive
+
+        return internalResult.combine(externalResult)
+    }
 }

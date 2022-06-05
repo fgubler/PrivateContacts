@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.items
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.theme.selectedElement
@@ -44,7 +44,7 @@ private const val EASTER_EGG_LOVE = "love"
 @Composable
 fun ContactList(
     pagedContacts: LazyPagingItems<IContactBase>,
-    selectedContacts: Set<ContactId>,
+    selectedContacts: Set<IContactId>,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
@@ -69,7 +69,7 @@ private fun NoResults() {
 @Composable
 private fun ListOfContacts(
     pagedContacts: LazyPagingItems<IContactBase>,
-    selectedContacts: Set<ContactId>,
+    selectedContacts: Set<IContactId>,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {

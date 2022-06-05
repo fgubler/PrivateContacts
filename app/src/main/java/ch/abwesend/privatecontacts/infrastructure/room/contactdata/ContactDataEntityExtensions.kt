@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
 
@@ -14,12 +14,12 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDa
  * If this produces a build-error "when needs to be exhaustive", although it is exhaustive,
  * just run "clean", then it should work
  */
-fun ContactData.toEntity(contactId: ContactId): ContactDataEntity =
+fun ContactData.toEntity(contactId: IContactIdInternal): ContactDataEntity =
     when (this) {
         is StringBasedContactDataSimple -> stringBasedToEntity(contactId)
     }
 
-private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: ContactId) =
+private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: IContactIdInternal) =
     ContactDataEntity(
         id = id.uuid,
         contactId = contactId.uuid,

@@ -10,7 +10,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import java.util.UUID
 
@@ -24,5 +24,5 @@ data class ContactEntity(
     val notes: String,
     var fullTextSearch: String, // column optimized for full-text search
 ) {
-    @Ignore val id: ContactId = ContactId(rawId)
+    @Ignore val id: ContactIdInternal = ContactIdInternal(rawId)
 }

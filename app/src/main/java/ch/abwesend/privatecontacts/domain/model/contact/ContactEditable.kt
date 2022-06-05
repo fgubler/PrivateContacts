@@ -21,7 +21,7 @@ interface IContactEditable : IContact {
 }
 
 data class ContactEditable(
-    override val id: ContactId,
+    override val id: IContactId,
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,
@@ -36,7 +36,7 @@ data class ContactEditable(
     companion object {
         fun createNew(): ContactEditable =
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "",
                 lastName = "",
                 nickname = "",

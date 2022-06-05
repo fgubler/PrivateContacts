@@ -15,8 +15,8 @@ import androidx.paging.PagingData
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -60,7 +60,7 @@ class ContactListViewModel : ViewModel() {
             updateScreenState()
         }
 
-    private var bulkModeSelectedContacts: Set<ContactId> = emptySet()
+    private var bulkModeSelectedContacts: Set<IContactId> = emptySet()
         set(value) {
             field = value
             updateScreenState()
@@ -181,7 +181,7 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
-    fun deleteContacts(contactIds: Set<ContactId>) {
+    fun deleteContacts(contactIds: Set<IContactId>) {
         viewModelScope.launch {
             val result = saveService.deleteContacts(contactIds)
             _deleteResult.emit(result)

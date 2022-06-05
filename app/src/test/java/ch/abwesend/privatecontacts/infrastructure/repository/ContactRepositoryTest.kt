@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
@@ -16,7 +16,6 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactEntity
@@ -125,50 +124,50 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `deleting a contact should delete it`() {
-        val contact = someContactEditable()
+        val contactId = someContactId()
         coEvery { contactDao.delete(ofType<Collection<UUID>>()) } just runs
 
-        val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
+        val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
-        coVerify { contactDao.delete(listOf(contact.id.uuid)) }
+        coVerify { contactDao.delete(listOf(contactId.uuid)) }
         assertThat(result).isEqualTo(ContactDeleteResult.Success)
     }
 
     @Test
     fun `an exception during deletion should return an Error-Result`() {
-        val contact = someContactEditable()
+        val contactId = someContactId()
         coEvery { contactDao.delete(ofType<UUID>()) } throws RuntimeException("Test")
 
-        val result = runBlocking { underTest.deleteContacts(listOf(contact.id)) }
+        val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
         assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNKNOWN_ERROR))
     }
 
     @Test
     fun `resolving a contact should load the contact-data`() {
-        val contact = someContactBase()
+        val contactId = someContactId()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id.uuid),
-            someContactDataEntity(contactId = contact.id.uuid),
+            someContactDataEntity(contactId = contactId.uuid),
+            someContactDataEntity(contactId = contactId.uuid),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
-        runBlocking { underTest.resolveContact(contact) }
+        runBlocking { underTest.resolveContact(contactId) }
 
-        coVerify { contactDataRepository.loadContactData(contact) }
+        coVerify { contactDataRepository.loadContactData(contactId) }
     }
 
     @Test
     fun `resolving a contact should also re-load the base-data from the database`() {
-        val contact = someContactBase(firstName = "John")
+        val contactId = someContactId()
         val contactEntity = someContactEntity(firstName = "Jack")
         coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
         coEvery { contactDao.findById(any()) } returns contactEntity
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
-        val result = runBlocking { underTest.resolveContact(contact) }
+        val result = runBlocking { underTest.resolveContact(contactId) }
 
         assertThat(result.firstName).isEqualTo(contactEntity.firstName)
         assertThat(result.lastName).isEqualTo(contactEntity.lastName)
@@ -179,18 +178,18 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `resolving a contact should try to resolve phone-numbers`() {
-        val contact = someContactBase()
+        val contactId = someContactId()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id.uuid, category = PHONE_NUMBER),
-            someContactDataEntity(contactId = contact.id.uuid, category = PHONE_NUMBER),
+            someContactDataEntity(contactId = contactId.uuid, category = PHONE_NUMBER),
+            someContactDataEntity(contactId = contactId.uuid, category = PHONE_NUMBER),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
-        runBlocking { underTest.resolveContact(contact) }
+        runBlocking { underTest.resolveContact(contactId) }
 
-        coVerify { contactDataRepository.loadContactData(contact) }
+        coVerify { contactDataRepository.loadContactData(contactId) }
         contactData.forEach {
             coVerify { contactDataRepository.tryResolveContactData(it) }
         }
@@ -198,18 +197,18 @@ class ContactRepositoryTest : TestBase() {
 
     @Test
     fun `resolving a contact should try to resolve email-addresses`() {
-        val contact = someContactBase()
+        val contactId = someContactId()
         val contactData = listOf(
-            someContactDataEntity(contactId = contact.id.uuid, category = EMAIL),
-            someContactDataEntity(contactId = contact.id.uuid, category = EMAIL),
+            someContactDataEntity(contactId = contactId.uuid, category = EMAIL),
+            someContactDataEntity(contactId = contactId.uuid, category = EMAIL),
         )
         coEvery { contactDataRepository.loadContactData(any()) } returns contactData
         coEvery { contactDao.findById(any()) } returns someContactEntity()
         every { contactDataRepository.tryResolveContactData(any()) } returns null
 
-        runBlocking { underTest.resolveContact(contact) }
+        runBlocking { underTest.resolveContact(contactId) }
 
-        coVerify { contactDataRepository.loadContactData(contact) }
+        coVerify { contactDataRepository.loadContactData(contactId) }
         contactData.forEach {
             coVerify { contactDataRepository.tryResolveContactData(it) }
         }
@@ -230,7 +229,7 @@ class ContactRepositoryTest : TestBase() {
             )
         )
         coEvery { contactDao.findByIds(any()) } answers {
-            firstArg<List<UUID>>().map { someContactEntity(id = ContactId(it)) }
+            firstArg<List<UUID>>().map { someContactEntity(id = ContactIdInternal(it)) }
         }
         coEvery { contactDataRepository.findPhoneNumbersEndingOn(any()) } returns contactData
 

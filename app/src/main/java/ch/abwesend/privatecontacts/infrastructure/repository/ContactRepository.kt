@@ -8,11 +8,10 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.uuid
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -56,7 +55,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         result
     }
 
-    override suspend fun findContactsWithNumberEndingOn(endOfPhoneNumber: String): List<ContactWithPhoneNumbers> {
+    override suspend fun findContactsWithNumberEndingOn(
+        endOfPhoneNumber: String
+    ): List<ContactWithPhoneNumbers> {
         val contactData = contactDataRepository.findPhoneNumbersEndingOn(endOfPhoneNumber)
         return withDatabase { database ->
             val contactIds = contactData.keys.map { it.uuid }
@@ -103,12 +104,12 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }.map { it.toContactBase() }
     }
 
-    override suspend fun resolveContact(contact: IContactBase): IContact {
+    override suspend fun resolveContact(contactId: IContactIdInternal): IContact {
         val contactEntity = withDatabase { database ->
-            database.contactDao().findById(contact.uuid)
-        } ?: throw IllegalArgumentException("Contact $contact not found in database")
+            database.contactDao().findById(contactId.uuid)
+        } ?: throw IllegalArgumentException("Contact $contactId not found in database")
 
-        val contactData = contactDataRepository.loadContactData(contact)
+        val contactData = contactDataRepository.loadContactData(contactId)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
 
         return ContactEditable(
@@ -147,7 +148,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun deleteContacts(contactIds: Collection<ContactId>): ContactDeleteResult {
+    override suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactDeleteResult {
         val results = bulkOperation(contactIds) { database, chunkedContactIds ->
             try {
                 database.contactDao().delete(contactIds = chunkedContactIds.map { it.uuid })

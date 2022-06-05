@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -17,10 +17,10 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
-fun someContactId(): ContactId = ContactId.randomId()
+fun someContactId(): ContactIdInternal = ContactIdInternal.randomId()
 
 fun someContactBase(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     type: ContactType = SECRET,
@@ -32,7 +32,7 @@ fun someContactBase(
 )
 
 fun someContactEntity(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -50,7 +50,7 @@ fun someContactEntity(
 )
 
 fun someContactEditable(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -70,7 +70,7 @@ fun someContactEditable(
 )
 
 fun someTestContact(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",

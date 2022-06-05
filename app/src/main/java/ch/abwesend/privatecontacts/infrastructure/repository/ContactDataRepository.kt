@@ -11,9 +11,10 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.requireInternalId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
@@ -28,24 +29,24 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 
 class ContactDataRepository : RepositoryBase() {
-    suspend fun loadContactData(contact: IContactBase): List<ContactDataEntity> =
+    suspend fun loadContactData(contactId: IContactIdInternal): List<ContactDataEntity> =
         withDatabase { database ->
-            database.contactDataDao().getDataForContact(contact.id.uuid)
+            database.contactDataDao().getDataForContact(contactId.uuid)
         }
 
-    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): Map<ContactId, List<PhoneNumberValue>> =
+    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): Map<ContactIdInternal, List<PhoneNumberValue>> =
         withDatabase { database ->
             val data = database.contactDataDao().findPhoneNumbersEndingOn(endOfPhoneNumber)
             data
                 .groupBy { it.contactId }
-                .mapKeys { ContactId(it.key) }
+                .mapKeys { ContactIdInternal(it.key) }
                 .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
     suspend fun createContactData(contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.map { contactData ->
-                contactData.toEntity(contact.id)
+                contactData.toEntity(contact.requireInternalId())
             }
 
             database.contactDataDao().insertAll(contactData)
@@ -53,17 +54,18 @@ class ContactDataRepository : RepositoryBase() {
 
     suspend fun updateContactData(contact: IContact) =
         withDatabase { database ->
+            val contactId = contact.requireInternalId()
             val contactData = contact.contactDataSet.filter { !it.isEmpty }
 
             val newData = contactData
                 .filter { it.modelStatus == NEW }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
             val changedData = contactData
                 .filter { it.modelStatus == CHANGED }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
             val deletedData = contactData
                 .filter { it.modelStatus == DELETED }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
 
             database.contactDataDao().insertAll(newData)
             database.contactDataDao().updateAll(changedData)
@@ -123,9 +125,9 @@ class ContactDataRepository : RepositoryBase() {
         null
     }
 
-    suspend fun deleteContactData(contact: IContactBase) = deleteContactData(listOf(contact.id))
+    suspend fun deleteContactData(contactId: IContactIdInternal) = deleteContactData(listOf(contactId))
 
-    suspend fun deleteContactData(contactIds: Collection<ContactId>) = withDatabase { database ->
+    suspend fun deleteContactData(contactIds: Collection<IContactIdInternal>) = withDatabase { database ->
         val dataToDelete = database.contactDataDao().getDataForContacts(contactIds.map { it.uuid })
         database.contactDataDao().deleteAll(dataToDelete)
     }
