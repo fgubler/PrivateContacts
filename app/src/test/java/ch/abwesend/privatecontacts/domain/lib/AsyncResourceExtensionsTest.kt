@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.lib
 
+import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
@@ -15,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.emitError
 import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
 import ch.abwesend.privatecontacts.domain.lib.flow.emitLoading
 import ch.abwesend.privatecontacts.domain.lib.flow.emitReady
+import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.testutil.TestBase
 import io.mockk.coEvery
@@ -22,7 +24,10 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -98,5 +103,23 @@ class AsyncResourceExtensionsTest : TestBase() {
         coVerify(exactly = 1) { flow.emit(ErrorResource(listOf(error))) }
         confirmVerified(flow)
         assertThat(result).isNull()
+    }
+
+    @Test
+    fun `toResourceFlow should first emit Loading and then ready with the values of the inner flow`() {
+        val values = (1..5).toList()
+        val innerFlow = flow {
+            values.forEach { emit(it) }
+        }
+        val underTest = innerFlow.toResourceFlow()
+        val collector = mockk<suspend (AsyncResource<Int>) -> Unit>(relaxed = true)
+
+        runBlocking { underTest.collect { collector(it) } }
+
+        coVerify(exactly = 1) { collector.invoke(ofType<LoadingResource<Int>>()) }
+        values.forEach {
+            coVerify(exactly = 1) { collector.invoke(ReadyResource(it)) }
+        }
+        confirmVerified(collector)
     }
 }

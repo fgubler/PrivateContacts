@@ -43,7 +43,7 @@ fun <T> AsyncResource<T>.composeIfLoading(handler: @Composable () -> Unit): Asyn
 }
 
 @Composable
-fun <T> AsyncResource<T>.composeIfError(handler: @Composable (List<Exception>) -> Unit): AsyncResource<T> {
+fun <T> AsyncResource<T>.composeIfError(handler: @Composable (List<Throwable>) -> Unit): AsyncResource<T> {
     (this as? ErrorResource)?.let { handler(it.errors) }
     return this
 }

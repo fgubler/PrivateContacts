@@ -15,7 +15,7 @@ sealed class AsyncResourceGeneric<TValue, TError> {
     open fun ifInactive(handler: InactiveHandler): AsyncResourceGeneric<TValue, TError> = this
 }
 
-typealias AsyncResource<TValue> = AsyncResourceGeneric<TValue, Exception>
+typealias AsyncResource<TValue> = AsyncResourceGeneric<TValue, Throwable>
 
 data class ReadyResource<T>(val value: T) : AsyncResource<T>() {
     override val valueOrNull = value
@@ -33,9 +33,9 @@ class LoadingResource<T> : AsyncResource<T>() {
     }
 }
 
-data class ErrorResource<T>(val errors: List<Exception>) : AsyncResource<T>() {
+data class ErrorResource<T>(val errors: List<Throwable>) : AsyncResource<T>() {
     override val valueOrNull: T? = null
-    override fun ifError(handler: ErrorHandlerGeneric<Exception>): ErrorResource<T> {
+    override fun ifError(handler: ErrorHandlerGeneric<Throwable>): ErrorResource<T> {
         handler(errors)
         return this
     }
@@ -61,4 +61,4 @@ fun interface InactiveHandler {
 fun interface ErrorHandlerGeneric<TError> {
     operator fun invoke(errors: List<TError>)
 }
-typealias ErrorHandler = ErrorHandlerGeneric<Exception>
+typealias ErrorHandler = ErrorHandlerGeneric<Throwable>
