@@ -19,13 +19,17 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
-import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
+import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
+import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
+import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
@@ -38,8 +42,6 @@ import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
-import ch.abwesend.privatecontacts.view.util.isError
-import ch.abwesend.privatecontacts.view.util.isLoading
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -52,6 +54,10 @@ object ContactListScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val scaffoldState = rememberScaffoldState()
+
+        LaunchedEffect(Unit) {
+            screenContext.contactListViewModel.reloadContacts()
+        }
 
         BaseScreen(
             screenContext = screenContext,
@@ -109,27 +115,27 @@ object ContactListScreen {
     @Composable
     private fun ContactListContent(screenContext: ScreenContext) {
         val viewModel = screenContext.contactListViewModel
-        val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
+        val contactsResource = viewModel.contacts.collectAsState(initial = InactiveResource()).value
 
         val screenState = viewModel.screenState.value
         val bulkMode = screenState is ContactListScreenState.BulkMode
         val selectedContacts = (screenState as? ContactListScreenState.BulkMode)
             ?.selectedContacts.orEmpty()
 
-        when {
-            pagedContacts.isError -> LoadingError(viewModel)
-            pagedContacts.isLoading -> ContactLoadingIndicator()
-            else -> {
-                if (pagedContacts.itemCount > 0 || viewModel.initialEmptyContactsIgnored) {
-                    ContactList(
-                        pagedContacts = pagedContacts,
-                        selectedContacts = selectedContacts,
-                        onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
-                        onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
-                    )
-                } else ContactLoadingIndicator()
-                viewModel.initialEmptyContactsIgnored = true
-            }
+        val showContactList: @Composable (contacts: List<IContactBase>) -> Unit = { contacts ->
+            ContactList(
+                contacts = contacts,
+                selectedContacts = selectedContacts,
+                onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
+                onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
+            )
+        }
+
+        when (contactsResource) {
+            is ErrorResource -> LoadingError(viewModel)
+            is LoadingResource -> ContactLoadingIndicator()
+            is InactiveResource -> showContactList(emptyList())
+            is ReadyResource -> showContactList(contactsResource.value)
         }
 
         val deletionErrors = viewModel.deleteResult

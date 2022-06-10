@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.room.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -16,10 +17,12 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEn
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Database(
-    version = 18,
+    version = 19,
     exportSchema = true,
     entities = [ContactEntity::class, ContactDataEntity::class],
-    autoMigrations = []
+    autoMigrations = [
+        AutoMigration(from = 18, to = 19)
+    ]
 )
 @TypeConverters(AppTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {

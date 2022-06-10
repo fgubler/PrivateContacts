@@ -10,7 +10,7 @@ import androidx.paging.Pager
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
+@Deprecated(PAGING_DEPRECATION)
 interface ContactPagerFactory {
-    fun createSecretContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
-    fun createAllContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
+    fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase>
 }

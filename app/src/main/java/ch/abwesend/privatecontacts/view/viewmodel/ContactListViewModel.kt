@@ -11,9 +11,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
+import ch.abwesend.privatecontacts.domain.lib.flow.MutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactId
@@ -31,15 +35,13 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_C
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 
 class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
-
-    /** initially, the contacts are always returned to be empty before loading-state starts */
-    var initialEmptyContactsIgnored: Boolean = false
 
     private var showSearch: Boolean = false
         set(value) {
@@ -79,7 +81,10 @@ class ContactListViewModel : ViewModel() {
             debounceMs = 300,
         ) { query ->
             currentFilter = query.ifEmpty { null }
-            _contacts.value = searchContacts(query)
+            viewModelScope.launch {
+                val contactsFlow = searchContacts(query)
+                _contacts.emitAll(contactsFlow)
+            }
         }
     }
 
@@ -89,10 +94,9 @@ class ContactListViewModel : ViewModel() {
     /**
      * The [State] is necessary to make sure the view is updated on [reloadContacts]
      */
-    private val _contacts: MutableState<Flow<PagingData<IContactBase>>> by lazy {
-        mutableStateOf(loadContacts())
-    }
-    val contacts: State<Flow<PagingData<IContactBase>>> = _contacts
+    private val _contacts: MutableResourceStateFlow<List<IContactBase>> =
+        mutableResourceStateFlow(InactiveResource())
+    val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
     private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
     val deleteResult: Flow<ContactDeleteResult> = _deleteResult
@@ -106,23 +110,24 @@ class ContactListViewModel : ViewModel() {
         if (resetSearch) {
             resetSearch()
         }
-        _contacts.value = currentFilter?.let { searchContacts(it) } ?: loadContacts()
+        viewModelScope.launch {
+            val contactsFlow = currentFilter?.let { searchContacts(it) } ?: loadContacts()
+            _contacts.emitAll(contactsFlow)
+        }
     }
 
-    /** beware: do not cache the result(when returning from detail-screen we want to reload) */
-    private fun loadContacts(): Flow<PagingData<IContactBase>> {
+    /** beware: do not cache the result (when returning from detail-screen we want to reload) */
+    private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> {
         logger.debug("Loading contacts")
-        initialEmptyContactsIgnored = false
         return when (selectedTab.value) {
             SECRET_CONTACTS -> loadService.loadSecretContacts()
             ALL_CONTACTS -> loadService.loadAllContacts()
         }
     }
 
-    /** beware: do not cache the result(when returning from detail-screen we want to reload) */
-    private fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+    /** beware: do not cache the result (when returning from detail-screen we want to reload) */
+    private suspend fun searchContacts(query: String): ResourceFlow<List<IContactBase>> {
         logger.debug("Searching contacts with query '$query'")
-        initialEmptyContactsIgnored = false
         return when (selectedTab.value) {
             SECRET_CONTACTS -> loadService.searchSecretContacts(query)
             ALL_CONTACTS -> loadService.searchAllContacts(query)

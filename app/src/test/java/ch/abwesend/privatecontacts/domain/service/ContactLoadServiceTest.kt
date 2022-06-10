@@ -50,7 +50,7 @@ class ContactLoadServiceTest : TestBase() {
     fun `search should check for easter eggs`() {
         val query = "Test"
         val pager = mockk<Pager<Int, IContactBase>>(relaxed = true)
-        every { pagerFactory.createSecretContactPager(any()) } returns pager
+        every { pagerFactory.createContactPager(any()) } returns pager
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
         underTest.searchSecretContacts(query)
@@ -62,13 +62,13 @@ class ContactLoadServiceTest : TestBase() {
     fun `search should pass the query to the paging logic`() {
         val query = "Test"
         val pager = mockk<Pager<Int, IContactBase>>(relaxed = true)
-        every { pagerFactory.createSecretContactPager(any()) } returns pager
+        every { pagerFactory.createContactPager(any()) } returns pager
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
         underTest.searchSecretContacts(query)
 
         verify { easterEggService.checkSearchForEasterEggs(query) }
-        verify { pagerFactory.createSecretContactPager(ContactSearchConfig.Query(query)) }
+        verify { pagerFactory.createContactPager(ContactSearchConfig.Query(query)) }
         verify { pager.flow }
     }
 }

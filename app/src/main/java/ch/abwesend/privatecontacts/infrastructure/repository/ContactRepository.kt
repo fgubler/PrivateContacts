@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
@@ -17,24 +19,39 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.repository.PAGING_DEPRECATION
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toContactBase
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
+import kotlinx.coroutines.flow.map
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
-    override suspend fun loadContacts(): List<IContactBase> =
+    override suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         withDatabase { database ->
-            database.contactDao().getAll()
-                .map { it.toContactBase() }
-                .also { logger.info("Loaded ${it.size} contacts") }
+            val dataFlow = when (searchConfig) {
+                is ContactSearchConfig.All -> database.contactDao().getAllAsFlow()
+                is ContactSearchConfig.Query -> {
+                    val phoneNumberQuery = searchService.prepareQueryForPhoneNumberSearch(searchConfig.query)
+                        .takeIf { searchService.isLongEnough(it) }.orEmpty()
+                    database.contactDao().searchAsFlow(query = searchConfig.query, phoneNumberQuery = phoneNumberQuery)
+                }
+            }
+
+            val resultFlow = dataFlow.map { entities ->
+                entities.map { it.toContactBase() }
+                    .also { logger.info("Loaded ${it.size} contacts") }
+            }
+
+            resultFlow.toResourceFlow()
         }
 
+    @Deprecated(PAGING_DEPRECATION)
     override suspend fun getContactsPaged(
         searchConfig: ContactSearchConfig,
         loadSize: Int,

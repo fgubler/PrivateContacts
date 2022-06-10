@@ -15,9 +15,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.repository.PAGING_DEPRECATION
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import java.lang.Exception
 
+@Suppress("DEPRECATION")
+@Deprecated(PAGING_DEPRECATION)
 class ContactPagingSource(
     private val searchConfig: ContactSearchConfig
 ) : PagingSource<Int, IContactBase>() {
@@ -58,7 +60,7 @@ class ContactPagingSource(
     companion object : ContactPagerFactory {
         private const val PAGE_SIZE = 50
 
-        override fun createSecretContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> =
+        override fun createContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> =
             Pager(
                 PagingConfig(
                     pageSize = PAGE_SIZE,
@@ -66,10 +68,5 @@ class ContactPagingSource(
                 ),
                 pagingSourceFactory = { ContactPagingSource(searchConfig) }
             )
-
-        override fun createAllContactPager(searchConfig: ContactSearchConfig): Pager<Int, IContactBase> {
-            // TODO implement
-            return createSecretContactPager(searchConfig)
-        }
     }
 }
