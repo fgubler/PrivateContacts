@@ -28,7 +28,7 @@ class ContactLoadService {
 
     suspend fun searchSecretContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
-        return if (query.isEmpty()) contactRepository.getContactsAsFlow(ContactSearchConfig.All)
+        return if (query.isEmpty()) loadSecretContacts()
         else contactRepository.getContactsAsFlow(ContactSearchConfig.Query(query))
     }
 

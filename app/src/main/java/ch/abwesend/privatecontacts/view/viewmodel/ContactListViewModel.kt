@@ -34,6 +34,7 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
@@ -73,6 +74,7 @@ class ContactListViewModel : ViewModel() {
 
     /** the currently applied search-filter for the list */
     private var currentFilter: String? = null
+    private var contactLoadingJob: Job? = null
 
     @FlowPreview
     private val searchQueryDebouncer by lazy {
@@ -81,10 +83,7 @@ class ContactListViewModel : ViewModel() {
             debounceMs = 300,
         ) { query ->
             currentFilter = query.ifEmpty { null }
-            viewModelScope.launch {
-                val contactsFlow = searchContacts(query)
-                _contacts.emitAll(contactsFlow)
-            }
+            reloadContacts()
         }
     }
 
@@ -110,7 +109,10 @@ class ContactListViewModel : ViewModel() {
         if (resetSearch) {
             resetSearch()
         }
-        viewModelScope.launch {
+        contactLoadingJob?.cancel()?.also {
+            logger.debug("Cancelling loading-job to reload")
+        }
+        contactLoadingJob = viewModelScope.launch {
             val contactsFlow = currentFilter?.let { searchContacts(it) } ?: loadContacts()
             _contacts.emitAll(contactsFlow)
         }
