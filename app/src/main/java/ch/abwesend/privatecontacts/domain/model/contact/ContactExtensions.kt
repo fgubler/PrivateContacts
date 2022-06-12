@@ -28,3 +28,6 @@ fun IContact.toContactEditable(): ContactEditable =
         notes = notes,
         contactDataSet = contactDataSet.toMutableList(),
     )
+
+val IContactBase.isExternal: Boolean
+    get() = id is IContactIdExternal

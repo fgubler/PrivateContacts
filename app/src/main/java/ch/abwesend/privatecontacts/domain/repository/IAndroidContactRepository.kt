@@ -6,8 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.repository
 
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 
 interface IAndroidContactRepository {
-    suspend fun loadContacts(): List<IContactBase>
+    suspend fun loadContactsAsFlow(): ResourceFlow<List<IContactBase>>
 }
