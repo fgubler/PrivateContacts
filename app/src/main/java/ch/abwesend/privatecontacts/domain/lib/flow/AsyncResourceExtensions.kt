@@ -7,55 +7,50 @@
 package ch.abwesend.privatecontacts.domain.lib.flow
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
-typealias ResourceFlow<T> = Flow<AsyncResource<T>>
-typealias ResourceFlowCollector<T> = FlowCollector<AsyncResource<T>>
-typealias ResourceStateFlow<T> = StateFlow<AsyncResource<T>>
-typealias MutableResourceStateFlow<T> = MutableStateFlow<AsyncResource<T>>
+/** the lower the index, the higher the priority */
+private val resourcePriorities = listOf(
+    ErrorResource::class,
+    LoadingResource::class,
+    InactiveResource::class,
+    ReadyResource::class, // ReadyResource should ALWAYS have the lowest priority
+)
 
-fun <T> mutableResourceStateFlow(
-    initialValue: AsyncResource<T> = InactiveResource()
-): MutableResourceStateFlow<T> = MutableStateFlow(initialValue)
+/**
+ * Combines the two resources according to their priorities.
+ * [mapperForReadyValues] is only applied if both resources are [ReadyResource].
+ */
+fun <TThis, TOther, TResult> AsyncResource<TThis>.combineWith(
+    other: AsyncResource<TOther>,
+    mapperForReadyValues: (TThis, TOther) -> TResult,
+): AsyncResource<TResult> {
+    val thisPriority = resourcePriorities.indexOf(this::class)
+    val otherPriority = resourcePriorities.indexOf(other::class)
+    val otherIsMoreImportant = otherPriority < thisPriority // low index means high priority
 
-suspend fun <T> ResourceFlowCollector<T>.emitLoading() = emit(LoadingResource())
-suspend fun <T> ResourceFlowCollector<T>.emitReady(value: T) = emit(ReadyResource(value))
-suspend fun <T> ResourceFlowCollector<T>.emitError(error: Throwable) = emit(ErrorResource(listOf(error)))
-suspend fun <T> ResourceFlowCollector<T>.emitInactive() = emit(InactiveResource())
-
-suspend fun <T> MutableResourceStateFlow<T>.withLoadingState(loader: suspend () -> T): T? =
-    try {
-        emitLoading()
-        val result = loader()
-        emitReady(result)
-        result
-    } catch (e: Exception) {
-        emitError(e)
-        logger.error("Failed to load data", e)
-        null
-    }
-
-@Suppress("USELESS_CAST") // it is actually needed
-fun <T> Flow<T>.toResourceFlow(): ResourceFlow<T> = flow {
-    try {
-        emitLoading()
-
-        val innerFlow: Flow<AsyncResource<T>> = map { ReadyResource(it) as AsyncResource<T> }
-            .catch { t ->
-                logger.error("Error in inner flow while transforming to ResourceStateFlow", t)
-                emit(ErrorResource(listOf(t)))
+    return if (otherIsMoreImportant) {
+        other.combineWith(this) { first, second -> mapperForReadyValues(second, first) }
+    } else {
+        when (this) {
+            is ErrorResource -> {
+                val otherErrors = (other as? ErrorResource)?.errors.orEmpty()
+                ErrorResource(errors + otherErrors)
             }
-
-        emitAll(innerFlow)
-    } catch (e: Exception) {
-        emitError(e)
-        logger.error("Failed to transform Flow to ResourceFlow", e)
+            is LoadingResource -> LoadingResource()
+            is InactiveResource -> InactiveResource()
+            is ReadyResource -> {
+                val otherValue = (other as? ReadyResource)?.value
+                otherValue
+                    ?.let { ReadyResource(mapperForReadyValues(value, otherValue)) }
+                    ?: handleReadyResourceCombineError(other)
+            }
+        }
     }
+}
+
+private fun <S, T> handleReadyResourceCombineError(other: AsyncResource<T>): AsyncResource<S> {
+    val error = IllegalStateException(
+        "Invalid state: other should be ReadyResource but is ${other::class.java.simpleName} instead"
+    ).also { other.logger.error(it) }
+    return ErrorResource(listOf(error))
 }
