@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlin.system.measureTimeMillis
 import com.alexstyl.contactstore.Contact as AndroidContact
 
 /**
@@ -53,10 +54,11 @@ class AndroidContactRepository : IAndroidContactRepository {
     private var allContactsCached: List<IContactBase>? = null
 
     override suspend fun loadContactsAsFlow(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow {
-        val contacts = allContactsCached.takeIf { !reloadCache }
-            ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
-
-        emit(contacts.orEmpty())
+        measureTimeMillis {
+            val contacts = allContactsCached.takeIf { !reloadCache }
+                ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
+            emit(contacts.orEmpty())
+        }.also { duration -> logger.debug("Loaded android contacts in $duration ms") }
     }.toResourceFlow()
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
@@ -79,7 +81,7 @@ class AndroidContactRepository : IAndroidContactRepository {
         val androidContacts = contactStore.fetchContacts(columnsToFetch = listOf(ContactColumn.Names)).asFlow()
 
         val contacts = androidContacts.map { contacts ->
-            logger.debug("Loaded ${contacts.size} android contacts: $androidContacts")
+            logger.debug("Loaded ${contacts.size} android contacts")
             contacts.mapNotNull { it.toContactBase() }
                 .filter { validationService.validateContactBase(it).valid }
         }
