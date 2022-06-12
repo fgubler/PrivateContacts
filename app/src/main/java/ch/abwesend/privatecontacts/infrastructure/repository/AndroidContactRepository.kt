@@ -53,7 +53,7 @@ class AndroidContactRepository : IAndroidContactRepository {
     private var allContactsCached: List<IContactBase>? = null
 
     override suspend fun loadContactsAsFlow(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow {
-        val contacts = allContactsCached.takeIf { reloadCache }
+        val contacts = allContactsCached.takeIf { !reloadCache }
             ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
 
         emit(contacts.orEmpty())
