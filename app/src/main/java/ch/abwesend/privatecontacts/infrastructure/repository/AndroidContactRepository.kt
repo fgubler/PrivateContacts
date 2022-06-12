@@ -52,8 +52,10 @@ class AndroidContactRepository : IAndroidContactRepository {
     // TODO re-think this. This only works while the user cannot change android contacts.
     private var allContactsCached: List<IContactBase>? = null
 
-    override suspend fun loadContactsAsFlow(): ResourceFlow<List<IContactBase>> = flow {
-        val contacts = allContactsCached ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
+    override suspend fun loadContactsAsFlow(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow {
+        val contacts = allContactsCached.takeIf { reloadCache }
+            ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
+
         emit(contacts.orEmpty())
     }.toResourceFlow()
 
