@@ -134,7 +134,8 @@ private fun Contact(
             Icon(
                 imageVector = contact.type.icon,
                 contentDescription = stringResource(id = contact.type.label),
-                modifier = Modifier.padding(start = 5.dp, end = 20.dp)
+                modifier = Modifier.padding(start = 5.dp, end = 20.dp),
+                tint = contact.type.color,
             )
         }
         Text(text = name)
