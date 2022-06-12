@@ -79,8 +79,10 @@ object SettingsScreen {
                 AndroidContactsCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                DefaultValuesCategory(settingsRepository, currentSettings)
-                SettingsCategorySpacer()
+                if (false) { // TODO re-insert when public contacts are possible
+                    DefaultValuesCategory(settingsRepository, currentSettings)
+                    SettingsCategorySpacer()
+                }
 
                 MiscellaneousCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
