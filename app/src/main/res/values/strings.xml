@@ -73,6 +73,7 @@
     <string name="last_name_colon">Last name:</string>
     <string name="nickname">Nickname</string>
     <string name="notes">Notes</string>
+    <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>
     <string name="phone_numbers">Phone numbers</string>

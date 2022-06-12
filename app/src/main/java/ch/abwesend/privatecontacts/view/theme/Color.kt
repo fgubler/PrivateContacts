@@ -18,5 +18,7 @@ object AppColors {
     val grayBackground = Color(0xFFBBBBBB)
     val selectedItemOnLight = Color(0xFFADD8E6)
     val selectedItemOnDark = Color(0xFF303F9F)
+    val goodGreen = Color(0xFF006633)
+    val dangerRed = Color(0xFF8b0000)
     val transparent = Color.Transparent
 }

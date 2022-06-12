@@ -81,6 +81,8 @@ object ContactDetailScreenContent {
                     if (contact.lastName.isNotEmpty()) {
                         Text(text = stringResource(id = R.string.last_name_colon), color = labelColor())
                     }
+
+                    Text(text = stringResource(id = R.string.visibility_colon), color = labelColor())
                 }
                 Column(modifier = Modifier.padding(start = 10.dp)) {
                     if (contact.firstName.isNotEmpty()) {
@@ -89,6 +91,7 @@ object ContactDetailScreenContent {
                     if (contact.lastName.isNotEmpty()) {
                         Text(text = contact.lastName)
                     }
+                    Text(text = stringResource(id = contact.type.label), color = contact.type.color)
                 }
             }
         }
