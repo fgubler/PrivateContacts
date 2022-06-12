@@ -20,6 +20,7 @@ data class TestSettings(
 ) : SettingsRepository {
     override var appTheme: AppTheme = currentSettings.appTheme
     override var orderByFirstName: Boolean = currentSettings.orderByFirstName
+    override var showContactTypeInList: Boolean = currentSettings.showContactTypeInList
     override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
     override var defaultContactType: ContactType = currentSettings.defaultContactType
     override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls

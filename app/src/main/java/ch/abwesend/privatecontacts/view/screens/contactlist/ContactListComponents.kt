@@ -37,6 +37,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.theme.selectedElement
+import ch.abwesend.privatecontacts.view.util.color
 
 private const val EASTER_EGG_LOVE = "love"
 

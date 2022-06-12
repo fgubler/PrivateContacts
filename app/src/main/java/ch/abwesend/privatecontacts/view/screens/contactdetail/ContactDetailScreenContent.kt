@@ -37,6 +37,7 @@ import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.util.color
 import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 import ch.abwesend.privatecontacts.view.util.navigateToBrowser
 import ch.abwesend.privatecontacts.view.util.navigateToDial
