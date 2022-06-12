@@ -31,7 +31,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -167,10 +166,7 @@ object ContactListScreen {
         if (bulkMode) {
             screenContext.contactListViewModel.toggleContactSelected(contact)
         } else {
-            if (!contact.isExternal) {
-                // TODO implement opening external contacts
-                screenContext.contactDetailViewModel.selectContact(contact)
-            }
+            screenContext.contactDetailViewModel.selectContact(contact)
             screenContext.router.navigateToScreen(Screen.ContactDetail)
         }
     }

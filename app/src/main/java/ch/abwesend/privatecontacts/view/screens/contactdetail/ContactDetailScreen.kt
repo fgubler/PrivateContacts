@@ -32,6 +32,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
+import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
@@ -116,7 +117,8 @@ object ContactDetailScreen {
                 BackIconButton { screenContext.router.navigateUp() }
             },
             actions = {
-                if (contact != null) {
+                // TODO handle external contacts
+                if (contact != null && !contact.isExternal) {
                     EditIconButton(enabled = buttonsEnabled) {
                         screenContext.contactEditViewModel.selectContact(contact)
                         screenContext.router.navigateToScreen(Screen.ContactEdit)

@@ -79,7 +79,7 @@ class ContactLoadService {
         contact.id.let { contactId ->
             when (contactId) {
                 is IContactIdInternal -> contactRepository.resolveContact(contactId)
-                is IContactIdExternal -> TODO("Resolving android contacts is not yet implemented")
+                is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
             }
         }
 }
