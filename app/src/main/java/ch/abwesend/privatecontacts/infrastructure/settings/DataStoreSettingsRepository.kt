@@ -52,6 +52,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.orderByFirstName
         set(value) = dataStore.setValue(orderByFirstNameEntry, value)
 
+    override var showContactTypeInList: Boolean
+        get() = currentSettings.showContactTypeInList
+        set(value) = dataStore.setValue(showContactTypeInListEntry, value)
+
     override var showIncomingCallsOnLockScreen: Boolean
         get() = currentSettings.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)

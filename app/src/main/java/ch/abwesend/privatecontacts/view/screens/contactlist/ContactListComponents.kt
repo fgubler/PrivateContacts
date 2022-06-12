@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -44,6 +45,7 @@ private const val EASTER_EGG_LOVE = "love"
 fun ContactList(
     contacts: List<IContactBase>,
     selectedContacts: Set<IContactId>,
+    showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
@@ -51,6 +53,7 @@ fun ContactList(
     else ListOfContacts(
         contacts = contacts,
         selectedContacts = selectedContacts,
+        showTypeIcons = showTypeIcons,
         onContactClicked = onContactClicked,
         onContactLongClicked = onContactLongClicked,
     )
@@ -66,6 +69,7 @@ private fun NoResults() {
 private fun ListOfContacts(
     contacts: List<IContactBase>,
     selectedContacts: Set<IContactId>,
+    showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
@@ -79,6 +83,7 @@ private fun ListOfContacts(
             Contact(
                 contact = contact,
                 selected = selected,
+                showTypeIcon = showTypeIcons,
                 onClicked = onContactClicked,
                 onLongClicked = onContactLongClicked,
             )
@@ -92,6 +97,7 @@ private fun ListOfContacts(
 private fun Contact(
     contact: IContactBase,
     selected: Boolean,
+    showTypeIcon: Boolean,
     onClicked: (IContactBase) -> Unit,
     onLongClicked: (IContactBase) -> Unit,
 ) {
@@ -112,16 +118,25 @@ private fun Contact(
             )
     ) {
         val name = contact.getFullName()
-        val icon = when {
+        val contactIcon = when {
             selected -> Icons.Default.TaskAlt
             name.lowercase().contains(EASTER_EGG_LOVE) -> Icons.Filled.Favorite
             else -> Icons.Filled.AccountCircle
         }
+
         Icon(
-            imageVector = icon,
+            imageVector = contactIcon,
             contentDescription = name,
-            modifier = Modifier.padding(start = 10.dp, end = 20.dp)
+            modifier = if (showTypeIcon) Modifier.padding(start = 10.dp)
+            else Modifier.padding(start = 10.dp, end = 20.dp)
         )
+        if (showTypeIcon) {
+            Icon(
+                imageVector = contact.type.icon,
+                contentDescription = stringResource(id = contact.type.label),
+                modifier = Modifier.padding(start = 5.dp, end = 20.dp)
+            )
+        }
         Text(text = name)
     }
     Spacer(modifier = Modifier.height(6.dp))

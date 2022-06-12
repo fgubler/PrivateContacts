@@ -122,10 +122,14 @@ object ContactListScreen {
         val selectedContacts = (screenState as? ContactListScreenState.BulkMode)
             ?.selectedContacts.orEmpty()
 
+        val showTypeIcons = viewModel.selectedTab.value.showContactTypeIcons &&
+            screenContext.settings.showContactTypeInList
+
         val showContactList: @Composable (contacts: List<IContactBase>) -> Unit = { contacts ->
             ContactList(
                 contacts = contacts,
                 selectedContacts = selectedContacts,
+                showTypeIcons = showTypeIcons,
                 onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
                 onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
             )

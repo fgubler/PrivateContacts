@@ -17,6 +17,7 @@ import kotlinx.coroutines.launch
 internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     appTheme = tryGetEnumValue(darkThemeEntry),
     orderByFirstName = getValue(orderByFirstNameEntry),
+    showContactTypeInList = getValue(showContactTypeInListEntry),
     showIncomingCallsOnLockScreen = getValue(incomingCallsOnLockScreenEntry),
     showInitialAppInfoDialog = getValue(initialInfoDialogEntry),
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),

@@ -113,6 +113,12 @@ object SettingsScreen {
                 value = currentSettings.orderByFirstName,
                 onValueChanged = { settingsRepository.orderByFirstName = it }
             )
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_contact_types_on_contact_list,
+                description = null,
+                value = currentSettings.showContactTypeInList,
+                onValueChanged = { settingsRepository.showContactTypeInList = it }
+            )
         }
     }
 

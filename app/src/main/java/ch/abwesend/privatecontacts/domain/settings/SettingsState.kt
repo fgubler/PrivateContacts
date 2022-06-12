@@ -13,6 +13,7 @@ interface ISettingsState {
     // UX
     val appTheme: AppTheme
     val orderByFirstName: Boolean
+    val showContactTypeInList: Boolean
 
     val showInitialAppInfoDialog: Boolean
 
@@ -46,6 +47,7 @@ interface ISettingsState {
 data class SettingsState(
     override val appTheme: AppTheme,
     override val orderByFirstName: Boolean,
+    override val showContactTypeInList: Boolean,
 
     override val showInitialAppInfoDialog: Boolean,
 
@@ -65,6 +67,7 @@ data class SettingsState(
         val defaultSettings: ISettingsState = SettingsState(
             appTheme = AppTheme.SYSTEM_SETTINGS,
             orderByFirstName = true,
+            showContactTypeInList = true,
             showIncomingCallsOnLockScreen = true,
             showInitialAppInfoDialog = true,
             requestIncomingCallPermissions = true,
