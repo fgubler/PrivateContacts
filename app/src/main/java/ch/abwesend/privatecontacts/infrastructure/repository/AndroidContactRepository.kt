@@ -26,12 +26,15 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.valid
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.ContactColumn
 import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactLookup
 import com.alexstyl.contactstore.ContactStore
+import com.alexstyl.contactstore.DisplayNameStyle.Alternative
+import com.alexstyl.contactstore.DisplayNameStyle.Primary
 import com.alexstyl.contactstore.allContactColumns
 import com.alexstyl.contactstore.coroutines.asFlow
 import kotlinx.coroutines.flow.Flow
@@ -108,9 +111,11 @@ class AndroidContactRepository : IAndroidContactRepository {
             }
         }
 
+        val displayNameStyle = if (Settings.current.orderByFirstName) Primary else Alternative
         val androidContacts = contactStore.fetchContacts(
             predicate = predicate,
-            columnsToFetch = listOf(ContactColumn.Names)
+            columnsToFetch = listOf(ContactColumn.Names),
+            displayNameStyle = displayNameStyle,
         ).asFlow()
 
         val contacts = androidContacts.map { contacts ->
