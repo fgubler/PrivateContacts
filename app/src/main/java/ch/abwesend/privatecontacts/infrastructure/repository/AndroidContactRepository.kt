@@ -19,6 +19,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.permission.MissingPermissionException
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
@@ -26,6 +29,7 @@ import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.ContactColumn
+import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactLookup
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.allContactColumns
@@ -53,13 +57,13 @@ class AndroidContactRepository : IAndroidContactRepository {
     // TODO re-think this. This only works while the user cannot change android contacts.
     private var allContactsCached: List<IContactBase>? = null
 
-    override suspend fun loadContactsAsFlow(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow<List<IContactBase>> {
-        measureTimeMillis {
-            val contacts = allContactsCached.takeIf { !reloadCache }
-                ?: createAllContactsFlow().firstOrNull().also { allContactsCached = it }
-            emit(contacts.orEmpty())
-        }.also { duration -> logger.debug("Loading android contacts took $duration ms") }
-    }.toResourceFlow()
+    override suspend fun loadContactsAsFlow(
+        searchConfig: ContactSearchConfig,
+        reloadCache: Boolean
+    ) = when (searchConfig) {
+        is All -> loadContacts(reloadCache)
+        is Query -> searchContacts(searchConfig.query)
+    }
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
         checkContactReadPermission { exception -> throw exception }
@@ -71,17 +75,46 @@ class AndroidContactRepository : IAndroidContactRepository {
         return contactRaw?.toContact() ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
-    private suspend fun createAllContactsFlow(): Flow<List<IContactBase>> = withContext(dispatchers.io) {
+    override suspend fun tryInitializingCache() {
+        if (permissionService.hasContactReadPermission()) {
+            logger.debug("Initializing cache for android contacts")
+            loadContacts(reloadCache = true).firstOrNull()
+        }
+    }
+
+    private suspend fun loadContacts(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow {
+        measureTimeMillis {
+            val contacts = allContactsCached.takeIf { !reloadCache }
+                ?: createContactsBaseFlow().firstOrNull().also { allContactsCached = it }
+            emit(contacts.orEmpty())
+        }.also { duration -> logger.debug("Loading android contacts took $duration ms") }
+    }.toResourceFlow()
+
+    private suspend fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
+        measureTimeMillis {
+            // no caching is needed because it should be fast enough thanks to filtering
+            val predicate = ContactPredicate.NameLookup(query) // this actually searches over all fields
+            val contacts = createContactsBaseFlow(predicate).firstOrNull()
+            emit(contacts.orEmpty())
+        }.also { duration -> logger.debug("Loading android contacts for query '$query' took $duration ms") }
+    }.toResourceFlow()
+
+    private suspend fun createContactsBaseFlow(
+        predicate: ContactPredicate? = null
+    ): Flow<List<IContactBase>> = withContext(dispatchers.io) {
         checkContactReadPermission { exception ->
             return@withContext flow {
                 ErrorResource<List<IContactBase>>(listOf(exception))
             }
         }
 
-        val androidContacts = contactStore.fetchContacts(columnsToFetch = listOf(ContactColumn.Names)).asFlow()
+        val androidContacts = contactStore.fetchContacts(
+            predicate = predicate,
+            columnsToFetch = listOf(ContactColumn.Names)
+        ).asFlow()
 
         val contacts = androidContacts.map { contacts ->
-            logger.debug("Loaded ${contacts.size} android contacts")
+            logger.debug("Loaded ${contacts.size} android contacts with predicate $predicate")
             contacts.mapNotNull { it.toContactBase() }
                 .filter { validationService.validateContactBase(it).valid }
         }

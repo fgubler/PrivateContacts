@@ -10,8 +10,15 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 interface IAndroidContactRepository {
-    suspend fun loadContactsAsFlow(reloadCache: Boolean = false): ResourceFlow<List<IContactBase>>
+    suspend fun loadContactsAsFlow(
+        searchConfig: ContactSearchConfig,
+        reloadCache: Boolean = false
+    ): ResourceFlow<List<IContactBase>>
+
     suspend fun resolveContact(contactId: IContactIdExternal): IContact
+
+    suspend fun tryInitializingCache()
 }

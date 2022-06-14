@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -14,13 +13,13 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
-import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.map
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
@@ -28,17 +27,17 @@ class ContactLoadService {
     private val easterEggService: EasterEggService by injectAnywhere()
 
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
-        contactRepository.getContactsAsFlow(ContactSearchConfig.All)
+        contactRepository.getContactsAsFlow(All)
 
     suspend fun searchSecretContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
         return if (query.isEmpty()) loadSecretContacts()
-        else contactRepository.getContactsAsFlow(ContactSearchConfig.Query(query))
+        else contactRepository.getContactsAsFlow(Query(query))
     }
 
     suspend fun loadAllContacts(): ResourceFlow<List<IContactBase>> = coroutineScope {
         val secretContactsDeferred = async { loadSecretContacts() }
-        val androidContactsDeferred = async { androidContactRepository.loadContactsAsFlow() }
+        val androidContactsDeferred = async { loadAndroidContacts() }
 
         val secretContacts = secretContactsDeferred.await()
         val androidContacts = androidContactsDeferred.await()
@@ -48,23 +47,21 @@ class ContactLoadService {
 
     suspend fun searchAllContacts(query: String): ResourceFlow<List<IContactBase>> = coroutineScope {
         val secretContactsDeferred = async { searchSecretContacts(query) }
-        val androidContactsDeferred = async { androidContactRepository.loadContactsAsFlow() }
+        val androidContactsDeferred = async { searchAndroidContacts(query) }
 
         val secretContacts = secretContactsDeferred.await()
-        val androidContacts = androidContactsDeferred.await().map { resource ->
-            when (resource) {
-                is ReadyResource -> {
-                    // TODO allow filtering for more than the name
-                    val filteredContacts = resource.value.filter {
-                        it.getFullName().lowercase().contains(query.lowercase())
-                    }
-                    ReadyResource(filteredContacts)
-                }
-                else -> resource
-            }
-        }
+        val androidContacts = androidContactsDeferred.await()
 
         combineContacts(secretContacts, androidContacts)
+    }
+
+    private suspend fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
+        androidContactRepository.loadContactsAsFlow(All)
+
+    private suspend fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
+        easterEggService.checkSearchForEasterEggs(query)
+        return if (query.isEmpty()) loadAndroidContacts()
+        else androidContactRepository.loadContactsAsFlow(Query(query))
     }
 
     private fun combineContacts(
