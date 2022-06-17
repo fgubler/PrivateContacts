@@ -29,11 +29,11 @@ import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotification
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
-import ch.abwesend.privatecontacts.infrastructure.repository.AndroidContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
@@ -79,6 +79,8 @@ internal val koinModule = module {
     // Factories
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory<AppDatabase>> { DatabaseFactory() }
+
+    @Suppress("DEPRECATION")
     single<ContactPagerFactory> { ContactPagingSource.Companion }
 
     // Helpers
