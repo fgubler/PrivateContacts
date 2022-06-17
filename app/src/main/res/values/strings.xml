@@ -41,6 +41,7 @@
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
+    <string name="feature_not_yet_implemented">Sorry, this feature is not yet implemented.</string>
 
     <string name="do_not_show_again">Do not show again</string>
     <string name="thank_you">Thank you</string>

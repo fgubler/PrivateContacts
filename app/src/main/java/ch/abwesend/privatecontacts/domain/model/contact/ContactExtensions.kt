@@ -36,4 +36,7 @@ fun IContact.toContactEditable(): ContactEditable =
     )
 
 val IContactBase.isExternal: Boolean
-    get() = id is IContactIdExternal
+    get() = id.isExternal
+
+val ContactId.isExternal: Boolean
+    get() = this is IContactIdExternal
