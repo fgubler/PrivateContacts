@@ -16,23 +16,23 @@ class ContactValidationService {
     fun validateContact(contact: IContact): ContactValidationResult {
         val validationErrors = mutableListOf<ContactValidationError>()
 
-        validationErrors.addAll(validateName(contact))
+        validationErrors.addAll(contact.validateName())
 
         return ContactValidationResult.fromErrors(validationErrors)
     }
 
     fun validateContactBase(contact: IContactBase): List<ContactValidationError> =
-        validateName(contact)
+        contact.validateName()
+}
 
-    private fun validateName(contact: IContactBase): List<ContactValidationError> {
-        val validationErrors = mutableListOf<ContactValidationError>()
+private fun IContactBase.validateName(): List<ContactValidationError> {
+    val validationErrors = mutableListOf<ContactValidationError>()
 
-        if (contact.firstName.trim().isEmpty() && contact.lastName.trim().isEmpty()) {
-            validationErrors.add(NAME_NOT_SET)
-        }
-
-        return validationErrors
+    if (displayName.trim().isEmpty()) {
+        validationErrors.add(NAME_NOT_SET)
     }
+
+    return validationErrors
 }
 
 val List<ContactValidationError>.valid: Boolean

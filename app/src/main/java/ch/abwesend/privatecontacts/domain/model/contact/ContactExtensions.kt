@@ -8,8 +8,14 @@ package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.settings.Settings
 
-fun IContactBase.getFullName(
+fun IContact.getFullName(
     firstNameFirst: Boolean = Settings.current.orderByFirstName
+): String = getFullName(firstName, lastName, firstNameFirst)
+
+fun getFullName(
+    firstName: String,
+    lastName: String,
+    firstNameFirst: Boolean = Settings.current.orderByFirstName,
 ): String =
     if (firstNameFirst) "$firstName $lastName"
     else "$lastName $firstName"

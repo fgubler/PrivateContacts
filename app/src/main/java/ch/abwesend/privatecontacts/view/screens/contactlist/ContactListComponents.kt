@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactId
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.theme.selectedElement
 import ch.abwesend.privatecontacts.view.util.color
@@ -118,7 +117,7 @@ private fun Contact(
                 onLongClick = { onLongClicked(contact) }
             )
     ) {
-        val name = contact.getFullName()
+        val name = contact.displayName
         val contactIcon = when {
             selected -> Icons.Default.TaskAlt
             name.lowercase().contains(EASTER_EGG_LOVE) -> Icons.Filled.Favorite

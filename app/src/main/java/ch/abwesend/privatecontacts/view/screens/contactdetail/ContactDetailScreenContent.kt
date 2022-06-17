@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -72,7 +71,7 @@ object ContactDetailScreenContent {
             categoryTitle = R.string.personal_information,
             icon = Icons.Default.Person,
             alignContentWithTitle = true,
-            modifier = Modifier.longClickForCopyToClipboard(contact.getFullName())
+            modifier = Modifier.longClickForCopyToClipboard(contact.displayName)
         ) {
             Row {
                 Column {

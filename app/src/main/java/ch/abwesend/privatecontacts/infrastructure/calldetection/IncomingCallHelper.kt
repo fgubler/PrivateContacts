@@ -9,7 +9,6 @@ package ch.abwesend.privatecontacts.infrastructure.calldetection
 import android.content.Context
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
@@ -32,7 +31,7 @@ class IncomingCallHelper {
         applicationScope.launch {
             val correspondingContacts = incomingCallService
                 .findCorrespondingContacts(phoneNumber, defaultCountryIso)
-                .map { it.getFullName() }
+                .map { it.displayName }
                 .distinct()
 
             logger.debug("Found corresponding contacts: $correspondingContacts")

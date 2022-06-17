@@ -29,7 +29,6 @@ import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import com.alexstyl.contactstore.ContactColumn
 import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactLookup
 import com.alexstyl.contactstore.ContactStore
@@ -114,7 +113,6 @@ class AndroidContactRepository : IAndroidContactRepository {
         val displayNameStyle = if (Settings.current.orderByFirstName) Primary else Alternative
         val androidContacts = contactStore.fetchContacts(
             predicate = predicate,
-            columnsToFetch = listOf(ContactColumn.Names),
             displayNameStyle = displayNameStyle,
         ).asFlow()
 
@@ -139,8 +137,7 @@ private fun AndroidContact.toContactBase(): IContactBase? =
         ContactBase(
             id = ContactIdAndroid(contactNo = contactId),
             type = ContactType.PUBLIC,
-            firstName = firstName,
-            lastName = lastName,
+            displayName = displayName,
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)

@@ -12,7 +12,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
@@ -69,7 +68,7 @@ class ContactLoadService {
         contactsFlow2: ResourceFlow<List<IContactBase>>
     ): ResourceFlow<List<IContactBase>> = contactsFlow1.combineResource(contactsFlow2) { contacts1, contacts2 ->
         val all = contacts1 + contacts2
-        all.sortedBy { it.getFullName() }
+        all.sortedBy { it.displayName }
     }
 
     suspend fun resolveContact(contact: IContactBase): IContact =
