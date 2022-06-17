@@ -72,7 +72,9 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
             address.value.city,
             address.value.region,
             address.value.country
-        ).joinToString(separator = ",\n")
+        )
+            .filterNot { it.isEmpty() }
+            .joinToString(separator = ",\n")
 
         PhysicalAddress(
             id = contactDataId,
