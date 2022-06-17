@@ -13,12 +13,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 interface IAndroidContactRepository {
-    suspend fun loadContactsAsFlow(
-        searchConfig: ContactSearchConfig,
-        reloadCache: Boolean = false
-    ): ResourceFlow<List<IContactBase>>
-
+    suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>>
     suspend fun resolveContact(contactId: IContactIdExternal): IContact
-
-    suspend fun tryInitializingCache()
 }

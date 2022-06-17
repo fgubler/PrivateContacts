@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
@@ -56,16 +56,11 @@ class AndroidContactRepository : IAndroidContactRepository {
         ContactStore.newInstance(getAnywhere())
     }
 
-    // TODO re-think this. This only works while the user cannot change android contacts.
-    private var allContactsCached: List<IContactBase>? = null
-
-    override suspend fun loadContactsAsFlow(
-        searchConfig: ContactSearchConfig,
-        reloadCache: Boolean
-    ) = when (searchConfig) {
-        is All -> loadContacts(reloadCache)
-        is Query -> searchContacts(searchConfig.query)
-    }
+    override suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
+        when (searchConfig) {
+            is All -> loadContacts()
+            is Query -> searchContacts(searchConfig.query)
+        }
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
         checkContactReadPermission { exception -> throw exception }
@@ -77,17 +72,9 @@ class AndroidContactRepository : IAndroidContactRepository {
         return contactRaw?.toContact() ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
-    override suspend fun tryInitializingCache() {
-        if (permissionService.hasContactReadPermission()) {
-            logger.debug("Initializing cache for android contacts")
-            loadContacts(reloadCache = true).firstOrNull()
-        }
-    }
-
-    private suspend fun loadContacts(reloadCache: Boolean): ResourceFlow<List<IContactBase>> = flow {
+    private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
-            val contacts = allContactsCached.takeIf { !reloadCache }
-                ?: createContactsBaseFlow().firstOrNull().also { allContactsCached = it }
+            val contacts = createContactsBaseFlow().firstOrNull()
             emit(contacts.orEmpty())
         }.also { duration -> logger.debug("Loading android contacts took $duration ms") }
     }.toResourceFlow()
