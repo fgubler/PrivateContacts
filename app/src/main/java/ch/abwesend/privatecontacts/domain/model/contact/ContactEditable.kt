@@ -21,7 +21,7 @@ interface IContactEditable : IContact {
 }
 
 data class ContactEditable(
-    override val id: IContactId,
+    override val id: ContactId,
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,

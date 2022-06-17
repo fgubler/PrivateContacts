@@ -19,8 +19,8 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -63,7 +63,7 @@ class ContactListViewModel : ViewModel() {
             updateScreenState()
         }
 
-    private var bulkModeSelectedContacts: Set<IContactId> = emptySet()
+    private var bulkModeSelectedContacts: Set<ContactId> = emptySet()
         set(value) {
             field = value
             updateScreenState()
@@ -188,7 +188,7 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
-    fun deleteContacts(contactIds: Set<IContactId>) {
+    fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
             val result = saveService.deleteContacts(contactIds)
             _deleteResult.emit(result)

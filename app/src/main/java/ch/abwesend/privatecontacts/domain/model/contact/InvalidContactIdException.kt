@@ -9,8 +9,8 @@ package ch.abwesend.privatecontacts.domain.model.contact
 import kotlin.reflect.KClass
 
 class InvalidContactIdException(
-    requiredType: KClass<out IContactId>,
-    actualType: KClass<out IContactId>
+    requiredType: KClass<out ContactId>,
+    actualType: KClass<out ContactId>
 ) : IllegalArgumentException(
     "Invalid contact-ID: is of type ${actualType.java.simpleName} " +
         "but should be of type ${requiredType.java.simpleName}"

@@ -7,9 +7,9 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
@@ -42,7 +42,7 @@ class ContactSaveService {
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
         deleteContacts(setOf(contact.id))
 
-    suspend fun deleteContacts(contactIds: Set<IContactId>): ContactDeleteResult {
+    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactDeleteResult {
         val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>()
         val externalContactIds = contactIds.filterIsInstance<IContactIdExternal>()
 

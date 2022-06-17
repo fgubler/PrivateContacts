@@ -8,13 +8,13 @@ package ch.abwesend.privatecontacts.domain.model.contact
 
 import java.util.UUID
 
-sealed interface IContactId
+sealed interface ContactId
 
-sealed interface IContactIdInternal : IContactId {
+sealed interface IContactIdInternal : ContactId {
     val uuid: UUID
 }
 
-sealed interface IContactIdExternal : IContactId {
+sealed interface IContactIdExternal : ContactId {
     val contactNo: Long
 }
 

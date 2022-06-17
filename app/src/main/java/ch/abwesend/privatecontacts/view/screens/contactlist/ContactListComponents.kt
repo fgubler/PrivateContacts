@@ -32,8 +32,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.IContactId
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.theme.selectedElement
 import ch.abwesend.privatecontacts.view.util.color
@@ -44,7 +44,7 @@ private const val EASTER_EGG_LOVE = "love"
 @Composable
 fun ContactList(
     contacts: List<IContactBase>,
-    selectedContacts: Set<IContactId>,
+    selectedContacts: Set<ContactId>,
     showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
@@ -68,7 +68,7 @@ private fun NoResults() {
 @Composable
 private fun ListOfContacts(
     contacts: List<IContactBase>,
-    selectedContacts: Set<IContactId>,
+    selectedContacts: Set<ContactId>,
     showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,

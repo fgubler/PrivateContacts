@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.domain.model.contact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
 interface IContactBase {
-    val id: IContactId
+    val id: ContactId
     val type: ContactType
     val displayName: String
 }
@@ -24,7 +24,7 @@ interface IContact : IContactBase {
 }
 
 data class ContactBase(
-    override val id: IContactId,
+    override val id: ContactId,
     override val type: ContactType,
     override val displayName: String,
 ) : IContactBase

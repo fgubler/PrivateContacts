@@ -33,7 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.IContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -112,7 +112,7 @@ private fun SearchTopBar(
 @Composable
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactId>,
+    selectedContacts: Set<ContactId>,
     disableBulkMode: () -> Unit
 ) {
     var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
@@ -137,7 +137,7 @@ private fun BulkModeTopBar(
 @Composable
 fun ActionsMenu(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactId>,
+    selectedContacts: Set<ContactId>,
     expanded: Boolean,
     onCloseMenu: () -> Unit
 ) {
@@ -171,7 +171,7 @@ fun ActionsMenu(
 @Composable
 private fun DeleteConfirmationDialog(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactId>,
+    selectedContacts: Set<ContactId>,
     visible: Boolean,
     hideDialog: () -> Unit,
 ) {
