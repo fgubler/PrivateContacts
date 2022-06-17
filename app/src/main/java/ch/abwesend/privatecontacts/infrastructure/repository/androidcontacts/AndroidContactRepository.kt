@@ -33,6 +33,7 @@ import com.alexstyl.contactstore.DisplayNameStyle.Primary
 import com.alexstyl.contactstore.allContactColumns
 import com.alexstyl.contactstore.coroutines.asFlow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -69,8 +70,8 @@ class AndroidContactRepository : IAndroidContactRepository {
 
     private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
-            val contacts = createContactsBaseFlow().firstOrNull()
-            emit(contacts.orEmpty())
+            val contacts = createContactsBaseFlow()
+            emitAll(contacts)
         }.also { duration -> logger.debug("Loading android contacts took $duration ms") }
     }.toResourceFlow()
 
