@@ -11,10 +11,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -42,7 +38,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlin.system.measureTimeMillis
-import com.alexstyl.contactstore.Contact as AndroidContact
 
 /**
  * Repository to access the android ContactsProvider
@@ -118,31 +113,3 @@ class AndroidContactRepository : IAndroidContactRepository {
         }
     }
 }
-
-private fun AndroidContact.toContactBase(): IContactBase? =
-    try {
-        ContactBase(
-            id = ContactIdAndroid(contactNo = contactId),
-            type = ContactType.PUBLIC,
-            displayName = displayName,
-        )
-    } catch (t: Throwable) {
-        logger.warning("Failed to map android contact with id = $contactId", t)
-        null
-    }
-
-private fun AndroidContact.toContact(): IContact? =
-    try {
-        ContactEditable(
-            id = ContactIdAndroid(contactNo = contactId),
-            type = ContactType.PUBLIC,
-            firstName = firstName,
-            lastName = lastName,
-            nickname = nickname,
-            notes = note?.raw.orEmpty(),
-            contactDataSet = mutableListOf(), // TODO read contact-data
-        )
-    } catch (t: Throwable) {
-        logger.warning("Failed to map android contact with id = $contactId", t)
-        null
-    }
