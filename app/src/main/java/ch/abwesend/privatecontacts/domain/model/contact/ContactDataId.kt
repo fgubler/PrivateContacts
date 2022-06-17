@@ -15,7 +15,7 @@ sealed interface IContactDataIdInternal : ContactDataId {
 }
 
 sealed interface IContactDataIdExternal : ContactDataId {
-    val contactDataNo: Long
+    val contactDataNo: Long?
 }
 
 @JvmInline
@@ -27,6 +27,16 @@ value class ContactDataIdInternal(override val uuid: UUID) : IContactDataIdInter
 
 @JvmInline
 value class ContactDataIdAndroid(override val contactDataNo: Long) : IContactDataIdExternal
+
+/**
+ * The contactDataNo on android contacts is nullable:
+ * we still want a unique identifier within the app
+ */
+@JvmInline
+value class ContactDataIdAndroidWithoutNo(val uuid: UUID = UUID.randomUUID()) : IContactDataIdExternal {
+    override val contactDataNo: Long?
+        get() = null
+}
 
 /**
  * Creates an ID for a new ContactData object.

@@ -3,6 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdAndroid
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdAndroidWithoutNo
 import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
@@ -16,18 +17,6 @@ import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
-import kotlin.random.Random
-
-private val randomNumberGenerator: Random by lazy {
-    val seed = System.currentTimeMillis().hashCode()
-    Random(seed)
-}
-
-private tailrec fun nextRandomLong(blockedValues: Collection<Long>): Long {
-    val value = randomNumberGenerator.nextLong()
-    return if (blockedValues.contains(value)) nextRandomLong(blockedValues)
-    else value
-}
 
 // TODO add additional data-types
 fun Contact.getContactData(): List<ContactData> = getPhoneNumbers() +
@@ -37,10 +26,9 @@ fun Contact.getContactData(): List<ContactData> = getPhoneNumbers() +
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
     val telephoneService: TelephoneService by injectAnywhere()
-    val allPhoneIds = phones.mapNotNull { it.id }
 
     return phones.mapIndexed { index, phone ->
-        val contactDataId = phone.toContactDataId(blockedIds = allPhoneIds)
+        val contactDataId = phone.toContactDataId()
         val type = phone.label.toContactDataType()
         val number = phone.value.raw
 
@@ -58,10 +46,8 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
 }
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
-    val allMailIds = mails.mapNotNull { it.id }
-
     return mails.mapIndexed { index, email ->
-        val contactDataId = email.toContactDataId(blockedIds = allMailIds)
+        val contactDataId = email.toContactDataId()
         val type = email.label.toContactDataType()
 
         EmailAddress(
@@ -76,10 +62,8 @@ private fun Contact.getEmailAddresses(): List<EmailAddress> {
 }
 
 private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
-    val allAddressIds = postalAddresses.mapNotNull { it.id }
-
     return postalAddresses.mapIndexed { index, address ->
-        val contactDataId = address.toContactDataId(blockedIds = allAddressIds)
+        val contactDataId = address.toContactDataId()
         val type = address.label.toContactDataType()
 
         // TODO think about how to structure the address
@@ -106,10 +90,8 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
 }
 
 private fun Contact.getWebsites(): List<Website> {
-    val allWebsiteIds = webAddresses.mapNotNull { it.id }
-
     return webAddresses.mapIndexed { index, address ->
-        val contactDataId = address.toContactDataId(allWebsiteIds)
+        val contactDataId = address.toContactDataId()
         val type = address.label.toContactDataType()
 
         Website(
@@ -140,10 +122,8 @@ private fun Label.toContactDataType(): ContactDataType =
         else -> ContactDataType.Other
     }
 
-private fun LabeledValue<*>.toContactDataId(blockedIds: Collection<Long>): IContactDataIdExternal {
-    val contactDataNo = id ?: nextRandomLong(blockedValues = blockedIds).also {
-        logger.warning("No ID found for contact data of type ${label.simpleClassName}: replaced by $it.")
-    }
-
-    return ContactDataIdAndroid(contactDataNo = contactDataNo)
-}
+private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
+    id?.let { contactDataNo -> ContactDataIdAndroid(contactDataNo = contactDataNo) }
+        ?: ContactDataIdAndroidWithoutNo().also {
+            logger.debug("No ID found for contact data of type ${label.simpleClassName}.")
+        }
