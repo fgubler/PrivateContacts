@@ -13,8 +13,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -63,7 +63,7 @@ class DatabaseInitializer {
                 notes = "Lost his hand",
                 contactDataSet = mutableListOf(
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "(650) 555-1212",
                         type = ContactDataType.Personal,
                         isMain = true,
@@ -71,7 +71,7 @@ class DatabaseInitializer {
                         modelStatus = ModelStatus.CHANGED,
                     ),
                     EmailAddress(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "luke@jedi.com",
                         type = ContactDataType.Business,
                         isMain = true,
@@ -79,7 +79,7 @@ class DatabaseInitializer {
                         modelStatus = ModelStatus.CHANGED,
                     ),
                     PhysicalAddress(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "A lonely hut",
                         type = ContactDataType.Personal,
                         isMain = true,
@@ -87,7 +87,7 @@ class DatabaseInitializer {
                         modelStatus = ModelStatus.CHANGED,
                     ),
                     Company(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "Jedi Inc.",
                         type = ContactDataType.Other,
                         isMain = true,
@@ -105,7 +105,7 @@ class DatabaseInitializer {
                 notes = "Efficient way of suicide",
                 contactDataSet = mutableListOf(
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "12345",
                         type = ContactDataType.Personal,
                         isMain = true,
@@ -113,7 +113,7 @@ class DatabaseInitializer {
                         sortOrder = 0,
                     ),
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "123456",
                         type = ContactDataType.Business,
                         isMain = false,
@@ -131,7 +131,7 @@ class DatabaseInitializer {
                 notes = "Small and green",
                 contactDataSet = mutableListOf(
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "123456",
                         type = ContactDataType.Personal,
                         isMain = false,
@@ -139,7 +139,7 @@ class DatabaseInitializer {
                         sortOrder = 0,
                     ),
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "1234567",
                         type = ContactDataType.Business,
                         isMain = false,
@@ -147,7 +147,7 @@ class DatabaseInitializer {
                         sortOrder = 1,
                     ),
                     PhoneNumber(
-                        id = ContactDataId.randomId(),
+                        id = createContactDataId(),
                         value = "12345678",
                         type = ContactDataType.CustomValue("Jedi-Number"),
                         isMain = true,

@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE_BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.util.StringProvider
@@ -39,6 +40,11 @@ sealed class ContactDataType {
         override val titleRes: Int = R.string.type_business
     }
 
+    object MobileBusiness : ContactDataType() {
+        override val key: Key = MOBILE_BUSINESS
+        override val titleRes: Int = R.string.type_business
+    }
+
     object Other : ContactDataType() {
         override val key: Key = OTHER
         override val titleRes: Int = R.string.type_other
@@ -47,6 +53,11 @@ sealed class ContactDataType {
     object Birthday : ContactDataType() {
         override val key: Key = BIRTHDAY
         override val titleRes: Int = R.string.type_birthday
+    }
+
+    object Anniversary : ContactDataType() {
+        override val key: Key = BIRTHDAY
+        override val titleRes: Int = R.string.type_anniversary
     }
 
     object Main : ContactDataType() {
@@ -72,8 +83,10 @@ sealed class ContactDataType {
         PERSONAL,
         BUSINESS,
         MOBILE,
+        MOBILE_BUSINESS,
         OTHER,
         BIRTHDAY,
+        Anniversary,
         MAIN,
         CUSTOM,
     }

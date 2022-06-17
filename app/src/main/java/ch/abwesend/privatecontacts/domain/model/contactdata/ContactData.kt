@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import java.util.UUID
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
 
 sealed interface ContactData {
     val id: ContactDataId
@@ -26,13 +26,6 @@ sealed interface ContactData {
 
     /** returning null means that the data will be ignored in search */
     fun formatValueForSearch(): String?
-}
-
-@JvmInline
-value class ContactDataId(val uuid: UUID) {
-    companion object {
-        fun randomId(): ContactDataId = ContactDataId(UUID.randomUUID())
-    }
 }
 
 interface StringBasedContactDataSimple : ContactData {

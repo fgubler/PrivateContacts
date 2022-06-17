@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
@@ -28,8 +29,7 @@ fun someContactBase(
 ): IContactBase = ContactBase(
     id = id,
     type = type,
-    firstName = firstName,
-    lastName = lastName,
+    displayName = getFullName(firstName, lastName)
 )
 
 fun someContactEntity(

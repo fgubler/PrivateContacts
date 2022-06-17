@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.testutil
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
 data class TestContact(
@@ -19,5 +20,8 @@ data class TestContact(
     override val notes: String,
     override val isNew: Boolean,
     override val id: ContactIdInternal,
-    override val type: ContactType
-) : IContact
+    override val type: ContactType,
+) : IContact {
+    override val displayName: String
+        get() = getFullName()
+}

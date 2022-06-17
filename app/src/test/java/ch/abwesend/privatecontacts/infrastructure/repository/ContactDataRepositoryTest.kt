@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.COMPANY
@@ -33,6 +34,7 @@ import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.someContactId
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.uuid
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -137,7 +139,7 @@ class ContactDataRepositoryTest : TestBase() {
         coVerify { contactDataDao.deleteAll(emptyList()) }
         confirmVerified(contactDataDao)
         assertThat(updateSlot.captured).hasSize(1)
-        assertThat(updateSlot.captured.first().id).isEqualTo(existingNumber.id.uuid)
+        assertThat(updateSlot.captured.first().id).isEqualTo((existingNumber.id as ContactDataIdInternal).uuid)
     }
 
     @Test

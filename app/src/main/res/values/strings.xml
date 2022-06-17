@@ -50,10 +50,12 @@
     <string name="public_contact">Public</string>
     <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
+    <string name="type_mobile_business">Mobile Business</string>
     <string name="type_mobile">Mobile</string>
     <string name="type_other">Other</string>
     <string name="type_custom">Custom</string>
     <string name="type_birthday">Birthday</string>
+    <string name="type_anniversary">Anniversary</string>
     <string name="type_main">Main</string>
 
     <string name="create_contact">Create Contact</string>

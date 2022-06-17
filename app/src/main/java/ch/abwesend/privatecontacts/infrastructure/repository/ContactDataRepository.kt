@@ -11,13 +11,13 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
@@ -75,7 +75,7 @@ class ContactDataRepository : RepositoryBase() {
 
         when (contactData.category) {
             ContactDataCategory.PHONE_NUMBER -> PhoneNumber(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -84,7 +84,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.EMAIL -> EmailAddress(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -92,7 +92,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.ADDRESS -> PhysicalAddress(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -100,7 +100,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.WEBSITE -> Website(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -108,7 +108,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.COMPANY -> Company(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,

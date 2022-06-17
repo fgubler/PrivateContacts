@@ -12,7 +12,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.someTestContact
@@ -29,8 +28,22 @@ import org.junit.jupiter.api.extension.ExtendWith
 class ContactExtensionsTest : TestBase() {
     @Test
     fun `should get display name`() {
-        val contact = someContactBase()
+        val firstName = "John"
+        val lastName = "Snow"
+        val fullNameStartingWithFirst = getFullName(firstName = firstName, lastName = lastName, firstNameFirst = true)
+        val fullNameStartingWithLast = getFullName(firstName = firstName, lastName = lastName, firstNameFirst = false)
 
+        assertThat(fullNameStartingWithFirst)
+            .startsWith(firstName)
+            .endsWith(lastName)
+        assertThat(fullNameStartingWithLast)
+            .startsWith(lastName)
+            .endsWith(firstName)
+    }
+
+    @Test
+    fun `should get display name from contact`() {
+        val contact = someContactEditable()
         val fullNameStartingWithFirst = contact.getFullName(firstNameFirst = true)
         val fullNameStartingWithLast = contact.getFullName(firstNameFirst = false)
 

@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.Apartment
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
+import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 
 data class Company(
     override val id: ContactDataId,
@@ -52,7 +54,7 @@ data class Company(
         )
         fun createEmpty(sortOrder: Int): Company =
             Company(
-                id = ContactDataId.randomId(),
+                id = createContactDataId(),
                 sortOrder = sortOrder,
                 type = ContactDataType.Main,
                 value = "",
