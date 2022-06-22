@@ -47,6 +47,7 @@ import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelpe
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
+import com.alexstyl.contactstore.ContactStore
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -94,4 +95,7 @@ internal val koinModule = module {
     single { DatabaseInitializer() }
     single { DatabaseDeletionHelper() }
     single { DatabaseHolder(androidContext()) }
+
+    // Android contacts
+    factory { ContactStore.newInstance(androidContext()) }
 }

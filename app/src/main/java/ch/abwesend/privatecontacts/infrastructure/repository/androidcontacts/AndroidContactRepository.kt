@@ -23,7 +23,6 @@ import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactLookup
@@ -48,9 +47,7 @@ class AndroidContactRepository : IAndroidContactRepository {
     private val validationService: ContactValidationService by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()
 
-    private val contactStore: ContactStore by lazy {
-        ContactStore.newInstance(getAnywhere())
-    }
+    private val contactStore: ContactStore by injectAnywhere()
 
     override suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {
