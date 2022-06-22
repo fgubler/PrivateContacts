@@ -63,7 +63,9 @@ class AndroidContactRepository : IAndroidContactRepository {
         val contactRaw = contactStore.fetchContacts(
             predicate = ContactLookup(contactId = contactId.contactNo),
             columnsToFetch = allContactColumns()
-        ).asFlow().firstOrNull()?.firstOrNull()
+        ).asFlow().firstOrNull()
+            .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
+            ?.firstOrNull()
 
         return contactRaw?.toContact() ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
@@ -77,7 +79,6 @@ class AndroidContactRepository : IAndroidContactRepository {
 
     private suspend fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
-            // no caching is needed because it should be fast enough thanks to filtering
             val predicate = ContactPredicate.NameLookup(query) // this actually searches over all fields
             val contacts = createContactsBaseFlow(predicate).firstOrNull()
             emit(contacts.orEmpty())
