@@ -69,7 +69,7 @@ class AndroidContactRepositoryTest : TestBase() {
     @Test
     fun `should resolve an existing contact by ID`() {
         val contactId = ContactIdAndroid(contactNo = 123123)
-        val contact = someAndroidContact(contactId = contactId.contactNo)
+        val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
         runBlocking { flow.emit(listOf(contact)) }
         every { permissionService.hasContactReadPermission() } returns true
 
