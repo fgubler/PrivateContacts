@@ -64,7 +64,8 @@ class AndroidContactRepository : IAndroidContactRepository {
             .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
             ?.firstOrNull()
 
-        return contactRaw?.toContact() ?: throw IllegalArgumentException("Contact $contactId not found on android")
+        return contactRaw?.toContact(rethrowExceptions = true)
+            ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
     private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {

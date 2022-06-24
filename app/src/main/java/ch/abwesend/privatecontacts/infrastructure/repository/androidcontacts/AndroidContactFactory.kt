@@ -21,7 +21,7 @@ fun Contact.toContactBase(): IContactBase? =
         null
     }
 
-fun Contact.toContact(): IContact? =
+fun Contact.toContact(rethrowExceptions: Boolean = false): IContact? =
     try {
         ContactEditable(
             id = ContactIdAndroid(contactNo = contactId),
@@ -34,5 +34,6 @@ fun Contact.toContact(): IContact? =
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)
-        null
+        if (rethrowExceptions) throw t
+        else null
     }
