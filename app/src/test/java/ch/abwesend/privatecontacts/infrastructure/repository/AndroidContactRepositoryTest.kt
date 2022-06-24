@@ -8,11 +8,13 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someAndroidContact
 import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.FetchRequest
 import com.alexstyl.contactstore.coroutines.asFlow
@@ -24,11 +26,14 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
 
@@ -70,12 +75,62 @@ class AndroidContactRepositoryTest : TestBase() {
     fun `should resolve an existing contact by ID`() {
         val contactId = ContactIdAndroid(contactNo = 123123)
         val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
-        runBlocking { flow.emit(listOf(contact)) }
         every { permissionService.hasContactReadPermission() } returns true
+        runBlocking { flow.emit(listOf(contact)) }
 
         val result = runBlocking { underTest.resolveContact(contactId) }
 
         coVerify { contactStore.fetchContacts(any(), any(), any()) }
         assertThat(result.id).isEqualTo(contactId)
     }
+
+    @Test
+    fun `resolving a contact should throw if the contact could not be found`() {
+        val contactId = ContactIdAndroid(contactNo = 123123)
+        every { permissionService.hasContactReadPermission() } returns true
+        // the flow has never emitted
+
+        assertThrows<IllegalArgumentException> {
+            runBlocking { underTest.resolveContact(contactId) }
+        }
+    }
+
+    @Test
+    fun `resolving a contact should re-throw if the contact could not be mapped`() {
+        val contactId = ContactIdAndroid(contactNo = 123123)
+        val exception = IllegalStateException("Just some test exception")
+        val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
+        every { contact.note } throws exception
+        every { permissionService.hasContactReadPermission() } returns true
+        runBlocking { flow.emit(listOf(contact)) }
+
+        val thrownException = assertThrows<IllegalStateException> {
+            runBlocking { underTest.resolveContact(contactId) }
+        }
+
+        assertThat(thrownException).isEqualTo(exception)
+    }
+
+    @Disabled // TODO fix
+    @Test
+    fun `loading all contacts should not pass a predicate`() {
+        val searchConfig = ContactSearchConfig.All
+
+        runBlocking { underTest.loadContactsAsFlow(searchConfig) }
+
+        verify { contactStore.fetchContacts(predicate = null, columnsToFetch = any(), displayNameStyle = any()) }
+    }
+
+    @Disabled // TODO fix
+    @Test
+    fun `loading contacts by query should not pass a predicate`() {
+        val searchConfig = ContactSearchConfig.Query("Test")
+        val expectedPredicate = ContactPredicate.NameLookup(searchConfig.query)
+
+        runBlocking { underTest.loadContactsAsFlow(searchConfig) }
+
+        verify { contactStore.fetchContacts(predicate = expectedPredicate, columnsToFetch = any(), displayNameStyle = any()) }
+    }
+
+    // TODO add tests for displayNameStyle and columns
 }
