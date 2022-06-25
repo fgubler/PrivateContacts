@@ -49,7 +49,7 @@ class AndroidContactRepository : IAndroidContactRepository {
 
     private val contactStore: ContactStore by injectAnywhere()
 
-    override suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
+    override fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {
             is All -> loadContacts()
             is Query -> searchContacts(searchConfig.query)
@@ -70,14 +70,14 @@ class AndroidContactRepository : IAndroidContactRepository {
             ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
-    private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
+    private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
             val contacts = createContactsBaseFlow()
             emitAll(contacts)
         }.also { duration -> logger.debug("Loading android contacts took $duration ms") }
     }.toResourceFlow()
 
-    private suspend fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
+    private fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
             val predicate = ContactPredicate.NameLookup(query) // this actually searches over all fields
             val contacts = createContactsBaseFlow(predicate).firstOrNull()
