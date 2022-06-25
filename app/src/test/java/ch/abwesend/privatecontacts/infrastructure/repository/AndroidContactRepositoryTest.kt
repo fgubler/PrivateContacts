@@ -8,13 +8,11 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
-import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someAndroidContact
 import com.alexstyl.contactstore.Contact
-import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.FetchRequest
 import com.alexstyl.contactstore.coroutines.asFlow
@@ -26,12 +24,10 @@ import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkStatic
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
