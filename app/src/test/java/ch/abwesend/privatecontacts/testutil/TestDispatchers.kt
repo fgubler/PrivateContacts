@@ -9,12 +9,12 @@ package ch.abwesend.privatecontacts.testutil
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 
 @ExperimentalCoroutinesApi
 object TestDispatchers : IDispatchers {
-    override val default: CoroutineDispatcher = TestCoroutineDispatcher()
-    override val io: CoroutineDispatcher = TestCoroutineDispatcher()
-    override val main: CoroutineDispatcher = TestCoroutineDispatcher()
-    override val mainImmediate: CoroutineDispatcher = TestCoroutineDispatcher()
+    override val default: CoroutineDispatcher = StandardTestDispatcher()
+    override val io: CoroutineDispatcher = StandardTestDispatcher()
+    override val main: CoroutineDispatcher = StandardTestDispatcher()
+    override val mainImmediate: CoroutineDispatcher = StandardTestDispatcher()
 }

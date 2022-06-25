@@ -37,6 +37,9 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
 
+/**
+ * TODO for some reason, it does not really work to add tests for resolving the list of contacts => find out why.
+ */
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class AndroidContactRepositoryTest : TestBase() {
@@ -110,27 +113,4 @@ class AndroidContactRepositoryTest : TestBase() {
 
         assertThat(thrownException).isEqualTo(exception)
     }
-
-    @Disabled // TODO fix
-    @Test
-    fun `loading all contacts should not pass a predicate`() {
-        val searchConfig = ContactSearchConfig.All
-
-        runBlocking { underTest.loadContactsAsFlow(searchConfig) }
-
-        verify { contactStore.fetchContacts(predicate = null, columnsToFetch = any(), displayNameStyle = any()) }
-    }
-
-    @Disabled // TODO fix
-    @Test
-    fun `loading contacts by query should not pass a predicate`() {
-        val searchConfig = ContactSearchConfig.Query("Test")
-        val expectedPredicate = ContactPredicate.NameLookup(searchConfig.query)
-
-        runBlocking { underTest.loadContactsAsFlow(searchConfig) }
-
-        verify { contactStore.fetchContacts(predicate = expectedPredicate, columnsToFetch = any(), displayNameStyle = any()) }
-    }
-
-    // TODO add tests for displayNameStyle and columns
 }
