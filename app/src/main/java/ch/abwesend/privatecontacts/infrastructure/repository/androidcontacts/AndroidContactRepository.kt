@@ -35,8 +35,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
 import kotlin.system.measureTimeMillis
 
 /**
@@ -60,7 +60,9 @@ class AndroidContactRepository : IAndroidContactRepository {
         val contactRaw = contactStore.fetchContacts(
             predicate = ContactLookup(contactId = contactId.contactNo),
             columnsToFetch = allContactColumns()
-        ).asFlow().firstOrNull()
+        ).asFlow()
+            .flowOn(dispatchers.io)
+            .firstOrNull()
             .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
             ?.firstOrNull()
 
@@ -83,11 +85,11 @@ class AndroidContactRepository : IAndroidContactRepository {
         }.also { duration -> logger.debug("Loading android contacts for query '$query' took $duration ms") }
     }.toResourceFlow()
 
-    private suspend fun createContactsBaseFlow(
+    private fun createContactsBaseFlow(
         predicate: ContactPredicate? = null
-    ): Flow<List<IContactBase>> = withContext(dispatchers.io) {
+    ): Flow<List<IContactBase>> {
         checkContactReadPermission { exception ->
-            return@withContext flow {
+            return flow {
                 ErrorResource<List<IContactBase>>(listOf(exception))
             }
         }
@@ -102,8 +104,9 @@ class AndroidContactRepository : IAndroidContactRepository {
             logger.debug("Loaded ${contacts.size} android contacts with predicate $predicate")
             contacts.mapNotNull { it.toContactBase() }
                 .filter { validationService.validateContactBase(it).valid }
-        }
-        contacts
+        }.flowOn(dispatchers.io)
+
+        return contacts
     }
 
     private inline fun <T> checkContactReadPermission(permissionDeniedHandler: (MissingPermissionException) -> T) {
