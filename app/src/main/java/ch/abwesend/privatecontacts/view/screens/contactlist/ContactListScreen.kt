@@ -164,6 +164,7 @@ object ContactListScreen {
             ContactList(
                 contacts = contacts,
                 selectedContacts = selectedContacts,
+                scrollingState = viewModel.scrollingState,
                 showTypeIcons = showTypeIcons,
                 onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
                 onContactLongClicked = { contact -> longClickContact(screenContext, contact) }

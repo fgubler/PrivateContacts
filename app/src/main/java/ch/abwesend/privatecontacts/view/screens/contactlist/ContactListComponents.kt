@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
@@ -45,6 +46,7 @@ private const val EASTER_EGG_LOVE = "love"
 fun ContactList(
     contacts: List<IContactBase>,
     selectedContacts: Set<ContactId>,
+    scrollingState: LazyListState,
     showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
@@ -53,6 +55,7 @@ fun ContactList(
     else ListOfContacts(
         contacts = contacts,
         selectedContacts = selectedContacts,
+        scrollingState = scrollingState,
         showTypeIcons = showTypeIcons,
         onContactClicked = onContactClicked,
         onContactLongClicked = onContactLongClicked,
@@ -69,11 +72,13 @@ private fun NoResults() {
 private fun ListOfContacts(
     contacts: List<IContactBase>,
     selectedContacts: Set<ContactId>,
+    scrollingState: LazyListState,
     showTypeIcons: Boolean,
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
     LazyColumn(
+        state = scrollingState,
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)

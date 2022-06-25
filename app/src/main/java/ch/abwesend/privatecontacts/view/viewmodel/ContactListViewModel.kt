@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.viewmodel
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -99,6 +100,9 @@ class ContactListViewModel : ViewModel() {
 
     private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
     val deleteResult: Flow<ContactDeleteResult> = _deleteResult
+
+    /** to remember the scrolling-position after returning from an opened contact */
+    val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
 
     fun selectTab(tab: ContactListTab) {
         _selectedTab.value = tab
