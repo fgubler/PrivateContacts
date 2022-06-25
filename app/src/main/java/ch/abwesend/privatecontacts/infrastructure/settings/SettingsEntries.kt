@@ -35,10 +35,6 @@ internal val showAndroidContactsEntry = SettingsEntry(
     key = booleanPreferencesKey("showAndroidContacts"),
     defaultValue = SettingsState.defaultSettings.showAndroidContacts
 )
-internal val requestAndroidContactPermissionsEntry = SettingsEntry(
-    key = booleanPreferencesKey("requestAndroidContactPermissions"),
-    defaultValue = SettingsState.defaultSettings.requestAndroidContactPermissions
-)
 internal val initialInfoDialogEntry = SettingsEntry(
     key = booleanPreferencesKey("showInitialInfoDialog"),
     defaultValue = SettingsState.defaultSettings.showInitialAppInfoDialog

@@ -29,7 +29,6 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.initialization.AndroidContactPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
@@ -180,18 +179,12 @@ object SettingsScreen {
                 value = currentSettings.showAndroidContacts,
             ) {
                 settingsRepository.showAndroidContacts = it
-                settingsRepository.requestAndroidContactPermissions = true
                 if (it) { requestPermissions = true }
             }
         }
 
         if (requestPermissions) {
-            getCurrentActivity()?.AndroidContactPermissionHandler(
-                settings = currentSettings,
-                permissionHelper = contactPermissionHelper,
-            ) {
-                requestPermissions = false
-            } ?: logger.warning("Activity not found: cannot ask for permissions")
+            contactPermissionHelper.requestAndroidContactPermissions { requestPermissions = false }
         }
     }
 

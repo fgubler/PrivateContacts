@@ -30,7 +30,6 @@ interface SettingsRepository : ISettingsState {
 
     // Android Contacts
     override var showAndroidContacts: Boolean
-    override var requestAndroidContactPermissions: Boolean
 
     // Others
     override var sendErrorsToCrashlytics: Boolean

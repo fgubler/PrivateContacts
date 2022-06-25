@@ -37,8 +37,6 @@ interface ISettingsState {
     // Android Contacts
     val showAndroidContacts: Boolean
 
-    val requestAndroidContactPermissions: Boolean
-
     // Others
     val sendErrorsToCrashlytics: Boolean
     val currentVersion: Int
@@ -58,7 +56,6 @@ data class SettingsState(
     override val showIncomingCallsOnLockScreen: Boolean,
 
     override val showAndroidContacts: Boolean,
-    override val requestAndroidContactPermissions: Boolean,
 
     override val sendErrorsToCrashlytics: Boolean,
     override val currentVersion: Int,
@@ -73,7 +70,6 @@ data class SettingsState(
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             showAndroidContacts = true,
-            requestAndroidContactPermissions = true,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.SECRET,
             currentVersion = BuildConfig.VERSION_CODE,

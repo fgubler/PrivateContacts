@@ -44,11 +44,9 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
-import ch.abwesend.privatecontacts.view.initialization.AndroidContactPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.AndroidContactPermissionsDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
@@ -127,10 +125,6 @@ class MainActivity : ComponentActivity() {
 
         when (initializationState) {
             InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
-            AndroidContactPermissionsDialog -> AndroidContactPermissionHandler(
-                settings = settings,
-                permissionHelper = contactPermissionHelper
-            ) { nextState() }
             CallPermissionsDialog -> CallPermissionHandler(
                 settings = settings,
                 permissionHelper = callPermissionHelper,

@@ -21,7 +21,10 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
@@ -32,7 +35,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
-import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -40,8 +42,11 @@ import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDi
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -49,15 +54,13 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactListScreen {
-    private val permissionService: PermissionService by injectAnywhere()
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val scaffoldState = rememberScaffoldState()
 
-        LaunchedEffect(Unit) {
-            screenContext.contactListViewModel.reloadContacts()
-        }
+        LaunchedEffect(Unit) { initializeScreen(screenContext) }
 
         BaseScreen(
             screenContext = screenContext,
@@ -79,23 +82,55 @@ object ContactListScreen {
         }
     }
 
+    private fun initializeScreen(screenContext: ScreenContext) {
+        screenContext.contactListViewModel.reloadContacts()
+
+        when (screenContext.contactListViewModel.selectedTab.value) {
+            SECRET_CONTACTS -> { /* nothing to do */ }
+            ALL_CONTACTS -> if (!screenContext.settings.showAndroidContacts) {
+                screenContext.contactListViewModel.selectTab(ContactListTab.default)
+            }
+        }
+    }
+
     @Composable
     private fun TabBox(screenContext: ScreenContext) {
-        val hasContactsPermission = permissionService.hasContactReadPermission()
         val androidContactsEnabled = screenContext.settings.showAndroidContacts
 
-        if (androidContactsEnabled && hasContactsPermission) {
+        if (androidContactsEnabled) {
             val viewModel = remember { screenContext.contactListViewModel }
             val selectedTab = viewModel.selectedTab.value
 
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
-                    LeadingIconTab(
-                        selected = selectedTab == tab,
-                        onClick = { viewModel.selectTab(tab) },
-                        text = { Text(text = stringResource(id = tab.label)) },
-                        icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) }
-                    )
+                    Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel)
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun Tab(tab: ContactListTab, selectedTab: ContactListTab, viewModel: ContactListViewModel) {
+        var requestPermissions: Boolean by remember { mutableStateOf(false) }
+
+        LeadingIconTab(
+            selected = selectedTab == tab,
+            text = { Text(text = stringResource(id = tab.label)) },
+            icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
+            onClick = {
+                if (tab.requiresPermission) {
+                    requestPermissions = true
+                } else {
+                    viewModel.selectTab(tab)
+                }
+            },
+        )
+
+        if (requestPermissions) {
+            contactPermissionHelper.requestAndroidContactPermissions {
+                requestPermissions = false
+                if (it.usable) {
+                    viewModel.selectTab(tab)
                 }
             }
         }
