@@ -67,11 +67,14 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
         val type = address.label.toContactDataType()
 
         // TODO think about how to structure the address
+        val cityWithPostalCode = listOf(address.value.postCode, address.value.city)
+            .filterNot { it.isEmpty() }
+            .joinToString(separator = " ")
+
         val completeAddress = listOfNotNull(
             address.value.street,
             address.value.neighborhood,
-            address.value.postCode,
-            address.value.city,
+            cityWithPostalCode,
             address.value.region,
             address.value.country
         )

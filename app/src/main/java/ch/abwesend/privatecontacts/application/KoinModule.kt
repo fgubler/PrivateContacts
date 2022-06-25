@@ -97,5 +97,5 @@ internal val koinModule = module {
     single { DatabaseHolder(androidContext()) }
 
     // Android contacts
-    factory { ContactStore.newInstance(androidContext()) }
+    single { ContactStore.newInstance(androidContext()) }
 }
