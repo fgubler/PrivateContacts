@@ -6,40 +6,34 @@
 
 package ch.abwesend.privatecontacts.testutil
 
-import ch.abwesend.privatecontacts.domain.model.contact.Contact
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
-import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 
-fun someContactId(): ContactId = ContactId.randomId()
+fun someContactId(): ContactIdInternal = ContactIdInternal.randomId()
 
 fun someContactBase(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
-    nickname: String = "Lord Snow",
     type: ContactType = SECRET,
-    notes: String = "Tries to do the right thing. Often badly.",
 ): IContactBase = ContactBase(
     id = id,
-    firstName = firstName,
-    lastName = lastName,
-    nickname = nickname,
     type = type,
-    notes = notes,
+    displayName = getFullName(firstName, lastName)
 )
 
 fun someContactEntity(
-    id: ContactId = someContactId(),
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -56,31 +50,8 @@ fun someContactEntity(
     fullTextSearch = fullTextSearch,
 )
 
-fun someContactWithPhoneNumbers(
-    id: ContactId = someContactId(),
-    firstName: String = "John",
-    lastName: String = "Snow",
-    nickname: String = "Lord Snow",
-    type: ContactType = SECRET,
-    notes: String = "Tries to do the right thing. Often badly.",
-    phoneNumbers: List<String> = emptyList(),
-): ContactWithPhoneNumbers {
-    val base = ContactBase(
-        id = id,
-        firstName = firstName,
-        lastName = lastName,
-        nickname = nickname,
-        type = type,
-        notes = notes,
-    )
-    return ContactWithPhoneNumbers(
-        contactBase = base,
-        phoneNumbers = phoneNumbers.map { PhoneNumberValue(it) }
-    )
-}
-
-fun someContactFull(
-    id: ContactId = someContactId(),
+fun someContactEditable(
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -88,27 +59,47 @@ fun someContactFull(
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
-): IContact = Contact(
+): IContactEditable = ContactEditable(
     id = id,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
     type = type,
     notes = notes,
-    contactDataSet = contactData,
+    contactDataSet = contactData.toMutableList(),
     isNew = isNew,
 )
 
-fun someContactEditable(
-    id: ContactId = someContactId(),
+fun someContactEditableWithId(
+    id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
-    contactData: MutableList<ContactData> = mutableListOf(),
+    contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
-): IContactEditable = ContactEditable(
+): Pair<IContactIdInternal, IContactEditable> = id to someContactEditable(
+    id = id,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    contactData = contactData,
+    isNew = isNew,
+)
+
+fun someTestContact(
+    id: ContactIdInternal = someContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = SECRET,
+    notes: String = "Tries to do the right thing. Often badly.",
+    contactData: List<ContactData> = emptyList(),
+    isNew: Boolean = false,
+): IContact = TestContact(
     id = id,
     firstName = firstName,
     lastName = lastName,

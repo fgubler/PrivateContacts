@@ -7,8 +7,8 @@
 package ch.abwesend.privatecontacts.view
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.somePhoneNumber
@@ -97,7 +97,7 @@ class ContactViewExtensionsTest : TestBase() {
 
     @Test
     fun `addOrReplace should replace an existing element`() {
-        val id = ContactDataId.randomId()
+        val id = ContactDataIdInternal.randomId()
         val phoneNumber1 = somePhoneNumber(id = id, value = "1")
         val phoneNumber2 = somePhoneNumber(id = id, value = "2")
         val list = mutableListOf<PhoneNumber>()

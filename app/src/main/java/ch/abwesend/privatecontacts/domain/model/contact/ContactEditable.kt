@@ -30,13 +30,16 @@ data class ContactEditable(
     override val contactDataSet: MutableList<ContactData>,
     override val isNew: Boolean = false,
 ) : IContactEditable {
+    override val displayName: String
+        get() = getFullName()
+
     override fun wrap(): ContactEditableWrapper = ContactEditableWrapper(this)
     fun deepCopy(): ContactEditable = copy(contactDataSet = contactDataSet.toMutableList())
 
     companion object {
         fun createNew(): ContactEditable =
             ContactEditable(
-                id = ContactId.randomId(),
+                id = ContactIdInternal.randomId(),
                 firstName = "",
                 lastName = "",
                 nickname = "",

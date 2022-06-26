@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -30,7 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.getFullName
+import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
@@ -50,8 +51,8 @@ import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
@@ -106,7 +107,7 @@ object ContactDetailScreen {
         TopAppBar(
             title = {
                 Text(
-                    text = contact?.getFullName() ?: stringResource(id = title),
+                    text = contact?.displayName ?: stringResource(id = title),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -115,7 +116,8 @@ object ContactDetailScreen {
                 BackIconButton { screenContext.router.navigateUp() }
             },
             actions = {
-                if (contact != null) {
+                // TODO handle external contacts
+                if (contact != null && !contact.isExternal) {
                     EditIconButton(enabled = buttonsEnabled) {
                         screenContext.contactEditViewModel.selectContact(contact)
                         screenContext.router.navigateToScreen(Screen.ContactEdit)

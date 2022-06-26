@@ -28,17 +28,23 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.domain.util.getAnywhere
-import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
 object SettingsScreen {
+    private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+    private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
+
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
         private set
 
@@ -69,8 +75,10 @@ object SettingsScreen {
                 else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
 
-                // TODO re-insert when public contacts are possible
-                if (false) {
+                AndroidContactsCategory(settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+
+                if (false) { // TODO re-insert when public contacts are possible
                     DefaultValuesCategory(settingsRepository, currentSettings)
                     SettingsCategorySpacer()
                 }
@@ -104,6 +112,12 @@ object SettingsScreen {
                 value = currentSettings.orderByFirstName,
                 onValueChanged = { settingsRepository.orderByFirstName = it }
             )
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_contact_types_on_contact_list,
+                description = null,
+                value = currentSettings.showContactTypeInList,
+                onValueChanged = { settingsRepository.showContactTypeInList = it }
+            )
         }
     }
 
@@ -133,11 +147,10 @@ object SettingsScreen {
         }
 
         if (requestPermissions) {
-            val permissionHelper: PermissionHelper by remember { mutableStateOf(getAnywhere()) }
-
-            getCurrentActivity()?.PermissionHandler(
+            getCurrentActivity()?.CallPermissionHandler(
                 settings = currentSettings,
-                permissionHelper = permissionHelper
+                permissionHelper = callPermissionHelper,
+                roleHelper = callScreeningRoleHelper,
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")
@@ -148,6 +161,30 @@ object SettingsScreen {
     private fun CallDetectionCategoryDummy() {
         SettingsCategory(titleRes = R.string.settings_category_call_detection) {
             Text(text = stringResource(id = R.string.settings_category_call_detection_excuse))
+        }
+    }
+
+    @Composable
+    private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        var requestPermissions: Boolean by remember { mutableStateOf(false) }
+
+        SettingsCategory(
+            titleRes = R.string.settings_category_contacts,
+            infoPopupText = R.string.settings_info_dialog_android_contacts,
+            hideInfoPopup = currentSettings.showAndroidContacts,
+        ) {
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_android_contacts,
+                description = R.string.settings_entry_show_android_contacts_description,
+                value = currentSettings.showAndroidContacts,
+            ) {
+                settingsRepository.showAndroidContacts = it
+                if (it) { requestPermissions = true }
+            }
+        }
+
+        if (requestPermissions) {
+            contactPermissionHelper.requestAndroidContactPermissions { requestPermissions = false }
         }
     }
 
@@ -166,16 +203,16 @@ object SettingsScreen {
             )
         }
     }
+}
 
-    @Composable
-    private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
-            SettingsCheckbox(
-                label = R.string.settings_entry_error_reports,
-                description = R.string.settings_entry_error_reports_description,
-                value = currentSettings.sendErrorsToCrashlytics,
-                onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
-            )
-        }
+@Composable
+private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
+        SettingsCheckbox(
+            label = R.string.settings_entry_error_reports,
+            description = R.string.settings_entry_error_reports_description,
+            value = currentSettings.sendErrorsToCrashlytics,
+            onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
+        )
     }
 }

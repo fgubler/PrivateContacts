@@ -23,9 +23,17 @@ internal val orderByFirstNameEntry = SettingsEntry(
     key = booleanPreferencesKey("orderByFirstName"),
     defaultValue = SettingsState.defaultSettings.orderByFirstName
 )
+internal val showContactTypeInListEntry = SettingsEntry(
+    key = booleanPreferencesKey("showContactTypeInList"),
+    defaultValue = SettingsState.defaultSettings.showContactTypeInList
+)
 internal val incomingCallsOnLockScreenEntry = SettingsEntry(
     key = booleanPreferencesKey("showIncomingCallsOnLockScreen"),
     defaultValue = SettingsState.defaultSettings.showIncomingCallsOnLockScreen
+)
+internal val showAndroidContactsEntry = SettingsEntry(
+    key = booleanPreferencesKey("showAndroidContacts"),
+    defaultValue = SettingsState.defaultSettings.showAndroidContacts
 )
 internal val initialInfoDialogEntry = SettingsEntry(
     key = booleanPreferencesKey("showInitialInfoDialog"),

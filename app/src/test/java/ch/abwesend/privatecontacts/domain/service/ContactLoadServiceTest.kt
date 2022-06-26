@@ -6,12 +6,11 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import androidx.paging.Pager
-import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
-import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -21,6 +20,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
@@ -32,9 +32,6 @@ class ContactLoadServiceTest : TestBase() {
     private lateinit var contactRepository: IContactRepository
 
     @MockK
-    private lateinit var pagerFactory: ContactPagerFactory
-
-    @MockK
     private lateinit var easterEggService: EasterEggService
 
     @InjectMockKs
@@ -42,18 +39,16 @@ class ContactLoadServiceTest : TestBase() {
 
     override fun Module.setupKoinModule() {
         single { contactRepository }
-        single { pagerFactory }
         single { easterEggService }
     }
 
     @Test
     fun `search should check for easter eggs`() {
         val query = "Test"
-        val pager = mockk<Pager<Int, IContactBase>>(relaxed = true)
-        every { pagerFactory.createContactPager(any()) } returns pager
+        coEvery { contactRepository.getContactsAsFlow(any()) } returns mockk()
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
-        underTest.searchContacts(query)
+        runBlocking { underTest.searchSecretContacts(query) }
 
         verify { easterEggService.checkSearchForEasterEggs(query) }
     }
@@ -61,14 +56,12 @@ class ContactLoadServiceTest : TestBase() {
     @Test
     fun `search should pass the query to the paging logic`() {
         val query = "Test"
-        val pager = mockk<Pager<Int, IContactBase>>(relaxed = true)
-        every { pagerFactory.createContactPager(any()) } returns pager
+        coEvery { contactRepository.getContactsAsFlow(any()) } returns mockk()
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
-        underTest.searchContacts(query)
+        runBlocking { underTest.searchSecretContacts(query) }
 
         verify { easterEggService.checkSearchForEasterEggs(query) }
-        verify { pagerFactory.createContactPager(ContactSearchConfig.Query(query)) }
-        verify { pager.flow }
+        coVerify { contactRepository.getContactsAsFlow(ContactSearchConfig.Query(query)) }
     }
 }

@@ -44,12 +44,17 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
+import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
-import ch.abwesend.privatecontacts.view.initialization.PermissionHandler
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.permission.PermissionHelper
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
@@ -66,7 +71,9 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalMaterialApi
 @FlowPreview
 class MainActivity : ComponentActivity() {
-    private val permissionHelper: PermissionHelper by injectAnywhere()
+    private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+    private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
 
     private val viewModel: MainViewModel by viewModels()
     private val contactListViewModel: ContactListViewModel by viewModels()
@@ -78,7 +85,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         logger.info("Main activity started")
 
-        permissionHelper.setupObserver(this)
+        callPermissionHelper.setupObservers(this)
+        contactPermissionHelper.setupObservers(this)
+        callScreeningRoleHelper.setupObserver(this)
 
         Settings.repository.currentVersion = BuildConfig.VERSION_CODE
 
@@ -114,10 +123,14 @@ class MainActivity : ComponentActivity() {
             screenContext = screenContext,
         )
 
-        InfoDialogs(initializationState, settings) { nextState() }
-
-        if (initializationState == CallPermissionsDialog) {
-            PermissionHandler(settings, permissionHelper) { nextState() }
+        when (initializationState) {
+            InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
+            CallPermissionsDialog -> CallPermissionHandler(
+                settings = settings,
+                permissionHelper = callPermissionHelper,
+                roleHelper = callScreeningRoleHelper,
+            ) { nextState() }
+            Initialized -> { /* nothing to do */ }
         }
     }
 

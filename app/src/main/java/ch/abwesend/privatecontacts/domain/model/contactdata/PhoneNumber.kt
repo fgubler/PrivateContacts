@@ -11,6 +11,8 @@ import androidx.compose.material.icons.filled.Phone
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
+import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 
 data class PhoneNumber(
     override val id: ContactDataId,
@@ -58,7 +60,7 @@ data class PhoneNumber(
         )
         fun createEmpty(sortOrder: Int): PhoneNumber =
             PhoneNumber(
-                id = ContactDataId.randomId(),
+                id = createContactDataId(),
                 sortOrder = sortOrder,
                 type = ContactDataType.Mobile,
                 value = "",

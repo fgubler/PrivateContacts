@@ -15,9 +15,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.repository.PAGING_DEPRECATION
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import java.lang.Exception
 
+@Suppress("DEPRECATION")
+@Deprecated(PAGING_DEPRECATION)
 class ContactPagingSource(
     private val searchConfig: ContactSearchConfig
 ) : PagingSource<Int, IContactBase>() {

@@ -11,12 +11,25 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 @Dao
 interface ContactDao {
     @Query("SELECT * FROM ContactEntity")
-    suspend fun getAll(): List<ContactEntity>
+    fun getAllAsFlow(): Flow<List<ContactEntity>>
+
+    @Query(
+        """
+        SELECT * 
+        FROM ContactEntity
+        WHERE (
+            (:query != '' AND fullTextSearch LIKE '%' || :query || '%') OR 
+            (:phoneNumberQuery != '' AND fullTextSearch LIKE '%' || :phoneNumberQuery || '%')
+        )
+    """
+    )
+    fun searchAsFlow(query: String, phoneNumberQuery: String): Flow<List<ContactEntity>>
 
     @Query("SELECT * FROM ContactEntity ORDER BY firstName, lastName, id LIMIT :loadSize OFFSET :offsetInRows")
     suspend fun getPagedByFirstName(loadSize: Int, offsetInRows: Int): List<ContactEntity>
@@ -72,15 +85,6 @@ interface ContactDao {
 
     @Query("SELECT * FROM ContactEntity WHERE id = :id")
     suspend fun findById(id: UUID): ContactEntity?
-
-    @Query(
-        """
-        SELECT * 
-        FROM ContactEntity 
-        WHERE (firstName || lastName || nickname) LIKE '%' || :query || '%' 
-    """
-    )
-    suspend fun searchByAnyName(query: String): List<ContactEntity>
 
     @Update
     suspend fun update(contact: ContactEntity)

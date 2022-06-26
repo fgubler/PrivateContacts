@@ -11,13 +11,13 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
@@ -28,42 +28,42 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 
 class ContactDataRepository : RepositoryBase() {
-    suspend fun loadContactData(contact: IContactBase): List<ContactDataEntity> =
+    suspend fun loadContactData(contactId: IContactIdInternal): List<ContactDataEntity> =
         withDatabase { database ->
-            database.contactDataDao().getDataForContact(contact.id.uuid)
+            database.contactDataDao().getDataForContact(contactId.uuid)
         }
 
-    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): Map<ContactId, List<PhoneNumberValue>> =
+    suspend fun findPhoneNumbersEndingOn(endOfPhoneNumber: String): Map<ContactIdInternal, List<PhoneNumberValue>> =
         withDatabase { database ->
             val data = database.contactDataDao().findPhoneNumbersEndingOn(endOfPhoneNumber)
             data
                 .groupBy { it.contactId }
-                .mapKeys { ContactId(it.key) }
+                .mapKeys { ContactIdInternal(it.key) }
                 .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
-    suspend fun createContactData(contact: IContact) =
+    suspend fun createContactData(contactId: IContactIdInternal, contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.map { contactData ->
-                contactData.toEntity(contact.id)
+                contactData.toEntity(contactId)
             }
 
             database.contactDataDao().insertAll(contactData)
         }
 
-    suspend fun updateContactData(contact: IContact) =
+    suspend fun updateContactData(contactId: IContactIdInternal, contact: IContact) =
         withDatabase { database ->
             val contactData = contact.contactDataSet.filter { !it.isEmpty }
 
             val newData = contactData
                 .filter { it.modelStatus == NEW }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
             val changedData = contactData
                 .filter { it.modelStatus == CHANGED }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
             val deletedData = contactData
                 .filter { it.modelStatus == DELETED }
-                .map { it.toEntity(contact.id) }
+                .map { it.toEntity(contactId) }
 
             database.contactDataDao().insertAll(newData)
             database.contactDataDao().updateAll(changedData)
@@ -75,7 +75,7 @@ class ContactDataRepository : RepositoryBase() {
 
         when (contactData.category) {
             ContactDataCategory.PHONE_NUMBER -> PhoneNumber(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -84,7 +84,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.EMAIL -> EmailAddress(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -92,7 +92,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.ADDRESS -> PhysicalAddress(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -100,7 +100,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.WEBSITE -> Website(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -108,7 +108,7 @@ class ContactDataRepository : RepositoryBase() {
                 modelStatus = UNCHANGED,
             )
             ContactDataCategory.COMPANY -> Company(
-                id = ContactDataId(contactData.id),
+                id = ContactDataIdInternal(contactData.id),
                 type = type,
                 sortOrder = contactData.sortOrder,
                 value = contactData.valueRaw,
@@ -123,9 +123,9 @@ class ContactDataRepository : RepositoryBase() {
         null
     }
 
-    suspend fun deleteContactData(contact: IContactBase) = deleteContactData(listOf(contact.id))
+    suspend fun deleteContactData(contactId: IContactIdInternal) = deleteContactData(listOf(contactId))
 
-    suspend fun deleteContactData(contactIds: Collection<ContactId>) = withDatabase { database ->
+    suspend fun deleteContactData(contactIds: Collection<IContactIdInternal>) = withDatabase { database ->
         val dataToDelete = database.contactDataDao().getDataForContacts(contactIds.map { it.uuid })
         database.contactDataDao().deleteAll(dataToDelete)
     }

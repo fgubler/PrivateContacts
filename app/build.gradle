@@ -23,8 +23,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 30
-        versionCode 16
-        versionName "1.2.0"
+        versionCode 18
+        versionName "2.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -117,6 +117,9 @@ dependencies {
     implementation "io.insert-koin:koin-android:${koinVersion}"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
 
+    implementation "com.alexstyl:contactstore:${contactStoreVersion}"
+    implementation "com.alexstyl:contactstore-coroutines:${contactStoreVersion}"
+
     // ===== Testing =====
     // Unit Tests
     testImplementation "junit:junit:4.13.2"
@@ -138,6 +141,8 @@ dependencies {
 
     testImplementation "io.mockk:mockk:${mockkVersion}"
     testImplementation "io.mockk:mockk-agent-jvm:${mockkVersion}"
+
+    testImplementation "com.alexstyl:contactstore-test:${contactStoreVersion}"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 

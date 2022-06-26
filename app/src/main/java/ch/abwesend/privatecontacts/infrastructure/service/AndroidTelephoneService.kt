@@ -9,10 +9,10 @@ package ch.abwesend.privatecontacts.infrastructure.service
 import android.content.Context
 import android.telephony.PhoneNumberUtils
 import android.telephony.TelephonyManager
-import ch.abwesend.privatecontacts.domain.service.interfaces.ITelephoneService
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import java.util.Locale
 
-class TelephoneService(applicationContext: Context) : ITelephoneService {
+class AndroidTelephoneService(applicationContext: Context) : TelephoneService {
     private val telephonyManager: TelephonyManager? by lazy {
         applicationContext.getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
     }

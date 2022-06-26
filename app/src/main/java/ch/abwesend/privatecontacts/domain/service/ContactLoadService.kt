@@ -6,28 +6,76 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import androidx.paging.PagingData
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
-import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
+import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val contactPagerFactory: ContactPagerFactory by injectAnywhere()
+    private val androidContactRepository: IAndroidContactRepository by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
 
-    fun loadContacts(): Flow<PagingData<IContactBase>> =
-        contactPagerFactory.createContactPager(ContactSearchConfig.All).flow
+    suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
+        contactRepository.getContactsAsFlow(All)
 
-    fun searchContacts(query: String): Flow<PagingData<IContactBase>> {
+    suspend fun searchSecretContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
-        return contactPagerFactory.createContactPager(ContactSearchConfig.Query(query)).flow
+        return if (query.isEmpty()) loadSecretContacts()
+        else contactRepository.getContactsAsFlow(Query(query))
+    }
+
+    suspend fun loadAllContacts(): ResourceFlow<List<IContactBase>> = coroutineScope {
+        val secretContactsDeferred = async { loadSecretContacts() }
+        val androidContactsDeferred = async { loadAndroidContacts() }
+
+        val secretContacts = secretContactsDeferred.await()
+        val androidContacts = androidContactsDeferred.await()
+
+        combineContacts(secretContacts, androidContacts)
+    }
+
+    suspend fun searchAllContacts(query: String): ResourceFlow<List<IContactBase>> = coroutineScope {
+        val secretContactsDeferred = async { searchSecretContacts(query) }
+        val androidContactsDeferred = async { searchAndroidContacts(query) }
+
+        val secretContacts = secretContactsDeferred.await()
+        val androidContacts = androidContactsDeferred.await()
+
+        combineContacts(secretContacts, androidContacts)
+    }
+
+    private suspend fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
+        androidContactRepository.loadContactsAsFlow(All)
+
+    private suspend fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
+        easterEggService.checkSearchForEasterEggs(query)
+        return if (query.isEmpty()) loadAndroidContacts()
+        else androidContactRepository.loadContactsAsFlow(Query(query))
+    }
+
+    private fun combineContacts(
+        contactsFlow1: ResourceFlow<List<IContactBase>>,
+        contactsFlow2: ResourceFlow<List<IContactBase>>
+    ): ResourceFlow<List<IContactBase>> = contactsFlow1.combineResource(contactsFlow2) { contacts1, contacts2 ->
+        val all = contacts1 + contacts2
+        all.sortedBy { it.displayName }
     }
 
     suspend fun resolveContact(contact: IContactBase): IContact =
-        contactRepository.resolveContact(contact)
+        contact.id.let { contactId ->
+            when (contactId) {
+                is IContactIdInternal -> contactRepository.resolveContact(contactId)
+                is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
+            }
+        }
 }

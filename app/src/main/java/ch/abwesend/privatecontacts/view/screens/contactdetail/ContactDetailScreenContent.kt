@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,8 @@ import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.util.color
+import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 import ch.abwesend.privatecontacts.view.util.navigateToBrowser
 import ch.abwesend.privatecontacts.view.util.navigateToDial
 import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
@@ -44,6 +47,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToSms
 
 const val UTF_8 = "utf-8"
 
+@ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
@@ -67,6 +71,7 @@ object ContactDetailScreenContent {
             categoryTitle = R.string.personal_information,
             icon = Icons.Default.Person,
             alignContentWithTitle = true,
+            modifier = Modifier.longClickForCopyToClipboard(contact.displayName)
         ) {
             Row {
                 Column {
@@ -76,6 +81,8 @@ object ContactDetailScreenContent {
                     if (contact.lastName.isNotEmpty()) {
                         Text(text = stringResource(id = R.string.last_name_colon), color = labelColor())
                     }
+
+                    Text(text = stringResource(id = R.string.visibility_colon), color = labelColor())
                 }
                 Column(modifier = Modifier.padding(start = 10.dp)) {
                     if (contact.firstName.isNotEmpty()) {
@@ -84,6 +91,7 @@ object ContactDetailScreenContent {
                     if (contact.lastName.isNotEmpty()) {
                         Text(text = contact.lastName)
                     }
+                    Text(text = stringResource(id = contact.type.label), color = contact.type.color)
                 }
             }
         }
@@ -157,6 +165,7 @@ object ContactDetailScreenContent {
                 categoryTitle = R.string.notes,
                 icon = Icons.Default.SpeakerNotes,
                 alignContentWithTitle = false,
+                modifier = Modifier.longClickForCopyToClipboard(contact.notes),
             ) {
                 Text(text = contact.notes)
             }

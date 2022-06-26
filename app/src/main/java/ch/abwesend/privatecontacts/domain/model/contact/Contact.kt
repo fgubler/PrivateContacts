@@ -8,18 +8,23 @@ package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 
+interface IContactBase {
+    val id: ContactId
+    val type: ContactType
+    val displayName: String
+}
+
 interface IContact : IContactBase {
+    val firstName: String
+    val lastName: String
+    val nickname: String
+    val notes: String
     val contactDataSet: List<ContactData>
     val isNew: Boolean
 }
 
-data class Contact(
+data class ContactBase(
     override val id: ContactId,
-    override val firstName: String,
-    override val lastName: String,
-    override val nickname: String,
     override val type: ContactType,
-    override val notes: String,
-    override val contactDataSet: List<ContactData>,
-    override val isNew: Boolean = false,
-) : IContact
+    override val displayName: String,
+) : IContactBase

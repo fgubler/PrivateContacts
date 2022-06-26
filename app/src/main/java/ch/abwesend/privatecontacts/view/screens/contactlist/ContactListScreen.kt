@@ -7,31 +7,46 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.LeadingIconTab
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TabRow
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.res.stringResource
-import androidx.paging.compose.collectAsLazyPagingItems
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
+import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
+import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
+import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
-import ch.abwesend.privatecontacts.view.util.isError
-import ch.abwesend.privatecontacts.view.util.isLoading
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -39,10 +54,13 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactListScreen {
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val scaffoldState = rememberScaffoldState()
+
+        LaunchedEffect(Unit) { initializeScreen(screenContext) }
 
         BaseScreen(
             screenContext = screenContext,
@@ -57,7 +75,64 @@ object ContactListScreen {
             },
             floatingActionButton = { AddContactButton(screenContext) }
         ) {
-            ContactListContent(screenContext)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                TabBox(screenContext)
+                ContactListContent(screenContext)
+            }
+        }
+    }
+
+    private fun initializeScreen(screenContext: ScreenContext) {
+        screenContext.contactListViewModel.reloadContacts()
+
+        when (screenContext.contactListViewModel.selectedTab.value) {
+            SECRET_CONTACTS -> { /* nothing to do */ }
+            ALL_CONTACTS -> if (!screenContext.settings.showAndroidContacts) {
+                screenContext.contactListViewModel.selectTab(ContactListTab.default)
+            }
+        }
+    }
+
+    @Composable
+    private fun TabBox(screenContext: ScreenContext) {
+        val androidContactsEnabled = screenContext.settings.showAndroidContacts
+
+        if (androidContactsEnabled) {
+            val viewModel = remember { screenContext.contactListViewModel }
+            val selectedTab = viewModel.selectedTab.value
+
+            TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
+                ContactListTab.valuesSorted.forEach { tab ->
+                    Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel)
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun Tab(tab: ContactListTab, selectedTab: ContactListTab, viewModel: ContactListViewModel) {
+        var requestPermissions: Boolean by remember { mutableStateOf(false) }
+
+        LeadingIconTab(
+            selected = selectedTab == tab,
+            text = { Text(text = stringResource(id = tab.label)) },
+            icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
+            onClick = {
+                if (tab.requiresPermission) {
+                    requestPermissions = true
+                } else {
+                    viewModel.selectTab(tab)
+                }
+            },
+        )
+
+        if (requestPermissions) {
+            contactPermissionHelper.requestAndroidContactPermissions {
+                requestPermissions = false
+                if (it.usable) {
+                    viewModel.selectTab(tab)
+                }
+            }
         }
     }
 
@@ -75,27 +150,32 @@ object ContactListScreen {
     @Composable
     private fun ContactListContent(screenContext: ScreenContext) {
         val viewModel = screenContext.contactListViewModel
-        val pagedContacts = viewModel.contacts.value.collectAsLazyPagingItems()
+        val contactsResource = viewModel.contacts.collectAsState(initial = InactiveResource()).value
 
         val screenState = viewModel.screenState.value
         val bulkMode = screenState is ContactListScreenState.BulkMode
         val selectedContacts = (screenState as? ContactListScreenState.BulkMode)
             ?.selectedContacts.orEmpty()
 
-        when {
-            pagedContacts.isError -> LoadingError(viewModel)
-            pagedContacts.isLoading -> ContactLoadingIndicator()
-            else -> {
-                if (pagedContacts.itemCount > 0 || viewModel.initialEmptyContactsIgnored) {
-                    ContactList(
-                        pagedContacts = pagedContacts,
-                        selectedContacts = selectedContacts,
-                        onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
-                        onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
-                    )
-                } else ContactLoadingIndicator()
-                viewModel.initialEmptyContactsIgnored = true
-            }
+        val showTypeIcons = viewModel.selectedTab.value.showContactTypeIcons &&
+            screenContext.settings.showContactTypeInList
+
+        val showContactList: @Composable (contacts: List<IContactBase>) -> Unit = { contacts ->
+            ContactList(
+                contacts = contacts,
+                selectedContacts = selectedContacts,
+                scrollingState = viewModel.scrollingState,
+                showTypeIcons = showTypeIcons,
+                onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
+                onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
+            )
+        }
+
+        when (contactsResource) {
+            is ErrorResource -> LoadingError(viewModel)
+            is LoadingResource -> ContactLoadingIndicator()
+            is InactiveResource -> showContactList(emptyList())
+            is ReadyResource -> showContactList(contactsResource.value)
         }
 
         val deletionErrors = viewModel.deleteResult

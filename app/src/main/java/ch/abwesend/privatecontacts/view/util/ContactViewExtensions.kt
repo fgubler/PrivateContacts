@@ -6,9 +6,12 @@
 
 package ch.abwesend.privatecontacts.view.util
 
+import androidx.compose.ui.graphics.Color
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.view.theme.AppColors
 
 inline fun <reified T : ContactData> IContact.contactDataForDisplay(
     addEmptyElement: Boolean = true,
@@ -44,3 +47,9 @@ fun <T : ContactData> MutableList<T>.addOrReplace(newData: T) {
         add(newData)
     }
 }
+
+val ContactType.color: Color
+    get() = when (this) {
+        ContactType.SECRET -> AppColors.goodGreen
+        ContactType.PUBLIC -> AppColors.dangerRed
+    }

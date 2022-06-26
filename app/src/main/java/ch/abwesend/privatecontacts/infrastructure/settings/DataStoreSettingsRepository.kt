@@ -31,8 +31,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val coroutineScope = applicationScope
 
-    override var currentSettings: ISettingsState = SettingsState.defaultSettings
-        private set
+    private var currentSettings: ISettingsState = SettingsState.defaultSettings
 
     override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
 
@@ -53,9 +52,17 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.orderByFirstName
         set(value) = dataStore.setValue(orderByFirstNameEntry, value)
 
+    override var showContactTypeInList: Boolean
+        get() = currentSettings.showContactTypeInList
+        set(value) = dataStore.setValue(showContactTypeInListEntry, value)
+
     override var showIncomingCallsOnLockScreen: Boolean
         get() = currentSettings.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)
+
+    override var showAndroidContacts: Boolean
+        get() = currentSettings.showAndroidContacts
+        set(value) = dataStore.setValue(showAndroidContactsEntry, value)
 
     override var showInitialAppInfoDialog: Boolean
         get() = currentSettings.showInitialAppInfoDialog
@@ -87,6 +94,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
+        showAndroidContacts = settings.showAndroidContacts
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType
         // TODO add new properties here

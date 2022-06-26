@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contact
 
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactFull
+import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -31,11 +31,11 @@ class ContactEntityExtensionsTest : TestBase() {
 
     @Test
     fun `should compute full text search`() {
-        val contact = someContactFull()
+        val (contactId, contact) = someContactEditableWithId()
         val fullText = "TestFullText"
         every { searchService.computeFullTextSearchColumn(any()) } returns fullText
 
-        val entity = contact.toEntity()
+        val entity = contact.toEntity(contactId)
 
         verify { searchService.computeFullTextSearchColumn(contact) }
         assertThat(entity.fullTextSearch).isEqualTo(fullText)

@@ -36,10 +36,12 @@
     <string name="send">Send</string>
     <string name="success">Success</string>
     <string name="failure">Failure</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
+    <string name="feature_not_yet_implemented">Sorry, this feature is not yet implemented.</string>
 
     <string name="do_not_show_again">Do not show again</string>
     <string name="thank_you">Thank you</string>
@@ -49,10 +51,12 @@
     <string name="public_contact">Public</string>
     <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
+    <string name="type_mobile_business">Mobile Business</string>
     <string name="type_mobile">Mobile</string>
     <string name="type_other">Other</string>
     <string name="type_custom">Custom</string>
     <string name="type_birthday">Birthday</string>
+    <string name="type_anniversary">Anniversary</string>
     <string name="type_main">Main</string>
 
     <string name="create_contact">Create Contact</string>
@@ -72,6 +76,7 @@
     <string name="last_name_colon">Last name:</string>
     <string name="nickname">Nickname</string>
     <string name="notes">Notes</string>
+    <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>
     <string name="phone_numbers">Phone numbers</string>
@@ -112,6 +117,9 @@
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
     <string name="activate_feature">Would you like to activate this feature now?</string>
 
+    <string name="show_android_contacts">Show public contacts?</string>
+    <string name="show_android_contacts_text">To also manage the contacts from the "normal" Android contacts app, some permissions are needed.\n\nIf wish to use this app only to manage your secret contacts, these permissions are not needed.</string>
+
     <string name="incoming_call_title">Incoming call</string>
     <string name="incoming_call_text_single_match">\"%1$s\" is calling you.</string>
     <string name="incoming_call_text_multiple_matches">%1$s or %2$s is calling you. The number %3$s matches all of those contacts.</string>
@@ -139,21 +147,26 @@
     <string name="system_default">System default</string>
 
     <string name="settings_category_ux">Display</string>
+    <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
 
     <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
+    <string name="settings_info_dialog_android_contacts">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
+    <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
     <string name="settings_entry_default_contact_type">Default contact-type</string>
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
     <string name="settings_entry_call_detection">Match incoming calls with contacts</string>
     <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
-    <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen.</string>
+    <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
+    <string name="settings_entry_show_android_contacts">Show public contacts</string>
+    <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 
@@ -168,5 +181,9 @@
     <string name="resetting_database_failed">Failed to reset the database. Please try again or notify the developers about this bug. If this does not work, you can also go to the system-settings and delete all data of this app. This will delete the database for sure.\n\nWe apologize for the inconvenience.</string>
     <string name="run_in_background">Run in background</string>
     <string name="version">Version</string>
+
+    <string name="secret_contacts_tab_title">Secret Contacts</string>
+    <string name="all_contacts_tab_title">All Contacts</string>
+
 
 </resources>
