@@ -194,7 +194,7 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun ContactLoadingIndicator() = LoadingIndicatorFullScreen(R.string.loading_contacts)
+    private fun ContactLoadingIndicator() = LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts)
 
     @Composable
     private fun LoadingError(viewModel: ContactListViewModel) {

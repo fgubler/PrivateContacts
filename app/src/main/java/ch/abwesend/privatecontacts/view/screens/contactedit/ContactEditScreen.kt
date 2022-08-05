@@ -55,7 +55,6 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
@@ -97,9 +96,9 @@ object ContactEditScreen {
                         onToggleExpanded = { showAllFields = !showAllFields }
                     )
                 }
-            ) {
+            ) { padding ->
                 // The actual content
-                Column {
+                Column(modifier = Modifier.padding(padding)) {
                     ContactEditContent(
                         screenContext = screenContext,
                         contact = contact,

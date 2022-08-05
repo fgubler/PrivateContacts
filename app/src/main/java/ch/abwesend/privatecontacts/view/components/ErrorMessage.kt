@@ -24,12 +24,13 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 @Composable
 fun FullScreenError(
     @StringRes errorMessage: Int,
+    modifier: Modifier = Modifier,
     buttonConfig: ButtonConfig? = null,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(20.dp)
     ) {

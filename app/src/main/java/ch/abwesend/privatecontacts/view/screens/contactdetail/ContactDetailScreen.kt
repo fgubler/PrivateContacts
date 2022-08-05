@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
@@ -71,12 +73,15 @@ object ContactDetailScreen {
                     contact = contactResource.valueOrNull
                 )
             }
-        ) {
+        ) { padding ->
+            val modifier = Modifier.padding(padding)
             contactResource
-                .composeIfError { NoContactLoadedError(viewModel = viewModel) }
-                .composeIfInactive { NoContactLoaded(router = screenContext.router) }
-                .composeIfLoading { LoadingIndicatorFullScreen(R.string.loading_contacts) }
-                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
+                .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
+                .composeIfInactive { NoContactLoaded(router = screenContext.router, modifier = modifier) }
+                .composeIfLoading {
+                    LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
+                }
+                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
         }
 
         DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
@@ -183,9 +188,10 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun NoContactLoaded(router: AppRouter) {
+    private fun NoContactLoaded(router: AppRouter, modifier: Modifier = Modifier) {
         FullScreenError(
             errorMessage = R.string.no_contact_selected,
+            modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.back,
                 icon = Icons.Default.ArrowBack,
@@ -196,9 +202,10 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun NoContactLoadedError(viewModel: ContactDetailViewModel) {
+    private fun NoContactLoadedError(viewModel: ContactDetailViewModel, modifier: Modifier = Modifier) {
         FullScreenError(
             errorMessage = R.string.no_contact_selected_error,
+            modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.reload_contact,
                 icon = Icons.Default.Sync,

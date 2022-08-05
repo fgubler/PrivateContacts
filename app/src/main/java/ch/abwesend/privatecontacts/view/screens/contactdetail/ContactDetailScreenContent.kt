@@ -54,9 +54,9 @@ const val UTF_8 = "utf-8"
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
     @Composable
-    fun ScreenContent(contact: IContact) {
+    fun ScreenContent(contact: IContact, modifier: Modifier = Modifier) {
         val scrollState = rememberScrollState()
-        Column(modifier = Modifier.verticalScroll(state = scrollState)) {
+        Column(modifier = modifier.verticalScroll(state = scrollState)) {
             PersonalInformation(contact = contact)
             PhoneNumbers(contact = contact)
             EmailAddresses(contact = contact)
