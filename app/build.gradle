@@ -16,17 +16,17 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
-        testInstrumentationRunnerArguments runnerBuilder: 'de.mannodermaus.junit5.AndroidJUnit5Builder'
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
-        targetSdk 30
+        targetSdk 32
         versionCode 18
         versionName "2.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary true
         }
@@ -51,7 +51,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
+//        useIR = true // gradle build fails with this option set to true...
     }
     buildFeatures {
         compose true
@@ -77,9 +77,9 @@ dependencies {
 
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.7.0"
-    implementation "androidx.appcompat:appcompat:1.4.1"
-    implementation "com.google.android.material:material:1.6.0"
+    implementation "androidx.core:core-ktx:1.8.0"
+    implementation "androidx.appcompat:appcompat:1.4.2"
+    implementation "com.google.android.material:material:1.6.1"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -95,8 +95,8 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:$composeVersion"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.4.0"
-    implementation "androidx.navigation:navigation-compose:2.5.0-rc01"
+    implementation "androidx.activity:activity-compose:1.5.1"
+    implementation "androidx.navigation:navigation-compose:2.5.1"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -112,7 +112,7 @@ dependencies {
 
     // Others
     implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha14"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha15"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
@@ -136,7 +136,6 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
 
     testImplementation "de.mannodermaus.junit5:android-test-core:${junit5AndroidVersion}"
-    testImplementation "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
 
     testImplementation "io.insert-koin:koin-test-junit5:${koinVersion}"
     testImplementation "androidx.room:room-testing:$roomVersion"
@@ -161,10 +160,6 @@ dependencies {
     androidTestImplementation "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
 
     androidTestImplementation "io.insert-koin:koin-test-junit5:${koinVersion}"
-    androidTestImplementation "de.mannodermaus.junit5:android-test-core:${junit5AndroidVersion}"
-    androidTestImplementation "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
 
     androidTestImplementation "io.mockk:mockk-android:${mockkVersion}"
-
-    androidTestRuntimeOnly "de.mannodermaus.junit5:android-test-runner:${junit5AndroidVersion}"
 }
