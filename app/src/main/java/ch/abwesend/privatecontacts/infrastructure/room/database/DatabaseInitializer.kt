@@ -17,11 +17,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
+import java.time.LocalDate
 
 class DatabaseInitializer {
     suspend fun initializeDatabase(contactDao: ContactDao): Boolean = try {
@@ -93,7 +96,39 @@ class DatabaseInitializer {
                         isMain = true,
                         sortOrder = 0,
                         modelStatus = ModelStatus.CHANGED,
-                    )
+                    ),
+                    EventDate(
+                        id = createContactDataId(),
+                        value = LocalDate.now(),
+                        type = ContactDataType.Birthday,
+                        isMain = true,
+                        sortOrder = 0,
+                        modelStatus = ModelStatus.CHANGED,
+                    ),
+                    EventDate(
+                        id = createContactDataId(),
+                        value = LocalDate.now().plusDays(5),
+                        type = ContactDataType.Anniversary,
+                        isMain = false,
+                        sortOrder = 1,
+                        modelStatus = ModelStatus.CHANGED,
+                    ),
+                    Relationship(
+                        id = createContactDataId(),
+                        value = "Darth Vader",
+                        type = ContactDataType.RelationshipParent,
+                        isMain = true,
+                        sortOrder = 0,
+                        modelStatus = ModelStatus.CHANGED,
+                    ),
+                    Relationship(
+                        id = createContactDataId(),
+                        value = "Leia Organa",
+                        type = ContactDataType.RelationshipSibling,
+                        isMain = false,
+                        sortOrder = 1,
+                        modelStatus = ModelStatus.CHANGED,
+                    ),
                 ),
             ),
             ContactEditable(
