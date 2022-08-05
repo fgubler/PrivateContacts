@@ -19,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
@@ -124,7 +125,14 @@ class ContactDataRepository : RepositoryBase() {
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )
-            ContactDataCategory.DATE -> null // TODO implement
+            ContactDataCategory.EVENT_DATE -> EventDate(
+                id = ContactDataIdInternal(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = EventDate.deserializeDate(contactData.valueRaw),
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
         }
     } catch (e: Exception) {
         logger.error("Failed to resolve contact-data", e)

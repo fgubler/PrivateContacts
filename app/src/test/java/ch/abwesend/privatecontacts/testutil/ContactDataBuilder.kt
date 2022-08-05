@@ -15,9 +15,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
+import java.time.LocalDate
 import java.util.UUID
 
 fun someContactDataId(): ContactDataId = createContactDataId()
@@ -75,6 +77,22 @@ fun someEmailAddress(
     isMain: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): EmailAddress = EmailAddress(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someEventDate(
+    id: ContactDataId = someContactDataId(),
+    value: LocalDate = LocalDate.now(),
+    type: ContactDataType = ContactDataType.Birthday,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): EventDate = EventDate(
     id = id,
     value = value,
     type = type,

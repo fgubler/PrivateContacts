@@ -14,16 +14,23 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.COMPANY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EVENT_DATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.RELATIONSHIP
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.WEBSITE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MAIN
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FRIEND
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
+import ch.abwesend.privatecontacts.domain.model.contactdata.GenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
@@ -49,6 +56,7 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
@@ -300,6 +308,46 @@ class ContactDataRepositoryTest : TestBase() {
 
         assertThat(result).isNotNull
         assertThat(result).isInstanceOf(Company::class.java)
+        assertThat(result!!.id.uuid).isEqualTo(entity.id)
+        assertThat(result.category).isEqualTo(entity.category)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
+        assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
+        assertThat(result.type.key).isEqualTo(entity.type.key)
+        assertThat(result.isMain).isEqualTo(entity.isMain)
+    }
+
+    @Test
+    fun `resolving an event date should return it`() {
+        val entity = someContactDataEntity(
+            category = EVENT_DATE,
+            value = "2022-05-01",
+            type = ContactDataTypeEntity(BIRTHDAY, null)
+        )
+
+        val result = runBlocking { underTest.tryResolveContactData(entity) }
+
+        assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(EventDate::class.java)
+        assertThat(result!!.id.uuid).isEqualTo(entity.id)
+        assertThat(result.category).isEqualTo(entity.category)
+        assertThat((result as? GenericContactData<*, *>)?.value).isEqualTo(LocalDate.of(2022, 5, 1))
+        assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
+        assertThat(result.type.key).isEqualTo(entity.type.key)
+        assertThat(result.isMain).isEqualTo(entity.isMain)
+    }
+
+    @Test
+    fun `resolving a relationship should return it`() {
+        val entity = someContactDataEntity(
+            category = RELATIONSHIP,
+            value = "Vin Venture",
+            type = ContactDataTypeEntity(RELATIONSHIP_FRIEND, null)
+        )
+
+        val result = runBlocking { underTest.tryResolveContactData(entity) }
+
+        assertThat(result).isNotNull
+        assertThat(result).isInstanceOf(Relationship::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
         assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)

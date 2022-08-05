@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.GenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 
@@ -22,6 +23,7 @@ import ch.abwesend.privatecontacts.domain.util.simpleClassName
 fun ContactData.toEntity(contactId: IContactIdInternal): ContactDataEntity =
     when (this) {
         is StringBasedContactData -> stringBasedToEntity(contactId)
+        is GenericContactData<*, *> -> toEntity(contactId)
     }
 
 private fun StringBasedContactData.stringBasedToEntity(contactId: IContactIdInternal): ContactDataEntity {
@@ -43,5 +45,28 @@ private fun StringBasedContactData.stringBasedToEntity(contactId: IContactIdInte
         valueRaw = value,
         valueFormatted = formattedValue,
         valueForMatching = valueForMatching,
+    )
+}
+
+private fun <TValue, TThis : GenericContactData<TValue, TThis>>
+GenericContactData<TValue, TThis>.toEntity(contactId: IContactIdInternal): ContactDataEntity {
+    val internalId: IContactDataIdInternal =
+        when (val fixedId = id) {
+            is IContactDataIdInternal -> fixedId
+            is IContactDataIdExternal -> ContactDataIdInternal.randomId().also {
+                logger.warning("Replaced external ID of $simpleClassName with internal one")
+            }
+        }
+
+    return ContactDataEntity(
+        id = internalId.uuid,
+        contactId = contactId.uuid,
+        category = category,
+        type = type.toEntity(),
+        sortOrder = sortOrder,
+        isMain = isMain,
+        valueRaw = serializedValue(),
+        valueFormatted = displayValue,
+        valueForMatching = displayValue,
     )
 }
