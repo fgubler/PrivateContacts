@@ -15,17 +15,20 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EVENT_DATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipChild
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFriend
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipParent
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipPartner
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipRelative
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSibling
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipWork
+import java.time.DateTimeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import java.time.format.FormatStyle
+
+/**
+ * The year 0 is set if no year was entered
+ */
+private const val DUMMY_YEAR_STRING = "0000"
+private const val DUMMY_YEAR_INT = 0
 
 data class EventDate(
     override val id: ContactDataId,
@@ -44,6 +47,7 @@ data class EventDate(
 
     override val displayValue: String by lazy {
         value?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)).orEmpty()
+            .replace(oldValue = DUMMY_YEAR_STRING, newValue = "")
     }
 
     override fun changeValue(value: LocalDate?): EventDate {
@@ -76,20 +80,23 @@ data class EventDate(
         }
 
         private val defaultAllowedTypes = listOf(
-            RelationshipParent,
-            RelationshipChild,
-            RelationshipSibling,
-            RelationshipPartner,
-            RelationshipFriend,
-            RelationshipRelative,
-            RelationshipWork,
+            Birthday,
+            Custom,
             Other,
         )
 
         fun deserializeDate(rawValue: String): LocalDate? = try {
             LocalDate.parse(rawValue, serializationDateFormatter)
-        } catch (e: Exception) {
+        } catch (e: DateTimeParseException) {
             logger.error("Failed to deserialize event date '$rawValue'", e)
+            null
+        }
+
+        fun createDate(day: Int, month: Int, year: Int?): LocalDate? = try {
+            val yearOrDummy: Int = year ?: DUMMY_YEAR_INT
+            LocalDate.of(yearOrDummy, month, day)
+        } catch (e: DateTimeException) {
+            logger.error("Failed to create date from day = $day, month = $month, year = $year", e)
             null
         }
 

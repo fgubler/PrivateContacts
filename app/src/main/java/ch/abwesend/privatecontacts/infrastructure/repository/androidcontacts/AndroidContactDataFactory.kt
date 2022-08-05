@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
@@ -19,12 +20,12 @@ import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 
-// TODO add additional data-types
 fun Contact.getContactData(): List<ContactData> = getPhoneNumbers() +
     getEmailAddresses() +
     getPhysicalAddresses() +
     getWebsites() +
-    getRelationships()
+    getRelationships() +
+    getEventDates()
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
     val telephoneService: TelephoneService by injectAnywhere()
@@ -119,6 +120,26 @@ private fun Contact.getRelationships(): List<Relationship> {
             sortOrder = index,
             type = type,
             value = relationship.value.name,
+            isMain = index == 0,
+            modelStatus = ModelStatus.UNCHANGED,
+        )
+    }
+}
+
+private fun Contact.getEventDates(): List<EventDate> {
+    return events.mapIndexed { index, event ->
+        val contactDataId = event.toContactDataId()
+        val type = event.label.toContactDataType()
+
+        val date = with(event.value) {
+            EventDate.createDate(day = dayOfMonth, month = month, year = year)
+        }
+
+        EventDate(
+            id = contactDataId,
+            sortOrder = index,
+            type = type,
+            value = date,
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )

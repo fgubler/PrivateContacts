@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.ANNIVERSARY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
@@ -61,7 +62,7 @@ sealed class ContactDataType {
     }
 
     object Anniversary : ContactDataType() {
-        override val key: Key = BIRTHDAY
+        override val key: Key = ANNIVERSARY
         override val titleRes: Int = R.string.type_anniversary
     }
 
@@ -126,7 +127,7 @@ sealed class ContactDataType {
         MOBILE_BUSINESS,
         OTHER,
         BIRTHDAY,
-        Anniversary,
+        ANNIVERSARY,
         MAIN,
         CUSTOM,
 

@@ -37,4 +37,33 @@ class EventDateTest : TestBase() {
 
         assertThat(result).isEqualTo(date)
     }
+
+    @Test
+    fun `should create normal date`() {
+        val expectedResult = LocalDate.of(2010, 10, 1)
+
+        val result = EventDate.createDate(day = 1, month = 10, year = 2010)
+
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `should create date without year`() {
+        val expectedResult = LocalDate.of(0, 10, 1)
+
+        val result = EventDate.createDate(day = 1, month = 10, year = null)
+
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `should serialize date without year`() {
+        val expectedResult = "0000-10-01"
+        val date = EventDate.createDate(day = 1, month = 10, year = null)!!
+        val underTest = someEventDate(value = date)
+
+        val result = underTest.serializedValue()
+
+        assertThat(result).isEqualTo(expectedResult)
+    }
 }

@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.Anniversary
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.ANNIVERSARY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.CUSTOM
@@ -40,7 +40,7 @@ fun ContactDataTypeEntity.toContactDataType(): ContactDataType {
         MOBILE_BUSINESS -> ContactDataType.MobileBusiness
         OTHER -> ContactDataType.Other
         BIRTHDAY -> ContactDataType.Birthday
-        Anniversary -> ContactDataType.Anniversary
+        ANNIVERSARY -> ContactDataType.Anniversary
         MAIN -> ContactDataType.Main
         CUSTOM -> ContactDataType.CustomValue(customValue.orEmpty())
 
