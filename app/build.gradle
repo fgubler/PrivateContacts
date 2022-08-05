@@ -114,6 +114,8 @@ dependencies {
     implementation "androidx.paging:paging-compose:1.0.0-alpha14"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
     implementation "io.insert-koin:koin-androidx-compose:$koinVersion"
