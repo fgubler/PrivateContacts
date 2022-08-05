@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipChild
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFriend
@@ -63,6 +64,7 @@ data class Relationship(
             RelationshipFriend,
             RelationshipRelative,
             RelationshipWork,
+            Custom,
             Other,
         )
 
