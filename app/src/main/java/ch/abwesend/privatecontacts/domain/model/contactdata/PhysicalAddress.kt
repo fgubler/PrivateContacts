@@ -21,7 +21,7 @@ data class PhysicalAddress(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<PhysicalAddress> {
+) : StringBasedContactDataGeneric<PhysicalAddress> {
     override val category: ContactDataCategory = ContactDataCategory.ADDRESS
 
     override val allowedTypes: List<ContactDataType>

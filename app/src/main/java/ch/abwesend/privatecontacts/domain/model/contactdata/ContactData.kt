@@ -28,7 +28,7 @@ sealed interface ContactData {
     fun formatValueForSearch(): String?
 }
 
-interface StringBasedContactDataSimple : ContactData {
+interface StringBasedContactData : ContactData {
     /** Raw value */
     val value: String
     /** Formatted for display */
@@ -52,7 +52,7 @@ interface StringBasedContactDataSimple : ContactData {
 /**
  * The generics are needed to make the functions return the dynamic type of "this"
  */
-interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataSimple {
+interface StringBasedContactDataGeneric<T : StringBasedContactDataGeneric<T>> : StringBasedContactData {
     fun changeValue(value: String): T
     override fun changeType(type: ContactDataType): T
     override fun delete(): T

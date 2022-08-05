@@ -21,7 +21,7 @@ data class Website(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<Website> {
+) : StringBasedContactDataGeneric<Website> {
     override val category: ContactDataCategory = ContactDataCategory.WEBSITE
 
     override val allowedTypes: List<ContactDataType>

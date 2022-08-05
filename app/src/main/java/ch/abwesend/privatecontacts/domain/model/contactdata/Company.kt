@@ -21,7 +21,7 @@ data class Company(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<Company> {
+) : StringBasedContactDataGeneric<Company> {
     override val category: ContactDataCategory = ContactDataCategory.COMPANY
 
     override val allowedTypes: List<ContactDataType>

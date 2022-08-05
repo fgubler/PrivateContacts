@@ -24,7 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
@@ -205,7 +205,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(PhoneNumber::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
@@ -224,7 +224,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(PhoneNumber::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.type).isInstanceOf(CustomValue::class.java)
@@ -245,7 +245,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(EmailAddress::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
@@ -264,7 +264,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(PhysicalAddress::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
@@ -283,7 +283,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(Website::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)
@@ -302,7 +302,7 @@ class ContactDataRepositoryTest : TestBase() {
         assertThat(result).isInstanceOf(Company::class.java)
         assertThat(result!!.id.uuid).isEqualTo(entity.id)
         assertThat(result.category).isEqualTo(entity.category)
-        assertThat((result as? StringBasedContactDataSimple)?.value).isEqualTo(entity.valueRaw)
+        assertThat((result as? StringBasedContactData)?.value).isEqualTo(entity.valueRaw)
         assertThat(result.sortOrder).isEqualTo(entity.sortOrder)
         assertThat(result.type.key).isEqualTo(entity.type.key)
         assertThat(result.isMain).isEqualTo(entity.isMain)

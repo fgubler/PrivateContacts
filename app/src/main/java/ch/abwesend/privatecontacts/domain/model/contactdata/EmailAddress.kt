@@ -21,7 +21,7 @@ data class EmailAddress(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<EmailAddress> {
+) : StringBasedContactDataGeneric<EmailAddress> {
     override val category: ContactDataCategory = ContactDataCategory.EMAIL
 
     override val allowedTypes: List<ContactDataType>

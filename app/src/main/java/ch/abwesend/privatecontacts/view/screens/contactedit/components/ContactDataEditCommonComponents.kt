@@ -42,7 +42,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataGeneric
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.StringDropDownOption
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
@@ -63,7 +63,7 @@ object ContactDataEditCommonComponents {
     private val parent = ContactEditScreen
 
     @Composable
-    inline fun <reified T : StringBasedContactData<T>> ContactDataCategory(
+    inline fun <reified T : StringBasedContactDataGeneric<T>> ContactDataCategory(
         contact: IContactEditable,
         @StringRes categoryTitle: Int,
         @StringRes fieldLabel: Int,
@@ -119,7 +119,7 @@ object ContactDataEditCommonComponents {
     }
 
     @Composable
-    fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
+    fun <T : StringBasedContactDataGeneric<T>> StringBasedContactDataEntry(
         contactData: T,
         @StringRes label: Int,
         keyboardType: KeyboardType,

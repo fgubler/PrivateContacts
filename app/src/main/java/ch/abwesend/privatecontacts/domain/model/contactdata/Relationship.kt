@@ -29,7 +29,7 @@ data class Relationship(
     override val type: ContactDataType,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<Relationship> {
+) : StringBasedContactDataGeneric<Relationship> {
     override val category: ContactDataCategory = ContactDataCategory.RELATIONSHIP
 
     override val allowedTypes: List<ContactDataType>

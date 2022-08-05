@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 
 /**
@@ -21,10 +21,10 @@ import ch.abwesend.privatecontacts.domain.util.simpleClassName
  */
 fun ContactData.toEntity(contactId: IContactIdInternal): ContactDataEntity =
     when (this) {
-        is StringBasedContactDataSimple -> stringBasedToEntity(contactId)
+        is StringBasedContactData -> stringBasedToEntity(contactId)
     }
 
-private fun StringBasedContactDataSimple.stringBasedToEntity(contactId: IContactIdInternal): ContactDataEntity {
+private fun StringBasedContactData.stringBasedToEntity(contactId: IContactIdInternal): ContactDataEntity {
     val internalId: IContactDataIdInternal =
         when (val fixedId = id) {
             is IContactDataIdInternal -> fixedId

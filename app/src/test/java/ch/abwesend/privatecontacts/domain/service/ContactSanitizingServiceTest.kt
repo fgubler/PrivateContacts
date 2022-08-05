@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.someContactEditable
@@ -63,8 +63,8 @@ class ContactSanitizingServiceTest : TestBase() {
         verify(exactly = 2) { telephoneService.formatPhoneNumberForDisplay(any()) }
         verify(exactly = 1) { telephoneService.formatPhoneNumberForDisplay(firstNumber) }
         verify(exactly = 1) { telephoneService.formatPhoneNumberForDisplay(secondNumber) }
-        val firstSanitizedValue = (contact.contactDataSet[0] as StringBasedContactDataSimple).formattedValue
-        val secondSanitizedValue = (contact.contactDataSet[1] as StringBasedContactDataSimple).formattedValue
+        val firstSanitizedValue = (contact.contactDataSet[0] as StringBasedContactData).formattedValue
+        val secondSanitizedValue = (contact.contactDataSet[1] as StringBasedContactData).formattedValue
         assertThat(firstSanitizedValue).isEqualTo(firstNumberSanitized)
         assertThat(secondSanitizedValue).isEqualTo(secondNumberSanitized)
     }
@@ -88,8 +88,8 @@ class ContactSanitizingServiceTest : TestBase() {
         verify(exactly = 2) { telephoneService.formatPhoneNumberForMatching(any()) }
         verify(exactly = 1) { telephoneService.formatPhoneNumberForMatching(firstNumber) }
         verify(exactly = 1) { telephoneService.formatPhoneNumberForMatching(secondNumber) }
-        val firstSanitizedValue = (contact.contactDataSet[0] as StringBasedContactDataSimple).valueForMatching
-        val secondSanitizedValue = (contact.contactDataSet[1] as StringBasedContactDataSimple).valueForMatching
+        val firstSanitizedValue = (contact.contactDataSet[0] as StringBasedContactData).valueForMatching
+        val secondSanitizedValue = (contact.contactDataSet[1] as StringBasedContactData).valueForMatching
         assertThat(firstSanitizedValue).isEqualTo(firstNumberSanitized)
         assertThat(secondSanitizedValue).isEqualTo(secondNumberSanitized)
     }

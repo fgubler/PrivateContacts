@@ -23,7 +23,7 @@ data class PhoneNumber(
     override val valueForMatching: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<PhoneNumber> {
+) : StringBasedContactDataGeneric<PhoneNumber> {
     override val category: ContactDataCategory = ContactDataCategory.PHONE_NUMBER
 
     override val allowedTypes: List<ContactDataType>

@@ -8,14 +8,14 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 
 class FullTextSearchService {
     fun isLongEnough(query: String): Boolean = query.length >= SEARCH_MIN_LENGTH
 
     fun prepareQuery(query: String): String =
-        StringBasedContactDataSimple.formatValueForSearch(query)
+        StringBasedContactData.formatValueForSearch(query)
 
     fun prepareQueryForPhoneNumberSearch(query: String): String =
         PhoneNumber.formatValueForSearch(query)
