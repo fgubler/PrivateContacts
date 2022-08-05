@@ -16,6 +16,13 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE_BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_CHILD
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FRIEND
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SIBLING
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_WORK
 
 /**
  * Not a real entity but embedded...
@@ -36,6 +43,14 @@ fun ContactDataTypeEntity.toContactDataType(): ContactDataType {
         Anniversary -> ContactDataType.Anniversary
         MAIN -> ContactDataType.Main
         CUSTOM -> ContactDataType.CustomValue(customValue.orEmpty())
+
+        RELATIONSHIP_SIBLING -> ContactDataType.RelationshipSibling
+        RELATIONSHIP_PARENT -> ContactDataType.RelationshipParent
+        RELATIONSHIP_CHILD -> ContactDataType.RelationshipChild
+        RELATIONSHIP_RELATIVE -> ContactDataType.RelationshipRelative
+        RELATIONSHIP_PARTNER -> ContactDataType.RelationshipPartner
+        RELATIONSHIP_FRIEND -> ContactDataType.RelationshipFriend
+        RELATIONSHIP_WORK -> ContactDataType.RelationshipWork
     }
 }
 

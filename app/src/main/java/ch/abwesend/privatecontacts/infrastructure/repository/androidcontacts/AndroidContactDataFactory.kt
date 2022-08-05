@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -22,7 +23,8 @@ import com.alexstyl.contactstore.LabeledValue
 fun Contact.getContactData(): List<ContactData> = getPhoneNumbers() +
     getEmailAddresses() +
     getPhysicalAddresses() +
-    getWebsites()
+    getWebsites() +
+    getRelationships()
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
     val telephoneService: TelephoneService by injectAnywhere()
@@ -66,7 +68,6 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
         val contactDataId = address.toContactDataId()
         val type = address.label.toContactDataType()
 
-        // TODO think about how to structure the address
         val cityWithPostalCode = listOf(address.value.postCode, address.value.city)
             .filterNot { it.isEmpty() }
             .joinToString(separator = " ")
@@ -108,7 +109,22 @@ private fun Contact.getWebsites(): List<Website> {
     }
 }
 
-// TODO find a solution for not losing the information about the other types
+private fun Contact.getRelationships(): List<Relationship> {
+    return relations.mapIndexed { index, relationship ->
+        val contactDataId = relationship.toContactDataId()
+        val type = relationship.label.toContactDataType()
+
+        Relationship(
+            id = contactDataId,
+            sortOrder = index,
+            type = type,
+            value = relationship.value.name,
+            isMain = index == 0,
+            modelStatus = ModelStatus.UNCHANGED,
+        )
+    }
+}
+
 private fun Label.toContactDataType(): ContactDataType =
     when (this) {
         Label.PhoneNumberMobile -> ContactDataType.Mobile
@@ -121,6 +137,21 @@ private fun Label.toContactDataType(): ContactDataType =
         Label.DateAnniversary -> ContactDataType.Anniversary
         Label.WebsiteHomePage -> ContactDataType.Main
         Label.Other -> ContactDataType.Other
+
+        Label.RelationBrother -> ContactDataType.RelationshipSibling
+        Label.RelationSister -> ContactDataType.RelationshipSibling
+        Label.RelationChild -> ContactDataType.RelationshipChild
+        Label.RelationFather -> ContactDataType.RelationshipParent
+        Label.RelationMother -> ContactDataType.RelationshipParent
+        Label.RelationParent -> ContactDataType.RelationshipParent
+        Label.RelationPartner -> ContactDataType.RelationshipPartner
+        Label.RelationDomesticPartner -> ContactDataType.RelationshipPartner
+        Label.RelationRelative -> ContactDataType.RelationshipRelative
+        Label.RelationFriend -> ContactDataType.RelationshipFriend
+        Label.RelationManager -> ContactDataType.RelationshipWork
+        Label.RelationReferredBy -> ContactDataType.Other
+        Label.RelationSpouse -> ContactDataType.RelationshipPartner
+
         is Label.Custom -> ContactDataType.CustomValue(customValue = label)
         else -> ContactDataType.Other
     }

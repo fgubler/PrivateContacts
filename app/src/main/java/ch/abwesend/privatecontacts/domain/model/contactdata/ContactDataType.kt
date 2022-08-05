@@ -15,6 +15,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE_BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SIBLING
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_WORK
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 
 sealed class ContactDataType {
@@ -79,6 +84,41 @@ sealed class ContactDataType {
         override fun getTitle(stringProvider: StringProvider): String = customValue
     }
 
+    object RelationshipSibling : ContactDataType() {
+        override val key: Key = RELATIONSHIP_SIBLING
+        override val titleRes: Int = R.string.type_relationship_sibling
+    }
+
+    object RelationshipParent : ContactDataType() {
+        override val key: Key = RELATIONSHIP_PARENT
+        override val titleRes: Int = R.string.type_relationship_parent
+    }
+
+    object RelationshipChild : ContactDataType() {
+        override val key: Key = Key.RELATIONSHIP_CHILD
+        override val titleRes: Int = R.string.type_relationship_child
+    }
+
+    object RelationshipPartner : ContactDataType() {
+        override val key: Key = RELATIONSHIP_PARTNER
+        override val titleRes: Int = R.string.type_relationship_partner
+    }
+
+    object RelationshipRelative : ContactDataType() {
+        override val key: Key = RELATIONSHIP_RELATIVE
+        override val titleRes: Int = R.string.type_relationship_relative
+    }
+
+    object RelationshipWork : ContactDataType() {
+        override val key: Key = RELATIONSHIP_WORK
+        override val titleRes: Int = R.string.type_relationship_work
+    }
+
+    object RelationshipFriend : ContactDataType() {
+        override val key: Key = Key.RELATIONSHIP_FRIEND
+        override val titleRes: Int = R.string.type_relationship_friend
+    }
+
     enum class Key {
         PERSONAL,
         BUSINESS,
@@ -89,5 +129,13 @@ sealed class ContactDataType {
         Anniversary,
         MAIN,
         CUSTOM,
+
+        RELATIONSHIP_SIBLING,
+        RELATIONSHIP_PARENT,
+        RELATIONSHIP_CHILD,
+        RELATIONSHIP_RELATIVE,
+        RELATIONSHIP_PARTNER,
+        RELATIONSHIP_FRIEND,
+        RELATIONSHIP_WORK,
     }
 }

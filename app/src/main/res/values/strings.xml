@@ -58,6 +58,13 @@
     <string name="type_birthday">Birthday</string>
     <string name="type_anniversary">Anniversary</string>
     <string name="type_main">Main</string>
+    <string name="type_relationship_sibling">Sibling</string>
+    <string name="type_relationship_parent">Parent</string>
+    <string name="type_relationship_child">Child</string>
+    <string name="type_relationship_partner">Partner</string>
+    <string name="type_relationship_relative">Relative</string>
+    <string name="type_relationship_work">Work</string>
+    <string name="type_relationship_friend">Friend</string>
 
     <string name="create_contact">Create Contact</string>
 
@@ -86,6 +93,8 @@
     <string name="physical_addresses">Addresses</string>
     <string name="website">Website</string>
     <string name="websites">Websites</string>
+    <string name="relationship">Relationship</string>
+    <string name="relationships">Relationships</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 

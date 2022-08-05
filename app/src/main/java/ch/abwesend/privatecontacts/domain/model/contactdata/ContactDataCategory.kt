@@ -13,4 +13,5 @@ enum class ContactDataCategory {
     WEBSITE,
     COMPANY,
     DATE,
+    RELATIONSHIP,
 }
