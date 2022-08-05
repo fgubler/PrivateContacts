@@ -28,8 +28,10 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
@@ -61,6 +63,8 @@ object ContactDetailScreenContent {
             PhysicalAddresses(contact = contact)
             Websites(contact = contact)
             Companies(contact = contact)
+            EventDates(contact = contact)
+            Relationships(contact = contact)
             Notes(contact = contact)
         }
     }
@@ -156,6 +160,24 @@ object ContactDetailScreenContent {
             iconConfig = IconConfig(label = Company.labelSingular, icon = Company.icon),
             factory = { Company.createEmpty(it) },
         ) { company -> company.navigateToOnlineSearch(context) }
+    }
+
+    @Composable
+    private fun EventDates(contact: IContact) {
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = EventDate.labelSingular, icon = EventDate.icon),
+            factory = { EventDate.createEmpty(it) },
+        ) {}
+    }
+
+    @Composable
+    private fun Relationships(contact: IContact) {
+        ContactDataCategory(
+            contact = contact,
+            iconConfig = IconConfig(label = Relationship.labelSingular, icon = Relationship.icon),
+            factory = { Relationship.createEmpty(it) },
+        ) {}
     }
 
     @Composable
