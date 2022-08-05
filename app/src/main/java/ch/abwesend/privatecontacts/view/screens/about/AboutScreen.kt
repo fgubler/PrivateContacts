@@ -45,8 +45,8 @@ object AboutScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
         val context = LocalContext.current
-        BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) {
-            Column(modifier = Modifier.padding(10.dp)) {
+        BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) { padding ->
+            Column(modifier = Modifier.padding(padding).padding(10.dp)) {
                 AboutTheApp(context)
                 ContactDevelopers(context)
                 LegalDisclaimer()

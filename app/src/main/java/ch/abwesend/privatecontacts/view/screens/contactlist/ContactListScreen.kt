@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LeadingIconTab
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
@@ -74,8 +76,11 @@ object ContactListScreen {
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ) { padding ->
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(padding)
+            ) {
                 TabBox(screenContext)
                 ContactListContent(screenContext)
             }

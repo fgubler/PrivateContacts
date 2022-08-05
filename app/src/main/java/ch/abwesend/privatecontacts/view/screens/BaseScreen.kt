@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
@@ -42,14 +43,14 @@ fun BaseScreen(
         )
     },
     floatingActionButton: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = topBar,
         drawerContent = { SideDrawerContent(selectedScreen, scaffoldState, screenContext.router::navigateToScreen) },
         floatingActionButton = floatingActionButton,
-        content = { content() },
+        content = { padding -> content(padding) },
     )
 }
 
