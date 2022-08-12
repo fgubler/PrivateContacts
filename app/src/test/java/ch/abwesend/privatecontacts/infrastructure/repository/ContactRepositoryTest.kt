@@ -41,6 +41,9 @@ import java.util.UUID
 @ExtendWith(MockKExtension::class)
 class ContactRepositoryTest : TestBase() {
     @MockK
+    private lateinit var contactGroupRepository: ContactGroupRepository
+
+    @MockK
     private lateinit var contactDataRepository: ContactDataRepository
 
     @RelaxedMockK
@@ -51,7 +54,14 @@ class ContactRepositoryTest : TestBase() {
 
     override fun Module.setupKoinModule() {
         single { contactDataRepository }
+        single { contactGroupRepository }
         single { searchService }
+    }
+
+    override fun setup() {
+        super.setup()
+        coEvery { contactGroupRepository.getContactGroups(any()) } returns emptyList()
+        coEvery { contactGroupRepository.storeContactGroups(any(), any()) } just runs
     }
 
     @Test
@@ -74,7 +84,7 @@ class ContactRepositoryTest : TestBase() {
 
         val result = runBlocking { underTest.createContact(contactId, contact) }
 
-        coVerify { contactDataRepository.createContactData(contactId, contact) }
+        coVerify { contactDataRepository.createContactData(contactId, contact.contactDataSet) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 

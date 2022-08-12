@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactGroup
 import com.alexstyl.contactstore.Contact
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
@@ -45,10 +46,15 @@ class AndroidContactFactoryTest : TestBase() {
             nickName = "Black Lion",
             note = "likes silver",
         )
+        val contactGroups = listOf(
+            someAndroidContactGroup(title = "Group 1"),
+            someAndroidContactGroup(title = "Group 2"),
+            someAndroidContactGroup(title = "Group 3"),
+        )
         mockkStatic(Contact::getContactData)
         every { androidContact.getContactData() } returns emptyList()
 
-        val result = androidContact.toContact(rethrowExceptions = true)
+        val result = androidContact.toContact(groups = contactGroups, rethrowExceptions = true)
 
         assertThat(result).isNotNull
         assertThat(result!!.id).isInstanceOf(IContactIdExternal::class.java)
@@ -57,6 +63,7 @@ class AndroidContactFactoryTest : TestBase() {
         assertThat(result.lastName).isEqualTo(androidContact.lastName)
         assertThat(result.nickname).isEqualTo(androidContact.nickname)
         assertThat(result.notes).isEqualTo(androidContact.note?.raw)
+        assertThat(result.contactGroups.map { it.id.name }).isEqualTo(contactGroups.map { it.title })
         verify { androidContact.getContactData() }
     }
 }

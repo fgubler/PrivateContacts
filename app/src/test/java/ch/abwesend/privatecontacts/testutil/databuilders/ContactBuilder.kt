@@ -20,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.testutil.TestContact
 
@@ -39,6 +40,7 @@ fun someContactBase(
 
 fun someContactEntity(
     id: ContactIdInternal = someContactId(),
+    externalContactNo: Long? = null,
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -47,6 +49,7 @@ fun someContactEntity(
     fullTextSearch: String = "TestSearch",
 ): ContactEntity = ContactEntity(
     rawId = id.uuid,
+    externalContactNo = externalContactNo,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
@@ -103,6 +106,7 @@ fun someTestContact(
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
+    contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
 ): IContact = TestContact(
     id = id,
@@ -112,6 +116,7 @@ fun someTestContact(
     type = type,
     notes = notes,
     contactDataSet = contactData,
+    contactGroups = contactGroups,
     isNew = isNew,
 )
 
@@ -123,6 +128,7 @@ fun <T : ContactId> someContactEditableGeneric(
     type: ContactType = PUBLIC,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
+    contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
 ): IContactEditable = ContactEditable(
     id = id,
@@ -132,5 +138,6 @@ fun <T : ContactId> someContactEditableGeneric(
     type = type,
     notes = notes,
     contactDataSet = contactData.toMutableList(),
+    contactGroups = contactGroups.toMutableList(),
     isNew = isNew,
 )

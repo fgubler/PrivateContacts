@@ -72,7 +72,7 @@ class ContactDataRepositoryTest : TestBase() {
         val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDataDao.insertAll(any()) } returns Unit
 
-        runBlocking { underTest.createContactData(contactId, contact) }
+        runBlocking { underTest.createContactData(contactId, contact.contactDataSet) }
 
         coVerify { contactDataDao.insertAll(any()) }
     }
@@ -83,7 +83,7 @@ class ContactDataRepositoryTest : TestBase() {
         val contact = spyk(someContactEditable(id = contactId))
         coEvery { contactDataDao.insertAll(any()) } returns Unit
 
-        runBlocking { underTest.createContactData(contactId, contact) }
+        runBlocking { underTest.createContactData(contactId, contact.contactDataSet) }
 
         verify { contact.contactDataSet }
     }

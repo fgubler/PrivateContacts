@@ -121,8 +121,7 @@ class ContactSaveServiceTest : TestBase() {
         assertThat(result).isEqualTo(ContactSaveResult.Success)
         assertThat(slot.isCaptured).isTrue
         val savedContactId = slot.captured
-        assertThat(savedContactId).isInstanceOf(ContactIdCombined::class.java)
-        assertThat((savedContactId as IContactIdExternal).contactNo).isEqualTo(contactId.contactNo)
+        assertThat(savedContactId).isInstanceOf(IContactIdInternal::class.java)
     }
 
     @Test

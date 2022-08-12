@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.testutil.databuilders
 
 import android.net.Uri
 import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
@@ -59,6 +60,18 @@ fun someUri(path: String): Uri {
 
     every { mock.path } returns path
     every { mock.toString() } returns path
+
+    return mock
+}
+
+fun someAndroidContactGroup(
+    title: String = "SomeGroup",
+    notes: String = "Just some random group",
+): ContactGroup {
+    val mock = mockk<ContactGroup>()
+
+    every { mock.title } returns title
+    every { mock.note } returns notes
 
     return mock
 }

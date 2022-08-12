@@ -11,9 +11,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 
 data class TestContact(
     override val contactDataSet: List<ContactData>,
+    override val contactGroups: List<ContactGroup>,
     override val firstName: String,
     override val lastName: String,
     override val nickname: String,
