@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.testutil
+package ch.abwesend.privatecontacts.testutil.databuilders
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
+import ch.abwesend.privatecontacts.testutil.TestContact
 
 fun someContactId(): ContactIdInternal = ContactIdInternal.randomId()
 

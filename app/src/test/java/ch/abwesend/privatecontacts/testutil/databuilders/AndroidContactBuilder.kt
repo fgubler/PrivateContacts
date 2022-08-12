@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.testutil
+package ch.abwesend.privatecontacts.testutil.databuilders
 
 import com.alexstyl.contactstore.Contact
 import io.mockk.every

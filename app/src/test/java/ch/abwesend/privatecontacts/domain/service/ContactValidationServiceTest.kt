@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NA
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Success
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

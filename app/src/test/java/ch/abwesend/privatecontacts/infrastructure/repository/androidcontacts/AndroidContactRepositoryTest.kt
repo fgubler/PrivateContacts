@@ -4,14 +4,13 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.FetchRequest

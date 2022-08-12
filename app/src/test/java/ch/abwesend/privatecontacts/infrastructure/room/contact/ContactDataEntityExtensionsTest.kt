@@ -10,10 +10,10 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactId
-import ch.abwesend.privatecontacts.testutil.someEmailAddress
-import ch.abwesend.privatecontacts.testutil.someEventDate
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.uuid
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi

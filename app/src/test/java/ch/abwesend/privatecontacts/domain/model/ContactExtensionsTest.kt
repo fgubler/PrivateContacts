@@ -12,9 +12,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
-import ch.abwesend.privatecontacts.testutil.someTestContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someTestContact
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify

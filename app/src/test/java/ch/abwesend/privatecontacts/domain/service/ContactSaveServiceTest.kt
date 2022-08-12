@@ -13,8 +13,8 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified

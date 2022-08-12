@@ -10,9 +10,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.someEmailAddress
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension

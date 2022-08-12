@@ -36,11 +36,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactDataEntity
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
-import ch.abwesend.privatecontacts.testutil.someContactId
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.uuid
 import io.mockk.coEvery
 import io.mockk.coVerify

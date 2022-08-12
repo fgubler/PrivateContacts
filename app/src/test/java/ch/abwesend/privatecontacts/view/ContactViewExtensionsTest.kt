@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.prepareForDisplay
 import io.mockk.junit5.MockKExtension

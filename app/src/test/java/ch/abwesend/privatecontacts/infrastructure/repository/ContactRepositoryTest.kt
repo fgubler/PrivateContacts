@@ -16,10 +16,10 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactDataEntity
-import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
-import ch.abwesend.privatecontacts.testutil.someContactEntity
-import ch.abwesend.privatecontacts.testutil.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
