@@ -6,10 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
-import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
