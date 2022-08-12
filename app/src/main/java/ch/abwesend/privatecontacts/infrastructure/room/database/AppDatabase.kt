@@ -17,12 +17,13 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEn
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Database(
-    version = 20,
+    version = 21,
     exportSchema = true,
     entities = [ContactEntity::class, ContactDataEntity::class],
     autoMigrations = [
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 19, to = 20),
+        AutoMigration(from = 20, to = 21),
     ]
 )
 @TypeConverters(AppTypeConverters::class)

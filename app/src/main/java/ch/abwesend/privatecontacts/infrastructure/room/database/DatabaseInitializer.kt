@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
@@ -22,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
+import ch.abwesend.privatecontacts.domain.model.contactdata.createContactDataId
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
