@@ -24,11 +24,14 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactLookup
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.DisplayNameStyle.Alternative
 import com.alexstyl.contactstore.DisplayNameStyle.Primary
+import com.alexstyl.contactstore.GroupsPredicate
 import com.alexstyl.contactstore.allContactColumns
 import com.alexstyl.contactstore.coroutines.asFlow
 import kotlinx.coroutines.flow.Flow
@@ -56,18 +59,35 @@ class AndroidContactRepository : IAndroidContactRepository {
         }
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
+        logger.debug("Resolving contact for id $contactId")
         checkContactReadPermission { exception -> throw exception }
-        val contactRaw = contactStore.fetchContacts(
-            predicate = ContactLookup(contactId = contactId.contactNo),
+
+        val contactRaw = loadFullContact(contactId.contactNo)
+        val contactGroups = loadContactGroups(contactRaw)
+
+        return contactRaw?.toContact(groups = contactGroups, rethrowExceptions = true)
+            ?: throw IllegalArgumentException("Contact $contactId not found on android")
+    }
+
+    private suspend fun loadFullContact(contactNo: Long): Contact? =
+        contactStore.fetchContacts(
+            predicate = ContactLookup(contactId = contactNo),
             columnsToFetch = allContactColumns()
         ).asFlow()
             .flowOn(dispatchers.io)
             .firstOrNull()
-            .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
+            .also { logger.debug("Found ${it?.size} contacts matching $contactNo") }
             ?.firstOrNull()
 
-        return contactRaw?.toContact(rethrowExceptions = true)
-            ?: throw IllegalArgumentException("Contact $contactId not found on android")
+    private suspend fun loadContactGroups(contact: Contact?): List<ContactGroup> {
+        val contactGroupIds = contact?.groups.orEmpty().map { it.groupId }
+        return if (contactGroupIds.isEmpty()) emptyList()
+        else contactStore.fetchContactGroups(GroupsPredicate.GroupLookup(contactGroupIds))
+            .asFlow()
+            .flowOn(dispatchers.io)
+            .firstOrNull()
+            .orEmpty()
+            .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
     }
 
     private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {

@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.ContactGroup
 
 fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
     try {
@@ -22,7 +23,7 @@ fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
         else null
     }
 
-fun Contact.toContact(rethrowExceptions: Boolean): IContact? =
+fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): IContact? =
     try {
         ContactEditable(
             id = ContactIdAndroid(contactNo = contactId),
@@ -32,7 +33,7 @@ fun Contact.toContact(rethrowExceptions: Boolean): IContact? =
             nickname = nickname,
             notes = note?.raw.orEmpty(),
             contactDataSet = getContactData().toMutableList(),
-            contactGroups = mutableListOf() // TODO implement
+            contactGroups = groups.toContactGroups().toMutableList(),
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)
