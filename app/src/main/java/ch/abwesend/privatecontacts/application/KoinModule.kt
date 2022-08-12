@@ -30,6 +30,7 @@ import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelp
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
@@ -73,6 +74,7 @@ internal val koinModule = module {
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single { ContactDataRepository() }
+    single { ContactGroupRepository() }
     single { CallNotificationRepository() }
     single { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }

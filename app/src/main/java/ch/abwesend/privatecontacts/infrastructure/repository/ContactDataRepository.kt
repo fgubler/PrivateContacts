@@ -44,13 +44,10 @@ class ContactDataRepository : RepositoryBase() {
                 .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
-    suspend fun createContactData(contactId: IContactIdInternal, contact: IContact) =
+    suspend fun createContactData(contactId: IContactIdInternal, contactData: List<ContactData>) =
         withDatabase { database ->
-            val contactData = contact.contactDataSet.map { contactData ->
-                contactData.toEntity(contactId)
-            }
-
-            database.contactDataDao().insertAll(contactData)
+            val dataEntities = contactData.map { data -> data.toEntity(contactId) }
+            database.contactDataDao().insertAll(dataEntities)
         }
 
     suspend fun updateContactData(contactId: IContactIdInternal, contact: IContact) =

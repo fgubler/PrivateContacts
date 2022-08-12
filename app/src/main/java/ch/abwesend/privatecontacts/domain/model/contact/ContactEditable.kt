@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.settings.Settings
 
 interface IContactEditable : IContact {
@@ -16,6 +17,7 @@ interface IContactEditable : IContact {
     override var type: ContactType
     override var notes: String
     override val contactDataSet: MutableList<ContactData>
+    override val contactGroups: MutableList<ContactGroup>
 
     fun wrap(): ContactEditableWrapper
 }
@@ -28,6 +30,7 @@ data class ContactEditable(
     override var type: ContactType,
     override var notes: String,
     override val contactDataSet: MutableList<ContactData>,
+    override val contactGroups: MutableList<ContactGroup>,
     override val isNew: Boolean = false,
 ) : IContactEditable {
     override val displayName: String
@@ -46,6 +49,7 @@ data class ContactEditable(
                 type = Settings.current.defaultContactType,
                 notes = "",
                 contactDataSet = mutableListOf(),
+                contactGroups = mutableListOf(),
                 isNew = true,
             )
     }

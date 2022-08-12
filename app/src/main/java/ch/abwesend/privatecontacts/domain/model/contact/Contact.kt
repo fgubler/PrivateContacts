@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 
 interface IContactBase {
     val id: ContactId
@@ -20,6 +21,7 @@ interface IContact : IContactBase {
     val nickname: String
     val notes: String
     val contactDataSet: List<ContactData>
+    val contactGroups: List<ContactGroup>
     val isNew: Boolean
 }
 

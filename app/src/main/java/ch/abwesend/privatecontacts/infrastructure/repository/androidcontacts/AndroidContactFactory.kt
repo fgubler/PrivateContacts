@@ -32,6 +32,7 @@ fun Contact.toContact(rethrowExceptions: Boolean): IContact? =
             nickname = nickname,
             notes = note?.raw.orEmpty(),
             contactDataSet = getContactData().toMutableList(),
+            contactGroups = mutableListOf() // TODO implement
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)

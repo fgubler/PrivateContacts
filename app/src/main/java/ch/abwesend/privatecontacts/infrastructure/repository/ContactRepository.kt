@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.map
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
+    private val contactGroupRepository: ContactGroupRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
     override suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
@@ -128,6 +129,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
         val contactData = contactDataRepository.loadContactData(contactId)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
+        val contactGroups = contactGroupRepository.getContactGroups(contactId)
 
         return ContactEditable(
             id = contactEntity.id,
@@ -137,6 +139,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             type = contactEntity.type,
             notes = contactEntity.notes,
             contactDataSet = resolvedData.toMutableList(),
+            contactGroups = contactGroups.toMutableList(),
             isNew = false,
         )
     }
@@ -145,7 +148,8 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         try {
             withDatabase { database ->
                 database.contactDao().insert(contact.toEntity(contactId))
-                contactDataRepository.createContactData(contactId, contact)
+                contactDataRepository.createContactData(contactId, contact.contactDataSet)
+                contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -158,6 +162,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             withDatabase { database ->
                 database.contactDao().update(contact.toEntity(contactId))
                 contactDataRepository.updateContactData(contactId, contact)
+                contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -169,7 +174,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val results = bulkOperation(contactIds) { database, chunkedContactIds ->
             try {
                 database.contactDao().delete(contactIds = chunkedContactIds.map { it.uuid })
-                // ContactData should be deleted by cascade-delete
+                // ContactData and ContactGroupRelations should be deleted by cascade-delete
                 ContactDeleteResult.Success
             } catch (e: Exception) {
                 logger.error("Failed to delete ${contactIds.size} contacts", e)

@@ -22,6 +22,8 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.createContactDataId
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
@@ -57,6 +59,7 @@ class DatabaseInitializer {
                 type = SECRET,
                 notes = "Evil but not very good at it",
                 contactDataSet = mutableListOf(),
+                contactGroups = mutableListOf(),
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -131,6 +134,10 @@ class DatabaseInitializer {
                         modelStatus = ModelStatus.CHANGED,
                     ),
                 ),
+                contactGroups = mutableListOf(
+                    ContactGroup(id = ContactGroupId("Future TestUsers"), notes = "2D"),
+                    ContactGroup(id = ContactGroupId("Random Dudes"), notes = ""),
+                ),
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -157,6 +164,7 @@ class DatabaseInitializer {
                         sortOrder = 1,
                     ),
                 ),
+                contactGroups = mutableListOf(),
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -191,6 +199,7 @@ class DatabaseInitializer {
                         sortOrder = 2,
                     ),
                 ),
+                contactGroups = mutableListOf(),
             ),
         )
 }

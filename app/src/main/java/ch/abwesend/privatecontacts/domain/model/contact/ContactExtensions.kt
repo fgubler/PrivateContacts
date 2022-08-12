@@ -33,6 +33,7 @@ fun IContact.toContactEditable(): ContactEditable =
         type = type,
         notes = notes,
         contactDataSet = contactDataSet.toMutableList(),
+        contactGroups = contactGroups.toMutableList(),
     )
 
 val IContactBase.isExternal: Boolean
