@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
@@ -49,7 +50,7 @@ class DatabaseInitializer {
     private val dummyContacts
         get() = mutableListOf(
             ContactEditable(
-                id = ContactIdInternal.randomId(),
+                id = ContactIdCombined.randomInternal(contactNo = 777L),
                 firstName = "Darth",
                 lastName = "Vader",
                 nickname = "Darthy",
