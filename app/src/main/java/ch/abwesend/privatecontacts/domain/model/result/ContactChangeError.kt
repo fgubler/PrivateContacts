@@ -10,5 +10,6 @@ import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R
 
 enum class ContactChangeError(@StringRes val label: Int) {
-    UNKNOWN_ERROR(R.string.unknown_error)
+    UNKNOWN_ERROR(R.string.unknown_error),
+    NOT_YET_IMPLEMENTED(R.string.not_yet_implemented_error)
 }

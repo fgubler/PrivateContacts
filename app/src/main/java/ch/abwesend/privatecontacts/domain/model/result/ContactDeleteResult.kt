@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.domain.model.result
 sealed interface ContactDeleteResult {
     fun combine(other: ContactDeleteResult): ContactDeleteResult
 
+    /** like a null-replacement: just does nothing */
     object Inactive : ContactDeleteResult {
         override fun combine(other: ContactDeleteResult): ContactDeleteResult = other
     }

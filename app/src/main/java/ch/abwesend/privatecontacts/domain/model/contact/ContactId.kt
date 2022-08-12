@@ -27,3 +27,13 @@ value class ContactIdInternal(override val uuid: UUID) : IContactIdInternal {
 
 @JvmInline
 value class ContactIdAndroid(override val contactNo: Long) : IContactIdExternal
+
+data class ContactIdCombined(
+    override val uuid: UUID,
+    override val contactNo: Long,
+) : IContactIdInternal, IContactIdExternal {
+    companion object {
+        fun randomInternal(contactNo: Long): ContactIdCombined =
+            ContactIdCombined(uuid = UUID.randomUUID(), contactNo = contactNo)
+    }
+}

@@ -8,10 +8,14 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -32,11 +36,22 @@ class ContactSaveService {
         }
         sanitizingService.sanitizeContact(contact)
 
-        val contactId = contact.id
-        return if (contactId is IContactIdInternal) {
-            if (contact.isNew) contactRepository.createContact(contactId, contact)
-            else contactRepository.updateContact(contactId, contact)
-        } else TODO("Saving android contacts is not yet implemented")
+        return when (contact.type) {
+            ContactType.SECRET -> saveContactInternally(contact)
+            ContactType.PUBLIC -> ContactSaveResult.Failure(NOT_YET_IMPLEMENTED)
+        }
+    }
+
+    private suspend fun saveContactInternally(contact: IContact): ContactSaveResult {
+        val oldContactId = contact.id
+        val newContactId = when (oldContactId) {
+            is IContactIdInternal -> oldContactId
+            is IContactIdExternal -> ContactIdCombined.randomInternal(oldContactId.contactNo)
+        }
+        val contactIdChanged = newContactId != oldContactId
+
+        return if (contactIdChanged || contact.isNew) contactRepository.createContact(newContactId, contact)
+        else contactRepository.updateContact(newContactId, contact)
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
@@ -52,8 +67,7 @@ class ContactSaveService {
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
             logger.warning("Tried to delete android contacts but that is not yet supported")
-            ContactDeleteResult.Failure(emptyList())
-            // TODO implement
+            ContactDeleteResult.Failure(listOf(NOT_YET_IMPLEMENTED))
         } else ContactDeleteResult.Inactive
 
         return internalResult.combine(externalResult)

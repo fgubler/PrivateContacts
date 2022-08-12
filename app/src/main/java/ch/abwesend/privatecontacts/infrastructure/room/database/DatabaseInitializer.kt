@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
@@ -53,7 +53,7 @@ class DatabaseInitializer {
                 firstName = "Darth",
                 lastName = "Vader",
                 nickname = "Darthy",
-                type = ContactType.SECRET,
+                type = SECRET,
                 notes = "Evil but not very good at it",
                 contactDataSet = mutableListOf(),
             ),
@@ -62,7 +62,7 @@ class DatabaseInitializer {
                 firstName = "Luke",
                 lastName = "Skywalker",
                 nickname = "Lucky Luke",
-                type = ContactType.PUBLIC,
+                type = SECRET,
                 notes = "Lost his hand",
                 contactDataSet = mutableListOf(
                     PhoneNumber(
@@ -136,7 +136,7 @@ class DatabaseInitializer {
                 firstName = "Obi-Wan",
                 lastName = "Kenobi",
                 nickname = "Obi",
-                type = ContactType.PUBLIC,
+                type = SECRET,
                 notes = "Efficient way of suicide",
                 contactDataSet = mutableListOf(
                     PhoneNumber(
@@ -162,7 +162,7 @@ class DatabaseInitializer {
                 firstName = "Yoda",
                 lastName = "",
                 nickname = "Yo-Da",
-                type = ContactType.SECRET,
+                type = SECRET,
                 notes = "Small and green",
                 contactDataSet = mutableListOf(
                     PhoneNumber(

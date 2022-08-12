@@ -6,6 +6,12 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
@@ -14,7 +20,9 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.F
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableGeneric
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -23,6 +31,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -94,5 +103,39 @@ class ContactSaveServiceTest : TestBase() {
         coVerify { contactRepository.updateContact(contactId, contact) }
         confirmVerified(contactRepository)
         assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `should treat external contact of type secret as new`() {
+        val contactId = someExternalContactId()
+        val contact = someContactEditableGeneric(id = contactId, isNew = false, type = SECRET)
+        coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
+        coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
+
+        val result = runBlocking { underTest.saveContact(contact) }
+
+        val slot = slot<IContactIdInternal>()
+        coVerify { validationService.validateContact(contact) }
+        coVerify { contactRepository.createContact(capture(slot), contact) }
+        confirmVerified(contactRepository)
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        assertThat(slot.isCaptured).isTrue
+        val savedContactId = slot.captured
+        assertThat(savedContactId).isInstanceOf(ContactIdCombined::class.java)
+        assertThat((savedContactId as IContactIdExternal).contactNo).isEqualTo(contactId.contactNo)
+    }
+
+    @Test
+    fun `should not save a public contact internally`() {
+        val contact = someContactEditable(type = PUBLIC)
+        coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
+        coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
+        coEvery { contactRepository.updateContact(any(), any()) } returns ContactSaveResult.Success
+
+        val result = runBlocking { underTest.saveContact(contact) }
+
+        confirmVerified(contactRepository) // should not store contact internally
+        assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
+        assertThat((result as ContactSaveResult.Failure).error).isEqualTo(NOT_YET_IMPLEMENTED)
     }
 }
