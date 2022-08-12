@@ -1,6 +1,8 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.Note
+import io.mockk.MockKSettings.relaxed
 import io.mockk.every
 import io.mockk.mockk
 
@@ -10,6 +12,7 @@ fun someAndroidContact(
     lastName: String = "Skywalker",
     displayName: String = "$firstName $lastName",
     nickName: String = displayName,
+    note: String = "daddy issues",
     relaxed: Boolean = false,
 ): Contact {
     val mock = mockk<Contact>(relaxed = relaxed)
@@ -19,6 +22,7 @@ fun someAndroidContact(
     every { mock.lastName } returns lastName
     every { mock.displayName } returns displayName
     every { mock.nickname } returns nickName
+    every { mock.note } returns Note(note)
 
     return mock
 }
