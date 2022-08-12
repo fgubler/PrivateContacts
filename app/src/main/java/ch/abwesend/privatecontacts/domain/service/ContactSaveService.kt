@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
-import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -46,7 +46,7 @@ class ContactSaveService {
         val oldContactId = contact.id
         val newContactId = when (oldContactId) {
             is IContactIdInternal -> oldContactId
-            is IContactIdExternal -> ContactIdCombined.randomInternal(oldContactId.contactNo)
+            is IContactIdExternal -> ContactIdInternal.randomId()
         }
         val contactIdChanged = newContactId != oldContactId
 
