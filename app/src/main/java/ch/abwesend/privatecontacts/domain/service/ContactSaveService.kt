@@ -15,7 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -38,7 +38,7 @@ class ContactSaveService {
 
         return when (contact.type) {
             ContactType.SECRET -> saveContactInternally(contact)
-            ContactType.PUBLIC -> ContactSaveResult.Failure(NOT_YET_IMPLEMENTED)
+            ContactType.PUBLIC -> ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
         }
     }
 
@@ -67,7 +67,7 @@ class ContactSaveService {
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
             logger.warning("Tried to delete android contacts but that is not yet supported")
-            ContactDeleteResult.Failure(listOf(NOT_YET_IMPLEMENTED))
+            ContactDeleteResult.Failure(listOf(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS))
         } else ContactDeleteResult.Inactive
 
         return internalResult.combine(externalResult)

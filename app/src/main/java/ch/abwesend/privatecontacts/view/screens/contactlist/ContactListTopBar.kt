@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -31,12 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
-import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -146,19 +143,10 @@ fun ActionsMenu(
 ) {
     var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
     val multipleContacts = selectedContacts.size > 1
-    val onlyInternalContactsSelected = selectedContacts.none { it.isExternal }
-    val context = LocalContext.current
 
-    // TODO implement logic for external contacts
     if (selectedContacts.isNotEmpty()) {
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            DropdownMenuItem(onClick = {
-                if (onlyInternalContactsSelected) {
-                    deleteConfirmationDialogVisible = true
-                } else {
-                    Toast.makeText(context, R.string.feature_not_yet_implemented, Toast.LENGTH_SHORT).show()
-                }
-            }) {
+            DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
                 @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
                 Text(stringResource(id = text))
             }

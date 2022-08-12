@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
@@ -136,6 +136,6 @@ class ContactSaveServiceTest : TestBase() {
 
         confirmVerified(contactRepository) // should not store contact internally
         assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
-        assertThat((result as ContactSaveResult.Failure).error).isEqualTo(NOT_YET_IMPLEMENTED)
+        assertThat((result as ContactSaveResult.Failure).error).isEqualTo(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
     }
 }
