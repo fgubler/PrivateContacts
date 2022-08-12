@@ -9,7 +9,6 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.COMPANY
@@ -18,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.RELATIONSHIP
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.WEBSITE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BIRTHDAY
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.BUSINESS

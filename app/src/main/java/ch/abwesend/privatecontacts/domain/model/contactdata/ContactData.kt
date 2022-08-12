@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
 
 sealed interface ContactData {
     val id: ContactDataId

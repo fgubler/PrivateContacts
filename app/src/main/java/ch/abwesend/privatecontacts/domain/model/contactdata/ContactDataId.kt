@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.domain.model.contact
+package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import java.util.UUID
 

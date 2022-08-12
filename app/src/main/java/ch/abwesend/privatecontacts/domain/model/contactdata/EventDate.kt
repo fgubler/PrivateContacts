@@ -12,8 +12,6 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
-import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EVENT_DATE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom

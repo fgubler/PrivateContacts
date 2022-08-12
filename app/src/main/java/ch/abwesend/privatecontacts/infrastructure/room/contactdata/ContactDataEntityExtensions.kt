@@ -7,12 +7,12 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contactdata
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
-import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdExternal
-import ch.abwesend.privatecontacts.domain.model.contact.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.GenericContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 
