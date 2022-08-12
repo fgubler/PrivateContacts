@@ -102,7 +102,7 @@ class AndroidContactRepository : IAndroidContactRepository {
 
         val contacts = androidContacts.map { contacts ->
             logger.debug("Loaded ${contacts.size} android contacts with predicate $predicate")
-            contacts.mapNotNull { it.toContactBase() }
+            contacts.mapNotNull { it.toContactBase(rethrowExceptions = false) }
                 .filter { validationService.validateContactBase(it).valid }
         }.flowOn(dispatchers.io)
 

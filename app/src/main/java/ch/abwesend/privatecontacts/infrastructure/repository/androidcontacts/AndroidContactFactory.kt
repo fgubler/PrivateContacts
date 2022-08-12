@@ -9,7 +9,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import com.alexstyl.contactstore.Contact
 
-fun Contact.toContactBase(): IContactBase? =
+fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
     try {
         ContactBase(
             id = ContactIdAndroid(contactNo = contactId),
@@ -18,10 +18,11 @@ fun Contact.toContactBase(): IContactBase? =
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)
-        null
+        if (rethrowExceptions) throw t
+        else null
     }
 
-fun Contact.toContact(rethrowExceptions: Boolean = false): IContact? =
+fun Contact.toContact(rethrowExceptions: Boolean): IContact? =
     try {
         ContactEditable(
             id = ContactIdAndroid(contactNo = contactId),
