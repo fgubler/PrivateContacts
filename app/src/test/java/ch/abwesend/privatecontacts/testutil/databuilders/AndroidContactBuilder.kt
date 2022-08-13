@@ -4,6 +4,7 @@ import android.net.Uri
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
+import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MailAddress
@@ -12,8 +13,10 @@ import com.alexstyl.contactstore.PhoneNumber
 import com.alexstyl.contactstore.PostalAddress
 import com.alexstyl.contactstore.Relation
 import com.alexstyl.contactstore.WebAddress
+import com.alexstyl.contactstore.thumbnailUri
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
 import java.time.LocalDate
 
 fun someAndroidContact(
@@ -29,10 +32,13 @@ fun someAndroidContact(
     addresses: List<String> = emptyList(),
     sisters: List<String> = emptyList(),
     birthdays: List<LocalDate> = emptyList(),
+    thumbnailUri: Uri = someUri("some thumbnail uri"),
+    imageData: ImageData = ImageData(ByteArray(0)),
     relaxed: Boolean = false,
 ): Contact {
     val mock = mockk<Contact>(relaxed = relaxed)
 
+    mockkStatic(Contact::thumbnailUri)
     every { mock.contactId } returns contactId
     every { mock.firstName } returns firstName
     every { mock.lastName } returns lastName
@@ -51,6 +57,8 @@ fun someAndroidContact(
     every { mock.events } returns birthdays.map {
         LabeledValue(EventDate(it.dayOfMonth, it.monthValue, it.year), label = Label.DateBirthday)
     }
+    every { mock.thumbnailUri } returns thumbnailUri
+    every { mock.imageData } returns imageData
 
     return mock
 }

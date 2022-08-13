@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.testutil.TestContact
 
@@ -66,6 +67,7 @@ fun someContactEditable(
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
+    contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
@@ -75,6 +77,7 @@ fun someContactEditable(
     type = type,
     notes = notes,
     contactData = contactData,
+    contactGroups = contactGroups,
     isNew = isNew,
 )
 
@@ -85,6 +88,7 @@ fun someContactEditableWithId(
     nickname: String = "Lord Snow",
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
+    contactGroups: List<ContactGroup> = emptyList(),
     contactData: List<ContactData> = emptyList(),
     isNew: Boolean = false,
 ): Pair<IContactIdInternal, IContactEditable> = id to someContactEditable(
@@ -95,6 +99,7 @@ fun someContactEditableWithId(
     type = type,
     notes = notes,
     contactData = contactData,
+    contactGroups = contactGroups,
     isNew = isNew,
 )
 
@@ -105,6 +110,7 @@ fun someTestContact(
     nickname: String = "Lord Snow",
     type: ContactType = SECRET,
     notes: String = "Tries to do the right thing. Often badly.",
+    image: ContactImage = ContactImage.empty,
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
@@ -115,6 +121,7 @@ fun someTestContact(
     nickname = nickname,
     type = type,
     notes = notes,
+    image = image,
     contactDataSet = contactData,
     contactGroups = contactGroups,
     isNew = isNew,
@@ -127,6 +134,7 @@ fun <T : ContactId> someContactEditableGeneric(
     nickname: String = "Lord Snow",
     type: ContactType = PUBLIC,
     notes: String = "Tries to do the right thing. Often badly.",
+    image: ContactImage = ContactImage.empty,
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
@@ -137,6 +145,7 @@ fun <T : ContactId> someContactEditableGeneric(
     nickname = nickname,
     type = type,
     notes = notes,
+    image = image,
     contactDataSet = contactData.toMutableList(),
     contactGroups = contactGroups.toMutableList(),
     isNew = isNew,

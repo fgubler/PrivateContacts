@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 
 data class TestContact(
     override val contactDataSet: List<ContactData>,
@@ -23,6 +24,7 @@ data class TestContact(
     override val isNew: Boolean,
     override val id: ContactIdInternal,
     override val type: ContactType,
+    override val image: ContactImage,
 ) : IContact {
     override val displayName: String
         get() = getFullName()

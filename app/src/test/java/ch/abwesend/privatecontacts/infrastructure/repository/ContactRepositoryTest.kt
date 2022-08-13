@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
+import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -19,6 +20,7 @@ import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -46,6 +48,9 @@ class ContactRepositoryTest : TestBase() {
     @MockK
     private lateinit var contactDataRepository: ContactDataRepository
 
+    @MockK
+    private lateinit var contactImageRepository: ContactImageRepository
+
     @RelaxedMockK
     private lateinit var searchService: FullTextSearchService
 
@@ -55,6 +60,7 @@ class ContactRepositoryTest : TestBase() {
     override fun Module.setupKoinModule() {
         single { contactDataRepository }
         single { contactGroupRepository }
+        single { contactImageRepository }
         single { searchService }
     }
 
@@ -62,6 +68,8 @@ class ContactRepositoryTest : TestBase() {
         super.setup()
         coEvery { contactGroupRepository.getContactGroups(any()) } returns emptyList()
         coEvery { contactGroupRepository.storeContactGroups(any(), any()) } just runs
+        coEvery { contactImageRepository.loadImage(any()) } returns ContactImage.empty
+        coEvery { contactImageRepository.storeImage(any(), any()) } just runs
     }
 
     @Test
@@ -85,6 +93,22 @@ class ContactRepositoryTest : TestBase() {
         val result = runBlocking { underTest.createContact(contactId, contact) }
 
         coVerify { contactDataRepository.createContactData(contactId, contact.contactDataSet) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `creating a contact should also create contact groups`() {
+        val groups = listOf(
+            someContactGroup(name = "Group1"),
+            someContactGroup(name = "Group2"),
+        )
+        val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
+        coEvery { contactDao.insert(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.createContact(contactId, contact) }
+
+        coVerify { contactGroupRepository.storeContactGroups(contactId, groups) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
@@ -119,6 +143,22 @@ class ContactRepositoryTest : TestBase() {
         val result = runBlocking { underTest.updateContact(contactId, contact) }
 
         coVerify { contactDataRepository.updateContactData(contactId, contact) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `updating a contact should also update the contact groups`() {
+        val groups = listOf(
+            someContactGroup(name = "Group1"),
+            someContactGroup(name = "Group2"),
+        )
+        val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
+        coEvery { contactDao.update(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
+
+        coVerify { contactGroupRepository.storeContactGroups(contactId, groups) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
