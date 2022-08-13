@@ -24,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
+import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
@@ -58,6 +59,7 @@ class DatabaseInitializer {
                 nickname = "Darthy",
                 type = SECRET,
                 notes = "Evil but not very good at it",
+                image = ContactImage.empty,
                 contactDataSet = mutableListOf(),
                 contactGroups = mutableListOf(),
             ),
@@ -68,6 +70,7 @@ class DatabaseInitializer {
                 nickname = "Lucky Luke",
                 type = SECRET,
                 notes = "Lost his hand",
+                image = ContactImage.empty,
                 contactDataSet = mutableListOf(
                     PhoneNumber(
                         id = createContactDataId(),
@@ -146,6 +149,7 @@ class DatabaseInitializer {
                 nickname = "Obi",
                 type = SECRET,
                 notes = "Efficient way of suicide",
+                image = ContactImage.empty,
                 contactDataSet = mutableListOf(
                     PhoneNumber(
                         id = createContactDataId(),
@@ -173,6 +177,7 @@ class DatabaseInitializer {
                 nickname = "Yo-Da",
                 type = SECRET,
                 notes = "Small and green",
+                image = ContactImage.empty,
                 contactDataSet = mutableListOf(
                     PhoneNumber(
                         id = createContactDataId(),

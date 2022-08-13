@@ -32,6 +32,7 @@ fun IContact.toContactEditable(): ContactEditable =
         nickname = nickname,
         type = type,
         notes = notes,
+        image = image,
         contactDataSet = contactDataSet.toMutableList(),
         contactGroups = contactGroups.toMutableList(),
     )

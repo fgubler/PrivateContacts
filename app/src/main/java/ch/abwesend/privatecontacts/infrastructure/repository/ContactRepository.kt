@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.map
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
     private val contactGroupRepository: ContactGroupRepository by injectAnywhere()
+    private val contactImageRepository: ContactImageRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
     override suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
@@ -130,6 +131,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val contactData = contactDataRepository.loadContactData(contactId)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
         val contactGroups = contactGroupRepository.getContactGroups(contactId)
+        val image = contactImageRepository.loadImage(contactId)
 
         return ContactEditable(
             id = contactEntity.id,
@@ -138,6 +140,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             nickname = contactEntity.nickname,
             type = contactEntity.type,
             notes = contactEntity.notes,
+            image = image,
             contactDataSet = resolvedData.toMutableList(),
             contactGroups = contactGroups.toMutableList(),
             isNew = false,
@@ -150,6 +153,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 database.contactDao().insert(contact.toEntity(contactId))
                 contactDataRepository.createContactData(contactId, contact.contactDataSet)
                 contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
+                contactImageRepository.storeImage(contactId, contact.image)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -163,6 +167,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 database.contactDao().update(contact.toEntity(contactId))
                 contactDataRepository.updateContactData(contactId, contact)
                 contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
+                contactImageRepository.storeImage(contactId, contact.image)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {

@@ -32,6 +32,7 @@ fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): I
             lastName = lastName,
             nickname = nickname,
             notes = note?.raw.orEmpty(),
+            image = getImage(),
             contactDataSet = getContactData().toMutableList(),
             contactGroups = groups.toContactGroups().toMutableList(),
         )
