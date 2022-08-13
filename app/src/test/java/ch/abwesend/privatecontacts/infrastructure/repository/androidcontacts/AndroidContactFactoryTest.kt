@@ -64,6 +64,7 @@ class AndroidContactFactoryTest : TestBase() {
         assertThat(result.nickname).isEqualTo(androidContact.nickname)
         assertThat(result.notes).isEqualTo(androidContact.note?.raw)
         assertThat(result.contactGroups.map { it.id.name }).isEqualTo(contactGroups.map { it.title })
+        assertThat(result.contactGroups.map { it.notes }).isEqualTo(contactGroups.map { it.note })
         verify { androidContact.getContactData() }
     }
 }

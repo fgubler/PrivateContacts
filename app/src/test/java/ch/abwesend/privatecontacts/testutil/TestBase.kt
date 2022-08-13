@@ -12,6 +12,8 @@ import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
+import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
+import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationDao
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import io.mockk.coEvery
@@ -61,6 +63,11 @@ abstract class TestBase : KoinTest {
     @MockK
     protected lateinit var contactDataDao: ContactDataDao
 
+    @MockK
+    protected lateinit var contactGroupDao: ContactGroupDao
+    @MockK
+    protected lateinit var contactGroupRelationDao: ContactGroupRelationDao
+
     /** Sets up the koin-module for injections */
     @RegisterExtension
     @JvmField
@@ -98,6 +105,8 @@ abstract class TestBase : KoinTest {
         every { databaseHolder.database } returns database
         every { database.contactDao() } returns contactDao
         every { database.contactDataDao() } returns contactDataDao
+        every { database.contactGroupDao() } returns contactGroupDao
+        every { database.contactGroupRelationDao() } returns contactGroupRelationDao
 
         setup()
     }

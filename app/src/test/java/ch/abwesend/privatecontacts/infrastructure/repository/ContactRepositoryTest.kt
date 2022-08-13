@@ -225,6 +225,18 @@ class ContactRepositoryTest : TestBase() {
     }
 
     @Test
+    fun `resolving a contact should try to load its contact groups`() {
+        val contactId = someContactId()
+        coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
+
+        runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactGroupRepository.getContactGroups(contactId) }
+    }
+
+    @Test
     fun `should find contacts with matching phone numbers`() {
         val contactId1 = someContactId()
         val contactId2 = someContactId()
