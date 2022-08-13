@@ -69,7 +69,7 @@ class DatabaseInitializer {
                 nickname = "Lucky Luke",
                 type = SECRET,
                 notes = "Lost his hand",
-                image = ContactImage(thumbnailUri = "Pseudo Thumbnail", fullImage = ByteArray(0), unchanged = true),
+                image = ContactImage(thumbnailUri = "Pseudo Thumbnail", fullImage = ByteArray(0), unchanged = false),
                 contactDataSet = mutableListOf(
                     PhoneNumber(
                         id = createContactDataId(),
