@@ -13,4 +13,4 @@ fun ContactImage.toEntity(contactId: IContactIdInternal): ContactImageEntity =
     ContactImageEntity(contactId = contactId.uuid, thumbnailUri = thumbnailUri, fullImage = fullImage)
 
 fun ContactImageEntity.toContactImage(): ContactImage =
-    ContactImage(thumbnailUri = thumbnailUri, fullImage = fullImage)
+    ContactImage(thumbnailUri = thumbnailUri, fullImage = fullImage, unchanged = true)

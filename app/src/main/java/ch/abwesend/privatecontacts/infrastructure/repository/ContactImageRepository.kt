@@ -11,18 +11,34 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contactimage.toContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contactimage.toEntity
+import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 
 class ContactImageRepository : RepositoryBase() {
-    suspend fun storeImage(contactId: IContactIdInternal, contactImage: ContactImage) = withDatabase { database ->
-        logger.debug("Replacing image for contact $contactId")
-        val entity = contactImage.toEntity(contactId)
-        database.contactImageDao().deleteImage(contactId.uuid)
-        database.contactImageDao().insert(entity)
-    }
-
     suspend fun loadImage(contactId: IContactIdInternal): ContactImage = withDatabase { database ->
         logger.debug("Loading image for contact $contactId")
         val entity = database.contactImageDao().getImage(contactId.uuid)
-        entity.toContactImage()
+        entity?.toContactImage() ?: ContactImage.empty.also {
+            logger.debug("No image found for contact $contactId")
+        }
+    }
+
+    suspend fun storeImage(contactId: IContactIdInternal, contactImage: ContactImage) = withDatabase { database ->
+        if (contactImage.unchanged) {
+            logger.debug("The image for contact $contactId was not changed")
+        } else {
+            logger.debug("Deleting image for contact $contactId")
+            database.contactImageDao().deleteImage(contactId.uuid)
+            database.storeImage(contactId, contactImage)
+        }
+    }
+
+    private suspend fun AppDatabase.storeImage(contactId: IContactIdInternal, contactImage: ContactImage) {
+        if (contactImage.isEmpty) {
+            logger.debug("No image to store for contact $contactId")
+        } else {
+            logger.debug("Storing new image for contact $contactId")
+            val entity = contactImage.toEntity(contactId)
+            contactImageDao().insert(entity)
+        }
     }
 }

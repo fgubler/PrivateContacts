@@ -28,6 +28,7 @@ class ContactGroupRepository : RepositoryBase() {
     }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: List<IContactGroup>) {
+        logger.debug("Creating missing contact groups")
         val existingGroupNames = getGroupNames().toSet()
         val newGroups = contactGroups
             .filter { !existingGroupNames.contains(it.id.name) }
@@ -39,6 +40,7 @@ class ContactGroupRepository : RepositoryBase() {
         contactId: IContactIdInternal,
         contactGroups: List<IContactGroup>
     ) {
+        logger.debug("Updating contact group relations")
         val newRelations = contactGroups.map { contactGroup ->
             ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
         }

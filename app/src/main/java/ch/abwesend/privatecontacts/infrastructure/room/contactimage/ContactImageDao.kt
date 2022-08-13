@@ -15,7 +15,7 @@ import java.util.UUID
 @Dao
 interface ContactImageDao {
     @Query("SELECT * FROM ContactImageEntity WHERE contactId = :contactId")
-    suspend fun getImage(contactId: UUID): ContactImageEntity
+    suspend fun getImage(contactId: UUID): ContactImageEntity?
 
     @Insert
     suspend fun insert(data: ContactImageEntity)

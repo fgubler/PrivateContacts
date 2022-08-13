@@ -5,4 +5,4 @@ import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.thumbnailUri
 
 fun Contact.getImage(): ContactImage =
-    ContactImage(thumbnailUri = thumbnailUri.toString(), fullImage = imageData?.raw)
+    ContactImage(thumbnailUri = thumbnailUri.toString(), fullImage = imageData?.raw, unchanged = true)
