@@ -16,9 +16,11 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -65,6 +67,7 @@ object ContactDetailScreenContent {
             Companies(contact = contact)
             EventDates(contact = contact)
             Relationships(contact = contact)
+            ContactGroups(contact = contact)
             Notes(contact = contact)
         }
     }
@@ -178,6 +181,27 @@ object ContactDetailScreenContent {
             iconConfig = IconConfig(label = Relationship.labelSingular, icon = Relationship.icon),
             factory = { Relationship.createEmpty(it) },
         ) {}
+    }
+
+    @Composable
+    private fun ContactGroups(contact: IContact) {
+        if (contact.contactGroups.isNotEmpty()) {
+            val groups = remember(contact) {
+                contact.contactGroups
+                    .map { it.id.name }
+                    .filter { it.isNotEmpty() }
+                    .sorted()
+                    .joinToString(separator = "\n")
+            }
+            ContactCategoryWithHeader(
+                categoryTitle = R.string.contact_groups,
+                icon = Icons.Default.Groups,
+                alignContentWithTitle = true,
+                modifier = Modifier.longClickForCopyToClipboard(groups),
+            ) {
+                Text(text = groups)
+            }
+        }
     }
 
     @Composable
