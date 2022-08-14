@@ -9,16 +9,21 @@ Right now, the app simply offers you the typical functionalities of a contacts a
 
 The app supports caller-detection, displaying a notification if a known contact is calling you. Unfortunately, that depends heavily on manufacturer and Android version. For that reason it is not 100% reliable yet (feedback is very welcome).
 
+Additional features
+- Displaying the normal contacts of the phone.
+
 ## What the app will be able to do in the future
+- Connecting the app to the standard Android database for contacts. 
+  - Moving contacts from the standard Android database to the app (and removing them from the standard database so they are no longer visible to other apps)
+  - Editing existing contacts from the standard Android database
+  - Creating new contacts in the standard Android database
+  - Moving contacts from Private Contacts back the the standard Android contact database
 - Support of Imports/Exports in vcf format
-- Showing an overlay over the call-screen when a contact calls (instead of just the notification)
 - Support of additional features of a contact app
   - Profile images
   - Mark contacts as favorites
   - Add contacts to groups/labels
-- Connecting the app to the standard Android database for contacts. 
-  - Letting the user choose for each contact whether it should be shared with other apps or whether it should remain confidential.
-  - Allowing sync with cloud-providers (if desired ofc)
+- Improvements of caller detection
 - Maybe an additional category of "Anonymized" contacts which are shared with other apps but under an alias.
 - Encryption and password protection
 
