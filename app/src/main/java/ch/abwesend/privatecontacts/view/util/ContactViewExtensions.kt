@@ -59,7 +59,7 @@ fun IContact.getFullBitmapImage(width: Int, height: Int = width): Bitmap? = try 
         val rawBitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
         Bitmap.createScaledBitmap(rawBitmap, width, height, false)
     }
-} catch(e: Exception) {
+} catch (e: Exception) {
     logger.warning("Failed to get bitmap for image of contact $id")
     null
 }
