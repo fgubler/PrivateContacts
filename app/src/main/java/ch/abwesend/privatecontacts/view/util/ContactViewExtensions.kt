@@ -6,7 +6,10 @@
 
 package ch.abwesend.privatecontacts.view.util
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.ui.graphics.Color
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -46,6 +49,19 @@ fun <T : ContactData> MutableList<T>.addOrReplace(newData: T) {
     } else {
         add(newData)
     }
+}
+
+/**
+ * The bitmap needs to be scaled here already to be at least as big as the Image() to put it in.
+ */
+fun IContact.getFullBitmapImage(width: Int, height: Int = width): Bitmap? = try {
+    image.fullImage?.let { image ->
+        val rawBitmap = BitmapFactory.decodeByteArray(image, 0, image.size)
+        Bitmap.createScaledBitmap(rawBitmap, width, height, false)
+    }
+} catch(e: Exception) {
+    logger.warning("Failed to get bitmap for image of contact $id")
+    null
 }
 
 val ContactType.color: Color

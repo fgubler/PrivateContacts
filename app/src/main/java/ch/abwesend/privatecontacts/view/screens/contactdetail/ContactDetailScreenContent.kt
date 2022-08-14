@@ -7,12 +7,16 @@
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
@@ -21,8 +25,11 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +48,7 @@ import ch.abwesend.privatecontacts.view.screens.contactdetail.components.Contact
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
 import ch.abwesend.privatecontacts.view.util.color
+import ch.abwesend.privatecontacts.view.util.getFullBitmapImage
 import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 import ch.abwesend.privatecontacts.view.util.navigateToBrowser
 import ch.abwesend.privatecontacts.view.util.navigateToDial
@@ -50,6 +58,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
 
 const val UTF_8 = "utf-8"
+const val IMAGE_MAX_SIZE_DP = 500
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -80,25 +89,40 @@ object ContactDetailScreenContent {
             alignContentWithTitle = true,
             modifier = Modifier.longClickForCopyToClipboard(contact.displayName)
         ) {
-            Row {
-                Column {
-                    if (contact.firstName.isNotEmpty()) {
-                        Text(text = stringResource(id = R.string.first_name_colon), color = labelColor())
-                    }
-                    if (contact.lastName.isNotEmpty()) {
-                        Text(text = stringResource(id = R.string.last_name_colon), color = labelColor())
-                    }
+            Row(
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row {
+                    Column {
+                        if (contact.firstName.isNotEmpty()) {
+                            Text(text = stringResource(id = R.string.first_name_colon), color = labelColor())
+                        }
+                        if (contact.lastName.isNotEmpty()) {
+                            Text(text = stringResource(id = R.string.last_name_colon), color = labelColor())
+                        }
 
-                    Text(text = stringResource(id = R.string.visibility_colon), color = labelColor())
+                        Text(text = stringResource(id = R.string.visibility_colon), color = labelColor())
+                    }
+                    Column(modifier = Modifier.padding(start = 10.dp)) {
+                        if (contact.firstName.isNotEmpty()) {
+                            Text(text = contact.firstName)
+                        }
+                        if (contact.lastName.isNotEmpty()) {
+                            Text(text = contact.lastName)
+                        }
+                        Text(text = stringResource(id = contact.type.label), color = contact.type.color)
+                    }
                 }
-                Column(modifier = Modifier.padding(start = 10.dp)) {
-                    if (contact.firstName.isNotEmpty()) {
-                        Text(text = contact.firstName)
+                contact.getFullBitmapImage(IMAGE_MAX_SIZE_DP)?.let {
+                    Surface(
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                            .weight(1F)
+                    ) {
+                        Image(bitmap = it.asImageBitmap(), contentDescription = stringResource(id = R.string.image))
                     }
-                    if (contact.lastName.isNotEmpty()) {
-                        Text(text = contact.lastName)
-                    }
-                    Text(text = stringResource(id = contact.type.label), color = contact.type.color)
                 }
             }
         }
