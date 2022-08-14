@@ -6,11 +6,14 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import android.graphics.Bitmap
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,7 +27,10 @@ import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -33,6 +39,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
@@ -58,7 +65,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
 
 const val UTF_8 = "utf-8"
-const val IMAGE_MAX_SIZE_DP = 500
+const val IMAGE_MAX_SIZE_DP = 750
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -113,19 +120,37 @@ object ContactDetailScreenContent {
                         }
                         Text(text = stringResource(id = contact.type.label), color = contact.type.color)
                     }
-                }
-                contact.getFullBitmapImage(IMAGE_MAX_SIZE_DP)?.let {
-                    Surface(
-                        modifier = Modifier
-                            .padding(start = 5.dp)
-                            .clip(RoundedCornerShape(5.dp))
-                            .weight(1F)
-                    ) {
-                        Image(bitmap = it.asImageBitmap(), contentDescription = stringResource(id = R.string.image))
-                    }
+                    ContactImage(contact = contact)
                 }
             }
         }
+    }
+
+    @Composable
+    private fun RowScope.ContactImage(contact: IContact) {
+        contact.getFullBitmapImage(IMAGE_MAX_SIZE_DP)?.let {
+            var showFullScreenImage: Boolean by remember { mutableStateOf(false) }
+
+            Surface(
+                modifier = Modifier
+                    .padding(start = 5.dp)
+                    .clip(RoundedCornerShape(5.dp))
+                    .weight(1F)
+                    .clickable { showFullScreenImage = true }
+            ) { ContactImage(it) }
+
+            if (showFullScreenImage) {
+                Dialog(
+                    onDismissRequest = { showFullScreenImage = false },
+                    content = { ContactImage(it) }
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun ContactImage(bitmap: Bitmap) {
+        Image(bitmap = bitmap.asImageBitmap(), contentDescription = stringResource(id = R.string.image))
     }
 
     @Composable
