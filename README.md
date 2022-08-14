@@ -33,6 +33,10 @@ Additional features
 |------------|---------------|--------------|---------------|
 |![Contact List](https://user-images.githubusercontent.com/1478872/164909358-a0277229-c2c7-42bb-99a1-c5425b400946.jpg)|![Contact Details](https://user-images.githubusercontent.com/1478872/164909363-3ecbbcb0-5cb0-4284-943f-d5e4d42c71c3.jpg)|![Contact Edit 1](https://user-images.githubusercontent.com/1478872/164909371-c0cdbe58-ce72-4333-971b-125b1e64747c.jpg)|![Contact Edit 2](https://user-images.githubusercontent.com/1478872/164909374-ab98a2d4-945d-4775-a0a8-2c04054e7e95.jpg)|
 
+## Used Libraries
+(this is a non-complete list of the most important libraries used; please consult the build.gradle for the complete list)
+- "Jetpack Compose" by Google for the UI: https://developer.android.com/jetpack/compose
+- "Contact Store" by Alex Styl for accessing the contacts: https://github.com/alexstyl/contactstore
 
 ## Contact
 * Florian Gubler
