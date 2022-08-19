@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGroup
-import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroupEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroupRelationEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactGroupRepositoryTest : TestBase() {
+class ContactGroupRepositoryTest : RepositoryTestBase() {
 
     @InjectMockKs
     private lateinit var underTest: ContactGroupRepository

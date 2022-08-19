@@ -53,10 +53,11 @@ class AndroidContactRepositoryTest : TestBase() {
     private lateinit var fetchRequest: FetchRequest<List<Contact>>
     private lateinit var flow: MutableStateFlow<List<Contact>>
 
-    override fun Module.setupKoinModule() {
-        single { contactStore }
-        single { permissionService }
-        single { context }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactStore }
+        module.single { permissionService }
+        module.single { context }
     }
 
     override fun setup() {

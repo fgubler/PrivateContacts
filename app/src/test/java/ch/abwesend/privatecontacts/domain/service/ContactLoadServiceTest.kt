@@ -37,9 +37,10 @@ class ContactLoadServiceTest : TestBase() {
     @InjectMockKs
     private lateinit var underTest: ContactLoadService
 
-    override fun Module.setupKoinModule() {
-        single { contactRepository }
-        single { easterEggService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactRepository }
+        module.single { easterEggService }
     }
 
     @Test

@@ -16,7 +16,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
-import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
@@ -41,7 +41,7 @@ import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactRepositoryTest : TestBase() {
+class ContactRepositoryTest : RepositoryTestBase() {
     @MockK
     private lateinit var contactGroupRepository: ContactGroupRepository
 
@@ -57,11 +57,12 @@ class ContactRepositoryTest : TestBase() {
     @InjectMockKs
     private lateinit var underTest: ContactRepository
 
-    override fun Module.setupKoinModule() {
-        single { contactDataRepository }
-        single { contactGroupRepository }
-        single { contactImageRepository }
-        single { searchService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactDataRepository }
+        module.single { contactGroupRepository }
+        module.single { contactImageRepository }
+        module.single { searchService }
     }
 
     override fun setup() {

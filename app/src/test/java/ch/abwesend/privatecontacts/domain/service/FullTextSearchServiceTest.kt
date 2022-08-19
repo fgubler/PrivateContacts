@@ -26,8 +26,9 @@ class FullTextSearchServiceTest : TestBase() {
     @InjectMockKs
     private lateinit var underTest: FullTextSearchService
 
-    override fun Module.setupKoinModule() {
-        single { underTest }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { underTest }
     }
 
     @Test

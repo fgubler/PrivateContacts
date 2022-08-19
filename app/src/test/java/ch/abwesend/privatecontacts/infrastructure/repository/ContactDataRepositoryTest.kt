@@ -35,7 +35,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDa
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
-import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
@@ -60,10 +60,11 @@ import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactDataRepositoryTest : TestBase() {
+class ContactDataRepositoryTest : RepositoryTestBase() {
     private lateinit var underTest: ContactDataRepository
 
     override fun setup() {
+        super.setup()
         underTest = ContactDataRepository()
     }
 

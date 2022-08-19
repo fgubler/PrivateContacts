@@ -35,13 +35,15 @@ class ContactSanitizingServiceTest : TestBase() {
     private val matchingPostfix = "forMatching"
 
     override fun setup() {
+        super.setup()
         underTest = ContactSanitizingService()
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg<String>() + displayPostfix }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg<String>() + matchingPostfix }
     }
 
-    override fun Module.setupKoinModule() {
-        single { telephoneService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { telephoneService }
     }
 
     @Test

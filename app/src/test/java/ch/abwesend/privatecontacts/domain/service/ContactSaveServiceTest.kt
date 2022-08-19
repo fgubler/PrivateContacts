@@ -52,14 +52,16 @@ class ContactSaveServiceTest : TestBase() {
     private lateinit var underTest: ContactSaveService
 
     override fun setup() {
+        super.setup()
         underTest = ContactSaveService()
         every { sanitizingService.sanitizeContact(any()) } just runs
     }
 
-    override fun Module.setupKoinModule() {
-        single { contactRepository }
-        single { validationService }
-        single { sanitizingService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactRepository }
+        module.single { validationService }
+        module.single { sanitizingService }
     }
 
     @Test

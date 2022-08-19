@@ -25,6 +25,7 @@ class ContactValidationServiceTest : TestBase() {
     private lateinit var underTest: ContactValidationService
 
     override fun setup() {
+        super.setup()
         underTest = ContactValidationService()
     }
 

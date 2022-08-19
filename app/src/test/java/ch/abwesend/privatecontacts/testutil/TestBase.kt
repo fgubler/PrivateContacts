@@ -10,15 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
-import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
-import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
-import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
-import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationDao
-import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
-import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
-import io.mockk.coEvery
 import io.mockk.every
-import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.mockkClass
@@ -47,8 +39,6 @@ import org.koin.test.junit5.mock.MockProviderExtension
 @ExtendWith(MockKExtension::class)
 abstract class TestBase : KoinTest {
     private lateinit var loggerFactory: ILoggerFactory
-    private lateinit var databaseHolder: DatabaseHolder
-    private lateinit var database: AppDatabase
     private lateinit var testLogger: ILogger
 
     /**
@@ -57,17 +47,6 @@ abstract class TestBase : KoinTest {
      */
     private lateinit var testSettings: TestSettings
 
-    @MockK
-    protected lateinit var contactDao: ContactDao
-
-    @MockK
-    protected lateinit var contactDataDao: ContactDataDao
-
-    @MockK
-    protected lateinit var contactGroupDao: ContactGroupDao
-    @MockK
-    protected lateinit var contactGroupRelationDao: ContactGroupRelationDao
-
     /** Sets up the koin-module for injections */
     @RegisterExtension
     @JvmField
@@ -75,10 +54,9 @@ abstract class TestBase : KoinTest {
         modules(
             module {
                 single { loggerFactory }
-                single { databaseHolder }
                 single<IDispatchers> { TestDispatchers }
                 single<SettingsRepository> { testSettings }
-                setupKoinModule()
+                setupKoinModule(this)
             }
         )
     }
@@ -99,15 +77,6 @@ abstract class TestBase : KoinTest {
         every { loggerFactory.createDefault(any()) } returns spyk(testLogger)
         every { loggerFactory.createLogcat(any()) } returns spyk(testLogger)
 
-        databaseHolder = mockk()
-        database = mockk()
-        coEvery { databaseHolder.ensureInitialized() } returns Unit
-        every { databaseHolder.database } returns database
-        every { database.contactDao() } returns contactDao
-        every { database.contactDataDao() } returns contactDataDao
-        every { database.contactGroupDao() } returns contactGroupDao
-        every { database.contactGroupRelationDao() } returns contactGroupRelationDao
-
         setup()
     }
 
@@ -121,5 +90,5 @@ abstract class TestBase : KoinTest {
     /** executed after each test */
     protected open fun tearDown() {}
     /** add additional injections to be mocked in koin */
-    protected open fun Module.setupKoinModule() {}
+    protected open fun setupKoinModule(module: Module) {}
 }

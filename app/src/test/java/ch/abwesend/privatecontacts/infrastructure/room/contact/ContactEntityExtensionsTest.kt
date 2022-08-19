@@ -25,8 +25,9 @@ class ContactEntityExtensionsTest : TestBase() {
     @MockK
     private lateinit var searchService: FullTextSearchService
 
-    override fun Module.setupKoinModule() {
-        single { searchService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { searchService }
     }
 
     @Test

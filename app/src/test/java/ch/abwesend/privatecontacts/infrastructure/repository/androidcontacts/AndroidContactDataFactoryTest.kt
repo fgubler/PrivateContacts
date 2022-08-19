@@ -32,8 +32,9 @@ class AndroidContactDataFactoryTest : TestBase() {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
-    override fun Module.setupKoinModule() {
-        single { telephoneService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { telephoneService }
     }
 
     override fun setup() {
