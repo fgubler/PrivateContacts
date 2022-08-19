@@ -36,8 +36,8 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactLoadRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactSaveRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory

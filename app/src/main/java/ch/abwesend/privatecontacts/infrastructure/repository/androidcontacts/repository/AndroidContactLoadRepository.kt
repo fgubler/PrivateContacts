@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
@@ -24,6 +24,8 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.toContactBase
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
