@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWith
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -114,6 +115,19 @@ class ContactRepositoryTest : RepositoryTestBase() {
     }
 
     @Test
+    fun `creating a contact should also create an image`() {
+        val image = someContactImage()
+        val (contactId, contact) = someContactEditableWithId(image = image)
+        coEvery { contactDao.insert(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.createContact(contactId, contact) }
+
+        coVerify { contactImageRepository.storeImage(contactId, image) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
     fun `an exception during creation should return an Error-Result`() {
         val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.insert(any()) } throws RuntimeException("Test")
@@ -160,6 +174,19 @@ class ContactRepositoryTest : RepositoryTestBase() {
         val result = runBlocking { underTest.updateContact(contactId, contact) }
 
         coVerify { contactGroupRepository.storeContactGroups(contactId, groups) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `updating a contact should also update the contact image`() {
+        val image = someContactImage()
+        val (contactId, contact) = someContactEditableWithId(image = image)
+        coEvery { contactDao.update(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
+
+        coVerify { contactImageRepository.storeImage(contactId, image) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
@@ -275,6 +302,18 @@ class ContactRepositoryTest : RepositoryTestBase() {
         runBlocking { underTest.resolveContact(contactId) }
 
         coVerify { contactGroupRepository.getContactGroups(contactId) }
+    }
+
+    @Test
+    fun `resolving a contact should try to load its image`() {
+        val contactId = someContactId()
+        coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
+
+        runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactImageRepository.loadImage(contactId) }
     }
 
     @Test

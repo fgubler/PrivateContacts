@@ -68,6 +68,7 @@ fun someContactEditable(
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),
+    image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
@@ -79,6 +80,7 @@ fun someContactEditable(
     contactData = contactData,
     contactGroups = contactGroups,
     isNew = isNew,
+    image = image,
 )
 
 fun someContactEditableWithId(
@@ -90,6 +92,7 @@ fun someContactEditableWithId(
     notes: String = "Tries to do the right thing. Often badly.",
     contactGroups: List<ContactGroup> = emptyList(),
     contactData: List<ContactData> = emptyList(),
+    image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
 ): Pair<IContactIdInternal, IContactEditable> = id to someContactEditable(
     id = id,
@@ -101,6 +104,7 @@ fun someContactEditableWithId(
     contactData = contactData,
     contactGroups = contactGroups,
     isNew = isNew,
+    image = image,
 )
 
 fun someTestContact(
