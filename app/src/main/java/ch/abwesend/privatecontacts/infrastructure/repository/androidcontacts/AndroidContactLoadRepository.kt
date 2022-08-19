@@ -18,7 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.permission.MissingPermissionExce
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.valid
@@ -45,7 +45,7 @@ import kotlin.system.measureTimeMillis
 /**
  * Repository to access the android ContactsProvider
  */
-class AndroidContactRepository : IAndroidContactRepository {
+class AndroidContactLoadRepository : IAndroidContactLoadRepository {
     private val permissionService: PermissionService by injectAnywhere()
     private val validationService: ContactValidationService by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()

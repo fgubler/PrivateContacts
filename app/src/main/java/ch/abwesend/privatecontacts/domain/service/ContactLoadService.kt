@@ -14,7 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
@@ -22,7 +22,7 @@ import kotlinx.coroutines.coroutineScope
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val androidContactRepository: IAndroidContactRepository by injectAnywhere()
+    private val androidContactRepository: IAndroidContactLoadRepository by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
 
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =

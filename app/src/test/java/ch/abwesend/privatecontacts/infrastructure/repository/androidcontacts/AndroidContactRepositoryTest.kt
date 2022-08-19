@@ -48,7 +48,7 @@ class AndroidContactRepositoryTest : TestBase() {
     private lateinit var context: Context
 
     @InjectMockKs
-    private lateinit var underTest: AndroidContactRepository
+    private lateinit var underTest: AndroidContactLoadRepository
 
     private lateinit var fetchRequest: FetchRequest<List<Contact>>
     private lateinit var flow: MutableStateFlow<List<Contact>>
