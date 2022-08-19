@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -20,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
@@ -27,6 +27,7 @@ class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
     private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
+    private val androidContactRepository: IAndroidContactSaveRepository by injectAnywhere()
 
     suspend fun saveContact(contact: IContactEditable): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
@@ -66,8 +67,7 @@ class ContactSaveService {
         } else ContactDeleteResult.Inactive
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
-            logger.warning("Tried to delete android contacts but that is not yet supported")
-            ContactDeleteResult.Failure(listOf(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS))
+            androidContactRepository.deleteContacts(externalContactIds)
         } else ContactDeleteResult.Inactive
 
         return internalResult.combine(externalResult)
