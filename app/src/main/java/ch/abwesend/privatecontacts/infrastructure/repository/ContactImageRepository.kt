@@ -22,13 +22,19 @@ class ContactImageRepository : RepositoryBase() {
         }
     }
 
-    suspend fun storeImage(contactId: IContactIdInternal, contactImage: ContactImage) = withDatabase { database ->
+    /** @return true if the image was changed in the database */
+    suspend fun storeImage(
+        contactId: IContactIdInternal,
+        contactImage: ContactImage
+    ): Boolean = withDatabase { database ->
         if (contactImage.unchanged) {
             logger.debug("The image for contact $contactId was not changed")
+            false
         } else {
             logger.debug("Deleting image for contact $contactId")
             database.contactImageDao().deleteImage(contactId.uuid)
             database.storeImage(contactId, contactImage)
+            true
         }
     }
 

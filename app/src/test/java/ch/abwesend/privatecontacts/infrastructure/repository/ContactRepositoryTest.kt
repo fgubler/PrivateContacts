@@ -70,7 +70,7 @@ class ContactRepositoryTest : RepositoryTestBase() {
         coEvery { contactGroupRepository.getContactGroups(any()) } returns emptyList()
         coEvery { contactGroupRepository.storeContactGroups(any(), any()) } just runs
         coEvery { contactImageRepository.loadImage(any()) } returns ContactImage.empty
-        coEvery { contactImageRepository.storeImage(any(), any()) } just runs
+        coEvery { contactImageRepository.storeImage(any(), any()) } returns false
     }
 
     @Test
