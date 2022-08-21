@@ -7,6 +7,9 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactBase
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactGroup

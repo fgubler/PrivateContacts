@@ -1,8 +1,10 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
-interface GenericContactData<TValue, TThis : GenericContactData<TValue, TThis>> : ContactData {
+sealed interface BaseGenericContactData<TValue> : ContactData {
     val value: TValue
+}
 
+interface GenericContactData<TValue, TThis : GenericContactData<TValue, TThis>> : BaseGenericContactData<TValue> {
     override fun changeType(type: ContactDataType): TThis
     override fun delete(): TThis
 

@@ -28,47 +28,55 @@ sealed class ContactDataType {
     protected abstract val titleRes: Int
     protected open val isPlaceHolder: Boolean = false
 
+    /**
+     * Lower numbers mean more important.
+     * Used if a piece of contact-data is stored under multiple types.
+     */
+    abstract val priority: Int
+
     open fun getTitle(stringProvider: StringProvider): String =
         stringProvider(titleRes)
 
     object Mobile : ContactDataType() {
         override val key: Key = MOBILE
         override val titleRes: Int = R.string.type_mobile
+        override val priority: Int = 100
     }
 
     object Personal : ContactDataType() {
         override val key: Key = PERSONAL
         override val titleRes: Int = R.string.type_personal
+        override val priority: Int = 200
     }
 
     object Business : ContactDataType() {
         override val key: Key = BUSINESS
         override val titleRes: Int = R.string.type_business
+        override val priority: Int = 300
     }
 
     object MobileBusiness : ContactDataType() {
         override val key: Key = MOBILE_BUSINESS
         override val titleRes: Int = R.string.type_business
-    }
-
-    object Other : ContactDataType() {
-        override val key: Key = OTHER
-        override val titleRes: Int = R.string.type_other
+        override val priority: Int = 310
     }
 
     object Birthday : ContactDataType() {
         override val key: Key = BIRTHDAY
         override val titleRes: Int = R.string.type_birthday
+        override val priority: Int = 500
     }
 
     object Anniversary : ContactDataType() {
         override val key: Key = ANNIVERSARY
         override val titleRes: Int = R.string.type_anniversary
+        override val priority: Int = 600
     }
 
     object Main : ContactDataType() {
         override val key: Key = MAIN
         override val titleRes: Int = R.string.type_main
+        override val priority: Int = 700
     }
 
     /** The "Custom" which is shown in the dropdown of possible sub-types */
@@ -76,6 +84,7 @@ sealed class ContactDataType {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.type_custom
         override val isPlaceHolder: Boolean = true
+        override val priority: Int = 400
     }
 
     /** The "Custom" which is then created based on [customValue] */
@@ -83,41 +92,55 @@ sealed class ContactDataType {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.type_custom
         override fun getTitle(stringProvider: StringProvider): String = customValue
+        override val priority: Int = 410
     }
 
     object RelationshipSibling : ContactDataType() {
         override val key: Key = RELATIONSHIP_SIBLING
         override val titleRes: Int = R.string.type_relationship_sibling
+        override val priority: Int = 800
     }
 
     object RelationshipParent : ContactDataType() {
         override val key: Key = RELATIONSHIP_PARENT
         override val titleRes: Int = R.string.type_relationship_parent
+        override val priority: Int = 810
     }
 
     object RelationshipChild : ContactDataType() {
         override val key: Key = Key.RELATIONSHIP_CHILD
         override val titleRes: Int = R.string.type_relationship_child
+        override val priority: Int = 820
     }
 
     object RelationshipPartner : ContactDataType() {
         override val key: Key = RELATIONSHIP_PARTNER
         override val titleRes: Int = R.string.type_relationship_partner
+        override val priority: Int = 830
     }
 
     object RelationshipRelative : ContactDataType() {
         override val key: Key = RELATIONSHIP_RELATIVE
         override val titleRes: Int = R.string.type_relationship_relative
-    }
-
-    object RelationshipWork : ContactDataType() {
-        override val key: Key = RELATIONSHIP_WORK
-        override val titleRes: Int = R.string.type_relationship_work
+        override val priority: Int = 840
     }
 
     object RelationshipFriend : ContactDataType() {
         override val key: Key = Key.RELATIONSHIP_FRIEND
         override val titleRes: Int = R.string.type_relationship_friend
+        override val priority: Int = 850
+    }
+
+    object RelationshipWork : ContactDataType() {
+        override val key: Key = RELATIONSHIP_WORK
+        override val titleRes: Int = R.string.type_relationship_work
+        override val priority: Int = 860
+    }
+
+    object Other : ContactDataType() {
+        override val key: Key = OTHER
+        override val titleRes: Int = R.string.type_other
+        override val priority: Int = 9000
     }
 
     enum class Key {

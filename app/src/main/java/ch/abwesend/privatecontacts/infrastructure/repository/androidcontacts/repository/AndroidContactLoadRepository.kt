@@ -19,8 +19,8 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.toContact
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.toContactBase
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactBase
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate

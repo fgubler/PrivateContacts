@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import io.mockk.every
@@ -133,4 +134,6 @@ class AndroidContactDataFactoryTest : TestBase() {
             assertThat(contactData.type).isEqualTo(ContactDataType.Birthday)
         }
     }
+
+    // TODO add test for duplicate-removal
 }

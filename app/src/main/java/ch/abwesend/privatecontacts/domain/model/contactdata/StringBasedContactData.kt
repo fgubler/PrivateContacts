@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
-interface StringBasedContactData : ContactData {
+interface StringBasedContactData : BaseGenericContactData<String> {
     /** Raw value */
-    val value: String
+    override val value: String
     /** Formatted for display */
     val formattedValue: String get() = value
     /** Formatted for automatic matching */

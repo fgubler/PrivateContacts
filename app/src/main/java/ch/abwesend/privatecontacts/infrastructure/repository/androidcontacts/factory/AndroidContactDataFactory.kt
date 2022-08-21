@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
+import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
@@ -45,7 +46,7 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
@@ -61,7 +62,7 @@ private fun Contact.getEmailAddresses(): List<EmailAddress> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
@@ -91,7 +92,7 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Contact.getWebsites(): List<Website> {
@@ -107,7 +108,7 @@ private fun Contact.getWebsites(): List<Website> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Contact.getRelationships(): List<Relationship> {
@@ -123,7 +124,7 @@ private fun Contact.getRelationships(): List<Relationship> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Contact.getEventDates(): List<EventDate> {
@@ -143,7 +144,7 @@ private fun Contact.getEventDates(): List<EventDate> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }
+    }.removeDuplicates()
 }
 
 private fun Label.toContactDataType(): ContactDataType =
@@ -182,3 +183,8 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
         ?: ContactDataIdAndroidWithoutNo().also {
             logger.debug("No ID found for contact data of type ${label.simpleClassName}.")
         }
+
+private fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
+    groupBy { it.value }
+        .map { (_, value) -> value.minByOrNull { it.type.priority } }
+        .filterNotNull()
