@@ -2,13 +2,13 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.fa
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroidWithoutNo
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
-import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
