@@ -130,6 +130,8 @@ abstract class AbstractLogger : ILogger {
             $message
             Throwable of type '${t.javaClass.name}'
             Original Throwable-Message: '$throwableMessage'
+            Stack-Trace: 
+            ${t.stackTrace.joinToString(separator = "\n")}
             """.trimIndent()
         } ?: throwableMessage
     }
