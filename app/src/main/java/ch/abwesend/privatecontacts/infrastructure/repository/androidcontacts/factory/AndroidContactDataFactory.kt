@@ -1,5 +1,6 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
 
+import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
@@ -184,7 +185,8 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
             logger.debug("No ID found for contact data of type ${label.simpleClassName}.")
         }
 
-private fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
+@VisibleForTesting
+internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
     groupBy { it.value }
         .map { (_, value) -> value.minByOrNull { it.type.priority } }
         .filterNotNull()

@@ -7,6 +7,10 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Personal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -15,8 +19,10 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.removeDuplicates
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -55,7 +61,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         result.forEachIndexed { index, contactData ->
             assertThat(contactData).isInstanceOf(PhoneNumber::class.java)
             assertThat((contactData as PhoneNumber).value).isEqualTo(phoneNumbers[index])
-            assertThat(contactData.type).isEqualTo(ContactDataType.Mobile)
+            assertThat(contactData.type).isEqualTo(Mobile)
         }
     }
 
@@ -70,7 +76,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         result.forEachIndexed { index, contactData ->
             assertThat(contactData).isInstanceOf(EmailAddress::class.java)
             assertThat((contactData as EmailAddress).value).isEqualTo(emailAddresses[index])
-            assertThat(contactData.type).isEqualTo(ContactDataType.Other)
+            assertThat(contactData.type).isEqualTo(Other)
         }
     }
 
@@ -100,7 +106,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         result.forEachIndexed { index, contactData ->
             assertThat(contactData).isInstanceOf(PhysicalAddress::class.java)
             assertThat((contactData as PhysicalAddress).value).isEqualTo(addresses[index])
-            assertThat(contactData.type).isEqualTo(ContactDataType.Personal)
+            assertThat(contactData.type).isEqualTo(Personal)
         }
     }
 
@@ -135,5 +141,34 @@ class AndroidContactDataFactoryTest : TestBase() {
         }
     }
 
-    // TODO add test for duplicate-removal
+    @Test
+    fun `should remove duplicates`() {
+        val number1 = "1234"
+        val number2 = "12345"
+        val number3 = "123456"
+        val number4 = "1234567"
+        val phoneNumbers = listOf(
+            somePhoneNumber(value = number1, type = Mobile),
+            somePhoneNumber(value = number2, type = Mobile),
+            somePhoneNumber(value = number2, type = Personal),
+            somePhoneNumber(value = number3, type = Mobile),
+            somePhoneNumber(value = number3, type = Personal),
+            somePhoneNumber(value = number3, type = Business),
+            somePhoneNumber(value = number4, type = Mobile),
+            somePhoneNumber(value = number4, type = Personal),
+            somePhoneNumber(value = number4, type = Business),
+            somePhoneNumber(value = number4, type = Other),
+        )
+        val expectedResult = listOf(
+            phoneNumbers[0],
+            phoneNumbers[1],
+            phoneNumbers[3],
+            phoneNumbers[6],
+        )
+
+        val result = phoneNumbers.removeDuplicates()
+
+        assertThat(result).hasSameSizeAs(expectedResult)
+        assertThat(result).isEqualTo(expectedResult)
+    }
 }
