@@ -59,6 +59,18 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase(), IAndroidCon
             ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
+    // TODO add read-permission check & maybe add exception-handling
+    override suspend fun doesContactExist(contactId: IContactIdExternal): Boolean = withContactStore { contactStore ->
+        logger.debug("Checking for contact existence: $contactId")
+        val existingContact = contactStore.fetchContacts(predicate = ContactLookup(contactId = contactId.contactNo))
+            .asFlow()
+            .flowOn(dispatchers.io)
+            .firstOrNull()
+            .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
+            ?.firstOrNull()
+        existingContact != null
+    }
+
     private suspend fun loadFullContact(contactNo: Long): Contact? = withContactStore { contactStore ->
         contactStore.fetchContacts(
             predicate = ContactLookup(contactId = contactNo),

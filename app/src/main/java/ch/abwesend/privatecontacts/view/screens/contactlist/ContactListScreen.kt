@@ -36,7 +36,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -184,11 +184,10 @@ object ContactListScreen {
         }
 
         val deletionErrors = viewModel.deleteResult
-            .collectAsState(initial = ContactDeleteResult.Inactive)
-            .let { it.value as? ContactDeleteResult.Failure }
-            ?.errors.orEmpty()
+            .collectAsState(initial = ContactBatchChangeResult.empty())
+            .value.failedChanges
 
-        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = selectedContacts.size > 1) {
+        DeleteContactsErrorDialog(numberOfErrors = deletionErrors.size, multipleContacts = selectedContacts.size > 1) {
             viewModel.resetDeletionResult()
         }
     }

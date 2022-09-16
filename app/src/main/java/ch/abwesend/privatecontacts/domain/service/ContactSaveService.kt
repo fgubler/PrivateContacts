@@ -14,7 +14,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -55,20 +57,23 @@ class ContactSaveService {
         else contactRepository.updateContact(newContactId, contact)
     }
 
-    suspend fun deleteContact(contact: IContactBase): ContactDeleteResult =
-        deleteContacts(setOf(contact.id))
+    suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
+        val batchResult = deleteContacts(setOf(contact.id))
+        return if (batchResult.completelySuccessful) ContactDeleteResult.Success
+        else ContactDeleteResult.Failure(UNKNOWN_ERROR)
+    }
 
-    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactDeleteResult {
+    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactBatchChangeResult {
         val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>()
         val externalContactIds = contactIds.filterIsInstance<IContactIdExternal>()
 
         val internalResult = if (internalContactIds.isNotEmpty()) {
             contactRepository.deleteContacts(internalContactIds)
-        } else ContactDeleteResult.Inactive
+        } else ContactBatchChangeResult.empty()
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
             androidContactRepository.deleteContacts(externalContactIds)
-        } else ContactDeleteResult.Inactive
+        } else ContactBatchChangeResult.empty()
 
         return internalResult.combine(externalResult)
     }

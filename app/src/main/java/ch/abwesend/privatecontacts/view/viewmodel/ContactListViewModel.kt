@@ -22,7 +22,8 @@ import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.BatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
@@ -98,8 +99,8 @@ class ContactListViewModel : ViewModel() {
         mutableResourceStateFlow(InactiveResource())
     val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
-    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
-    val deleteResult: Flow<ContactDeleteResult> = _deleteResult
+    private val _deleteResult = EventFlow.createShared<ContactBatchChangeResult>()
+    val deleteResult: Flow<ContactBatchChangeResult> = _deleteResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -197,7 +198,7 @@ class ContactListViewModel : ViewModel() {
             val result = saveService.deleteContacts(contactIds)
             _deleteResult.emit(result)
 
-            if (result is ContactDeleteResult.Success) {
+            if (!result.completelyFailed) {
                 launch { reloadContacts() }
                 setBulkMode(enabled = false) // bulk-action is over
             }
@@ -206,7 +207,7 @@ class ContactListViewModel : ViewModel() {
 
     fun resetDeletionResult() {
         viewModelScope.launch {
-            _deleteResult.emit(ContactDeleteResult.Inactive)
+            _deleteResult.emit(BatchChangeResult.empty())
         }
     }
 }

@@ -12,7 +12,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
@@ -208,7 +207,7 @@ class ContactRepositoryTest : RepositoryTestBase() {
         val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
         coVerify { contactDao.delete(listOf(contactId.uuid)) }
-        assertThat(result).isEqualTo(ContactDeleteResult.Success)
+        assertThat(result.completelySuccessful).isTrue
     }
 
     @Test
@@ -218,7 +217,7 @@ class ContactRepositoryTest : RepositoryTestBase() {
 
         val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
-        assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNKNOWN_ERROR))
+        assertThat(result.completelyFailed).isTrue
     }
 
     @Test

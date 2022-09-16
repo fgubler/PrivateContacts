@@ -84,7 +84,7 @@ object ContactDetailScreen {
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
         }
 
-        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
+        DeleteContactsErrorDialog(numberOfErrors = deletionErrors.size, multipleContacts = false) {
             deletionErrors = emptyList()
         }
 

@@ -12,16 +12,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 
 @Composable
 fun DeleteContactsErrorDialog(
-    errors: List<ContactChangeError>,
+    numberOfErrors: Int,
     multipleContacts: Boolean = false,
     onClose: () -> Unit
 ) {
-    if (errors.isNotEmpty()) {
+    if (numberOfErrors > 0) {
         OkDialog(
             title = R.string.error,
             onClose = onClose
@@ -31,18 +30,9 @@ fun DeleteContactsErrorDialog(
                 if (multipleContacts) R.string.delete_contacts_error
                 else R.string.delete_contact_error
 
-            val description = if (errors.size <= 1) {
-                stringResource(id = descriptionResource) + " ${errors.first().getLabel()}"
-            } else {
-                val errorTexts = errors.map { it.getLabel() }.joinToString { " - $it \n" }
-                stringResource(descriptionResource) + "\n\n" + errorTexts
-            }
-            Text(text = description)
+            Text(text = stringResource(id = descriptionResource))
         }
 
         BackHandler { onClose() }
     }
 }
-
-@Composable
-private fun ContactChangeError.getLabel() = stringResource(id = label)
