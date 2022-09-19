@@ -26,7 +26,22 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidCon
             ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
         } catch (t: Throwable) {
             logger.error("Failed to delete contacts $contactIds", t)
-            // TODO check if any of the contacts was actually successful? Stop at first error
+            checkForPartialSuccess(contactIds)
+        }
+
+    private suspend fun checkForPartialSuccess(contactIds: List<IContactIdExternal>): ContactBatchChangeResult {
+        val deletedContacts = mutableListOf<ContactId>() // use the mutable list for partial results in case of failure
+        try {
+            contactIds.forEach {
+                if (!contactLoadRepository.doesContactExist(it)) {
+                    deletedContacts.add(it)
+                }
+            }
+        } catch (t: Throwable) {
+            logger.error("Failed to check if some contacts were deleted successfully", t)
             ContactBatchChangeResult.failure(contactIds)
         }
+        val notDeletedContacts = contactIds.minus(deletedContacts.toSet())
+        return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
+    }
 }
