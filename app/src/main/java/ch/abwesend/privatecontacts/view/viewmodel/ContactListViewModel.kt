@@ -13,16 +13,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
-import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.MutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.result.BatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -37,7 +37,6 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_C
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 
@@ -99,8 +98,9 @@ class ContactListViewModel : ViewModel() {
         mutableResourceStateFlow(InactiveResource())
     val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
-    private val _deleteResult = EventFlow.createShared<ContactBatchChangeResult>()
-    val deleteResult: Flow<ContactBatchChangeResult> = _deleteResult
+    /** implemented as a resource to show a loading-indicator during deletion */
+    private val _deleteResult = mutableResourceStateFlow<ContactBatchChangeResult>()
+    val deleteResult: ResourceFlow<ContactBatchChangeResult> = _deleteResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -195,10 +195,11 @@ class ContactListViewModel : ViewModel() {
 
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
-            val result = saveService.deleteContacts(contactIds)
-            _deleteResult.emit(result)
+            val result = _deleteResult.withLoadingState {
+                saveService.deleteContacts(contactIds)
+            }
 
-            if (!result.completelyFailed) {
+            if (result == null || !result.completelyFailed) {
                 launch { reloadContacts() }
                 setBulkMode(enabled = false) // bulk-action is over
             }
@@ -207,7 +208,7 @@ class ContactListViewModel : ViewModel() {
 
     fun resetDeletionResult() {
         viewModelScope.launch {
-            _deleteResult.emit(BatchChangeResult.empty())
+            _deleteResult.emitInactive()
         }
     }
 }

@@ -108,6 +108,8 @@
 
     <string name="show_additional_fields">Show additional fields</string>
 
+    <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
+
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>
     <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
@@ -118,11 +120,13 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
+    <string name="delete_contact_progress">Contact is being deleted</string>
     <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
 
     <string name="delete_contacts">Delete Contacts</string>
     <string name="delete_contacts_title">Delete Contacts</string>
     <string name="delete_contacts_text">Deleted contacts cannot be restored. Are you sure you would like to delete these %1$s contact(s)?</string>
+    <string name="delete_contacts_progress">Contacts are being deleted</string>
     <string name="delete_contacts_partial_error">Something went wrong. Not all contacts could be deleted.</string>
     <string name="delete_contacts_full_error">Something went wrong. No contacts could be deleted.</string>
 

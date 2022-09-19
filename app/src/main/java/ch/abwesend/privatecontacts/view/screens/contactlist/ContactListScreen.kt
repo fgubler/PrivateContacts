@@ -36,11 +36,12 @@ import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsLoadingDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -183,14 +184,22 @@ object ContactListScreen {
             is ReadyResource -> showContactList(contactsResource.value)
         }
 
-        val deletionResult = viewModel.deleteResult
-            .collectAsState(initial = ContactBatchChangeResult.empty())
-            .value
+        val deletionResource = viewModel.deleteResult.collectAsState(initial = InactiveResource()).value
 
-        val numberOfFailed = deletionResult.failedChanges.size
-        val totalNumber = numberOfFailed + deletionResult.successfulChanges.size
-        DeleteContactsErrorDialog(numberOfErrors = numberOfFailed, numberOfAttemptedChanges = totalNumber) {
-            viewModel.resetDeletionResult()
+        val errorDialogCloseCallback: () -> Unit = { viewModel.resetDeletionResult() }
+        when (deletionResource) {
+            is ErrorResource -> DeleteContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
+            is InactiveResource -> { /* nothing to do */ }
+            is LoadingResource -> DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1)
+            is ReadyResource -> {
+                val numberOfFailed = deletionResource.value.failedChanges.size
+                val totalNumber = numberOfFailed + deletionResource.value.successfulChanges.size
+                DeleteContactsResultDialog(
+                    numberOfErrors = numberOfFailed,
+                    numberOfAttemptedChanges = totalNumber,
+                    onClose = errorDialogCloseCallback,
+                )
+            }
         }
     }
 
