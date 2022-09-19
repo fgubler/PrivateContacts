@@ -121,11 +121,13 @@ object ContactDetailScreen {
                 BackIconButton { screenContext.router.navigateUp() }
             },
             actions = {
-                // TODO handle external contacts
-                if (contact != null && !contact.isExternal) {
-                    EditIconButton(enabled = buttonsEnabled) {
-                        screenContext.contactEditViewModel.selectContact(contact)
-                        screenContext.router.navigateToScreen(Screen.ContactEdit)
+                if (contact != null) {
+                    // TODO handle external contacts
+                    if (!contact.isExternal) {
+                        EditIconButton(enabled = buttonsEnabled) {
+                            screenContext.contactEditViewModel.selectContact(contact)
+                            screenContext.router.navigateToScreen(Screen.ContactEdit)
+                        }
                     }
                     MoreActionsIconButton(enabled = buttonsEnabled) {
                         dropDownMenuExpanded = true
