@@ -6,6 +6,10 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
@@ -15,9 +19,7 @@ import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.confirmVerified
-import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -48,7 +50,7 @@ class ContactImageRepositoryTest : RepositoryTestBase() {
         val result = runBlocking { underTest.loadImage(contactId) }
 
         coVerify { contactImageDao.getImage(contactId.uuid) }
-        assertThat(result.unchanged).isTrue
+        assertThat(result.modelStatus).isEqualTo(UNCHANGED)
         assertThat(result.thumbnailUri).isEqualTo(thumbnailUri)
         assertThat(result.fullImage).isEqualTo(fullImage)
     }
@@ -66,7 +68,7 @@ class ContactImageRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should not change the DB if the image was not changed`() {
         val contactId = someContactId()
-        val image = someContactImage(unchanged = true)
+        val image = someContactImage(modelStatus = UNCHANGED)
 
         val result = runBlocking { underTest.storeImage(contactId, image) }
 
@@ -75,32 +77,41 @@ class ContactImageRepositoryTest : RepositoryTestBase() {
     }
 
     @Test
-    fun `should delete the changed image if empty`() {
+    fun `should delete the image for status deleted`() {
         val contactId = someContactId()
-        val image = spyk(someContactImage(unchanged = false))
-        every { image.isEmpty } returns true
-        coJustRun { contactImageDao.deleteImage(any()) }
+        val image = someContactImage(modelStatus = DELETED)
+        coJustRun { contactImageDao.delete(any()) }
         coJustRun { contactImageDao.insert(any()) }
 
         val result = runBlocking { underTest.storeImage(contactId, image) }
 
         assertThat(result).isTrue
-        coVerify { contactImageDao.deleteImage(contactId.uuid) }
+        coVerify { contactImageDao.delete(match { it.contactId == contactId.uuid }) }
         confirmVerified(contactImageDao)
     }
 
     @Test
-    fun `should replace the changed image if not empty`() {
+    fun `should replace the changed image`() {
         val contactId = someContactId()
-        val image = spyk(someContactImage(unchanged = false))
-        every { image.isEmpty } returns false
-        coJustRun { contactImageDao.deleteImage(any()) }
+        val image = someContactImage(modelStatus = CHANGED)
+        coJustRun { contactImageDao.update(any()) }
+
+        val result = runBlocking { underTest.storeImage(contactId, image) }
+
+        assertThat(result).isTrue
+        coVerify { contactImageDao.update(match { it.contactId == contactId.uuid }) }
+        confirmVerified(contactImageDao)
+    }
+
+    @Test
+    fun `should create a new image`() {
+        val contactId = someContactId()
+        val image = someContactImage(modelStatus = NEW)
         coJustRun { contactImageDao.insert(any()) }
 
         val result = runBlocking { underTest.storeImage(contactId, image) }
 
         assertThat(result).isTrue
-        coVerify { contactImageDao.deleteImage(contactId.uuid) }
         coVerify { contactImageDao.insert(match { it.contactId == contactId.uuid }) }
         confirmVerified(contactImageDao)
     }

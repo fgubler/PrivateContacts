@@ -1,5 +1,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contactimage.ContactImageEntity
 import io.mockk.every
@@ -23,9 +25,9 @@ fun someContactImageEntity(
 fun someContactImage(
     thumbnailUri: String? = null,
     fullImage: ByteArray? = ByteArray(0),
-    unchanged: Boolean = true,
+    modelStatus: ModelStatus = UNCHANGED,
 ): ContactImage = ContactImage(
     thumbnailUri = thumbnailUri,
     fullImage = fullImage,
-    unchanged = unchanged,
+    modelStatus = modelStatus,
 )

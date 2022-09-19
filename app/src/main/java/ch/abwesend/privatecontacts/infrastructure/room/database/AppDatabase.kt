@@ -23,7 +23,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactimage.ContactImage
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Database(
-    version = 23,
+    version = 24,
     exportSchema = true,
     entities = [
         ContactEntity::class,
@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean
         AutoMigration(from = 20, to = 21),
         AutoMigration(from = 21, to = 22),
         AutoMigration(from = 22, to = 23),
+        AutoMigration(from = 23, to = 24),
     ]
 )
 @TypeConverters(AppTypeConverters::class)

@@ -10,6 +10,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import java.util.UUID
 
 @Dao
@@ -22,6 +23,9 @@ interface ContactImageDao {
 
     @Insert
     suspend fun insertAll(data: List<ContactImageEntity>)
+
+    @Update
+    suspend fun update(data: ContactImageEntity)
 
     @Delete
     suspend fun delete(data: ContactImageEntity)

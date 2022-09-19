@@ -19,7 +19,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 fun DeleteContactsLoadingDialog(deleteMultiple: Boolean) {
     if (deleteMultiple) { // deleting one contact is so fast, a loading-screen does not make sense
         @StringRes val title =
-            if(deleteMultiple) R.string.delete_contacts_progress
+            if (deleteMultiple) R.string.delete_contacts_progress
             else R.string.delete_contact_progress
         SimpleProgressDialog(title = title, allowRunningInBackground = false)
     }
