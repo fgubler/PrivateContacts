@@ -121,7 +121,7 @@ object ContactEditScreen {
 
                 BackHandler(enabled = true) {
                     val anyDialogShown = showDiscardConfirmationDialog ||
-                            savingErrors.isNotEmpty() || validationErrors.isNotEmpty()
+                        savingErrors.isNotEmpty() || validationErrors.isNotEmpty()
 
                     // close open dialogs
                     if (anyDialogShown) {

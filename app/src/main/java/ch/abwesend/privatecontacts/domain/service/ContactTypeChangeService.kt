@@ -48,7 +48,7 @@ class ContactTypeChangeService {
         logger.debug("Saving contact with new type $newType")
         val saveResult = saveService.saveContact(newContact)
 
-        return when(saveResult) {
+        return when (saveResult) {
 
             is ValidationFailure -> {
                 logger.warning("Failed to save contact due to validation")
@@ -84,7 +84,7 @@ class ContactTypeChangeService {
     private suspend fun deleteContactWithOldType(contact: IContactBase): ContactSaveResult {
         logger.debug("Deleting old contact with id ${contact.id}")
         val deleteResult = saveService.deleteContact(contact)
-        return when(deleteResult) {
+        return when (deleteResult) {
             is ContactDeleteResult.Failure -> {
                 logger.warning("Failed to delete old contact with id ${contact.id}")
                 val errors = listOf(UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE)

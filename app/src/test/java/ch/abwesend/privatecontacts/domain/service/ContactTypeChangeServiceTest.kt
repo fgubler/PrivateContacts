@@ -152,7 +152,7 @@ class ContactTypeChangeServiceTest : TestBase() {
 
         assertThat(result).isEqualTo(Success)
         coVerify {
-            saveService.saveContact(match { newContact -> newContact.contactDataSet.all { it.modelStatus == NEW }})
+            saveService.saveContact(match { newContact -> newContact.contactDataSet.all { it.modelStatus == NEW } })
         }
     }
 
@@ -170,7 +170,7 @@ class ContactTypeChangeServiceTest : TestBase() {
         assertThat(result).isEqualTo(Success)
         coVerify {
             saveService.saveContact(
-                match { newContact -> newContact.contactDataSet.all { it.modelStatus == UNCHANGED }}
+                match { newContact -> newContact.contactDataSet.all { it.modelStatus == UNCHANGED } }
             )
         }
     }
