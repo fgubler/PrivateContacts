@@ -70,7 +70,7 @@ object ContactEditScreen {
         var showAllFields: Boolean by remember { mutableStateOf(true) }
 
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
-        var savingError: ContactChangeError? by remember { mutableStateOf(null) }
+        var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
 
         LaunchedEffect(Unit) {
@@ -79,7 +79,7 @@ object ContactEditScreen {
                 onSaveResult(
                     screenContext = screenContext,
                     result = result,
-                    setSavingError = { savingError = it },
+                    setSavingErrors = { savingErrors = it },
                     setValidationErrors = { validationErrors = it },
                 )
             }
@@ -112,8 +112,8 @@ object ContactEditScreen {
                 DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
                     showDiscardConfirmationDialog = false
                 }
-                SavingErrorDialog(savingError) {
-                    savingError = null
+                SavingErrorDialog(savingErrors) {
+                    savingErrors = emptyList()
                 }
                 ValidationErrorDialog(validationErrors) {
                     validationErrors = emptyList()
@@ -121,13 +121,12 @@ object ContactEditScreen {
 
                 BackHandler(enabled = true) {
                     val anyDialogShown = showDiscardConfirmationDialog ||
-                        savingError != null ||
-                        validationErrors.isNotEmpty()
+                            savingErrors.isNotEmpty() || validationErrors.isNotEmpty()
 
                     // close open dialogs
                     if (anyDialogShown) {
                         showDiscardConfirmationDialog = false
-                        savingError = null
+                        savingErrors = emptyList()
                         validationErrors = emptyList()
                         return@BackHandler
                     }
@@ -203,14 +202,14 @@ object ContactEditScreen {
         screenContext: ScreenContext,
         result: ContactSaveResult,
         setValidationErrors: (List<ContactValidationError>) -> Unit,
-        setSavingError: (ContactChangeError) -> Unit,
+        setSavingErrors: (List<ContactChangeError>) -> Unit,
     ) {
         when (result) {
             is Success -> {
                 screenContext.contactDetailViewModel.reloadContact() // update data there
                 screenContext.router.navigateUp()
             }
-            is Failure -> setSavingError(result.error)
+            is Failure -> setSavingErrors(result.errors)
             is ValidationFailure -> setValidationErrors(result.validationErrors)
         }
     }
@@ -253,17 +252,21 @@ object ContactEditScreen {
     }
 
     @Composable
-    private fun SavingErrorDialog(
-        error: ContactChangeError?,
-        onClose: () -> Unit
-    ) {
-        error?.let { savingError ->
+    private fun SavingErrorDialog(errors: List<ContactChangeError>, onClose: () -> Unit) {
+        if (errors.isNotEmpty()) {
             OkDialog(
                 title = R.string.error,
                 onClose = onClose
             ) {
-                val errorText = stringResource(id = savingError.label)
-                val description = stringResource(R.string.saving_data_error, errorText)
+                // TODO test this :-)
+                val description = if (errors.size == 1) {
+                    val errorText = stringResource(id = errors.first().label)
+                    stringResource(R.string.saving_data_error, errorText)
+                } else {
+                    val partialTexts = errors.map { stringResource(id = it.label) }
+                    val errorText = " - " + partialTexts.joinToString(separator = "\n - ")
+                    stringResource(R.string.saving_data_errors, errorText)
+                }
                 Text(text = description)
             }
         }

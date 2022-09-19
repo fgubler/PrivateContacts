@@ -35,6 +35,8 @@ data class Website(
         return copy(type = type, modelStatus = status)
     }
 
+    override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+
     override fun delete(): Website {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)
         return copy(modelStatus = status)

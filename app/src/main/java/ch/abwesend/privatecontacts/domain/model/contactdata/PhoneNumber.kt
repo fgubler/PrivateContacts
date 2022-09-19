@@ -37,6 +37,8 @@ data class PhoneNumber(
         return copy(type = type, modelStatus = status)
     }
 
+    override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+
     override fun delete(): PhoneNumber {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)
         return copy(modelStatus = status)

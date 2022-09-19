@@ -10,6 +10,8 @@ sealed interface ContactSaveResult {
     object Success : ContactSaveResult
     data class ValidationFailure(val validationErrors: List<ContactValidationError>) : ContactSaveResult
 
-    @JvmInline
-    value class Failure(val error: ContactChangeError) : ContactSaveResult
+    /** if a value class is used, some tests fail for some reason */
+    data class Failure(val errors: List<ContactChangeError>) : ContactSaveResult {
+        constructor(error: ContactChangeError) : this(listOf(error))
+    }
 }

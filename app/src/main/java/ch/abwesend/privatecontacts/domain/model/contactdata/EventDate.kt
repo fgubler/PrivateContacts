@@ -48,6 +48,8 @@ data class EventDate(
             .replace(oldValue = DUMMY_YEAR_STRING, newValue = "")
     }
 
+    override fun overrideStatus(newStatus: ModelStatus): ContactData = copy(modelStatus = newStatus)
+
     override fun changeValue(value: LocalDate?): EventDate {
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(value = value, modelStatus = status)

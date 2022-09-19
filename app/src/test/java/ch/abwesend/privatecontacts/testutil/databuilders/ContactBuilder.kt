@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -65,6 +66,30 @@ fun someContactEditable(
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
     type: ContactType = SECRET,
+    notes: String = "Tries to do the right thing. Often badly.",
+    contactData: List<ContactData> = emptyList(),
+    contactGroups: List<ContactGroup> = emptyList(),
+    image: ContactImage = ContactImage.empty,
+    isNew: Boolean = false,
+): IContactEditable = someContactEditableGeneric(
+    id = id,
+    firstName = firstName,
+    lastName = lastName,
+    nickname = nickname,
+    type = type,
+    notes = notes,
+    contactData = contactData,
+    contactGroups = contactGroups,
+    isNew = isNew,
+    image = image,
+)
+
+fun someExternalContactEditable(
+    id: IContactIdExternal = someExternalContactId(),
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    type: ContactType = PUBLIC,
     notes: String = "Tries to do the right thing. Often badly.",
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),

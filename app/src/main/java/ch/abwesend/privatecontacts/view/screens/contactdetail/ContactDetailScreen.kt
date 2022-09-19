@@ -93,7 +93,6 @@ object ContactDetailScreen {
                 when (result) {
                     is ContactDeleteResult.Success -> screenContext.router.navigateUp()
                     is ContactDeleteResult.Failure -> deletionErrors = result.errors
-                    is ContactDeleteResult.Inactive -> { /* nothing to do */ }
                 }
             }
         }

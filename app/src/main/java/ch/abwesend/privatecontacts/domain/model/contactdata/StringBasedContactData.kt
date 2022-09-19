@@ -1,5 +1,7 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
+
 interface StringBasedContactData : BaseGenericContactData<String> {
     /** Raw value */
     override val value: String
@@ -27,5 +29,6 @@ interface StringBasedContactData : BaseGenericContactData<String> {
 interface StringBasedContactDataGeneric<T : StringBasedContactDataGeneric<T>> : StringBasedContactData {
     fun changeValue(value: String): T
     override fun changeType(type: ContactDataType): T
+    override fun overrideStatus(newStatus: ModelStatus): T
     override fun delete(): T
 }

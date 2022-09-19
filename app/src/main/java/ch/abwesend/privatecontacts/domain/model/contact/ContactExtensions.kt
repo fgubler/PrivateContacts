@@ -37,6 +37,13 @@ fun IContact.toContactEditable(): ContactEditable =
         contactGroups = contactGroups.toMutableList(),
     )
 
+fun IContact.toContactBase(): ContactBase =
+    ContactBase(
+        id = id,
+        type = type,
+        displayName = getFullName(firstName, lastName),
+    )
+
 val IContactBase.isExternal: Boolean
     get() = id.isExternal
 

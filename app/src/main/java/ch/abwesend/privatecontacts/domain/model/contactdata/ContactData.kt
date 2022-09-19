@@ -21,6 +21,7 @@ sealed interface ContactData {
     val displayValue: String
 
     fun changeType(type: ContactDataType): ContactData
+    fun overrideStatus(newStatus: ModelStatus): ContactData
     fun delete(): ContactData
 
     /** returning null means that the data will be ignored in search */

@@ -41,6 +41,7 @@
     <string name="error">Error</string>
     <string name="unknown_error">Unknown error</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
+    <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
     <string name="feature_not_yet_implemented">Sorry, this feature is not yet implemented.</string>
 
@@ -111,6 +112,7 @@
     <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
 
     <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
+    <string name="saving_data_errors">Something went wrong:\n\"%1$s\"\nThe data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>
     <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
 
@@ -129,6 +131,9 @@
     <string name="delete_contacts_progress">Contacts are being deleted</string>
     <string name="delete_contacts_partial_error">Something went wrong. Not all contacts could be deleted.</string>
     <string name="delete_contacts_full_error">Something went wrong. No contacts could be deleted.</string>
+
+    <string name="type_change_create_new_contact_error">Something went wrong. The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
+    <string name="type_change_delete_old_contact_error">Something went wrong. The old contact could not be deleted. However, the new contact has been created. You can try to delete the old one manually.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>

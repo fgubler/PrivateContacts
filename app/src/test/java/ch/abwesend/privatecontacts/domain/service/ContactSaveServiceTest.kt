@@ -135,6 +135,7 @@ class ContactSaveServiceTest : TestBase() {
 
         confirmVerified(contactRepository) // should not store contact internally
         assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
-        assertThat((result as ContactSaveResult.Failure).error).isEqualTo(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+        val error = (result as ContactSaveResult.Failure).errors.first()
+        assertThat(error).isEqualTo(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
     }
 }
