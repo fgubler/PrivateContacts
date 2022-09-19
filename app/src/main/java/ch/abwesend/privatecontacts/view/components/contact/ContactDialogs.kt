@@ -17,7 +17,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 @Composable
 fun DeleteContactsErrorDialog(
     numberOfErrors: Int,
-    multipleContacts: Boolean = false,
+    numberOfAttemptedChanges: Int,
     onClose: () -> Unit
 ) {
     if (numberOfErrors > 0) {
@@ -26,9 +26,11 @@ fun DeleteContactsErrorDialog(
             onClose = onClose
         ) {
             @StringRes
-            val descriptionResource =
-                if (multipleContacts) R.string.delete_contacts_error
-                else R.string.delete_contact_error
+            val descriptionResource = when {
+                numberOfAttemptedChanges == 1 -> R.string.delete_contact_error
+                numberOfAttemptedChanges > numberOfErrors -> R.string.delete_contacts_partial_error
+                else -> R.string.delete_contacts_full_error
+            }
 
             Text(text = stringResource(id = descriptionResource))
         }

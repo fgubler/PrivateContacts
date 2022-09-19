@@ -183,11 +183,13 @@ object ContactListScreen {
             is ReadyResource -> showContactList(contactsResource.value)
         }
 
-        val deletionErrors = viewModel.deleteResult
+        val deletionResult = viewModel.deleteResult
             .collectAsState(initial = ContactBatchChangeResult.empty())
-            .value.failedChanges
+            .value
 
-        DeleteContactsErrorDialog(numberOfErrors = deletionErrors.size, multipleContacts = selectedContacts.size > 1) {
+        val numberOfFailed = deletionResult.failedChanges.size
+        val totalNumber = numberOfFailed + deletionResult.successfulChanges.size
+        DeleteContactsErrorDialog(numberOfErrors = numberOfFailed, numberOfAttemptedChanges = totalNumber) {
             viewModel.resetDeletionResult()
         }
     }
