@@ -254,18 +254,14 @@ object ContactEditScreen {
     @Composable
     private fun SavingErrorDialog(errors: List<ContactChangeError>, onClose: () -> Unit) {
         if (errors.isNotEmpty()) {
-            OkDialog(
-                title = R.string.error,
-                onClose = onClose
-            ) {
-                // TODO test this :-)
+            OkDialog(title = R.string.error, onClose = onClose) {
                 val description = if (errors.size == 1) {
                     val errorText = stringResource(id = errors.first().label)
                     stringResource(R.string.saving_data_error, errorText)
                 } else {
                     val partialTexts = errors.map { stringResource(id = it.label) }
-                    val errorText = " - " + partialTexts.joinToString(separator = "\n - ")
-                    stringResource(R.string.saving_data_errors, errorText)
+                    val errorText = partialTexts.joinToString(separator = "\n\n")
+                    stringResource(R.string.saving_data_error, errorText)
                 }
                 Text(text = description)
             }
@@ -278,10 +274,7 @@ object ContactEditScreen {
         onClose: () -> Unit
     ) {
         if (validationErrors.isNotEmpty()) {
-            OkDialog(
-                title = R.string.data_validation_errors,
-                onClose = onClose
-            ) {
+            OkDialog(title = R.string.data_validation_errors, onClose = onClose) {
                 Column {
                     validationErrors.forEach { error ->
                         Text(stringResource(id = error.label))

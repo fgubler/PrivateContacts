@@ -111,8 +111,7 @@
 
     <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
 
-    <string name="saving_data_error">Something went wrong: \"%1$s\". The data could not be saved.</string>
-    <string name="saving_data_errors">Something went wrong:\n\"%1$s\"\nThe data could not be saved.</string>
+    <string name="saving_data_error">Something went wrong:\n\n%1$s \n\nThe data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>
     <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
 
@@ -132,8 +131,8 @@
     <string name="delete_contacts_partial_error">Something went wrong. Not all contacts could be deleted.</string>
     <string name="delete_contacts_full_error">Something went wrong. No contacts could be deleted.</string>
 
-    <string name="type_change_create_new_contact_error">Something went wrong. The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
-    <string name="type_change_delete_old_contact_error">Something went wrong. The old contact could not be deleted. However, the new contact has been created. You can try to delete the old one manually.</string>
+    <string name="type_change_create_new_contact_error">The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
+    <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can try to delete the old one manually.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
