@@ -6,6 +6,8 @@
 
 <resources>
     <string name="app_name">Private Contacts</string>
+    <string name="greetings_from_the_developer">Greetings from the Developer, Florian.</string>
+
     <string name="screen_contact_list">Contacts</string>
     <string name="screen_settings">Settings</string>
     <string name="screen_about_the_app">About</string>
@@ -131,8 +133,16 @@
     <string name="delete_contacts_partial_error">Something went wrong. Not all contacts could be deleted.</string>
     <string name="delete_contacts_full_error">Something went wrong. No contacts could be deleted.</string>
 
+    <string name="make_contact_secret">Change contact to \'Secret\'</string>
+    <string name="make_contact_secret_title">Change contact to \'Secret\'</string>
+    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.</string>
+
+    <string name="make_contacts_secret">Change contacts to \'Secret\'</string>
+
     <string name="type_change_create_new_contact_error">The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
-    <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can try to delete the old one manually.</string>
+    <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can now delete the old one manually.</string>
+
+    <string name="type_change_batch_error">While changing the types of %1$s contacts, %2$s validation-errors and %3$s other errors occurred. In the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>

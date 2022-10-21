@@ -22,8 +22,7 @@ interface IContactEditable : IContact {
     override val contactGroups: MutableList<ContactGroup>
 
     fun wrap(): ContactEditableWrapper
-    fun deepCopy(): IContactEditable
-    fun changeToInternalId(): IContactEditable
+    fun deepCopy(isContactNew: Boolean = isNew): IContactEditable
 }
 
 data class ContactEditable(
@@ -43,9 +42,8 @@ data class ContactEditable(
 
     override fun wrap(): ContactEditableWrapper = ContactEditableWrapper(this)
 
-    override fun changeToInternalId(): ContactEditable = copy(id = ContactIdInternal.randomId())
-
-    override fun deepCopy(): ContactEditable = copy(contactDataSet = contactDataSet.toMutableList())
+    override fun deepCopy(isContactNew: Boolean): ContactEditable =
+        copy(isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
 
     companion object {
         fun createNew(): ContactEditable {

@@ -6,12 +6,13 @@
 
 package ch.abwesend.privatecontacts.view.components.contact
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
+import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 
@@ -30,7 +31,6 @@ fun DeleteContactsUnknownErrorDialog(onClose: () -> Unit) {
     OkDialog(title = R.string.error, onClose = onClose) {
         Text(text = stringResource(id = R.string.generic_unknown_error))
     }
-    BackHandler { onClose() }
 }
 
 @Composable
@@ -50,7 +50,39 @@ fun DeleteContactsResultDialog(
 
             Text(text = stringResource(id = descriptionResource))
         }
+    }
+}
 
-        BackHandler { onClose() }
+@Composable
+fun ChangeContactTypeResultDialog(
+    validationErrors: List<ContactValidationError>,
+    errors: List<ContactChangeError>,
+    numberOfAttemptedChanges: Int,
+    onClose: () -> Unit
+) {
+    if (validationErrors.isNotEmpty() || errors.isNotEmpty()) {
+        OkDialog(title = R.string.error, onClose = onClose) {
+
+            val description = if (numberOfAttemptedChanges == 1) {
+                @StringRes
+                val descriptionResource = when {
+                    errors.isNotEmpty() -> errors.first().label
+                    validationErrors.isNotEmpty() -> validationErrors.first().label
+                    else -> R.string.greetings_from_the_developer // cannot actually happen
+                }
+                stringResource(id = descriptionResource)
+            } else {
+                val formatArgs = arrayOf(
+                    numberOfAttemptedChanges.toString(),
+                    validationErrors.size.toString(),
+                    errors.size.toString(),
+                )
+                stringResource(
+                    id = R.string.type_change_batch_error,
+                    formatArgs = formatArgs
+                )
+            }
+            Text(text = description)
+        }
     }
 }

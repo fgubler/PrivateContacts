@@ -10,12 +10,15 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.Dispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
@@ -36,7 +39,7 @@ class ContactTypeChangeService {
     // TODO add proper batch processing
     // TODO consider whether we really want to do it in parallel or if it is too risky
     suspend fun changeContactType(
-        contacts: Collection<IContactEditable>,
+        contacts: Collection<IContact>,
         newType: ContactType
     ): ContactBatchChangeResult = withContext(dispatchers.default) {
         val partialResults = contacts
@@ -54,22 +57,24 @@ class ContactTypeChangeService {
         )
     }
 
-    suspend fun changeContactType(contact: IContactEditable, newType: ContactType): ContactSaveResult {
+    suspend fun changeContactType(contact: IContact, newType: ContactType): ContactSaveResult {
         logger.debug("Trying to change contact-type from ${contact.type} to $newType")
+        val contactEditable = contact.asEditable()
 
         return when (newType) {
             contact.type -> {
                 logger.debug("No contact-type change necessary: just save it normally.")
-                saveService.saveContact(contact)
+                saveService.saveContact(contactEditable)
             }
             ContactType.PUBLIC -> Failure(NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS)
-            ContactType.SECRET -> changeContactTypeToSecret(contact, newType)
+            ContactType.SECRET -> changeContactTypeToSecret(contactEditable, newType)
         }
     }
 
     private suspend fun changeContactTypeToSecret(contact: IContactEditable, newType: ContactType): ContactSaveResult {
         val oldContact = contact.toContactBase()
-        val newContact = contact.changeToInternalId()
+        // the internal ID will be set automatically, while saving
+        val newContact = contact.deepCopy(isContactNew = true)
         newContact.type = newType
         newContact.setModelStatusNew()
 
@@ -77,7 +82,6 @@ class ContactTypeChangeService {
         val saveResult = saveService.saveContact(newContact)
 
         return when (saveResult) {
-
             is ValidationFailure -> {
                 logger.warning("Failed to save contact due to validation")
                 saveResult
@@ -96,8 +100,10 @@ class ContactTypeChangeService {
 
     private fun IContactEditable.setModelStatusNew() {
         val computeNewStatus: (oldStatus: ModelStatus) -> ModelStatus = { oldStatus ->
-            // if it was to be deleted, just don't add it
-            if (oldStatus == DELETED) UNCHANGED else NEW
+            when (oldStatus) {
+                DELETED -> UNCHANGED // if it was to be deleted, just don't add it
+                CHANGED, NEW, UNCHANGED -> NEW
+            }
         }
 
         val newImageStatus = computeNewStatus(image.modelStatus)
