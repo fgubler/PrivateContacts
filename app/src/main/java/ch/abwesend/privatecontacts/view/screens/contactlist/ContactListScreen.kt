@@ -35,13 +35,16 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeLoadingDialog
+import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypesResultDialog
+import ch.abwesend.privatecontacts.view.components.contact.ChangeContactsUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -161,7 +164,7 @@ object ContactListScreen {
         val screenState = viewModel.screenState.value
         val bulkMode = screenState is ContactListScreenState.BulkMode
         val selectedContacts = (screenState as? ContactListScreenState.BulkMode)
-            ?.selectedContacts.orEmpty()
+            ?.selectedContacts.orEmpty().map { it.id }.toSet()
 
         val showTypeIcons = viewModel.selectedTab.value.showContactTypeIcons &&
             screenContext.settings.showContactTypeInList
@@ -184,17 +187,44 @@ object ContactListScreen {
             is ReadyResource -> showContactList(contactsResource.value)
         }
 
+        TypeChangeResultHandler(viewModel, selectedContacts)
+        DeletionResultHandler(viewModel, selectedContacts)
+    }
+
+    @Composable
+    private fun DeletionResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
         val deletionResource = viewModel.deleteResult.collectAsState(initial = InactiveResource()).value
 
         val errorDialogCloseCallback: () -> Unit = { viewModel.resetDeletionResult() }
         when (deletionResource) {
-            is ErrorResource -> DeleteContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
+            is ErrorResource -> ChangeContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
             is InactiveResource -> { /* nothing to do */ }
             is LoadingResource -> DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1)
             is ReadyResource -> {
                 val numberOfFailed = deletionResource.value.failedChanges.size
                 val totalNumber = numberOfFailed + deletionResource.value.successfulChanges.size
                 DeleteContactsResultDialog(
+                    numberOfErrors = numberOfFailed,
+                    numberOfAttemptedChanges = totalNumber,
+                    onClose = errorDialogCloseCallback,
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun TypeChangeResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
+        val typeChangeResource = viewModel.typeChangeResult.collectAsState(initial = InactiveResource()).value
+
+        val errorDialogCloseCallback: () -> Unit = { viewModel.resetTypeChangeResult() }
+        when (typeChangeResource) {
+            is ErrorResource -> ChangeContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
+            is InactiveResource -> { /* nothing to do */ }
+            is LoadingResource -> ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1)
+            is ReadyResource -> {
+                val numberOfFailed = typeChangeResource.value.failedChanges.size
+                val totalNumber = numberOfFailed + typeChangeResource.value.successfulChanges.size
+                ChangeContactTypesResultDialog(
                     numberOfErrors = numberOfFailed,
                     numberOfAttemptedChanges = totalNumber,
                     onClose = errorDialogCloseCallback,

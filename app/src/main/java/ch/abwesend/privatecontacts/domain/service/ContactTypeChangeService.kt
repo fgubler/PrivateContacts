@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.lib.coroutine.Dispatchers
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 
 class ContactTypeChangeService {
     private val saveService: ContactSaveService by injectAnywhere()
-    private val dispatchers: Dispatchers by injectAnywhere()
+    private val dispatchers: IDispatchers by injectAnywhere()
 
     // TODO add proper batch processing
     // TODO consider whether we really want to do it in parallel or if it is too risky

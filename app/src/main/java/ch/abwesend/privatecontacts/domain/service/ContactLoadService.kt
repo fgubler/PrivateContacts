@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -19,11 +21,14 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val androidContactRepository: IAndroidContactLoadRepository by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
+
+    private val dispatchers: IDispatchers by injectAnywhere()
 
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
         contactRepository.getContactsAsFlow(All)
@@ -77,5 +82,11 @@ class ContactLoadService {
                 is IContactIdInternal -> contactRepository.resolveContact(contactId)
                 is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
             }
+        }
+
+    // TODO use proper batch-job
+    suspend fun resolveContacts(contacts: Collection<IContactBase>): List<IContact> =
+        withContext(dispatchers.default) {
+            contacts.mapAsync { resolveContact(it) }
         }
 }

@@ -23,7 +23,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
@@ -68,7 +67,7 @@ class ContactListViewModel : ViewModel() {
             updateScreenState()
         }
 
-    private var bulkModeSelectedContacts: Set<ContactId> = emptySet()
+    private var bulkModeSelectedContacts: Set<IContactBase> = emptySet()
         set(value) {
             field = value
             updateScreenState()
@@ -106,7 +105,6 @@ class ContactListViewModel : ViewModel() {
     private val _deleteResult = mutableResourceStateFlow<ContactBatchChangeResult>()
     val deleteResult: ResourceFlow<ContactBatchChangeResult> = _deleteResult
 
-    // TODO observe
     /** implemented as a resource to show a loading-indicator during type-change */
     private val _typeChangeResult = mutableResourceStateFlow<ContactBatchChangeResult>()
     val typeChangeResult: ResourceFlow<ContactBatchChangeResult> = _typeChangeResult
@@ -193,12 +191,12 @@ class ContactListViewModel : ViewModel() {
 
         val contactId = contact.id
         val selectedContacts = bulkModeSelectedContacts
-        bulkModeSelectedContacts = if (selectedContacts.contains(contactId)) {
+        bulkModeSelectedContacts = if (selectedContacts.any { it.id == contactId }) {
             logger.debug("unselecting contact $contactId")
-            selectedContacts.minus(contactId)
+            selectedContacts.minus(contact)
         } else {
             logger.debug("selecting contact $contactId")
-            selectedContacts.plus(contactId)
+            selectedContacts.plus(contact)
         }
     }
 
@@ -215,11 +213,11 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
-    // TODO use
-    fun changeContactType(contacts: List<IContact>, newType: ContactType) {
+    fun changeContactType(contacts: Collection<IContactBase>, newType: ContactType) {
         viewModelScope.launch {
-            val result = _deleteResult.withLoadingState {
-                typeChangeService.changeContactType(contacts, newType)
+            val fullContacts = loadService.resolveContacts(contacts)
+            val result = _typeChangeResult.withLoadingState {
+                typeChangeService.changeContactType(fullContacts, newType)
             }
 
             if (result == null || !result.completelyFailed) {
@@ -232,6 +230,12 @@ class ContactListViewModel : ViewModel() {
     fun resetDeletionResult() {
         viewModelScope.launch {
             _deleteResult.emitInactive()
+        }
+    }
+
+    fun resetTypeChangeResult() {
+        viewModelScope.launch {
+            _typeChangeResult.emitInactive()
         }
     }
 }

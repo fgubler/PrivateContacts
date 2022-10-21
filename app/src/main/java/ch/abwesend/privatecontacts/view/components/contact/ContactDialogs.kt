@@ -28,7 +28,17 @@ fun DeleteContactsLoadingDialog(deleteMultiple: Boolean) {
 }
 
 @Composable
-fun DeleteContactsUnknownErrorDialog(onClose: () -> Unit) {
+fun ChangeContactTypeLoadingDialog(changeMultiple: Boolean) {
+    if (changeMultiple) { // changing one contact is so fast, a loading-screen does not make sense
+        @StringRes val title =
+            if (changeMultiple) R.string.make_contacts_secret_progress
+            else R.string.make_contact_secret_progress
+        SimpleProgressDialog(title = title, allowRunningInBackground = false)
+    }
+}
+
+@Composable
+fun ChangeContactsUnknownErrorDialog(onClose: () -> Unit) {
     OkDialog(title = R.string.error, onClose = onClose) {
         Text(text = stringResource(id = R.string.generic_unknown_error))
     }
@@ -88,6 +98,26 @@ fun ChangeContactTypeResultDialog(
                 .joinToString(separator = Constants.doubleLinebreak)
 
             Text(text = text)
+        }
+    }
+}
+
+@Composable
+fun ChangeContactTypesResultDialog(
+    numberOfErrors: Int,
+    numberOfAttemptedChanges: Int,
+    onClose: () -> Unit
+) {
+    if (numberOfErrors > 0) {
+        OkDialog(title = R.string.error, onClose = onClose) {
+            @StringRes
+            val descriptionResource = when {
+                numberOfAttemptedChanges == 1 -> R.string.type_change_error
+                numberOfAttemptedChanges > numberOfErrors -> R.string.make_contacts_secret_partial_error
+                else -> R.string.make_contacts_secret_full_error
+            }
+
+            Text(text = stringResource(id = descriptionResource))
         }
     }
 }
