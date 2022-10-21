@@ -64,17 +64,8 @@ fun ChangeContactTypeResultDialog(
     if (validationErrors.isNotEmpty() || errors.isNotEmpty()) {
         OkDialog(title = R.string.error, onClose = onClose) {
 
-            val description = if (numberOfAttemptedChanges == 1) {
-                val errorTitle = stringResource(id = R.string.type_change_error)
-                @StringRes
-                val errorDescriptionResource = when {
-                    errors.isNotEmpty() -> errors.first().label
-                    validationErrors.isNotEmpty() -> validationErrors.first().label
-                    else -> R.string.greetings_from_the_developer // cannot actually happen
-                }
-                val errorDescription = stringResource(id = errorDescriptionResource)
-                errorTitle + Constants.doubleLinebreak + errorDescription
-            } else {
+            val errorTitle = if (numberOfAttemptedChanges == 1) stringResource(id = R.string.type_change_error)
+            else {
                 val formatArgs = arrayOf(
                     numberOfAttemptedChanges.toString(),
                     validationErrors.size.toString(),
@@ -85,7 +76,18 @@ fun ChangeContactTypeResultDialog(
                     formatArgs = formatArgs
                 )
             }
-            Text(text = description)
+
+            val errorDescriptionResources = when {
+                errors.isNotEmpty() -> errors.map { it.label }
+                validationErrors.isNotEmpty() -> validationErrors.map { it.label }
+                else -> emptyList() // cannot actually happen
+            }
+
+            val errorDescriptions = errorDescriptionResources.map { stringResource(id = it) }
+            val text = (listOf(errorTitle) + errorDescriptions)
+                .joinToString(separator = Constants.doubleLinebreak)
+
+            Text(text = text)
         }
     }
 }
