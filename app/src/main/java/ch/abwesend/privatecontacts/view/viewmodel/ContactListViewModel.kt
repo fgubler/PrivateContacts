@@ -22,10 +22,13 @@ import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
+import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
@@ -44,6 +47,7 @@ class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
+    private val typeChangeService: ContactTypeChangeService by injectAnywhere()
 
     private var showSearch: Boolean = false
         set(value) {
@@ -101,6 +105,11 @@ class ContactListViewModel : ViewModel() {
     /** implemented as a resource to show a loading-indicator during deletion */
     private val _deleteResult = mutableResourceStateFlow<ContactBatchChangeResult>()
     val deleteResult: ResourceFlow<ContactBatchChangeResult> = _deleteResult
+
+    // TODO observe
+    /** implemented as a resource to show a loading-indicator during type-change */
+    private val _typeChangeResult = mutableResourceStateFlow<ContactBatchChangeResult>()
+    val typeChangeResult: ResourceFlow<ContactBatchChangeResult> = _typeChangeResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -197,6 +206,20 @@ class ContactListViewModel : ViewModel() {
         viewModelScope.launch {
             val result = _deleteResult.withLoadingState {
                 saveService.deleteContacts(contactIds)
+            }
+
+            if (result == null || !result.completelyFailed) {
+                launch { reloadContacts() }
+                setBulkMode(enabled = false) // bulk-action is over
+            }
+        }
+    }
+
+    // TODO use
+    fun changeContactType(contacts: List<IContact>, newType: ContactType) {
+        viewModelScope.launch {
+            val result = _deleteResult.withLoadingState {
+                typeChangeService.changeContactType(contacts, newType)
             }
 
             if (result == null || !result.completelyFailed) {
