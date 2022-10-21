@@ -162,10 +162,6 @@ fun ActionsMenu(
             onCloseMenu()
         },
     )
-
-    BackHandler(enabled = deleteConfirmationDialogVisible) {
-        deleteConfirmationDialogVisible = false
-    }
 }
 
 @Composable

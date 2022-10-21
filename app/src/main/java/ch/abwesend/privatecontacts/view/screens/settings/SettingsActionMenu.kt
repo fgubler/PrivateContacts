@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -98,10 +97,6 @@ private fun ConfirmationDialogs(
     }
 
     DatabaseResetStateDialog(state = databaseResetState) { databaseResetState = it }
-
-    BackHandler(enabled = showRestoreConfirmation || showDatabaseResetConfirmation) {
-        hideDialogs()
-    }
 }
 
 @Composable

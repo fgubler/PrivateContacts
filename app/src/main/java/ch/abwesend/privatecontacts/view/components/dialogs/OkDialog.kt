@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.components.dialogs
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +42,8 @@ fun OkDialog(
         },
         dismissButton = {},
     )
+
+    BackHandler { onClose() }
 }
 
 @Composable
@@ -61,6 +64,8 @@ fun OkDialog(
         },
         dismissButton = {},
     )
+
+    BackHandler { onClose() }
 }
 
 @Composable
@@ -89,4 +94,6 @@ fun OkDoNotShowAgainDialog(
         },
         dismissButton = {},
     )
+
+    BackHandler { onClose(doNotShowAgain) }
 }

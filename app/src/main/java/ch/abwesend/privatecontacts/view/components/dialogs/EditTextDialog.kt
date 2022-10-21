@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.components.dialogs
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -59,4 +60,6 @@ fun EditTextDialog(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
+
+    BackHandler { onCancel() }
 }

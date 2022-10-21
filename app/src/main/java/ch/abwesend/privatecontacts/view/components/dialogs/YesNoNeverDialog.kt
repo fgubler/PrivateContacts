@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.components.dialogs
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -59,4 +60,5 @@ fun YesNoNeverDialog(
             }
         },
     )
+    BackHandler { onNo(doNotShowAgainState) }
 }

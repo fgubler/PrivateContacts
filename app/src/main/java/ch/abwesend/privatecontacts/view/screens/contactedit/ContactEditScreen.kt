@@ -119,18 +119,7 @@ object ContactEditScreen {
                     validationErrors = emptyList()
                 }
 
-                BackHandler(enabled = true) {
-                    val anyDialogShown = showDiscardConfirmationDialog ||
-                        savingErrors.isNotEmpty() || validationErrors.isNotEmpty()
-
-                    // close open dialogs
-                    if (anyDialogShown) {
-                        showDiscardConfirmationDialog = false
-                        savingErrors = emptyList()
-                        validationErrors = emptyList()
-                        return@BackHandler
-                    }
-
+                BackHandler {
                     // trigger discard-changes logic
                     onDiscard(screenContext) {
                         showDiscardConfirmationDialog = true
