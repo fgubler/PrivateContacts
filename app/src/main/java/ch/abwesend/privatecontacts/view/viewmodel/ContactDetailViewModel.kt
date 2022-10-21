@@ -44,7 +44,7 @@ class ContactDetailViewModel : ViewModel() {
         latestSelectedContact = contact
         viewModelScope.launch {
             _selectedContact.withLoadingState {
-                loadService.resolveContact(contact)
+                loadService.resolveContact(contact.id)
             }
         }
     }

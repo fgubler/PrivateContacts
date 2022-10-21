@@ -215,9 +215,8 @@ class ContactListViewModel : ViewModel() {
 
     fun changeContactType(contacts: Collection<IContactBase>, newType: ContactType) {
         viewModelScope.launch {
-            val fullContacts = loadService.resolveContacts(contacts)
             val result = _typeChangeResult.withLoadingState {
-                typeChangeService.changeContactType(fullContacts, newType)
+                typeChangeService.changeContactType(contacts, newType)
             }
 
             if (result == null || !result.completelyFailed) {

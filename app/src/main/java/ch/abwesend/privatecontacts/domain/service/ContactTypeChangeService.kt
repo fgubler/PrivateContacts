@@ -33,16 +33,24 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.withContext
 
 class ContactTypeChangeService {
+    private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()
 
     // TODO add proper batch processing
     // TODO consider whether we really want to do it in parallel or if it is too risky
+    // TODO add tests
     suspend fun changeContactType(
-        contacts: Collection<IContact>,
+        contacts: Collection<IContactBase>,
         newType: ContactType
     ): ContactBatchChangeResult = withContext(dispatchers.default) {
-        val partialResults = contacts
+        val contactIds = contacts
+            .filter { it.type != newType }
+            .map { it.id }
+        val fullContacts = loadService.resolveContacts(contactIds)
+        logger.debug("Resolved ${fullContacts.size} full contacts to change their type.")
+
+        val partialResults = fullContacts
             .mapAsync { contact -> contact.id to changeContactType(contact, newType) }
             .toMap()
 

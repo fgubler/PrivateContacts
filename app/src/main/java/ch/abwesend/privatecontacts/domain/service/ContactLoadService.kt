@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -76,16 +77,14 @@ class ContactLoadService {
         all.sortedBy { it.displayName }
     }
 
-    suspend fun resolveContact(contact: IContactBase): IContact =
-        contact.id.let { contactId ->
-            when (contactId) {
-                is IContactIdInternal -> contactRepository.resolveContact(contactId)
-                is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
-            }
+    suspend fun resolveContact(contactId: ContactId): IContact =
+        when (contactId) {
+            is IContactIdInternal -> contactRepository.resolveContact(contactId)
+            is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
         }
 
     // TODO use proper batch-job
-    suspend fun resolveContacts(contacts: Collection<IContactBase>): List<IContact> =
+    suspend fun resolveContacts(contacts: Collection<ContactId>): List<IContact> =
         withContext(dispatchers.default) {
             contacts.mapAsync { resolveContact(it) }
         }
