@@ -142,6 +142,7 @@
     <string name="type_change_create_new_contact_error">The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
     <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can now delete the old one manually.</string>
 
+    <string name="type_change_error">While changing the type of the contact, an error occurred and the contact could not be changed. Therefore, the old contact was left unchanged to avoid data-loss.</string>
     <string name="type_change_batch_error">While changing the types of %1$s contacts, %2$s validation-errors and %3$s other errors occurred. In the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>

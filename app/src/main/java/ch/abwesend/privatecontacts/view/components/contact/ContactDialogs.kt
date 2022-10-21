@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 
@@ -64,13 +65,15 @@ fun ChangeContactTypeResultDialog(
         OkDialog(title = R.string.error, onClose = onClose) {
 
             val description = if (numberOfAttemptedChanges == 1) {
+                val errorTitle = stringResource(id = R.string.type_change_error)
                 @StringRes
-                val descriptionResource = when {
+                val errorDescriptionResource = when {
                     errors.isNotEmpty() -> errors.first().label
                     validationErrors.isNotEmpty() -> validationErrors.first().label
                     else -> R.string.greetings_from_the_developer // cannot actually happen
                 }
-                stringResource(id = descriptionResource)
+                val errorDescription = stringResource(id = errorDescriptionResource)
+                errorTitle + Constants.doubleLinebreak + errorDescription
             } else {
                 val formatArgs = arrayOf(
                     numberOfAttemptedChanges.toString(),
