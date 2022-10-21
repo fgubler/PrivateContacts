@@ -188,6 +188,6 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
 
 @VisibleForTesting
 internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
-    groupBy { it.value }
+    groupBy { it.displayValue }
         .map { (_, value) -> value.minByOrNull { it.type.priority } }
         .filterNotNull()
