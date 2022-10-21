@@ -44,6 +44,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconButton
@@ -249,7 +250,7 @@ object ContactEditScreen {
                     stringResource(R.string.saving_data_error, errorText)
                 } else {
                     val partialTexts = errors.map { stringResource(id = it.label) }
-                    val errorText = partialTexts.joinToString(separator = "\n\n")
+                    val errorText = partialTexts.joinToString(separator = Constants.doubleLinebreak)
                     stringResource(R.string.saving_data_error, errorText)
                 }
                 Text(text = description)

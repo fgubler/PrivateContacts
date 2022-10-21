@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
@@ -83,7 +84,7 @@ private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
             address.value.country
         )
             .filterNot { it.isEmpty() }
-            .joinToString(separator = ",\n")
+            .joinToString(separator = ",${Constants.linebreak}")
 
         PhysicalAddress(
             id = contactDataId,

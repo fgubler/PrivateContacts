@@ -49,6 +49,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
@@ -246,7 +247,7 @@ object ContactDetailScreenContent {
                     .map { it.id.name }
                     .filter { it.isNotEmpty() }
                     .sorted()
-                    .joinToString(separator = "\n")
+                    .joinToString(separator = Constants.linebreak)
             }
             ContactCategoryWithHeader(
                 categoryTitle = R.string.contact_groups,
