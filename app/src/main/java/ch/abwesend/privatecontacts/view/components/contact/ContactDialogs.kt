@@ -51,15 +51,17 @@ fun DeleteContactsResultDialog(
     onClose: () -> Unit
 ) {
     if (numberOfErrors > 0) {
-        OkDialog(title = R.string.error, onClose = onClose) {
-            @StringRes
-            val descriptionResource = when {
-                numberOfAttemptedChanges == 1 -> R.string.delete_contact_error
-                numberOfAttemptedChanges > numberOfErrors -> R.string.delete_contacts_partial_error
-                else -> R.string.delete_contacts_full_error
+        val description = when {
+            numberOfAttemptedChanges == 1 -> stringResource(id = R.string.delete_contact_error)
+            numberOfAttemptedChanges > numberOfErrors -> {
+                val formatArgs = arrayOf(numberOfErrors, numberOfAttemptedChanges)
+                stringResource(id = R.string.delete_contacts_partial_error, formatArgs = formatArgs)
             }
+            else -> stringResource(id = R.string.delete_contacts_full_error)
+        }
 
-            Text(text = stringResource(id = descriptionResource))
+        OkDialog(title = R.string.error, onClose = onClose) {
+            Text(text = description)
         }
     }
 }
@@ -109,15 +111,17 @@ fun ChangeContactTypesResultDialog(
     onClose: () -> Unit
 ) {
     if (numberOfErrors > 0) {
-        OkDialog(title = R.string.error, onClose = onClose) {
-            @StringRes
-            val descriptionResource = when {
-                numberOfAttemptedChanges == 1 -> R.string.type_change_error
-                numberOfAttemptedChanges > numberOfErrors -> R.string.make_contacts_secret_partial_error
-                else -> R.string.make_contacts_secret_full_error
+        val description = when {
+            numberOfAttemptedChanges == 1 -> stringResource(id = R.string.type_change_error)
+            numberOfAttemptedChanges > numberOfErrors -> {
+                val formatArgs = arrayOf(numberOfErrors, numberOfAttemptedChanges)
+                stringResource(id = R.string.make_contacts_secret_partial_error, formatArgs = formatArgs)
             }
+            else -> stringResource(id = R.string.make_contacts_secret_full_error)
+        }
 
-            Text(text = stringResource(id = descriptionResource))
+        OkDialog(title = R.string.error, onClose = onClose) {
+            Text(text = description)
         }
     }
 }
