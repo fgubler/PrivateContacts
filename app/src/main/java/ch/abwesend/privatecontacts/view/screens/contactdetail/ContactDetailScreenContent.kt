@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import android.graphics.Bitmap
+import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -35,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -101,56 +105,61 @@ object ContactDetailScreenContent {
                 verticalAlignment = Alignment.Top,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Row {
-                    Column {
-                        if (contact.firstName.isNotEmpty()) {
-                            Text(text = stringResource(id = R.string.first_name_colon), color = labelColor())
-                        }
-                        if (contact.lastName.isNotEmpty()) {
-                            Text(text = stringResource(id = R.string.last_name_colon), color = labelColor())
-                        }
-                        if (contact.nickname.isNotEmpty()) {
-                            Text(text = stringResource(id = R.string.nickname_colon), color = labelColor())
-                        }
+                Column {
+                    if (contact.firstName.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.first_name_colon, value = contact.firstName)
+                    }
+                    if (contact.lastName.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.last_name_colon, value = contact.lastName)
+                    }
+                    if (contact.nickname.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.nickname_colon, value = contact.nickname)
+                    }
 
-                        Text(text = stringResource(id = R.string.visibility_colon), color = labelColor())
-                    }
-                    Column(modifier = Modifier.padding(start = 10.dp)) {
-                        if (contact.firstName.isNotEmpty()) {
-                            Text(text = contact.firstName)
-                        }
-                        if (contact.lastName.isNotEmpty()) {
-                            Text(text = contact.lastName)
-                        }
-                        if (contact.nickname.isNotEmpty()) {
-                            Text(text = contact.nickname)
-                        }
-                        Text(text = stringResource(id = contact.type.label), color = contact.type.color)
-                    }
-                    ContactImage(contact = contact)
+                    PersonalInformationRow(
+                        label = R.string.visibility_colon,
+                        value = stringResource(id = contact.type.label),
+                        valueFontColor = contact.type.color
+                    )
                 }
+                ContactImage(contact = contact)
             }
         }
     }
 
     @Composable
+    private fun PersonalInformationRow(
+        @StringRes label: Int,
+        value: String,
+        valueFontColor: Color = Color.Unspecified
+    ) {
+        Row {
+            Text(text = stringResource(id = label), color = labelColor())
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(text = value, color = valueFontColor)
+        }
+    }
+
+    @Composable
     private fun RowScope.ContactImage(contact: IContact) {
-        contact.getFullBitmapImage(IMAGE_MAX_SIZE_DP)?.let {
-            var showFullScreenImage: Boolean by remember { mutableStateOf(false) }
+        if (!contact.image.isEmpty) {
+            contact.getFullBitmapImage(IMAGE_MAX_SIZE_DP)?.let {
+                var showFullScreenImage: Boolean by remember { mutableStateOf(false) }
 
-            Surface(
-                modifier = Modifier
-                    .padding(start = 5.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .weight(1F)
-                    .clickable { showFullScreenImage = true }
-            ) { ContactImage(it) }
+                Surface(
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .weight(1F)
+                        .clickable { showFullScreenImage = true }
+                ) { ContactImage(it) }
 
-            if (showFullScreenImage) {
-                Dialog(
-                    onDismissRequest = { showFullScreenImage = false },
-                    content = { ContactImage(it) }
-                )
+                if (showFullScreenImage) {
+                    Dialog(
+                        onDismissRequest = { showFullScreenImage = false },
+                        content = { ContactImage(it) }
+                    )
+                }
             }
         }
     }
