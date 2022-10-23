@@ -36,4 +36,4 @@ private fun IContact.computeFullTextSearchColumn(): String {
 }
 
 fun ContactEntity.toContactBase(): ContactBase =
-    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName))
+    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName, nickname))

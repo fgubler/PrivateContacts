@@ -25,10 +25,11 @@ fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
 
 fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): IContact? =
     try {
+        val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
         ContactEditable(
             id = ContactIdAndroid(contactNo = contactId),
             type = ContactType.PUBLIC,
-            firstName = firstName,
+            firstName = "$firstName$middleNamePart",
             lastName = lastName,
             nickname = nickname,
             notes = note?.raw.orEmpty(),

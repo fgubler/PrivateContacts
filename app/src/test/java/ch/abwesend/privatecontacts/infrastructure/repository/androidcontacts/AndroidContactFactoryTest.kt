@@ -70,4 +70,24 @@ class AndroidContactFactoryTest : TestBase() {
         assertThat(result.contactGroups.map { it.notes }).isEqualTo(contactGroups.map { it.note })
         verify { androidContact.getContactData() }
     }
+
+    @Test
+    fun `should write the middle name to the end of the first name`() {
+        val androidContact = someAndroidContact(
+            contactId = 433L,
+            firstName = "Gabriel",
+            middleName = "Something",
+            lastName = "De Leon",
+            nickName = "Black Lion",
+            note = "likes silver",
+        )
+        mockkStatic(Contact::getContactData)
+        every { androidContact.getContactData() } returns emptyList()
+
+        val result = androidContact.toContact(groups = emptyList(), rethrowExceptions = true)
+
+        assertThat(result).isNotNull
+        assertThat(result!!.id).isInstanceOf(IContactIdExternal::class.java)
+        assertThat(result.firstName).isEqualTo("Gabriel Something")
+    }
 }

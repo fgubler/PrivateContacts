@@ -33,11 +33,12 @@ fun someContactBase(
     id: ContactIdInternal = someContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
+    nickname: String = "",
     type: ContactType = SECRET,
 ): IContactBase = ContactBase(
     id = id,
     type = type,
-    displayName = getFullName(firstName, lastName)
+    displayName = getFullName(firstName, lastName, nickname)
 )
 
 fun someContactEntity(

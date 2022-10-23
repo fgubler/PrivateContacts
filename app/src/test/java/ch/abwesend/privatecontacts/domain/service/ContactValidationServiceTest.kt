@@ -31,8 +31,8 @@ class ContactValidationServiceTest : TestBase() {
 
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "  "])
-    fun `should not allow both first- and last-name to be empty or blank`(name: String) {
-        val contact = someContactEditable(firstName = name, lastName = name,)
+    fun `should not allow first- and last-name and nickname all to be empty or blank`(name: String) {
+        val contact = someContactEditable(firstName = name, lastName = name, nickname = name)
 
         val result = runBlocking { underTest.validateContact(contact) }
 
@@ -42,14 +42,17 @@ class ContactValidationServiceTest : TestBase() {
 
     @ParameterizedTest
     @ValueSource(strings = ["", " ", "  "])
-    fun `should allow the first-name or last-name to be empty or blank`(name: String) {
-        val contactFirst = someContactEditable(firstName = name, lastName = "Test")
-        val contactLast = someContactEditable(firstName = "Test", lastName = name)
+    fun `should allow the first-name or last-name or nickname to be empty or blank`(name: String) {
+        val contactFirst = someContactEditable(firstName = "Test", lastName = name, nickname = name)
+        val contactLast = someContactEditable(firstName = name, lastName = "Test", nickname = name)
+        val contactNick = someContactEditable(firstName = name, lastName = name, nickname = "Test")
 
-        val resultFirst = runBlocking { underTest.validateContact(contactFirst) }
-        val resultLast = runBlocking { underTest.validateContact(contactLast) }
+        val resultFirst = runBlocking { underTest.validateContact(contactLast) }
+        val resultLast = runBlocking { underTest.validateContact(contactFirst) }
+        val resultNick = runBlocking { underTest.validateContact(contactNick) }
 
         assertThat(resultFirst).isInstanceOf(Success::class.java)
         assertThat(resultLast).isInstanceOf(Success::class.java)
+        assertThat(resultNick).isInstanceOf(Success::class.java)
     }
 }

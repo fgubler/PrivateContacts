@@ -22,6 +22,7 @@ import java.time.LocalDate
 fun someAndroidContact(
     contactId: Long = 123123,
     firstName: String = "Luke",
+    middleName: String = "",
     lastName: String = "Skywalker",
     displayName: String = "$firstName $lastName",
     nickName: String = displayName,
@@ -42,6 +43,7 @@ fun someAndroidContact(
     every { mock.contactId } returns contactId
     every { mock.firstName } returns firstName
     every { mock.lastName } returns lastName
+    every { mock.middleName } returns middleName
     every { mock.displayName } returns displayName
     every { mock.nickname } returns nickName
     every { mock.note } returns Note(note)
