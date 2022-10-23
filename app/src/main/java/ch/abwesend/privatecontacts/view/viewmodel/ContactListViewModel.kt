@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.MutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
+import ch.abwesend.privatecontacts.domain.lib.flow.mapReady
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -126,7 +127,8 @@ class ContactListViewModel : ViewModel() {
         }
         contactLoadingJob = viewModelScope.launch {
             val contactsFlow = currentFilter?.let { searchContacts(it) } ?: loadContacts()
-            _contacts.emitAll(contactsFlow)
+            val sortedContactsFlow = contactsFlow.mapReady { contacts -> contacts.sortedBy { it.displayName } }
+            _contacts.emitAll(sortedContactsFlow)
         }
     }
 
