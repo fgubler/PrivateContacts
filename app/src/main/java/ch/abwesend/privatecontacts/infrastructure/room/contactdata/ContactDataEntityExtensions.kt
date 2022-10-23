@@ -31,7 +31,7 @@ private fun StringBasedContactData.stringBasedToEntity(contactId: IContactIdInte
         when (val fixedId = id) {
             is IContactDataIdInternal -> fixedId
             is IContactDataIdExternal -> ContactDataIdInternal.randomId().also {
-                logger.warning("Replaced external ID of $simpleClassName with internal one")
+                logger.warning("Replaced external ID of $simpleClassName with an internal one")
             }
         }
 
@@ -54,7 +54,7 @@ GenericContactData<TValue, TThis>.toEntity(contactId: IContactIdInternal): Conta
         when (val fixedId = id) {
             is IContactDataIdInternal -> fixedId
             is IContactDataIdExternal -> ContactDataIdInternal.randomId().also {
-                logger.warning("Replaced external ID of $simpleClassName with internal one")
+                logger.warning("Replaced external ID of $simpleClassName with an internal one")
             }
         }
 
