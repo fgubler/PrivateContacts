@@ -120,6 +120,9 @@
     <string name="discard_changes_title">Discard Changes</string>
     <string name="discard_changes_text">Are you sure you would like to discard all unsaved changes?</string>
 
+    <string name="select_all">Select all</string>
+    <string name="deselect_all">Deselect all</string>
+
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>

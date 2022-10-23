@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ScaffoldState
@@ -123,7 +124,7 @@ private fun BulkModeTopBar(
         navigationIcon = { CancelIconButton { disableBulkMode() } },
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
-            ActionsMenu(
+            BulkModeActionsMenu(
                 viewModel = viewModel,
                 selectedContacts = selectedContacts,
                 expanded = dropDownMenuExpanded
@@ -136,14 +137,21 @@ private fun BulkModeTopBar(
 }
 
 @Composable
-fun ActionsMenu(
+fun BulkModeActionsMenu(
     viewModel: ContactListViewModel,
     selectedContacts: Set<IContactBase>,
     expanded: Boolean,
     onCloseMenu: () -> Unit,
 ) {
-    if (selectedContacts.isNotEmpty()) {
-        DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+        DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
+            Text(stringResource(id = R.string.select_all))
+        }
+        DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
+            Text(stringResource(id = R.string.deselect_all))
+        }
+        if (selectedContacts.isNotEmpty()) {
+            Divider()
             TypeChangeMenuItem(viewModel, selectedContacts, onCloseMenu)
             DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
         }

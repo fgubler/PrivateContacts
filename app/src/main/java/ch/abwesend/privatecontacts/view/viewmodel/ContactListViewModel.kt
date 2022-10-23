@@ -202,6 +202,16 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
+    fun selectAllContacts() {
+        _contacts.value.valueOrNull?.let { allContacts ->
+            bulkModeSelectedContacts = allContacts.toSet()
+        }
+    }
+
+    fun deselectAllContacts() {
+        bulkModeSelectedContacts = emptySet()
+    }
+
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
             val result = _deleteResult.withLoadingState {
