@@ -38,6 +38,7 @@ data class PhoneNumber(
     }
 
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+    override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
 
     override fun delete(): PhoneNumber {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

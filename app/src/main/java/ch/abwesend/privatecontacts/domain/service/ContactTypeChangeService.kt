@@ -85,6 +85,7 @@ class ContactTypeChangeService {
         val newContact = contact.deepCopy(isContactNew = true)
         newContact.type = newType
         newContact.setModelStatusNew()
+        newContact.changeContactDataToInternalIds()
 
         logger.debug("Saving contact with new type $newType")
         val saveResult = saveService.saveContact(newContact)
@@ -121,6 +122,10 @@ class ContactTypeChangeService {
             val newStatus = computeNewStatus(contactData.modelStatus)
             contactData.overrideStatus(newStatus)
         }
+    }
+
+    private fun IContactEditable.changeContactDataToInternalIds() {
+        contactDataSet.replaceAll { contactData -> contactData.changeToInternalId() }
     }
 
     private suspend fun deleteContactWithOldType(contact: IContactBase): ContactSaveResult {

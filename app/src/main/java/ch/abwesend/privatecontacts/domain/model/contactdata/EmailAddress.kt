@@ -36,6 +36,7 @@ data class EmailAddress(
     }
 
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+    override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
 
     override fun delete(): EmailAddress {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

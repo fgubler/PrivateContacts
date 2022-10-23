@@ -22,6 +22,7 @@ sealed interface ContactData {
 
     fun changeType(type: ContactDataType): ContactData
     fun overrideStatus(newStatus: ModelStatus): ContactData
+    fun changeToInternalId(): ContactData
     fun delete(): ContactData
 
     /** returning null means that the data will be ignored in search */
