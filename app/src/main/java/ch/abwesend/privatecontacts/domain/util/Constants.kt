@@ -8,6 +8,9 @@ package ch.abwesend.privatecontacts.domain.util
 
 object Constants {
     val linebreak: String by lazy {
-        System.getProperty("line.separator")
+        System.getProperty("line.separator") ?: "\n"
     }
+
+    val doubleLinebreak: String
+        get() = linebreak + linebreak
 }

@@ -10,12 +10,13 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -30,6 +31,8 @@ import kotlinx.coroutines.flow.map
 
 class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactDataRepository: ContactDataRepository by injectAnywhere()
+    private val contactGroupRepository: ContactGroupRepository by injectAnywhere()
+    private val contactImageRepository: ContactImageRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
     override suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
@@ -128,6 +131,8 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
         val contactData = contactDataRepository.loadContactData(contactId)
         val resolvedData = contactData.mapNotNull { contactDataRepository.tryResolveContactData(it) }
+        val contactGroups = contactGroupRepository.getContactGroups(contactId)
+        val image = contactImageRepository.loadImage(contactId)
 
         return ContactEditable(
             id = contactEntity.id,
@@ -136,7 +141,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             nickname = contactEntity.nickname,
             type = contactEntity.type,
             notes = contactEntity.notes,
+            image = image,
             contactDataSet = resolvedData.toMutableList(),
+            contactGroups = contactGroups.toMutableList(),
             isNew = false,
         )
     }
@@ -145,7 +152,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         try {
             withDatabase { database ->
                 database.contactDao().insert(contact.toEntity(contactId))
-                contactDataRepository.createContactData(contactId, contact)
+                contactDataRepository.createContactData(contactId, contact.contactDataSet)
+                contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
+                contactImageRepository.storeImage(contactId, contact.image)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -158,6 +167,8 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             withDatabase { database ->
                 database.contactDao().update(contact.toEntity(contactId))
                 contactDataRepository.updateContactData(contactId, contact)
+                contactGroupRepository.storeContactGroups(contactId, contact.contactGroups)
+                contactImageRepository.storeImage(contactId, contact.image)
                 ContactSaveResult.Success
             }
         } catch (e: Exception) {
@@ -165,20 +176,24 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactDeleteResult {
-        val results = bulkOperation(contactIds) { database, chunkedContactIds ->
+    override suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactBatchChangeResult {
+        val deletedContacts: List<ContactId> = bulkOperation(contactIds) { database, chunkedContactIds ->
             try {
                 database.contactDao().delete(contactIds = chunkedContactIds.map { it.uuid })
-                // ContactData should be deleted by cascade-delete
-                ContactDeleteResult.Success
+                // ContactData and ContactGroupRelations should be deleted by cascade-delete
+                chunkedContactIds
             } catch (e: Exception) {
                 logger.error("Failed to delete ${contactIds.size} contacts", e)
-                ContactDeleteResult.Failure(UNKNOWN_ERROR)
+                emptyList()
             }
+        }.flatten()
+        logger.debug("Deleted ${deletedContacts.size} of ${contactIds.size} contacts successfully")
+
+        val notDeletedContacts = contactIds.minus(deletedContacts.toSet())
+        if (notDeletedContacts.isNotEmpty()) {
+            logger.warning("Failed to delete ${notDeletedContacts.size} of ${contactIds.size} contacts")
         }
 
-        return results.reduce { first, second -> first.combine(second) }.also {
-            logger.debug("Deletion result of ${contactIds.size} contacts: $it")
-        }
+        return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 }

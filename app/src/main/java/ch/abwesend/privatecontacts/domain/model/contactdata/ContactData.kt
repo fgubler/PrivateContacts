@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
 
 sealed interface ContactData {
     val id: ContactDataId
@@ -22,38 +21,10 @@ sealed interface ContactData {
     val displayValue: String
 
     fun changeType(type: ContactDataType): ContactData
+    fun overrideStatus(newStatus: ModelStatus): ContactData
+    fun changeToInternalId(): ContactData
     fun delete(): ContactData
 
     /** returning null means that the data will be ignored in search */
     fun formatValueForSearch(): String?
-}
-
-interface StringBasedContactDataSimple : ContactData {
-    /** Raw value */
-    val value: String
-    /** Formatted for display */
-    val formattedValue: String get() = value
-    /** Formatted for automatic matching */
-    val valueForMatching: String get() = value
-
-    override val isEmpty: Boolean
-        get() = value.isEmpty()
-
-    override val displayValue: String
-        get() = formattedValue
-
-    override fun formatValueForSearch(): String = formatValueForSearch(value)
-
-    companion object {
-        fun formatValueForSearch(value: String): String = value
-    }
-}
-
-/**
- * The generics are needed to make the functions return the dynamic type of "this"
- */
-interface StringBasedContactData<T : StringBasedContactData<T>> : StringBasedContactDataSimple {
-    fun changeValue(value: String): T
-    override fun changeType(type: ContactDataType): T
-    override fun delete(): T
 }

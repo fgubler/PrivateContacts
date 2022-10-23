@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -35,16 +35,16 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataGeneric
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.StringDropDownOption
+import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.secondaryIconModifier
@@ -63,13 +63,13 @@ object ContactDataEditCommonComponents {
     private val parent = ContactEditScreen
 
     @Composable
-    inline fun <reified T : StringBasedContactData<T>> ContactDataCategory(
+    inline fun <reified T : StringBasedContactDataGeneric<T>> ContactDataCategory(
         contact: IContactEditable,
         @StringRes categoryTitle: Int,
         @StringRes fieldLabel: Int,
         icon: ImageVector,
-        keyboardType: KeyboardType,
         showIfEmpty: Boolean,
+        valueFieldConfig: TextFieldConfig = TextFieldConfig(),
         initiallyExpanded: Boolean = false,
         noinline factory: (sortOrder: Int) -> T,
         noinline waitForCustomType: (ContactData) -> Unit,
@@ -104,7 +104,7 @@ object ContactDataEditCommonComponents {
                         StringBasedContactDataEntry(
                             contactData = contactData,
                             label = fieldLabel,
-                            keyboardType = keyboardType,
+                            valueFieldConfig = valueFieldConfig,
                             isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
                             waitForCustomType = waitForCustomType,
                             onChanged = onEntryChanged,
@@ -119,10 +119,10 @@ object ContactDataEditCommonComponents {
     }
 
     @Composable
-    fun <T : StringBasedContactData<T>> StringBasedContactDataEntry(
+    fun <T : StringBasedContactDataGeneric<T>> StringBasedContactDataEntry(
         contactData: T,
         @StringRes label: Int,
-        keyboardType: KeyboardType,
+        valueFieldConfig: TextFieldConfig,
         isLastElement: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (T) -> Unit,
@@ -140,7 +140,8 @@ object ContactDataEditCommonComponents {
                 OutlinedTextField(
                     label = { Text(stringResource(id = label)) },
                     value = contactData.value,
-                    singleLine = true,
+                    singleLine = valueFieldConfig.singleLine,
+                    maxLines = valueFieldConfig.maxLines,
                     onValueChange = { onChanged(contactData.changeValue(it)) },
                     modifier = textFieldModifier
                         .weight(1.0f)
@@ -150,10 +151,9 @@ object ContactDataEditCommonComponents {
                                     viewRequester.bringIntoViewDelayed()
                                 }
                             }
-                        },
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = keyboardType,
-                    ),
+                        }
+                        .heightIn(min = valueFieldConfig.minHeight),
+                    keyboardOptions = valueFieldConfig.keyboardOptions,
                     keyboardActions = KeyboardActions(onDone = {
                         manager.closeKeyboardAndClearFocus()
                     }),

@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
@@ -36,5 +36,5 @@ interface IContactRepository {
     suspend fun resolveContact(contactId: IContactIdInternal): IContact
     suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
-    suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactDeleteResult
+    suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactBatchChangeResult
 }

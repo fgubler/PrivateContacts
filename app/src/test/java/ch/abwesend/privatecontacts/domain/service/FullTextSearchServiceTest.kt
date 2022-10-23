@@ -9,9 +9,9 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.someEmailAddress
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,8 +26,9 @@ class FullTextSearchServiceTest : TestBase() {
     @InjectMockKs
     private lateinit var underTest: FullTextSearchService
 
-    override fun Module.setupKoinModule() {
-        single { underTest }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { underTest }
     }
 
     @Test

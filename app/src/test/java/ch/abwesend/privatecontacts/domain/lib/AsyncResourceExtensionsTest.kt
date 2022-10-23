@@ -40,6 +40,7 @@ class AsyncResourceExtensionsTest : TestBase() {
     private lateinit var flow: MutableResourceStateFlow<Int>
 
     override fun setup() {
+        super.setup()
         coEvery { flow.emit(any()) } returns Unit
     }
 

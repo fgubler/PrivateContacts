@@ -54,3 +54,11 @@ private fun <S, T> handleReadyResourceCombineError(other: AsyncResource<T>): Asy
     ).also { other.logger.error(it) }
     return ErrorResource(listOf(error))
 }
+
+fun <T, S> AsyncResource<T>.mapReady(mapper: (T) -> S): AsyncResource<S> =
+    when (this) {
+        is ErrorResource -> ErrorResource(errors = errors)
+        is InactiveResource -> InactiveResource()
+        is LoadingResource -> LoadingResource()
+        is ReadyResource -> ReadyResource(value = mapper(value))
+    }

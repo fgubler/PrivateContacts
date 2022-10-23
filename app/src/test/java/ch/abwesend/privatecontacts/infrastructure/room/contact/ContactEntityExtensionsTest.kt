@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contact
 
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -25,8 +25,9 @@ class ContactEntityExtensionsTest : TestBase() {
     @MockK
     private lateinit var searchService: FullTextSearchService
 
-    override fun Module.setupKoinModule() {
-        single { searchService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { searchService }
     }
 
     @Test

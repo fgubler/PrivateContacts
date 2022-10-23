@@ -62,9 +62,10 @@ object SettingsScreen {
             screenContext = screenContext,
             selectedScreen = SettingsScreen,
             topBarActions = { SettingsActions(screenContext.settingsViewModel) }
-        ) {
+        ) { padding ->
             Column(
                 modifier = Modifier
+                    .padding(padding)
                     .padding(10.dp)
                     .verticalScroll(scrollState)
             ) {

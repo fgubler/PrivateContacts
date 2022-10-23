@@ -13,18 +13,22 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.Debouncer
-import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.MutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
+import ch.abwesend.privatecontacts.domain.lib.flow.mapReady
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
+import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
@@ -36,7 +40,6 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_C
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 
@@ -44,6 +47,7 @@ class ContactListViewModel : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
+    private val typeChangeService: ContactTypeChangeService by injectAnywhere()
 
     private var showSearch: Boolean = false
         set(value) {
@@ -64,7 +68,7 @@ class ContactListViewModel : ViewModel() {
             updateScreenState()
         }
 
-    private var bulkModeSelectedContacts: Set<ContactId> = emptySet()
+    private var bulkModeSelectedContacts: Set<IContactBase> = emptySet()
         set(value) {
             field = value
             updateScreenState()
@@ -98,8 +102,13 @@ class ContactListViewModel : ViewModel() {
         mutableResourceStateFlow(InactiveResource())
     val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
-    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
-    val deleteResult: Flow<ContactDeleteResult> = _deleteResult
+    /** implemented as a resource to show a loading-indicator during deletion */
+    private val _deleteResult = mutableResourceStateFlow<ContactBatchChangeResult>()
+    val deleteResult: ResourceFlow<ContactBatchChangeResult> = _deleteResult
+
+    /** implemented as a resource to show a loading-indicator during type-change */
+    private val _typeChangeResult = mutableResourceStateFlow<ContactBatchChangeResult>()
+    val typeChangeResult: ResourceFlow<ContactBatchChangeResult> = _typeChangeResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -118,7 +127,8 @@ class ContactListViewModel : ViewModel() {
         }
         contactLoadingJob = viewModelScope.launch {
             val contactsFlow = currentFilter?.let { searchContacts(it) } ?: loadContacts()
-            _contacts.emitAll(contactsFlow)
+            val sortedContactsFlow = contactsFlow.mapReady { contacts -> contacts.sortedBy { it.displayName } }
+            _contacts.emitAll(sortedContactsFlow)
         }
     }
 
@@ -183,21 +193,45 @@ class ContactListViewModel : ViewModel() {
 
         val contactId = contact.id
         val selectedContacts = bulkModeSelectedContacts
-        bulkModeSelectedContacts = if (selectedContacts.contains(contactId)) {
+        bulkModeSelectedContacts = if (selectedContacts.any { it.id == contactId }) {
             logger.debug("unselecting contact $contactId")
-            selectedContacts.minus(contactId)
+            selectedContacts.minus(contact)
         } else {
             logger.debug("selecting contact $contactId")
-            selectedContacts.plus(contactId)
+            selectedContacts.plus(contact)
         }
+    }
+
+    fun selectAllContacts() {
+        _contacts.value.valueOrNull?.let { allContacts ->
+            bulkModeSelectedContacts = allContacts.toSet()
+        }
+    }
+
+    fun deselectAllContacts() {
+        bulkModeSelectedContacts = emptySet()
     }
 
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
-            val result = saveService.deleteContacts(contactIds)
-            _deleteResult.emit(result)
+            val result = _deleteResult.withLoadingState {
+                saveService.deleteContacts(contactIds)
+            }
 
-            if (result is ContactDeleteResult.Success) {
+            if (result == null || !result.completelyFailed) {
+                launch { reloadContacts() }
+                setBulkMode(enabled = false) // bulk-action is over
+            }
+        }
+    }
+
+    fun changeContactType(contacts: Collection<IContactBase>, newType: ContactType) {
+        viewModelScope.launch {
+            val result = _typeChangeResult.withLoadingState {
+                typeChangeService.changeContactType(contacts, newType)
+            }
+
+            if (result == null || !result.completelyFailed) {
                 launch { reloadContacts() }
                 setBulkMode(enabled = false) // bulk-action is over
             }
@@ -206,7 +240,13 @@ class ContactListViewModel : ViewModel() {
 
     fun resetDeletionResult() {
         viewModelScope.launch {
-            _deleteResult.emit(ContactDeleteResult.Inactive)
+            _deleteResult.emitInactive()
+        }
+    }
+
+    fun resetTypeChangeResult() {
+        viewModelScope.launch {
+            _typeChangeResult.emitInactive()
         }
     }
 }

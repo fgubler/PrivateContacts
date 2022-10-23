@@ -6,24 +6,30 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val androidContactRepository: IAndroidContactRepository by injectAnywhere()
+    private val androidContactRepository: IAndroidContactLoadRepository by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
+
+    private val dispatchers: IDispatchers by injectAnywhere()
 
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
         contactRepository.getContactsAsFlow(All)
@@ -54,10 +60,10 @@ class ContactLoadService {
         combineContacts(secretContacts, androidContacts)
     }
 
-    private suspend fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
+    private fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
         androidContactRepository.loadContactsAsFlow(All)
 
-    private suspend fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
+    private fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
         return if (query.isEmpty()) loadAndroidContacts()
         else androidContactRepository.loadContactsAsFlow(Query(query))
@@ -67,15 +73,18 @@ class ContactLoadService {
         contactsFlow1: ResourceFlow<List<IContactBase>>,
         contactsFlow2: ResourceFlow<List<IContactBase>>
     ): ResourceFlow<List<IContactBase>> = contactsFlow1.combineResource(contactsFlow2) { contacts1, contacts2 ->
-        val all = contacts1 + contacts2
-        all.sortedBy { it.displayName }
+        contacts1 + contacts2
     }
 
-    suspend fun resolveContact(contact: IContactBase): IContact =
-        contact.id.let { contactId ->
-            when (contactId) {
-                is IContactIdInternal -> contactRepository.resolveContact(contactId)
-                is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
-            }
+    suspend fun resolveContact(contactId: ContactId): IContact =
+        when (contactId) {
+            is IContactIdInternal -> contactRepository.resolveContact(contactId)
+            is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
+        }
+
+    // TODO use proper batch-job
+    suspend fun resolveContacts(contacts: Collection<ContactId>): List<IContact> =
+        withContext(dispatchers.default) {
+            contacts.mapAsync { resolveContact(it) }
         }
 }

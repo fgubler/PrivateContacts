@@ -10,16 +10,18 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
+import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
-import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
-import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactDataEntity
-import ch.abwesend.privatecontacts.testutil.someContactEditableWithId
-import ch.abwesend.privatecontacts.testutil.someContactEntity
-import ch.abwesend.privatecontacts.testutil.someContactId
+import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -39,9 +41,15 @@ import java.util.UUID
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactRepositoryTest : TestBase() {
+class ContactRepositoryTest : RepositoryTestBase() {
+    @MockK
+    private lateinit var contactGroupRepository: ContactGroupRepository
+
     @MockK
     private lateinit var contactDataRepository: ContactDataRepository
+
+    @MockK
+    private lateinit var contactImageRepository: ContactImageRepository
 
     @RelaxedMockK
     private lateinit var searchService: FullTextSearchService
@@ -49,9 +57,20 @@ class ContactRepositoryTest : TestBase() {
     @InjectMockKs
     private lateinit var underTest: ContactRepository
 
-    override fun Module.setupKoinModule() {
-        single { contactDataRepository }
-        single { searchService }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactDataRepository }
+        module.single { contactGroupRepository }
+        module.single { contactImageRepository }
+        module.single { searchService }
+    }
+
+    override fun setup() {
+        super.setup()
+        coEvery { contactGroupRepository.getContactGroups(any()) } returns emptyList()
+        coEvery { contactGroupRepository.storeContactGroups(any(), any()) } just runs
+        coEvery { contactImageRepository.loadImage(any()) } returns ContactImage.empty
+        coEvery { contactImageRepository.storeImage(any(), any()) } returns false
     }
 
     @Test
@@ -74,7 +93,36 @@ class ContactRepositoryTest : TestBase() {
 
         val result = runBlocking { underTest.createContact(contactId, contact) }
 
-        coVerify { contactDataRepository.createContactData(contactId, contact) }
+        coVerify { contactDataRepository.createContactData(contactId, contact.contactDataSet) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `creating a contact should also create contact groups`() {
+        val groups = listOf(
+            someContactGroup(name = "Group1"),
+            someContactGroup(name = "Group2"),
+        )
+        val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
+        coEvery { contactDao.insert(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.createContact(contactId, contact) }
+
+        coVerify { contactGroupRepository.storeContactGroups(contactId, groups) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `creating a contact should also create an image`() {
+        val image = someContactImage()
+        val (contactId, contact) = someContactEditableWithId(image = image)
+        coEvery { contactDao.insert(any()) } returns Unit
+        coEvery { contactDataRepository.createContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.createContact(contactId, contact) }
+
+        coVerify { contactImageRepository.storeImage(contactId, image) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
     }
 
@@ -113,6 +161,35 @@ class ContactRepositoryTest : TestBase() {
     }
 
     @Test
+    fun `updating a contact should also update the contact groups`() {
+        val groups = listOf(
+            someContactGroup(name = "Group1"),
+            someContactGroup(name = "Group2"),
+        )
+        val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
+        coEvery { contactDao.update(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
+
+        coVerify { contactGroupRepository.storeContactGroups(contactId, groups) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
+    fun `updating a contact should also update the contact image`() {
+        val image = someContactImage()
+        val (contactId, contact) = someContactEditableWithId(image = image)
+        coEvery { contactDao.update(any()) } returns Unit
+        coEvery { contactDataRepository.updateContactData(any(), any()) } returns Unit
+
+        val result = runBlocking { underTest.updateContact(contactId, contact) }
+
+        coVerify { contactImageRepository.storeImage(contactId, image) }
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+    }
+
+    @Test
     fun `an exception during update should return an Error-Result`() {
         val (contactId, contact) = someContactEditableWithId()
         coEvery { contactDao.update(any()) } throws RuntimeException("Test")
@@ -130,7 +207,7 @@ class ContactRepositoryTest : TestBase() {
         val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
         coVerify { contactDao.delete(listOf(contactId.uuid)) }
-        assertThat(result).isEqualTo(ContactDeleteResult.Success)
+        assertThat(result.completelySuccessful).isTrue
     }
 
     @Test
@@ -140,7 +217,7 @@ class ContactRepositoryTest : TestBase() {
 
         val result = runBlocking { underTest.deleteContacts(listOf(contactId)) }
 
-        assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNKNOWN_ERROR))
+        assertThat(result.completelyFailed).isTrue
     }
 
     @Test
@@ -212,6 +289,30 @@ class ContactRepositoryTest : TestBase() {
         contactData.forEach {
             coVerify { contactDataRepository.tryResolveContactData(it) }
         }
+    }
+
+    @Test
+    fun `resolving a contact should try to load its contact groups`() {
+        val contactId = someContactId()
+        coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
+
+        runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactGroupRepository.getContactGroups(contactId) }
+    }
+
+    @Test
+    fun `resolving a contact should try to load its image`() {
+        val contactId = someContactId()
+        coEvery { contactDataRepository.loadContactData(any()) } returns emptyList()
+        every { contactDataRepository.tryResolveContactData(any()) } returns null
+        coEvery { contactDao.findById(any()) } returns someContactEntity()
+
+        runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactImageRepository.loadImage(contactId) }
     }
 
     @Test

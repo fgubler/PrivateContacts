@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.Home
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
-import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 
 data class PhysicalAddress(
     override val id: ContactDataId,
@@ -21,7 +19,7 @@ data class PhysicalAddress(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<PhysicalAddress> {
+) : StringBasedContactDataGeneric<PhysicalAddress> {
     override val category: ContactDataCategory = ContactDataCategory.ADDRESS
 
     override val allowedTypes: List<ContactDataType>
@@ -36,6 +34,9 @@ data class PhysicalAddress(
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(type = type, modelStatus = status)
     }
+
+    override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+    override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
 
     override fun delete(): PhysicalAddress {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

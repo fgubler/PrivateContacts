@@ -32,6 +32,7 @@ interface ILogger {
 /**
  * Inline to make sure the stack-trace starts at the right place.
  */
+@Suppress("NOTHING_TO_INLINE")
 inline fun ILogger.error(message: String) {
     error(message, LoggingException(message))
 }

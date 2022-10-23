@@ -6,9 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,20 +26,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsErrorDialog
+import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeResultDialog
+import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -62,7 +68,6 @@ object ContactDetailScreen {
     fun Screen(screenContext: ScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
-        var deletionErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
 
         Scaffold(
             topBar = {
@@ -71,24 +76,55 @@ object ContactDetailScreen {
                     contact = contactResource.valueOrNull
                 )
             }
-        ) {
+        ) { padding ->
+            val modifier = Modifier.padding(padding)
             contactResource
-                .composeIfError { NoContactLoadedError(viewModel = viewModel) }
-                .composeIfInactive { NoContactLoaded(router = screenContext.router) }
-                .composeIfLoading { LoadingIndicatorFullScreen(R.string.loading_contacts) }
-                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it) }
+                .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
+                .composeIfInactive { NoContactLoaded(router = screenContext.router, modifier = modifier) }
+                .composeIfLoading {
+                    LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
+                }
+                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
         }
 
-        DeleteContactsErrorDialog(errors = deletionErrors, multipleContacts = false) {
+        DeleteResultObserver(viewModel, screenContext.router)
+        TypeChangeResultObserver(viewModel, screenContext.router)
+    }
+
+    @Composable
+    private fun DeleteResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
+        var deletionErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
+
+        DeleteContactsResultDialog(numberOfErrors = deletionErrors.size, numberOfAttemptedChanges = 1) {
             deletionErrors = emptyList()
         }
 
         LaunchedEffect(Unit) {
             viewModel.deleteResult.collect { result ->
                 when (result) {
-                    is ContactDeleteResult.Success -> screenContext.router.navigateUp()
+                    is ContactDeleteResult.Success -> router.navigateUp()
                     is ContactDeleteResult.Failure -> deletionErrors = result.errors
-                    is ContactDeleteResult.Inactive -> { /* nothing to do */ }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun TypeChangeResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
+        var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
+        var errors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
+
+        ChangeContactTypeResultDialog(validationErrors, errors, numberOfAttemptedChanges = 1) {
+            validationErrors = emptyList()
+            errors = emptyList()
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.typeChangeResult.collect { result ->
+                when (result) {
+                    is ContactSaveResult.Success -> router.navigateUp()
+                    is ContactSaveResult.ValidationFailure -> validationErrors = result.validationErrors
+                    is ContactSaveResult.Failure -> errors = result.errors
                 }
             }
         }
@@ -116,11 +152,13 @@ object ContactDetailScreen {
                 BackIconButton { screenContext.router.navigateUp() }
             },
             actions = {
-                // TODO handle external contacts
-                if (contact != null && !contact.isExternal) {
-                    EditIconButton(enabled = buttonsEnabled) {
-                        screenContext.contactEditViewModel.selectContact(contact)
-                        screenContext.router.navigateToScreen(Screen.ContactEdit)
+                if (contact != null) {
+                    // TODO handle external contacts
+                    if (!contact.isExternal) {
+                        EditIconButton(enabled = buttonsEnabled) {
+                            screenContext.contactEditViewModel.selectContact(contact)
+                            screenContext.router.navigateToScreen(Screen.ContactEdit)
+                        }
                     }
                     MoreActionsIconButton(enabled = buttonsEnabled) {
                         dropDownMenuExpanded = true
@@ -138,28 +176,83 @@ object ContactDetailScreen {
         screenContext: ScreenContext,
         contact: IContact,
         expanded: Boolean,
-        onCloseMenu: () -> Unit
+        onCloseMenu: () -> Unit,
     ) {
-        var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
-                Text(stringResource(id = R.string.delete_contact))
+            TypeChangeMenuItem(screenContext, contact, onCloseMenu)
+            DeleteMenuItem(screenContext, contact, onCloseMenu)
+        }
+    }
+
+    @Composable
+    private fun TypeChangeMenuItem(
+        screenContext: ScreenContext,
+        contact: IContact,
+        onCloseMenu: () -> Unit,
+    ) {
+        when (contact.type) {
+            SECRET -> Unit
+            PUBLIC -> {
+                var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+
+                DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
+                    Text(stringResource(id = R.string.make_contact_secret))
+                }
+
+                TypeChangeConfirmationDialog(
+                    screenContext = screenContext,
+                    contact = contact,
+                    visible = confirmationDialogVisible,
+                    hideDialog = {
+                        confirmationDialogVisible = false
+                        onCloseMenu()
+                    },
+                )
             }
         }
+    }
+
+    @Composable
+    private fun TypeChangeConfirmationDialog(
+        screenContext: ScreenContext,
+        contact: IContact,
+        visible: Boolean,
+        hideDialog: () -> Unit,
+    ) {
+        if (visible) {
+            YesNoDialog(
+                title = R.string.make_contact_secret_title,
+                text = R.string.make_contact_secret_text,
+                onYes = {
+                    hideDialog()
+                    screenContext.contactDetailViewModel.changeContactType(contact, SECRET)
+                },
+                onNo = hideDialog
+            )
+        }
+    }
+
+    @Composable
+    private fun DeleteMenuItem(
+        screenContext: ScreenContext,
+        contact: IContact,
+        onCloseMenu: () -> Unit,
+    ) {
+        var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+
+        DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
+            Text(stringResource(id = R.string.delete_contact))
+        }
+
         DeleteConfirmationDialog(
             screenContext = screenContext,
             contact = contact,
-            visible = deleteConfirmationDialogVisible,
+            visible = confirmationDialogVisible,
             hideDialog = {
-                deleteConfirmationDialogVisible = false
+                confirmationDialogVisible = false
                 onCloseMenu()
             },
         )
-
-        BackHandler(enabled = deleteConfirmationDialogVisible) {
-            deleteConfirmationDialogVisible = false
-        }
     }
 
     @Composable
@@ -183,9 +276,10 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun NoContactLoaded(router: AppRouter) {
+    private fun NoContactLoaded(router: AppRouter, modifier: Modifier = Modifier) {
         FullScreenError(
             errorMessage = R.string.no_contact_selected,
+            modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.back,
                 icon = Icons.Default.ArrowBack,
@@ -196,9 +290,10 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun NoContactLoadedError(viewModel: ContactDetailViewModel) {
+    private fun NoContactLoadedError(viewModel: ContactDetailViewModel, modifier: Modifier = Modifier) {
         FullScreenError(
             errorMessage = R.string.no_contact_selected_error,
+            modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.reload_contact,
                 icon = Icons.Default.Sync,

@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.Phone
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
-import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 
 data class PhoneNumber(
     override val id: ContactDataId,
@@ -23,7 +21,7 @@ data class PhoneNumber(
     override val valueForMatching: String = value,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<PhoneNumber> {
+) : StringBasedContactDataGeneric<PhoneNumber> {
     override val category: ContactDataCategory = ContactDataCategory.PHONE_NUMBER
 
     override val allowedTypes: List<ContactDataType>
@@ -38,6 +36,9 @@ data class PhoneNumber(
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(type = type, modelStatus = status)
     }
+
+    override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+    override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
 
     override fun delete(): PhoneNumber {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

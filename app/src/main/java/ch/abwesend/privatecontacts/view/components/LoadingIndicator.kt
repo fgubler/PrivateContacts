@@ -23,10 +23,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingIndicatorFullScreen(@StringRes textAfterIndicator: Int? = null) {
+fun LoadingIndicatorFullScreen(modifier: Modifier = Modifier, @StringRes textAfterIndicator: Int? = null) {
     LoadingIndicatorFullWidth(
         textAfterIndicator = textAfterIndicator,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     )
 }
 

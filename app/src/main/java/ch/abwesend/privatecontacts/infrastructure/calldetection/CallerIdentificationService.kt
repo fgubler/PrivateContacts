@@ -21,9 +21,9 @@ class CallerIdentificationService : CallScreeningService() {
         respondToCall(callDetails, response)
 
         if (shouldHandleCall(callDetails)) {
-            val number: String = callDetails.handle.schemeSpecificPart
-            logger.debug("Incoming call from $number")
-            incomingCallHelper.handleIncomingCall(baseContext, number)
+            val number: String? = callDetails.handle?.schemeSpecificPart
+            logger.debug("Incoming call from number '$number'")
+            number?.let { incomingCallHelper.handleIncomingCall(baseContext, it) }
         } else logger.debug("Ignored not-incoming call")
     }
 

@@ -16,7 +16,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
-import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataSimple
+import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.util.addProtocolToUriString
 import ch.abwesend.privatecontacts.view.screens.contactdetail.UTF_8
@@ -92,7 +92,7 @@ fun openLink(context: Context, link: String) {
     }
 }
 
-fun StringBasedContactDataSimple.navigateToOnlineSearch(context: Context) {
+fun StringBasedContactData.navigateToOnlineSearch(context: Context) {
     try {
         val companyName = URLEncoder.encode(value, UTF_8)
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://duckduckgo.com/?q=$companyName"))

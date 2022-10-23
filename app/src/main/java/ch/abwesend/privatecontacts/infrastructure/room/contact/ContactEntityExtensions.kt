@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contact
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdCombined
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
@@ -15,9 +16,11 @@ import ch.abwesend.privatecontacts.domain.util.getAnywhere
 
 fun IContact.toEntity(contactId: IContactIdInternal): ContactEntity {
     val fullTextSearchColumn = computeFullTextSearchColumn()
+    val externalContactNo = (contactId as? IContactIdCombined)?.contactNo
 
     return ContactEntity(
         rawId = contactId.uuid,
+        externalContactNo = externalContactNo,
         type = type,
         firstName = firstName,
         lastName = lastName,
@@ -33,4 +36,4 @@ private fun IContact.computeFullTextSearchColumn(): String {
 }
 
 fun ContactEntity.toContactBase(): ContactBase =
-    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName))
+    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName, nickname))

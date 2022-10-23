@@ -16,8 +16,8 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 object IntroductionScreen {
     @Composable
     fun Screen(screenContext: ScreenContext) {
-        BaseScreen(screenContext = screenContext, selectedScreen = Introduction) {
-            Column(modifier = Modifier.padding(10.dp)) {
+        BaseScreen(screenContext = screenContext, selectedScreen = Introduction) { padding ->
+            Column(modifier = Modifier.padding(padding).padding(10.dp)) {
                 SectionTitle(titleRes = R.string.screen_introduction, addTopPadding = false)
                 Text(text = stringResource(id = R.string.app_introduction_description))
 

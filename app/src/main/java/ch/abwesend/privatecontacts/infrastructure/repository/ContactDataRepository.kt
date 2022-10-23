@@ -11,17 +11,19 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.toContactDataType
@@ -42,13 +44,10 @@ class ContactDataRepository : RepositoryBase() {
                 .mapValues { pair -> pair.value.map { PhoneNumberValue(it.valueRaw) } }
         }
 
-    suspend fun createContactData(contactId: IContactIdInternal, contact: IContact) =
+    suspend fun createContactData(contactId: IContactIdInternal, contactData: List<ContactData>) =
         withDatabase { database ->
-            val contactData = contact.contactDataSet.map { contactData ->
-                contactData.toEntity(contactId)
-            }
-
-            database.contactDataDao().insertAll(contactData)
+            val dataEntities = contactData.map { data -> data.toEntity(contactId) }
+            database.contactDataDao().insertAll(dataEntities)
         }
 
     suspend fun updateContactData(contactId: IContactIdInternal, contact: IContact) =
@@ -115,8 +114,22 @@ class ContactDataRepository : RepositoryBase() {
                 isMain = contactData.isMain,
                 modelStatus = UNCHANGED,
             )
-
-            ContactDataCategory.DATE -> null // TODO implement
+            ContactDataCategory.RELATIONSHIP -> Relationship(
+                id = ContactDataIdInternal(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = contactData.valueRaw,
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
+            ContactDataCategory.EVENT_DATE -> EventDate(
+                id = ContactDataIdInternal(contactData.id),
+                type = type,
+                sortOrder = contactData.sortOrder,
+                value = EventDate.deserializeDate(contactData.valueRaw),
+                isMain = contactData.isMain,
+                modelStatus = UNCHANGED,
+            )
         }
     } catch (e: Exception) {
         logger.error("Failed to resolve contact-data", e)

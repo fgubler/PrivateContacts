@@ -6,12 +6,12 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ScaffoldState
@@ -31,12 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
-import ch.abwesend.privatecontacts.domain.model.contact.isExternal
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -115,7 +114,7 @@ private fun SearchTopBar(
 @Composable
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<ContactId>,
+    selectedContacts: Set<IContactBase>,
     disableBulkMode: () -> Unit
 ) {
     var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
@@ -125,7 +124,7 @@ private fun BulkModeTopBar(
         navigationIcon = { CancelIconButton { disableBulkMode() } },
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
-            ActionsMenu(
+            BulkModeActionsMenu(
                 viewModel = viewModel,
                 selectedContacts = selectedContacts,
                 expanded = dropDownMenuExpanded
@@ -138,31 +137,84 @@ private fun BulkModeTopBar(
 }
 
 @Composable
-fun ActionsMenu(
+fun BulkModeActionsMenu(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<ContactId>,
+    selectedContacts: Set<IContactBase>,
     expanded: Boolean,
-    onCloseMenu: () -> Unit
+    onCloseMenu: () -> Unit,
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+        DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
+            Text(stringResource(id = R.string.select_all))
+        }
+        DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
+            Text(stringResource(id = R.string.deselect_all))
+        }
+        if (selectedContacts.isNotEmpty()) {
+            Divider()
+            TypeChangeMenuItem(viewModel, selectedContacts, onCloseMenu)
+            DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
+        }
+    }
+}
+
+@Composable
+private fun TypeChangeMenuItem(
+    viewModel: ContactListViewModel,
+    contacts: Set<IContactBase>,
+    onCloseMenu: () -> Unit,
+) {
+    if (contacts.any { it.type != SECRET }) {
+        var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+
+        DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
+            Text(stringResource(id = R.string.make_contacts_secret))
+        }
+
+        TypeChangeConfirmationDialog(
+            viewModel = viewModel,
+            contacts = contacts,
+            visible = confirmationDialogVisible,
+            hideDialog = {
+                confirmationDialogVisible = false
+                onCloseMenu()
+            },
+        )
+    }
+}
+
+@Composable
+private fun TypeChangeConfirmationDialog(
+    viewModel: ContactListViewModel,
+    contacts: Set<IContactBase>,
+    visible: Boolean,
+    hideDialog: () -> Unit,
+) {
+    if (visible) {
+        YesNoDialog(
+            title = R.string.make_contacts_secret_title,
+            text = R.string.make_contact_secret_text,
+            onYes = {
+                hideDialog()
+                viewModel.changeContactType(contacts, SECRET)
+            },
+            onNo = hideDialog
+        )
+    }
+}
+
+@Composable
+private fun DeleteMenuItem(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<IContactBase>,
+    onCloseMenu: () -> Unit,
 ) {
     var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
     val multipleContacts = selectedContacts.size > 1
-    val onlyInternalContactsSelected = selectedContacts.none { it.isExternal }
-    val context = LocalContext.current
 
-    // TODO implement logic for external contacts
-    if (selectedContacts.isNotEmpty()) {
-        DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            DropdownMenuItem(onClick = {
-                if (onlyInternalContactsSelected) {
-                    deleteConfirmationDialogVisible = true
-                } else {
-                    Toast.makeText(context, R.string.feature_not_yet_implemented, Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
-                Text(stringResource(id = text))
-            }
-        }
+    DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
+        @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
+        Text(stringResource(id = text))
     }
 
     DeleteConfirmationDialog(
@@ -174,16 +226,12 @@ fun ActionsMenu(
             onCloseMenu()
         },
     )
-
-    BackHandler(enabled = deleteConfirmationDialogVisible) {
-        deleteConfirmationDialogVisible = false
-    }
 }
 
 @Composable
 private fun DeleteConfirmationDialog(
     viewModel: ContactListViewModel,
-    selectedContacts: Set<ContactId>,
+    selectedContacts: Set<IContactBase>,
     visible: Boolean,
     hideDialog: () -> Unit,
 ) {
@@ -193,7 +241,8 @@ private fun DeleteConfirmationDialog(
             text = { Text(text = stringResource(id = R.string.delete_contacts_text, selectedContacts.size)) },
             onYes = {
                 hideDialog()
-                viewModel.deleteContacts(selectedContacts)
+                val contactIds = selectedContacts.map { it.id }.toSet()
+                viewModel.deleteContacts(contactIds)
             },
             onNo = hideDialog
         )

@@ -98,7 +98,6 @@ abstract class AbstractLogger : ILogger {
 
     override fun error(message: String, t: Throwable) {
         val logMessage = createThrowableLogMessage(t, message)
-        t.printStackTrace()
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
             if (logToCrashlytics()) {
@@ -109,7 +108,6 @@ abstract class AbstractLogger : ILogger {
 
     override fun error(t: Throwable) {
         val logMessage = createThrowableLogMessage(t)
-        t.printStackTrace()
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
             if (logToCrashlytics()) {
@@ -130,6 +128,8 @@ abstract class AbstractLogger : ILogger {
             $message
             Throwable of type '${t.javaClass.name}'
             Original Throwable-Message: '$throwableMessage'
+            Stack-Trace: 
+            ${t.stackTrace.joinToString(separator = Constants.linebreak)}
             """.trimIndent()
         } ?: throwableMessage
     }

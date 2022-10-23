@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
-import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.junit5.MockKExtension
@@ -27,10 +27,11 @@ private class TestRepository : RepositoryBase() {
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class RepositoryBaseTest : TestBase() {
+class RepositoryBaseTest : RepositoryTestBase() {
     private lateinit var underTest: TestRepository
 
     override fun setup() {
+        super.setup()
         underTest = TestRepository()
     }
 

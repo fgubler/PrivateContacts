@@ -11,12 +11,14 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.Dispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
+import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
@@ -30,10 +32,13 @@ import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelp
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
@@ -61,6 +66,7 @@ internal val koinModule = module {
     single { ContactSanitizingService() }
     single { EasterEggService() }
     single { DatabaseService() }
+    single { ContactTypeChangeService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
 
@@ -69,10 +75,13 @@ internal val koinModule = module {
     single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
 
     // Repositories
-    single<IAndroidContactRepository> { AndroidContactRepository() }
+    single<IAndroidContactLoadRepository> { AndroidContactLoadRepository() }
+    single<IAndroidContactSaveRepository> { AndroidContactSaveRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single { ContactDataRepository() }
+    single { ContactGroupRepository() }
+    single { ContactImageRepository() }
     single { CallNotificationRepository() }
     single { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }

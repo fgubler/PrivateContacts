@@ -4,14 +4,14 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.AndroidContactRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactStore
 import com.alexstyl.contactstore.FetchRequest
@@ -49,15 +49,16 @@ class AndroidContactRepositoryTest : TestBase() {
     private lateinit var context: Context
 
     @InjectMockKs
-    private lateinit var underTest: AndroidContactRepository
+    private lateinit var underTest: AndroidContactLoadRepository
 
     private lateinit var fetchRequest: FetchRequest<List<Contact>>
     private lateinit var flow: MutableStateFlow<List<Contact>>
 
-    override fun Module.setupKoinModule() {
-        single { contactStore }
-        single { permissionService }
-        single { context }
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { contactStore }
+        module.single { permissionService }
+        module.single { context }
     }
 
     override fun setup() {

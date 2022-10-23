@@ -11,8 +11,6 @@ import androidx.compose.material.icons.filled.Language
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.contact.ContactDataId
-import ch.abwesend.privatecontacts.domain.model.contact.createContactDataId
 
 data class Website(
     override val id: ContactDataId,
@@ -21,7 +19,7 @@ data class Website(
     override val value: String,
     override val isMain: Boolean = false,
     override val modelStatus: ModelStatus,
-) : StringBasedContactData<Website> {
+) : StringBasedContactDataGeneric<Website> {
     override val category: ContactDataCategory = ContactDataCategory.WEBSITE
 
     override val allowedTypes: List<ContactDataType>
@@ -36,6 +34,9 @@ data class Website(
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(type = type, modelStatus = status)
     }
+
+    override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
+    override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
 
     override fun delete(): Website {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

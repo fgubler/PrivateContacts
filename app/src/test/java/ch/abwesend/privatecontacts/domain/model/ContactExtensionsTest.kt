@@ -12,9 +12,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.someContactEditable
-import ch.abwesend.privatecontacts.testutil.somePhoneNumber
-import ch.abwesend.privatecontacts.testutil.someTestContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.someTestContact
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockkStatic
 import io.mockk.verify
@@ -30,15 +30,44 @@ class ContactExtensionsTest : TestBase() {
     fun `should get display name`() {
         val firstName = "John"
         val lastName = "Snow"
-        val fullNameStartingWithFirst = getFullName(firstName = firstName, lastName = lastName, firstNameFirst = true)
-        val fullNameStartingWithLast = getFullName(firstName = firstName, lastName = lastName, firstNameFirst = false)
+        val nickname = ""
+        val fullNameStartingWithFirst = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            firstNameFirst = true,
+        )
+        val fullNameStartingWithLast = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            firstNameFirst = false,
+        )
 
-        assertThat(fullNameStartingWithFirst)
-            .startsWith(firstName)
-            .endsWith(lastName)
-        assertThat(fullNameStartingWithLast)
-            .startsWith(lastName)
-            .endsWith(firstName)
+        assertThat(fullNameStartingWithFirst).isEqualTo("John Snow")
+        assertThat(fullNameStartingWithLast).isEqualTo("Snow John")
+    }
+
+    @Test
+    fun `should get display name with nickname`() {
+        val firstName = "John"
+        val lastName = "Snow"
+        val nickname = "Fix-All"
+        val fullNameStartingWithFirst = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            firstNameFirst = true,
+        )
+        val fullNameStartingWithLast = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            firstNameFirst = false,
+        )
+
+        assertThat(fullNameStartingWithFirst).isEqualTo("""John "Fix-All" Snow""")
+        assertThat(fullNameStartingWithLast).isEqualTo("""Snow "Fix-All" John""")
     }
 
     @Test

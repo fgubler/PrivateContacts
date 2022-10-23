@@ -44,6 +44,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconButton
@@ -55,7 +56,6 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
-import kotlinx.coroutines.flow.collect
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
@@ -71,7 +71,7 @@ object ContactEditScreen {
         var showAllFields: Boolean by remember { mutableStateOf(true) }
 
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
-        var savingError: ContactChangeError? by remember { mutableStateOf(null) }
+        var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
 
         LaunchedEffect(Unit) {
@@ -80,7 +80,7 @@ object ContactEditScreen {
                 onSaveResult(
                     screenContext = screenContext,
                     result = result,
-                    setSavingError = { savingError = it },
+                    setSavingErrors = { savingErrors = it },
                     setValidationErrors = { validationErrors = it },
                 )
             }
@@ -97,9 +97,9 @@ object ContactEditScreen {
                         onToggleExpanded = { showAllFields = !showAllFields }
                     )
                 }
-            ) {
+            ) { padding ->
                 // The actual content
-                Column {
+                Column(modifier = Modifier.padding(padding)) {
                     ContactEditContent(
                         screenContext = screenContext,
                         contact = contact,
@@ -113,26 +113,14 @@ object ContactEditScreen {
                 DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
                     showDiscardConfirmationDialog = false
                 }
-                SavingErrorDialog(savingError) {
-                    savingError = null
+                SavingErrorDialog(savingErrors) {
+                    savingErrors = emptyList()
                 }
                 ValidationErrorDialog(validationErrors) {
                     validationErrors = emptyList()
                 }
 
-                BackHandler(enabled = true) {
-                    val anyDialogShown = showDiscardConfirmationDialog ||
-                        savingError != null ||
-                        validationErrors.isNotEmpty()
-
-                    // close open dialogs
-                    if (anyDialogShown) {
-                        showDiscardConfirmationDialog = false
-                        savingError = null
-                        validationErrors = emptyList()
-                        return@BackHandler
-                    }
-
+                BackHandler {
                     // trigger discard-changes logic
                     onDiscard(screenContext) {
                         showDiscardConfirmationDialog = true
@@ -204,14 +192,14 @@ object ContactEditScreen {
         screenContext: ScreenContext,
         result: ContactSaveResult,
         setValidationErrors: (List<ContactValidationError>) -> Unit,
-        setSavingError: (ContactChangeError) -> Unit,
+        setSavingErrors: (List<ContactChangeError>) -> Unit,
     ) {
         when (result) {
             is Success -> {
                 screenContext.contactDetailViewModel.reloadContact() // update data there
                 screenContext.router.navigateUp()
             }
-            is Failure -> setSavingError(result.error)
+            is Failure -> setSavingErrors(result.errors)
             is ValidationFailure -> setValidationErrors(result.validationErrors)
         }
     }
@@ -254,17 +242,17 @@ object ContactEditScreen {
     }
 
     @Composable
-    private fun SavingErrorDialog(
-        error: ContactChangeError?,
-        onClose: () -> Unit
-    ) {
-        error?.let { savingError ->
-            OkDialog(
-                title = R.string.error,
-                onClose = onClose
-            ) {
-                val errorText = stringResource(id = savingError.label)
-                val description = stringResource(R.string.saving_data_error, errorText)
+    private fun SavingErrorDialog(errors: List<ContactChangeError>, onClose: () -> Unit) {
+        if (errors.isNotEmpty()) {
+            OkDialog(title = R.string.error, onClose = onClose) {
+                val description = if (errors.size == 1) {
+                    val errorText = stringResource(id = errors.first().label)
+                    stringResource(R.string.saving_data_error, errorText)
+                } else {
+                    val partialTexts = errors.map { stringResource(id = it.label) }
+                    val errorText = partialTexts.joinToString(separator = Constants.doubleLinebreak)
+                    stringResource(R.string.saving_data_error, errorText)
+                }
                 Text(text = description)
             }
         }
@@ -276,10 +264,7 @@ object ContactEditScreen {
         onClose: () -> Unit
     ) {
         if (validationErrors.isNotEmpty()) {
-            OkDialog(
-                title = R.string.data_validation_errors,
-                onClose = onClose
-            ) {
+            OkDialog(title = R.string.data_validation_errors, onClose = onClose) {
                 Column {
                     validationErrors.forEach { error ->
                         Text(stringResource(id = error.label))

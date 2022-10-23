@@ -65,3 +65,6 @@ fun <T> Flow<T>.toResourceFlow(): ResourceFlow<T> = flow {
         logger.error("Failed to transform Flow to ResourceFlow", e)
     }
 }
+
+fun <T, S> ResourceFlow<T>.mapReady(mapper: (T) -> S): ResourceFlow<S> =
+    map { resource -> resource.mapReady(mapper) }

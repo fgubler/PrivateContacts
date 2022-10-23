@@ -11,6 +11,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -18,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
 
 @ExperimentalFoundationApi
@@ -37,7 +39,7 @@ object ContactDataEditComponents {
             categoryTitle = PhoneNumber.labelPlural,
             fieldLabel = PhoneNumber.labelSingular,
             icon = PhoneNumber.icon,
-            keyboardType = KeyboardType.Phone,
+            valueFieldConfig = TextFieldConfig(KeyboardType.Phone),
             showIfEmpty = showIfEmpty,
             factory = { PhoneNumber.createEmpty(it) },
             waitForCustomType = waitForCustomType,
@@ -57,7 +59,7 @@ object ContactDataEditComponents {
             categoryTitle = EmailAddress.labelPlural,
             fieldLabel = EmailAddress.labelSingular,
             icon = EmailAddress.icon,
-            keyboardType = KeyboardType.Email,
+            valueFieldConfig = TextFieldConfig(KeyboardType.Email),
             showIfEmpty = showIfEmpty,
             factory = { EmailAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
@@ -77,7 +79,7 @@ object ContactDataEditComponents {
             categoryTitle = PhysicalAddress.labelPlural,
             fieldLabel = PhysicalAddress.labelSingular,
             icon = PhysicalAddress.icon,
-            keyboardType = KeyboardType.Text,
+            valueFieldConfig = TextFieldConfig(minHeight = 80.dp, maxLines = 5),
             showIfEmpty = showIfEmpty,
             factory = { PhysicalAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
@@ -97,7 +99,7 @@ object ContactDataEditComponents {
             categoryTitle = Website.labelPlural,
             fieldLabel = Website.labelSingular,
             icon = Website.icon,
-            keyboardType = KeyboardType.Uri,
+            valueFieldConfig = TextFieldConfig(KeyboardType.Uri),
             showIfEmpty = showIfEmpty,
             factory = { Website.createEmpty(it) },
             waitForCustomType = waitForCustomType,
@@ -117,7 +119,6 @@ object ContactDataEditComponents {
             categoryTitle = Company.labelPlural,
             fieldLabel = Company.labelSingular,
             icon = Company.icon,
-            keyboardType = KeyboardType.Text,
             showIfEmpty = showIfEmpty,
             factory = { Company.createEmpty(it) },
             waitForCustomType = waitForCustomType,

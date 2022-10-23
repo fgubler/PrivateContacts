@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -206,7 +205,6 @@ object ContactEditScreenContent {
                 onSave = onCustomTypeDefined
             )
         }
-        BackHandler(enabled = visible) { hideDialog() }
     }
 
     @Composable
