@@ -79,9 +79,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         endOfPhoneNumber: String
     ): List<ContactWithPhoneNumbers> {
         val contactData = contactDataRepository.findPhoneNumbersEndingOn(endOfPhoneNumber)
-        return withDatabase { database ->
-            val contactIds = contactData.keys.map { it.uuid }
-            val contacts = database.contactDao().findByIds(contactIds)
+        val contactIds = contactData.keys.map { it.uuid }
+        return bulkLoadingOperation(contactIds) { database, chunkedContactIds ->
+            val contacts = database.contactDao().findByIds(chunkedContactIds)
 
             contacts.map { contactEntity ->
                 ContactWithPhoneNumbers(
