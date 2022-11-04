@@ -82,7 +82,7 @@ class ContactLoadService {
             is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
         }
 
-    // TODO use proper batch-job
+    // TODO use proper batch-handling
     suspend fun resolveContacts(contacts: Collection<ContactId>): List<IContact> =
         withContext(dispatchers.default) {
             contacts.mapAsync { resolveContact(it) }

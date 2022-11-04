@@ -24,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
@@ -38,7 +39,6 @@ class ContactTypeChangeService {
     private val dispatchers: IDispatchers by injectAnywhere()
 
     // TODO add proper batch processing
-    // TODO consider whether we really want to do it in parallel or if it is too risky
     // TODO add tests
     suspend fun changeContactType(
         contacts: Collection<IContactBase>,
@@ -67,15 +67,19 @@ class ContactTypeChangeService {
 
     suspend fun changeContactType(contact: IContact, newType: ContactType): ContactSaveResult {
         logger.debug("Trying to change contact-type from ${contact.type} to $newType")
-        val contactEditable = contact.asEditable()
-
-        return when (newType) {
-            contact.type -> {
-                logger.debug("No contact-type change necessary: just save it normally.")
-                saveService.saveContact(contactEditable)
+        return try {
+            val contactEditable = contact.asEditable()
+            when (newType) {
+                contact.type -> {
+                    logger.debug("No contact-type change necessary: just save it normally.")
+                    saveService.saveContact(contactEditable)
+                }
+                ContactType.PUBLIC -> Failure(NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS)
+                ContactType.SECRET -> changeContactTypeToSecret(contactEditable, newType)
             }
-            ContactType.PUBLIC -> Failure(NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS)
-            ContactType.SECRET -> changeContactTypeToSecret(contactEditable, newType)
+        } catch (e: Exception) {
+            logger.error("Failed to change contact type for ${contact.id}", e)
+            Failure(UNKNOWN_ERROR)
         }
     }
 
