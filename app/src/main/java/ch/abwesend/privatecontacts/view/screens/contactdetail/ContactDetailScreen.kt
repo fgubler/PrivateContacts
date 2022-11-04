@@ -46,6 +46,7 @@ import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeResultDialog
 import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -179,56 +180,27 @@ object ContactDetailScreen {
         onCloseMenu: () -> Unit,
     ) {
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            TypeChangeMenuItem(screenContext, contact, onCloseMenu)
+            MakeContactSecretMenuItem(screenContext.contactDetailViewModel, contact, onCloseMenu)
             DeleteMenuItem(screenContext, contact, onCloseMenu)
         }
     }
 
     @Composable
-    private fun TypeChangeMenuItem(
-        screenContext: ScreenContext,
+    private fun MakeContactSecretMenuItem(
+        viewModel: ContactDetailViewModel,
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
         when (contact.type) {
             SECRET -> Unit
             PUBLIC -> {
-                var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-
-                DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
-                    Text(stringResource(id = R.string.make_contact_secret))
+                MakeContactSecretMenuItem(contacts = setOf(contact)) { changeContact ->
+                    if (changeContact) {
+                        viewModel.changeContactType(contact, SECRET)
+                    }
+                    onCloseMenu()
                 }
-
-                TypeChangeConfirmationDialog(
-                    screenContext = screenContext,
-                    contact = contact,
-                    visible = confirmationDialogVisible,
-                    hideDialog = {
-                        confirmationDialogVisible = false
-                        onCloseMenu()
-                    },
-                )
             }
-        }
-    }
-
-    @Composable
-    private fun TypeChangeConfirmationDialog(
-        screenContext: ScreenContext,
-        contact: IContact,
-        visible: Boolean,
-        hideDialog: () -> Unit,
-    ) {
-        if (visible) {
-            YesNoDialog(
-                title = R.string.make_contact_secret_title,
-                text = R.string.make_contact_secret_text,
-                onYes = {
-                    hideDialog()
-                    screenContext.contactDetailViewModel.changeContactType(contact, SECRET)
-                },
-                onNo = hideDialog
-            )
         }
     }
 
