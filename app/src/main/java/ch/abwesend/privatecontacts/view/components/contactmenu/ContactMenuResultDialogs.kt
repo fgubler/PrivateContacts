@@ -4,9 +4,8 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.components.contact
+package ch.abwesend.privatecontacts.view.components.contactmenu
 
-import androidx.annotation.StringRes
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -15,27 +14,6 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
-import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
-
-@Composable
-fun DeleteContactsLoadingDialog(deleteMultiple: Boolean) {
-    if (deleteMultiple) { // deleting one contact is so fast, a loading-screen does not make sense
-        @StringRes val title =
-            if (deleteMultiple) R.string.delete_contacts_progress
-            else R.string.delete_contact_progress
-        SimpleProgressDialog(title = title, allowRunningInBackground = false)
-    }
-}
-
-@Composable
-fun ChangeContactTypeLoadingDialog(changeMultiple: Boolean) {
-    if (changeMultiple) { // changing one contact is so fast, a loading-screen does not make sense
-        @StringRes val title =
-            if (changeMultiple) R.string.make_contacts_secret_progress
-            else R.string.make_contact_secret_progress
-        SimpleProgressDialog(title = title, allowRunningInBackground = false)
-    }
-}
 
 @Composable
 fun ChangeContactsUnknownErrorDialog(onClose: () -> Unit) {

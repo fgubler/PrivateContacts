@@ -260,6 +260,6 @@ class ContactTypeChangeServiceTest : TestBase() {
         assertThat(result.completelyFailed).isFalse
         assertThat(result.completelySuccessful).isFalse
         assertThat(result.successfulChanges).isEqualTo(listOf(contactIds[0]))
-        assertThat(result.failedChanges).isEqualTo(listOf(contactIds[1], contactIds[2], contactIds[3]))
+        assertThat(result.failedChanges.keys).isEqualTo(setOf(contactIds[1], contactIds[2], contactIds[3]))
     }
 }

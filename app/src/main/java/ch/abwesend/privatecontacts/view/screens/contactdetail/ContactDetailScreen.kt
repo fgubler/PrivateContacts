@@ -43,9 +43,9 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeResultDialog
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeResultDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig

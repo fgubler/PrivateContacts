@@ -8,9 +8,9 @@ package ch.abwesend.privatecontacts.domain.model.result
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 
-data class BatchChangeResult<T>(
+data class BatchChangeResult<T, TError>(
     val successfulChanges: List<T>,
-    val failedChanges: List<T>,
+    val failedChanges: Map<T, TError>,
 ) {
     val completelySuccessful: Boolean
         get() = successfulChanges.isNotEmpty() && failedChanges.isEmpty()
@@ -21,22 +21,22 @@ data class BatchChangeResult<T>(
     val isEmpty: Boolean
         get() = successfulChanges.isEmpty() && failedChanges.isEmpty()
 
-    fun combine(other: BatchChangeResult<T>): BatchChangeResult<T> = BatchChangeResult(
+    fun combine(other: BatchChangeResult<T, TError>): BatchChangeResult<T, TError> = BatchChangeResult(
         successfulChanges = successfulChanges + other.successfulChanges,
         failedChanges = failedChanges + other.failedChanges,
     )
 
     companion object {
-        fun <T> success(changes: List<T>): BatchChangeResult<T> = BatchChangeResult(
+        fun <T, TError> success(changes: List<T>): BatchChangeResult<T, TError> = BatchChangeResult(
             successfulChanges = changes,
-            failedChanges = emptyList(),
+            failedChanges = emptyMap(),
         )
-        fun <T> failure(changes: List<T>): BatchChangeResult<T> = BatchChangeResult(
+        fun <T, TError> failure(changes: Map<T, TError>): BatchChangeResult<T, TError> = BatchChangeResult(
             successfulChanges = emptyList(),
             failedChanges = changes,
         )
-        fun <T> empty(): BatchChangeResult<T> = BatchChangeResult(emptyList(), emptyList())
+        fun <T, TError> empty(): BatchChangeResult<T, TError> = BatchChangeResult(emptyList(), emptyMap())
     }
 }
 
-typealias ContactBatchChangeResult = BatchChangeResult<ContactId>
+typealias ContactBatchChangeResult = BatchChangeResult<ContactId, ContactBatchChangeErrors>

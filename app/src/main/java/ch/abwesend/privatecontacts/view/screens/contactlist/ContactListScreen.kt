@@ -40,11 +40,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
-import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeLoadingDialog
-import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypesResultDialog
-import ch.abwesend.privatecontacts.view.components.contact.ChangeContactsUnknownErrorDialog
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsLoadingDialog
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeLoadingDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypesResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactsUnknownErrorDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
