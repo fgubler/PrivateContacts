@@ -32,3 +32,26 @@ fun MakeContactSecretMenuItem(contacts: Set<IContactBase>, onCloseMenu: (changeC
         },
     )
 }
+
+@Composable
+fun DeleteContactMenuItem(
+    contacts: Set<IContactBase>,
+    onCloseMenu: (delete: Boolean) -> Unit,
+) {
+    var deleteConfirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
+    val multipleContacts = contacts.size > 1
+
+    DropdownMenuItem(onClick = { deleteConfirmationDialogVisible = true }) {
+        @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
+        Text(stringResource(id = text))
+    }
+
+    DeleteContactConfirmationDialog(
+        contacts = contacts,
+        visible = deleteConfirmationDialogVisible,
+        hideDialog = { delete ->
+            deleteConfirmationDialogVisible = false
+            onCloseMenu(delete)
+        },
+    )
+}

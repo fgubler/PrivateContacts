@@ -10,7 +10,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -46,8 +45,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeResultDialog
 import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
-import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.AppRouter
@@ -210,40 +209,11 @@ object ContactDetailScreen {
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
-        var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-
-        DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
-            Text(stringResource(id = R.string.delete_contact))
-        }
-
-        DeleteConfirmationDialog(
-            screenContext = screenContext,
-            contact = contact,
-            visible = confirmationDialogVisible,
-            hideDialog = {
-                confirmationDialogVisible = false
-                onCloseMenu()
-            },
-        )
-    }
-
-    @Composable
-    private fun DeleteConfirmationDialog(
-        screenContext: ScreenContext,
-        contact: IContact,
-        visible: Boolean,
-        hideDialog: () -> Unit,
-    ) {
-        if (visible) {
-            YesNoDialog(
-                title = R.string.delete_contact_title,
-                text = R.string.delete_contact_text,
-                onYes = {
-                    hideDialog()
-                    screenContext.contactDetailViewModel.deleteContact(contact)
-                },
-                onNo = hideDialog
-            )
+        DeleteContactMenuItem(contacts = setOf(contact)) { delete ->
+            if (delete) {
+                screenContext.contactDetailViewModel.deleteContact(contact)
+            }
+            onCloseMenu()
         }
     }
 
