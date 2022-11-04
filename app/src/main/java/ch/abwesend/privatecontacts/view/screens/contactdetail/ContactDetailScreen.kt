@@ -43,7 +43,7 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
@@ -113,8 +113,14 @@ object ContactDetailScreen {
     private fun TypeChangeResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
         var errors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
+        val changeSuccessful = validationErrors.isEmpty() && errors.isEmpty()
 
-        ChangeContactTypeResultDialog(validationErrors, errors, numberOfAttemptedChanges = 1) {
+        ChangeContactTypeErrorDialog(
+            validationErrors = validationErrors,
+            errors = errors,
+            numberOfAttemptedChanges = 1,
+            numberOfSuccessfulChanges = if (changeSuccessful) 1 else 0
+        ) {
             validationErrors = emptyList()
             errors = emptyList()
         }

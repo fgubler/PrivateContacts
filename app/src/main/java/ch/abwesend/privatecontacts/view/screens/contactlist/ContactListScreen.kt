@@ -37,11 +37,12 @@ import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeLoadingDialog
-import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypesResultDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactsUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
@@ -222,11 +223,13 @@ object ContactListScreen {
             is InactiveResource -> { /* nothing to do */ }
             is LoadingResource -> ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1)
             is ReadyResource -> {
-                val numberOfFailed = typeChangeResource.value.failedChanges.size
-                val totalNumber = numberOfFailed + typeChangeResource.value.successfulChanges.size
-                ChangeContactTypesResultDialog(
-                    numberOfErrors = numberOfFailed,
-                    numberOfAttemptedChanges = totalNumber,
+                val result = typeChangeResource.value
+                val flattenedErrors = result.flattenedErrors()
+                ChangeContactTypeErrorDialog(
+                    validationErrors = flattenedErrors.validationErrors,
+                    errors = flattenedErrors.errors,
+                    numberOfAttemptedChanges = result.numberOfAttemptedChanges,
+                    numberOfSuccessfulChanges = result.successfulChanges.size,
                     onClose = errorDialogCloseCallback,
                 )
             }

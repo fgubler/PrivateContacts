@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.domain.model.result
+package ch.abwesend.privatecontacts.domain.model.result.batch
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 
@@ -20,6 +20,9 @@ data class BatchChangeResult<T, TError>(
 
     val isEmpty: Boolean
         get() = successfulChanges.isEmpty() && failedChanges.isEmpty()
+
+    val numberOfAttemptedChanges: Int
+        get() = successfulChanges.size + failedChanges.size
 
     fun combine(other: BatchChangeResult<T, TError>): BatchChangeResult<T, TError> = BatchChangeResult(
         successfulChanges = successfulChanges + other.successfulChanges,
@@ -40,3 +43,5 @@ data class BatchChangeResult<T, TError>(
 }
 
 typealias ContactBatchChangeResult = BatchChangeResult<ContactId, ContactBatchChangeErrors>
+typealias BatchChangeResultWithErrors<T, TError, TValidationError> =
+    BatchChangeResult<T, BatchChangeErrors<TError, TValidationError>>
