@@ -3,7 +3,9 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.re
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -21,7 +23,14 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidCon
                 }
                 contactIds.filter { !contactLoadRepository.doesContactExist(it) }
             }
-            val notDeletedContacts = contactIds.minus(deletedContacts.toSet())
+            val notDeletedContacts = contactIds
+                .minus(deletedContacts.toSet())
+                .associateWith {
+                    ContactBatchChangeErrors(
+                        errors = listOf(UNABLE_TO_DELETE_CONTACT),
+                        validationErrors = emptyList(),
+                    )
+                }
 
             ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
         } catch (t: Throwable) {
@@ -39,9 +48,15 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidCon
             }
         } catch (t: Throwable) {
             logger.error("Failed to check if some contacts were deleted successfully", t)
-            ContactBatchChangeResult.failure(contactIds)
         }
-        val notDeletedContacts = contactIds.minus(deletedContacts.toSet())
+        val notDeletedContacts = contactIds
+            .minus(deletedContacts.toSet())
+            .associateWith {
+                ContactBatchChangeErrors(
+                    errors = listOf(UNABLE_TO_DELETE_CONTACT),
+                    validationErrors = emptyList(),
+                )
+            }
         return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 }

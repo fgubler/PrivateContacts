@@ -41,7 +41,11 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
 
     <string name="error">Error</string>
+    <string name="errors">Errors</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="validation_error">Validation error</string>
+    <string name="validation_errors">Validation errors</string>
+    <string name="unable_to_delete_contact">The contact could not be deleted</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
@@ -131,7 +135,7 @@
 
     <string name="delete_contacts">Delete Contacts</string>
     <string name="delete_contacts_title">Delete Contacts</string>
-    <string name="delete_contacts_text">Deleted contacts cannot be restored. Are you sure you would like to delete these %1$s contact(s)?</string>
+    <string name="delete_contacts_text">Deleted contacts cannot be restored. Are you sure you would like to delete these %1$s contacts?</string>
     <string name="delete_contacts_progress">Contacts are being deleted</string>
     <string name="delete_contacts_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be deleted.</string>
     <string name="delete_contacts_full_error">Something went wrong. No contacts could be deleted.</string>
@@ -151,7 +155,7 @@
     <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can now delete the old one manually.</string>
 
     <string name="type_change_error">While changing the type of the contact, an error occurred and the contact could not be changed. Therefore, the old contact was left unchanged to avoid data-loss.</string>
-    <string name="type_change_batch_error">While changing the types of %1$s contacts, %2$s validation-errors and %3$s other errors occurred. In the case of an error the old contact was not deleted to avoid data-loss.</string>
+    <string name="type_change_batch_error">While changing the types of %1$s contacts, the change failed for %2$s contacts.\nThis was due to %3$s failed validation(s) and %4$s other error(s).\n\nIn the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>

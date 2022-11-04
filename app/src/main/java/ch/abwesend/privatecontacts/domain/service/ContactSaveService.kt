@@ -14,13 +14,13 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere

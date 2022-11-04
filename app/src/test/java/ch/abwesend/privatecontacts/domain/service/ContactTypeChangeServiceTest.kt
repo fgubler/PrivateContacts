@@ -12,6 +12,8 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
@@ -46,6 +48,9 @@ class ContactTypeChangeServiceTest : TestBase() {
     @MockK
     private lateinit var saveService: ContactSaveService
 
+    @MockK
+    private lateinit var loadService: ContactLoadService
+
     private lateinit var underTest: ContactTypeChangeService
 
     override fun setup() {
@@ -56,6 +61,7 @@ class ContactTypeChangeServiceTest : TestBase() {
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { saveService }
+        module.single { loadService }
     }
 
     @Test
@@ -224,5 +230,36 @@ class ContactTypeChangeServiceTest : TestBase() {
 
         assertThat(result).isEqualTo(Failure(expectedErrors))
         coVerify { saveService.saveContact(any()) }
+    }
+    @Test
+    fun `should change the type of multiple contacts`() {
+        val contactIds = listOf(
+            someExternalContactId(contactNo = 123), // success
+            someExternalContactId(contactNo = 456), // error when saving
+            someExternalContactId(contactNo = 789), // error when deleting
+            someExternalContactId(contactNo = 666), // throws an exception
+        )
+        val contacts = contactIds.map { someContactEditable(id = it, type = PUBLIC) }
+        coEvery { loadService.resolveContacts(any()) } returns contacts
+        coEvery { saveService.saveContact(any()) } answers {
+            val contact = firstArg<IContactEditable>()
+            when (contact.id) {
+                in listOf(contactIds[0], contactIds[2]) -> Success
+                contactIds[3] -> throw Exception("Some Test Exception")
+                else -> Failure(UNKNOWN_ERROR)
+            }
+        }
+        coEvery { saveService.deleteContact(any()) } answers {
+            val contact = firstArg<IContactBase>()
+            if (contact.id in listOf(contactIds[0], contactIds[1])) ContactDeleteResult.Success
+            else ContactDeleteResult.Failure(UNKNOWN_ERROR)
+        }
+
+        val result = runBlocking { underTest.changeContactType(contacts, SECRET) }
+
+        assertThat(result.completelyFailed).isFalse
+        assertThat(result.completelySuccessful).isFalse
+        assertThat(result.successfulChanges).isEqualTo(listOf(contactIds[0]))
+        assertThat(result.failedChanges.keys).isEqualTo(setOf(contactIds[1], contactIds[2], contactIds[3]))
     }
 }

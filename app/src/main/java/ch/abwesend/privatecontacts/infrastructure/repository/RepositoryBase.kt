@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
@@ -30,15 +30,11 @@ abstract class RepositoryBase {
         data: Collection<T>,
         operation: suspend (AppDatabase, Collection<T>) -> S
     ): List<S> = withDatabase { database ->
-        if (data.size > MAX_BULK_OPERATION_SIZE) {
-            logger.debug("Trying bulk-operation with ${data.size} elements: splitting up into chunks")
-            val firstBatch = data.take(MAX_BULK_OPERATION_SIZE)
-            val rest = data.minus(firstBatch.toSet())
-            val results = listOf(operation(database, firstBatch)) + bulkOperation(rest, operation)
-
-            results.also { logger.debug("Executed bulk-operation with result $it") }
-        } else {
-            listOf(operation(database, data))
-        }
+        data.chunked(MAX_BULK_OPERATION_SIZE).mapAsync { operation(database, data) }
     }
+
+    protected suspend fun <T, S> bulkLoadingOperation(
+        data: Collection<T>,
+        operation: suspend (AppDatabase, Collection<T>) -> Collection<S>
+    ): List<S> = bulkOperation(data, operation).flatten()
 }

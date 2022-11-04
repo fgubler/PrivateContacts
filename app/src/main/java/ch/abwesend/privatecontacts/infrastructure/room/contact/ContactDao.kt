@@ -81,7 +81,7 @@ interface ContactDao {
     suspend fun count(): Int
 
     @Query("SELECT * FROM ContactEntity WHERE id IN (:ids)")
-    suspend fun findByIds(ids: List<UUID>): List<ContactEntity>
+    suspend fun findByIds(ids: Collection<UUID>): List<ContactEntity>
 
     @Query("SELECT * FROM ContactEntity WHERE id = :id")
     suspend fun findById(id: UUID): ContactEntity?

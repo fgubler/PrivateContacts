@@ -26,11 +26,12 @@ import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.testutil.TestContact
 
-fun someContactId(): ContactIdInternal = ContactIdInternal.randomId()
+fun someContactId(): ContactIdInternal = someInternalContactId()
+fun someInternalContactId(): ContactIdInternal = ContactIdInternal.randomId()
 fun someExternalContactId(contactNo: Long = 442): ContactIdAndroid = ContactIdAndroid(contactNo = contactNo)
 
 fun someContactBase(
-    id: ContactIdInternal = someContactId(),
+    id: ContactIdInternal = someInternalContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "",
@@ -42,7 +43,7 @@ fun someContactBase(
 )
 
 fun someContactEntity(
-    id: ContactIdInternal = someContactId(),
+    id: ContactIdInternal = someInternalContactId(),
     externalContactNo: Long? = null,
     firstName: String = "John",
     lastName: String = "Snow",
@@ -62,7 +63,7 @@ fun someContactEntity(
 )
 
 fun someContactEditable(
-    id: ContactIdInternal = someContactId(),
+    id: ContactId = someInternalContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -110,7 +111,7 @@ fun someExternalContactEditable(
 )
 
 fun someContactEditableWithId(
-    id: ContactIdInternal = someContactId(),
+    id: ContactIdInternal = someInternalContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -134,7 +135,7 @@ fun someContactEditableWithId(
 )
 
 fun someTestContact(
-    id: ContactIdInternal = someContactId(),
+    id: ContactIdInternal = someInternalContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",

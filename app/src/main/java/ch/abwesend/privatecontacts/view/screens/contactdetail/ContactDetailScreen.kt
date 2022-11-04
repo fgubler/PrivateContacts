@@ -10,7 +10,6 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -44,9 +43,10 @@ import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
-import ch.abwesend.privatecontacts.view.components.contact.ChangeContactTypeResultDialog
-import ch.abwesend.privatecontacts.view.components.contact.DeleteContactsResultDialog
-import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
+import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.AppRouter
@@ -113,8 +113,14 @@ object ContactDetailScreen {
     private fun TypeChangeResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
         var errors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
+        val changeSuccessful = validationErrors.isEmpty() && errors.isEmpty()
 
-        ChangeContactTypeResultDialog(validationErrors, errors, numberOfAttemptedChanges = 1) {
+        ChangeContactTypeErrorDialog(
+            validationErrors = validationErrors,
+            errors = errors,
+            numberOfAttemptedChanges = 1,
+            numberOfSuccessfulChanges = if (changeSuccessful) 1 else 0
+        ) {
             validationErrors = emptyList()
             errors = emptyList()
         }
@@ -179,56 +185,27 @@ object ContactDetailScreen {
         onCloseMenu: () -> Unit,
     ) {
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            TypeChangeMenuItem(screenContext, contact, onCloseMenu)
+            MakeContactSecretMenuItem(screenContext.contactDetailViewModel, contact, onCloseMenu)
             DeleteMenuItem(screenContext, contact, onCloseMenu)
         }
     }
 
     @Composable
-    private fun TypeChangeMenuItem(
-        screenContext: ScreenContext,
+    private fun MakeContactSecretMenuItem(
+        viewModel: ContactDetailViewModel,
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
         when (contact.type) {
             SECRET -> Unit
             PUBLIC -> {
-                var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-
-                DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
-                    Text(stringResource(id = R.string.make_contact_secret))
+                MakeContactSecretMenuItem(contacts = setOf(contact)) { changeContact ->
+                    if (changeContact) {
+                        viewModel.changeContactType(contact, SECRET)
+                    }
+                    onCloseMenu()
                 }
-
-                TypeChangeConfirmationDialog(
-                    screenContext = screenContext,
-                    contact = contact,
-                    visible = confirmationDialogVisible,
-                    hideDialog = {
-                        confirmationDialogVisible = false
-                        onCloseMenu()
-                    },
-                )
             }
-        }
-    }
-
-    @Composable
-    private fun TypeChangeConfirmationDialog(
-        screenContext: ScreenContext,
-        contact: IContact,
-        visible: Boolean,
-        hideDialog: () -> Unit,
-    ) {
-        if (visible) {
-            YesNoDialog(
-                title = R.string.make_contact_secret_title,
-                text = R.string.make_contact_secret_text,
-                onYes = {
-                    hideDialog()
-                    screenContext.contactDetailViewModel.changeContactType(contact, SECRET)
-                },
-                onNo = hideDialog
-            )
         }
     }
 
@@ -238,40 +215,11 @@ object ContactDetailScreen {
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
-        var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
-
-        DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
-            Text(stringResource(id = R.string.delete_contact))
-        }
-
-        DeleteConfirmationDialog(
-            screenContext = screenContext,
-            contact = contact,
-            visible = confirmationDialogVisible,
-            hideDialog = {
-                confirmationDialogVisible = false
-                onCloseMenu()
-            },
-        )
-    }
-
-    @Composable
-    private fun DeleteConfirmationDialog(
-        screenContext: ScreenContext,
-        contact: IContact,
-        visible: Boolean,
-        hideDialog: () -> Unit,
-    ) {
-        if (visible) {
-            YesNoDialog(
-                title = R.string.delete_contact_title,
-                text = R.string.delete_contact_text,
-                onYes = {
-                    hideDialog()
-                    screenContext.contactDetailViewModel.deleteContact(contact)
-                },
-                onNo = hideDialog
-            )
+        DeleteContactMenuItem(contacts = setOf(contact)) { delete ->
+            if (delete) {
+                screenContext.contactDetailViewModel.deleteContact(contact)
+            }
+            onCloseMenu()
         }
     }
 
