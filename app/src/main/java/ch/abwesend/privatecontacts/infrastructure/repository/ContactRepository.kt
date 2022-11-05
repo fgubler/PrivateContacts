@@ -15,9 +15,11 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.PAGING_DEPRECATION
@@ -79,9 +81,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         endOfPhoneNumber: String
     ): List<ContactWithPhoneNumbers> {
         val contactData = contactDataRepository.findPhoneNumbersEndingOn(endOfPhoneNumber)
-        return withDatabase { database ->
-            val contactIds = contactData.keys.map { it.uuid }
-            val contacts = database.contactDao().findByIds(contactIds)
+        val contactIds = contactData.keys.map { it.uuid }
+        return bulkLoadingOperation(contactIds) { database, chunkedContactIds ->
+            val contacts = database.contactDao().findByIds(chunkedContactIds)
 
             contacts.map { contactEntity ->
                 ContactWithPhoneNumbers(
@@ -189,7 +191,15 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }.flatten()
         logger.debug("Deleted ${deletedContacts.size} of ${contactIds.size} contacts successfully")
 
-        val notDeletedContacts = contactIds.minus(deletedContacts.toSet())
+        val notDeletedContacts = contactIds
+            .minus(deletedContacts.toSet())
+            .associateWith {
+                ContactBatchChangeErrors(
+                    errors = listOf(UNABLE_TO_DELETE_CONTACT),
+                    validationErrors = emptyList(),
+                )
+            }
+
         if (notDeletedContacts.isNotEmpty()) {
             logger.warning("Failed to delete ${notDeletedContacts.size} of ${contactIds.size} contacts")
         }
