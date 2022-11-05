@@ -11,10 +11,10 @@ The app supports caller-detection, displaying a notification if a known contact 
 
 Additional features
 - Displaying the normal contacts of the phone.
+- Moving contacts from the standard Android database to the app (and removing them from the standard database so they are no longer visible to other apps)
 
 ## What the app will be able to do in the future
 - Connecting the app to the standard Android database for contacts. 
-  - Moving contacts from the standard Android database to the app (and removing them from the standard database so they are no longer visible to other apps)
   - Editing existing contacts from the standard Android database
   - Creating new contacts in the standard Android database
   - Moving contacts from Private Contacts back the the standard Android contact database
@@ -26,6 +26,7 @@ Additional features
 - Improvements of caller detection
 - Maybe an additional category of "Anonymized" contacts which are shared with other apps but under an alias.
 - Encryption and password protection
+- Suggestions are always welcome...
 
 ## Screenshots
 
