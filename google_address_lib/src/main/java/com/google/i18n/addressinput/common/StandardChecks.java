@@ -41,31 +41,31 @@ import java.util.Map;
  * Loader for a map defining the standard checks to perform on AddressFields.
  */
 public final class StandardChecks {
-  private StandardChecks() {
-  }
+    private StandardChecks() {
+    }
 
-  public static final Map<AddressField, List<AddressProblemType>> PROBLEM_MAP;
+    public static final Map<AddressField, List<AddressProblemType>> PROBLEM_MAP;
 
-  static {
-    Map<AddressField, List<AddressProblemType>> map =
-        new HashMap<AddressField, List<AddressProblemType>>();
+    static {
+        Map<AddressField, List<AddressProblemType>> map =
+                new HashMap<AddressField, List<AddressProblemType>>();
 
-    addToMap(map, COUNTRY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
-    addToMap(map, ADMIN_AREA, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
-    addToMap(map, LOCALITY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
-    addToMap(map, DEPENDENT_LOCALITY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
-    addToMap(map, POSTAL_CODE, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, INVALID_FORMAT,
-        MISMATCHING_VALUE);
-    addToMap(map, STREET_ADDRESS, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
-    addToMap(map, SORTING_CODE, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
-    addToMap(map, ORGANIZATION, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
-    addToMap(map, RECIPIENT, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
+        addToMap(map, COUNTRY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
+        addToMap(map, ADMIN_AREA, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
+        addToMap(map, LOCALITY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
+        addToMap(map, DEPENDENT_LOCALITY, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, UNKNOWN_VALUE);
+        addToMap(map, POSTAL_CODE, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD, INVALID_FORMAT,
+                MISMATCHING_VALUE);
+        addToMap(map, STREET_ADDRESS, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
+        addToMap(map, SORTING_CODE, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
+        addToMap(map, ORGANIZATION, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
+        addToMap(map, RECIPIENT, UNEXPECTED_FIELD, MISSING_REQUIRED_FIELD);
 
-    PROBLEM_MAP = Collections.unmodifiableMap(map);
-  }
+        PROBLEM_MAP = Collections.unmodifiableMap(map);
+    }
 
-  private static void addToMap(Map<AddressField, List<AddressProblemType>> map, AddressField field,
-      AddressProblemType... problems) {
-    map.put(field, Collections.unmodifiableList(Arrays.asList(problems)));
-  }
+    private static void addToMap(Map<AddressField, List<AddressProblemType>> map, AddressField field,
+                                 AddressProblemType... problems) {
+        map.put(field, Collections.unmodifiableList(Arrays.asList(problems)));
+    }
 }

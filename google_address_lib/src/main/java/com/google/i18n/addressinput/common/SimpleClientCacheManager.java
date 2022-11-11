@@ -22,20 +22,20 @@ package com.google.i18n.addressinput.common;
 // This is an external class and part of the widget's public API.
 // TODO: Review public API for external classes and tidy JavaDoc.
 public final class SimpleClientCacheManager implements ClientCacheManager {
-  // URL to get public address data.
-  static final String PUBLIC_ADDRESS_SERVER = "https://chromium-i18n.appspot.com/ssl-address";
+    // URL to get public address data.
+    static final String PUBLIC_ADDRESS_SERVER = "https://chromium-i18n.appspot.com/ssl-address";
 
-  @Override
-  public String get(String key) {
-    return "";
-  }
+    @Override
+    public String get(String key) {
+        return "";
+    }
 
-  @Override
-  public void put(String key, String data) {
-  }
+    @Override
+    public void put(String key, String data) {
+    }
 
-  @Override
-  public String getAddressServerUrl() {
-    return PUBLIC_ADDRESS_SERVER;
-  }
+    @Override
+    public String getAddressServerUrl() {
+        return PUBLIC_ADDRESS_SERVER;
+    }
 }

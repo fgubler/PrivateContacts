@@ -22,5 +22,5 @@ package com.google.i18n.addressinput.common;
  * suggestion in the dropdown list.
  */
 public interface OnAddressSelectedListener {
-  void onAddressSelected(AddressData addressData);
+    void onAddressSelected(AddressData addressData);
 }

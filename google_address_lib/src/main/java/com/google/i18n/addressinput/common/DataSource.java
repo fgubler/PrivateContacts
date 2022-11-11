@@ -25,19 +25,19 @@ package com.google.i18n.addressinput.common;
 // TODO: Add a way to load static data without using the AddressVerificationData and remove
 // this interface (along with AddressVerificationData).
 public interface DataSource {
-  /**
-   * Returns the default JSON data for the given key string (this method should complete immediately
-   * and must not trigger any network requests.
-   */
-  AddressVerificationNodeData getDefaultData(String key);
+    /**
+     * Returns the default JSON data for the given key string (this method should complete immediately
+     * and must not trigger any network requests.
+     */
+    AddressVerificationNodeData getDefaultData(String key);
 
-  /**
-   * A <b>blocking</b> method to return the JSON data for the given key string. This method will
-   * block the current thread until data is available or until a timeout occurs (at which point the
-   * default data will be returned). All networking and failure states are hidden from the caller by
-   * this API.
-   */
-  // TODO: This is very poor API and should be changed to avoid blocking and let the caller
-  // manage requests asynchronously.
-  AddressVerificationNodeData get(String key);
+    /**
+     * A <b>blocking</b> method to return the JSON data for the given key string. This method will
+     * block the current thread until data is available or until a timeout occurs (at which point the
+     * default data will be returned). All networking and failure states are hidden from the caller by
+     * this API.
+     */
+    // TODO: This is very poor API and should be changed to avoid blocking and let the caller
+    // manage requests asynchronously.
+    AddressVerificationNodeData get(String key);
 }

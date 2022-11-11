@@ -26,21 +26,21 @@ import java.util.Map;
  * AddressDataKey.
  */
 public final class AddressVerificationNodeData {
-  private final Map<AddressDataKey, String> map;
+    private final Map<AddressDataKey, String> map;
 
-  public AddressVerificationNodeData(Map<AddressDataKey, String> map) {
-    Util.checkNotNull(map, "Cannot construct StandardNodeData with null map");
-    this.map = map;
-  }
+    public AddressVerificationNodeData(Map<AddressDataKey, String> map) {
+        Util.checkNotNull(map, "Cannot construct StandardNodeData with null map");
+        this.map = map;
+    }
 
-  public boolean containsKey(AddressDataKey key) {
-    return map.containsKey(key);
-  }
+    public boolean containsKey(AddressDataKey key) {
+        return map.containsKey(key);
+    }
 
-  /**
-   * Gets the value for a particular key in the map.
-   */
-  public String get(AddressDataKey key) {
-    return map.get(key);
-  }
+    /**
+     * Gets the value for a particular key in the map.
+     */
+    public String get(AddressDataKey key) {
+        return map.get(key);
+    }
 }

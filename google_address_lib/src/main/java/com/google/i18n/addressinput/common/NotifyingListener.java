@@ -21,26 +21,26 @@ package com.google.i18n.addressinput.common;
  */
 // TODO: Consider dealing with interruption in a more recoverable way.
 public final class NotifyingListener implements DataLoadListener {
-  private boolean done = false;
+    private boolean done = false;
 
-  @Override
-  public void dataLoadingBegin() {
-  }
-
-  @Override
-  public synchronized void dataLoadingEnd() {
-    done = true;
-    notifyAll();
-  }
-
-  /**
-   * Waits for a call to {@link #dataLoadingEnd} to have occurred. If this thread is interrupted,
-   * the {@code InterruptedException} is propagated immediately and the loading may not yet have
-   * finished. This leaves callers in a potentially unrecoverable state.
-   */
-  public synchronized void waitLoadingEnd() throws InterruptedException {
-    while (!done) {
-      wait();
+    @Override
+    public void dataLoadingBegin() {
     }
-  }
+
+    @Override
+    public synchronized void dataLoadingEnd() {
+        done = true;
+        notifyAll();
+    }
+
+    /**
+     * Waits for a call to {@link #dataLoadingEnd} to have occurred. If this thread is interrupted,
+     * the {@code InterruptedException} is propagated immediately and the loading may not yet have
+     * finished. This leaves callers in a potentially unrecoverable state.
+     */
+    public synchronized void waitLoadingEnd() throws InterruptedException {
+        while (!done) {
+            wait();
+        }
+    }
 }

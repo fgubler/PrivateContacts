@@ -22,10 +22,18 @@ package com.google.i18n.addressinput.common;
 // This is an external class and part of the widget's public API.
 // TODO: Review public API for external classes and tidy JavaDoc.
 public interface ClientCacheManager {
-  /** Get the data that is cached for the given key. */
-  String get(String key);
-  /** Put the data for the given key into the cache. */
-  void put(String key, String data);
-  /** Get the URL of the server that serves address metadata. */
-  String getAddressServerUrl();
+    /**
+     * Get the data that is cached for the given key.
+     */
+    String get(String key);
+
+    /**
+     * Put the data for the given key into the cache.
+     */
+    void put(String key, String data);
+
+    /**
+     * Get the URL of the server that serves address metadata.
+     */
+    String getAddressServerUrl();
 }

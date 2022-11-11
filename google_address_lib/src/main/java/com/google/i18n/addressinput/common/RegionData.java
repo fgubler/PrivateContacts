@@ -22,85 +22,85 @@ package com.google.i18n.addressinput.common;
 // This class used to purport to be immutable, but it is no such thing.
 // TODO: Make this class actually immutable and not just pretending to be immutable.
 public final class RegionData {
-  private String key;
-  private String name;
+    private String key;
+    private String name;
 
-  /**
-   * Create a new RegionData object.
-   */
-  private RegionData() {
-  }
-
-  /**
-   * Copy constructor. data should not be null.
-   *
-   * @param data A populated instance of RegionData
-   */
-  private RegionData(RegionData data) {
-    Util.checkNotNull(data);
-    this.key = data.key;
-    this.name = data.name;
-  }
-
-  /**
-   * Gets the key of the region. For example, California's key is "CA".
-   */
-  public String getKey() {
-    return key;
-  }
-
-  /**
-   * Gets the name. Returns null if not specified.
-   */
-  String getName() {
-    return name;
-  }
-
-  /**
-   * Gets the best display name. Returns the name if this is not null, otherwise the key.
-   */
-  public String getDisplayName() {
-    return (name != null) ? name : key;
-  }
-
-  /**
-   * Checks if the input subkey is the name (in Latin or local script) of the region. Returns
-   * false if subkey is not a valid name for the region, or the input subkey is null.
-   *
-   * @param subkey a string that refers to the name of a geo location. Like "California", "CA", or
-   *               "Mountain View". Names in the local script are also supported.
-   */
-  public boolean isValidName(String subkey) {
-    if (subkey == null) {
-      return false;
-    }
-      return subkey.equalsIgnoreCase(key) || subkey.equalsIgnoreCase(name);
-  }
-
-  /**
-   * A builder class to facilitate the creation of RegionData objects.
-   */
-  // TODO: Replace this broken builder implementation with a simple static factory method.
-  public static class Builder {
-    RegionData data = new RegionData();
-
-    public RegionData build() {
-      return new RegionData(data);
-    }
-
-    public Builder setKey(String key) {
-      Util.checkNotNull(key, "Key should not be null.");
-      data.key = key;
-      return this;
+    /**
+     * Create a new RegionData object.
+     */
+    private RegionData() {
     }
 
     /**
-     * Sets name of the region. For example, "California". If the name is an empty string, sets
-     * it to null.
+     * Copy constructor. data should not be null.
+     *
+     * @param data A populated instance of RegionData
      */
-    public Builder setName(String name) {
-      data.name = Util.trimToNull(name);
-      return this;
+    private RegionData(RegionData data) {
+        Util.checkNotNull(data);
+        this.key = data.key;
+        this.name = data.name;
     }
-  }
+
+    /**
+     * Gets the key of the region. For example, California's key is "CA".
+     */
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Gets the name. Returns null if not specified.
+     */
+    String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the best display name. Returns the name if this is not null, otherwise the key.
+     */
+    public String getDisplayName() {
+        return (name != null) ? name : key;
+    }
+
+    /**
+     * Checks if the input subkey is the name (in Latin or local script) of the region. Returns
+     * false if subkey is not a valid name for the region, or the input subkey is null.
+     *
+     * @param subkey a string that refers to the name of a geo location. Like "California", "CA", or
+     *               "Mountain View". Names in the local script are also supported.
+     */
+    public boolean isValidName(String subkey) {
+        if (subkey == null) {
+            return false;
+        }
+        return subkey.equalsIgnoreCase(key) || subkey.equalsIgnoreCase(name);
+    }
+
+    /**
+     * A builder class to facilitate the creation of RegionData objects.
+     */
+    // TODO: Replace this broken builder implementation with a simple static factory method.
+    public static class Builder {
+        RegionData data = new RegionData();
+
+        public RegionData build() {
+            return new RegionData(data);
+        }
+
+        public Builder setKey(String key) {
+            Util.checkNotNull(key, "Key should not be null.");
+            data.key = key;
+            return this;
+        }
+
+        /**
+         * Sets name of the region. For example, "California". If the name is an empty string, sets
+         * it to null.
+         */
+        public Builder setName(String name) {
+            data.name = Util.trimToNull(name);
+            return this;
+        }
+    }
 }
