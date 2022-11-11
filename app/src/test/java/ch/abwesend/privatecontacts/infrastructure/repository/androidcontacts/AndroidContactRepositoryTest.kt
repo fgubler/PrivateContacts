@@ -81,7 +81,6 @@ class AndroidContactRepositoryTest : TestBase() {
             val arguments: List<String> = args.filterIsInstance<String>()
             arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()
         }
-
     }
 
     @Test
