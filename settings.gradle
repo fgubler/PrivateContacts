@@ -13,4 +13,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Private Contacts"
+
 include ":app"
+include ':google_address_lib_main'
+include ':google_address_lib_helper'
