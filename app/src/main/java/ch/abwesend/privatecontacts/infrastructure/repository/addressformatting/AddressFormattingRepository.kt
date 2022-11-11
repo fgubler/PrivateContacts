@@ -1,6 +1,5 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.addressformatting
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddressDto
 import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.util.Constants
 import com.google.i18n.addressinput.common.AddressData
@@ -16,19 +15,30 @@ class AddressFormattingRepository : IAddressFormattingRepository {
         Locale.getISOCountries().toSet()
     }
 
-    override fun formatAddress(address: PhysicalAddressDto): String {
+    /**
+     * [neighborhood] will be ignored by the library
+     * [country] important for the locale but will not be part of the returned address
+     */
+    override fun formatAddress(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        country: String,
+    ): String {
         val currentLocale = Locale.getDefault()
-        val validCountry = isValidCountryCode(address.country)
-        val countryCode = if (validCountry) address.country else currentLocale.country
+        val validCountry = isValidCountryCode(country)
+        val countryCode = if (validCountry) country else currentLocale.country
         val languageCode = if (validCountry) null else currentLocale.language
 
         val formatInterpreter = FormatInterpreter(FormOptions().createSnapshot())
         val builder = AddressData.Builder()
-            .setAddress(address.street)
-            .setDependentLocality(address.neighborhood)
-            .setLocality(address.city)
-            .setPostalCode(address.postalCode)
-            .setAdminArea(address.region)
+            .setAddress(street)
+            .setDependentLocality(neighborhood)
+            .setLocality(city)
+            .setPostalCode(postalCode)
+            .setAdminArea(region)
             .setCountry(countryCode)
 
         languageCode?.let { builder.setLanguageCode(it) }

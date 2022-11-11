@@ -1,7 +1,12 @@
 package ch.abwesend.privatecontacts.domain.repository
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddressDto
-
 interface IAddressFormattingRepository {
-    fun formatAddress(address: PhysicalAddressDto): String
+    fun formatAddress(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        country: String,
+    ): String
 }
