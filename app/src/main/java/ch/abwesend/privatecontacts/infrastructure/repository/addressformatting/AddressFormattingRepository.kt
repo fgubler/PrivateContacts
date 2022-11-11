@@ -44,8 +44,43 @@ class AddressFormattingRepository : IAddressFormattingRepository {
         languageCode?.let { builder.setLanguageCode(it) }
         val addressData = builder.build()
 
-        val addressFragments: List<String?> = formatInterpreter.getEnvelopeAddress(addressData)
-        return addressFragments.joinToString(separator = Constants.linebreak)
+        val addressFragments: List<String?> = formatInterpreter.getEnvelopeAddress(addressData).orEmpty()
+        val address = addressFragments.filterNotNull().joinToString(separator = Constants.linebreak)
+        return address.ifEmpty {
+            formatAddressFallback(
+                street = street,
+                neighborhood = neighborhood,
+                postalCode = postalCode,
+                city = city,
+                region = region,
+                country = countryCode,
+            )
+        }
+    }
+
+    private fun formatAddressFallback(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        country: String,
+    ): String {
+        val cityWithPostalCode = listOf(postalCode, city)
+            .filterNot { it.isEmpty() }
+            .joinToString(separator = " ")
+
+        val addressFragments = listOfNotNull(
+            street,
+            neighborhood,
+            cityWithPostalCode,
+            region,
+            country
+        )
+
+        return addressFragments
+            .filterNot { it.isEmpty() }
+            .joinToString(separator = ",${Constants.linebreak}")
     }
 
     private fun isValidCountryCode(country: String): Boolean = countryCodes.contains(country)

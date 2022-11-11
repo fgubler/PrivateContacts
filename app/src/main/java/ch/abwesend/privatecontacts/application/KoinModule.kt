@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.Dispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -37,6 +38,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -79,6 +81,7 @@ internal val koinModule = module {
     single<IAndroidContactSaveRepository> { AndroidContactSaveRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
+    single<IAddressFormattingRepository> { AddressFormattingRepository() }
     single { ContactDataRepository() }
     single { ContactGroupRepository() }
     single { ContactImageRepository() }
