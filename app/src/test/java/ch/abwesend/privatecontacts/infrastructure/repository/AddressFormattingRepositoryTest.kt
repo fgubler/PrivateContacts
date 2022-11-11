@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddressDto
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -51,7 +52,7 @@ class AddressFormattingRepositoryTest : TestBase() {
         val region = ""
         val expectedAddress = ""
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -73,7 +74,7 @@ class AddressFormattingRepositoryTest : TestBase() {
         val region = ""
         val expectedAddress = ""
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -99,7 +100,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             else -> throwInvalidCountry(countryCode)
         }
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -121,7 +122,7 @@ class AddressFormattingRepositoryTest : TestBase() {
         val region = ""
         val expectedAddress = street
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -143,7 +144,7 @@ class AddressFormattingRepositoryTest : TestBase() {
         val region = ""
         val expectedAddress = "$street$linebreak$city"
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -169,7 +170,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             else -> throwInvalidCountry(countryCode)
         }
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -195,7 +196,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             else -> throwInvalidCountry(countryCode)
         }
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -216,7 +217,7 @@ class AddressFormattingRepositoryTest : TestBase() {
         val region = "Superbia"
         val expectedAddress = "$street$linebreak$postalCode $city"
 
-        val result = underTest.formatAddress(
+        val result = formatAddress(
             street = street,
             neighborhood = neighborhood,
             postalCode = postalCode,
@@ -227,6 +228,24 @@ class AddressFormattingRepositoryTest : TestBase() {
 
         assertThat(result).isEqualTo(expectedAddress)
     }
+
+    private fun formatAddress(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        country: String,
+    ): String = underTest.formatAddress(
+        PhysicalAddressDto(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            country = country,
+        )
+    )
 
     private fun throwInvalidCountry(country: String): Nothing =
         throw IllegalArgumentException("Invalid countryCode '$country'")
