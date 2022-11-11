@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.removeDuplicates
@@ -39,15 +40,25 @@ class AndroidContactDataFactoryTest : TestBase() {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
+    @MockK
+    private lateinit var addressFormattingRepository: IAddressFormattingRepository
+
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { telephoneService }
+        module.single { addressFormattingRepository }
     }
 
     override fun setup() {
         super.setup()
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
+        every {
+            addressFormattingRepository.formatAddress(any(), any(), any(), any(), any(), any())
+        } answers {
+            val arguments: List<String> = args.map { it as String }
+            arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()
+        }
     }
 
     @Test
