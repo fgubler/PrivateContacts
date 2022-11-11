@@ -49,13 +49,22 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase(), IAndroidCon
         }
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
+        val contactRaw = resolveContactRaw(contactId)
+        return resolveContact(contactId, contactRaw)
+    }
+
+    suspend fun resolveContact(contactId: IContactIdExternal, contactRaw: Contact): IContact {
+        val contactGroups = loadContactGroups(contactRaw)
+
+        return contactRaw.toContact(groups = contactGroups, rethrowExceptions = true)
+            ?: throw IllegalStateException("Could not convert contact $contactId to local data-model")
+    }
+
+    suspend fun resolveContactRaw(contactId: IContactIdExternal): Contact {
         logger.debug("Resolving contact for id $contactId")
         checkContactReadPermission { exception -> throw exception }
 
-        val contactRaw = loadFullContact(contactId.contactNo)
-        val contactGroups = loadContactGroups(contactRaw)
-
-        return contactRaw?.toContact(groups = contactGroups, rethrowExceptions = true)
+        return loadFullContact(contactId.contactNo)
             ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 

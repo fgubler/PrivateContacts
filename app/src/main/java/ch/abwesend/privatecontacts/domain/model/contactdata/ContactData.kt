@@ -19,6 +19,7 @@ sealed interface ContactData {
     val modelStatus: ModelStatus
 
     val displayValue: String
+    val value: Any?
 
     fun changeType(type: ContactDataType): ContactData
     fun overrideStatus(newStatus: ModelStatus): ContactData
