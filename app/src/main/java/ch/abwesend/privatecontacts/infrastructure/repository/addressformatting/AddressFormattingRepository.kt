@@ -1,0 +1,52 @@
+package ch.abwesend.privatecontacts.infrastructure.repository.addressformatting
+
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.util.Constants
+import com.google.i18n.addressinput.common.AddressData
+import com.google.i18n.addressinput.common.FormOptions
+import com.google.i18n.addressinput.common.FormatInterpreter
+import java.util.Locale
+
+/**
+ * See https://stackoverflow.com/questions/11269172/address-formatting-based-on-locale-in-android
+ */
+class AddressFormattingRepository : IAddressFormattingRepository {
+    private val countryCodes: Set<String> by lazy {
+        Locale.getISOCountries().toSet()
+    }
+
+    /**
+     * [neighborhood] will be ignored by the library
+     * [country] important for the locale but will not be part of the returned address
+     */
+    override fun formatAddress(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        country: String,
+    ): String {
+        val currentLocale = Locale.getDefault()
+        val validCountry = isValidCountryCode(country)
+        val countryCode = if (validCountry) country else currentLocale.country
+        val languageCode = if (validCountry) null else currentLocale.language
+
+        val formatInterpreter = FormatInterpreter(FormOptions().createSnapshot())
+        val builder = AddressData.Builder()
+            .setAddress(street)
+            .setDependentLocality(neighborhood)
+            .setLocality(city)
+            .setPostalCode(postalCode)
+            .setAdminArea(region)
+            .setCountry(countryCode)
+
+        languageCode?.let { builder.setLanguageCode(it) }
+        val addressData = builder.build()
+
+        val addressFragments: List<String?> = formatInterpreter.getEnvelopeAddress(addressData)
+        return addressFragments.joinToString(separator = Constants.linebreak)
+    }
+
+    private fun isValidCountryCode(country: String): Boolean = countryCodes.contains(country)
+}
