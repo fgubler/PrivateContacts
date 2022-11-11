@@ -26,6 +26,7 @@ class AddressFormattingRepository : IAddressFormattingRepository {
         city: String,
         region: String,
         country: String,
+        useFallbackForEmptyAddress: Boolean,
     ): String {
         val currentLocale = Locale.getDefault()
         val validCountry = isValidCountryCode(country)
@@ -49,14 +50,16 @@ class AddressFormattingRepository : IAddressFormattingRepository {
             .map { it?.trim() }
             .filterNot { it.isNullOrEmpty() }
             .ifEmpty {
-                getFallbackAddressFragments(
-                    street = street,
-                    neighborhood = neighborhood,
-                    postalCode = postalCode,
-                    city = city,
-                    region = region,
-                    country = countryCode,
-                )
+                if (useFallbackForEmptyAddress) {
+                    getFallbackAddressFragments(
+                        street = street,
+                        neighborhood = neighborhood,
+                        postalCode = postalCode,
+                        city = city,
+                        region = region,
+                        country = countryCode,
+                    )
+                } else emptyList()
             }
 
         return addressFragments

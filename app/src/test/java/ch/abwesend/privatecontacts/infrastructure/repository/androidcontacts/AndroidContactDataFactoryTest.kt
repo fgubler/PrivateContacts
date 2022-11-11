@@ -56,7 +56,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         every {
             addressFormattingRepository.formatAddress(any(), any(), any(), any(), any(), any())
         } answers {
-            val arguments: List<String> = args.map { it as String }
+            val arguments: List<String> = args.filterIsInstance<String>()
             arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()
         }
     }

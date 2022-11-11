@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -45,6 +46,9 @@ class AndroidContactRepositoryTest : TestBase() {
     @MockK
     private lateinit var permissionService: PermissionService
 
+    @MockK
+    private lateinit var addressFormattingRepository: IAddressFormattingRepository
+
     @RelaxedMockK
     private lateinit var context: Context
 
@@ -59,6 +63,7 @@ class AndroidContactRepositoryTest : TestBase() {
         module.single { contactStore }
         module.single { permissionService }
         module.single { context }
+        module.single { addressFormattingRepository }
     }
 
     override fun setup() {
@@ -69,6 +74,14 @@ class AndroidContactRepositoryTest : TestBase() {
         mockkStatic(FetchRequest<*>::asFlow)
         every { fetchRequest.asFlow() } returns flow
         every { contactStore.fetchContacts(any(), any(), any()) } returns fetchRequest
+
+        every {
+            addressFormattingRepository.formatAddress(any(), any(), any(), any(), any(), any())
+        } answers {
+            val arguments: List<String> = args.filterIsInstance<String>()
+            arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()
+        }
+
     }
 
     @Test

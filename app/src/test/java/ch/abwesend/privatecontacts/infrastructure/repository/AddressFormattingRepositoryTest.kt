@@ -25,7 +25,7 @@ private const val US = "US"
 @ExtendWith(MockKExtension::class)
 class AddressFormattingRepositoryTest : TestBase() {
     private lateinit var underTest: AddressFormattingRepository
-    private val linebreak = Constants.linebreak
+    private val linebreak = ",${Constants.linebreak}"
 
     private lateinit var previousLocale: Locale
 
@@ -58,6 +58,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -80,6 +81,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -106,6 +108,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -128,6 +131,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -150,6 +154,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -176,6 +181,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -202,6 +208,7 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = countryCode,
+            useFallbackForEmptyAddress = false,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
@@ -223,6 +230,30 @@ class AddressFormattingRepositoryTest : TestBase() {
             city = city,
             region = region,
             country = "something really invalid",
+            useFallbackForEmptyAddress = false,
+        )
+
+        assertThat(result).isEqualTo(expectedAddress)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = [DE, US])
+    fun `should use the fallback if the lib-logic returns an empty string`(countryCode: String) {
+        val street = ""
+        val neighborhood = "This is a great neighborhood"
+        val postalCode = ""
+        val city = ""
+        val region = ""
+        val expectedAddress = "$neighborhood$linebreak$countryCode"
+
+        val result = underTest.formatAddress(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            country = countryCode,
+            useFallbackForEmptyAddress = true,
         )
 
         assertThat(result).isEqualTo(expectedAddress)
