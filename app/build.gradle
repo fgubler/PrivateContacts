@@ -16,12 +16,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
-        targetSdk 32
+        targetSdk 33
         versionCode 23
         versionName "2.3.2"
 
@@ -77,9 +77,9 @@ dependencies {
 
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.8.0"
-    implementation "androidx.appcompat:appcompat:1.4.2"
-    implementation "com.google.android.material:material:1.6.1"
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.appcompat:appcompat:1.5.1"
+    implementation "com.google.android.material:material:1.7.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -95,8 +95,8 @@ dependencies {
     implementation "androidx.compose.material:material-icons-extended:$composeVersion"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.5.1"
-    implementation "androidx.navigation:navigation-compose:2.5.1"
+    implementation "androidx.activity:activity-compose:1.6.1"
+    implementation "androidx.navigation:navigation-compose:2.5.3"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -112,7 +112,7 @@ dependencies {
 
     // Others
     implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha15"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' // beware 1.2.0 might not work
@@ -151,8 +151,8 @@ dependencies {
 
     // Instrumented Tests
     androidTestImplementation "org.assertj:assertj-core:3.21.0"
-    androidTestImplementation "androidx.test.ext:junit:1.1.3"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.4.0"
+    androidTestImplementation "androidx.test.ext:junit:1.1.4"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.0"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:${composeVersion}"
 
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
