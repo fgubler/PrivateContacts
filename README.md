@@ -38,6 +38,7 @@ Additional features
 (this is a non-complete list of the most important libraries used; please consult the build.gradle for the complete list)
 - "Jetpack Compose" by Google for the UI: https://developer.android.com/jetpack/compose
 - "Contact Store" by Alex Styl for accessing the contacts: https://github.com/alexstyl/contactstore
+- "libaddressinput" by Google for formatting addresses: https://github.com/google/libaddressinput
 
 ## Contact
 * Florian Gubler
