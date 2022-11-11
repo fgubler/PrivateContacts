@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -103,9 +104,10 @@ private fun SearchTopBar(
     changeSearchText: (String) -> Unit,
     resetSearch: () -> Unit
 ) {
+    val backgroundColor = MaterialTheme.colors.background
     TopAppBar(
-        backgroundColor = Color.White,
-        title = { SearchField(searchText) { changeSearchText(it) } },
+        backgroundColor = backgroundColor,
+        title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
     )
     BackHandler { resetSearch() }
@@ -191,7 +193,7 @@ private fun DeleteMenuItem(
 
 @ExperimentalComposeUiApi
 @Composable
-private fun SearchField(query: String, onQueryChanged: (String) -> Unit) {
+private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val manager = createKeyboardAndFocusManager()
 
@@ -199,7 +201,7 @@ private fun SearchField(query: String, onQueryChanged: (String) -> Unit) {
         value = query,
         onValueChange = onQueryChanged,
         maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = backgroundColor),
         modifier = Modifier.focusRequester(focusRequester),
         placeholder = { Text(text = stringResource(id = R.string.search)) },
         leadingIcon = { SearchIcon() },
