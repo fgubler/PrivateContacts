@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOW
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
+import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
@@ -30,6 +31,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactEdit
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
@@ -51,17 +53,23 @@ class ContactTypeChangeServiceTest : TestBase() {
     @MockK
     private lateinit var loadService: ContactLoadService
 
+    @MockK
+    private lateinit var contactGroupRepository: IContactGroupRepository
+
     private lateinit var underTest: ContactTypeChangeService
 
     override fun setup() {
         super.setup()
         underTest = ContactTypeChangeService()
+
+        coJustRun { contactGroupRepository.createMissingContactGroups(any()) }
     }
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { saveService }
         module.single { loadService }
+        module.single { contactGroupRepository }
     }
 
     @Test
