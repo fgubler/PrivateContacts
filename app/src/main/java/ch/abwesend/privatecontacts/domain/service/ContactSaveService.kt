@@ -41,7 +41,7 @@ class ContactSaveService {
 
         return when (contact.type) {
             ContactType.SECRET -> saveContactInternally(contact)
-            ContactType.PUBLIC -> ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+            ContactType.PUBLIC -> saveContactExternally(contact)
         }
     }
 
@@ -55,6 +55,19 @@ class ContactSaveService {
 
         return if (contactIdChanged || contact.isNew) contactRepository.createContact(newContactId, contact)
         else contactRepository.updateContact(newContactId, contact)
+    }
+
+    private suspend fun saveContactExternally(contact: IContact): ContactSaveResult {
+        val oldContactId = contact.id
+        val newContactId = when (oldContactId) {
+            is IContactIdInternal -> return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+            is IContactIdExternal -> oldContactId
+        }
+        val contactIdChanged = newContactId != oldContactId
+
+        return if (contactIdChanged || contact.isNew) {
+            ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+        } else androidContactRepository.updateContact(newContactId, contact)
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {

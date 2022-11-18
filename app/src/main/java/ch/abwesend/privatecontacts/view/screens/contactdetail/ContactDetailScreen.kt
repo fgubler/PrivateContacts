@@ -33,7 +33,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -159,12 +158,9 @@ object ContactDetailScreen {
             },
             actions = {
                 if (contact != null) {
-                    // TODO handle external contacts
-                    if (!contact.isExternal) {
-                        EditIconButton(enabled = buttonsEnabled) {
-                            screenContext.contactEditViewModel.selectContact(contact)
-                            screenContext.router.navigateToScreen(Screen.ContactEdit)
-                        }
+                    EditIconButton(enabled = buttonsEnabled) {
+                        screenContext.contactEditViewModel.selectContact(contact)
+                        screenContext.router.navigateToScreen(Screen.ContactEdit)
                     }
                     MoreActionsIconButton(enabled = buttonsEnabled) {
                         dropDownMenuExpanded = true
