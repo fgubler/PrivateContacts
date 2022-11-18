@@ -68,6 +68,8 @@
     <string name="type_anniversary">Anniversary</string>
     <string name="type_main">Main</string>
     <string name="type_relationship_sibling">Sibling</string>
+    <string name="type_relationship_brother">Brother</string>
+    <string name="type_relationship_sister">Sister</string>
     <string name="type_relationship_parent">Parent</string>
     <string name="type_relationship_child">Child</string>
     <string name="type_relationship_partner">Partner</string>

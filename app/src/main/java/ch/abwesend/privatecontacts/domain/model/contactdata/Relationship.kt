@@ -13,12 +13,13 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipBrother
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipChild
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFriend
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipParent
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipPartner
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipRelative
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSibling
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSister
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipWork
 
 data class Relationship(
@@ -60,7 +61,8 @@ data class Relationship(
         private val defaultAllowedTypes = listOf(
             RelationshipParent,
             RelationshipChild,
-            RelationshipSibling,
+            RelationshipBrother,
+            RelationshipSister,
             RelationshipPartner,
             RelationshipFriend,
             RelationshipRelative,

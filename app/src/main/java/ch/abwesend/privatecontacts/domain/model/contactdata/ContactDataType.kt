@@ -16,10 +16,12 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE_BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_BROTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SIBLING
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SISTER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_WORK
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 
@@ -95,10 +97,23 @@ sealed class ContactDataType {
         override val priority: Int = 410
     }
 
+    object RelationshipBrother : ContactDataType() {
+        override val key: Key = RELATIONSHIP_BROTHER
+        override val titleRes: Int = R.string.type_relationship_brother
+        override val priority: Int = 800
+    }
+
+    object RelationshipSister : ContactDataType() {
+        override val key: Key = RELATIONSHIP_SISTER
+        override val titleRes: Int = R.string.type_relationship_sister
+        override val priority: Int = 802
+    }
+
+    /** Do not use: only for backwards-compatibility */
     object RelationshipSibling : ContactDataType() {
         override val key: Key = RELATIONSHIP_SIBLING
         override val titleRes: Int = R.string.type_relationship_sibling
-        override val priority: Int = 800
+        override val priority: Int = 805
     }
 
     object RelationshipParent : ContactDataType() {
@@ -155,6 +170,8 @@ sealed class ContactDataType {
         CUSTOM,
 
         RELATIONSHIP_SIBLING,
+        RELATIONSHIP_BROTHER,
+        RELATIONSHIP_SISTER,
         RELATIONSHIP_PARENT,
         RELATIONSHIP_CHILD,
         RELATIONSHIP_RELATIVE,
