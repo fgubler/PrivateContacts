@@ -7,7 +7,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactDa
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroidWithoutNo
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -20,7 +19,6 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
-import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 
 fun Contact.getContactData(): List<ContactData> {
@@ -146,37 +144,6 @@ private fun Contact.getEventDates(): List<EventDate> {
         )
     }.removeDuplicates()
 }
-
-private fun Label.toContactDataType(): ContactDataType =
-    when (this) {
-        Label.PhoneNumberMobile -> ContactDataType.Mobile
-        Label.PhoneNumberCompanyMain -> ContactDataType.Business
-        Label.PhoneNumberWorkMobile -> ContactDataType.MobileBusiness
-        Label.Main -> ContactDataType.Main
-        Label.LocationHome -> ContactDataType.Personal
-        Label.LocationWork -> ContactDataType.Business
-        Label.DateBirthday -> ContactDataType.Birthday
-        Label.DateAnniversary -> ContactDataType.Anniversary
-        Label.WebsiteHomePage -> ContactDataType.Main
-        Label.Other -> ContactDataType.Other
-
-        Label.RelationBrother -> ContactDataType.RelationshipSibling
-        Label.RelationSister -> ContactDataType.RelationshipSibling
-        Label.RelationChild -> ContactDataType.RelationshipChild
-        Label.RelationFather -> ContactDataType.RelationshipParent
-        Label.RelationMother -> ContactDataType.RelationshipParent
-        Label.RelationParent -> ContactDataType.RelationshipParent
-        Label.RelationPartner -> ContactDataType.RelationshipPartner
-        Label.RelationDomesticPartner -> ContactDataType.RelationshipPartner
-        Label.RelationRelative -> ContactDataType.RelationshipRelative
-        Label.RelationFriend -> ContactDataType.RelationshipFriend
-        Label.RelationManager -> ContactDataType.RelationshipWork
-        Label.RelationReferredBy -> ContactDataType.Other
-        Label.RelationSpouse -> ContactDataType.RelationshipPartner
-
-        is Label.Custom -> ContactDataType.CustomValue(customValue = label)
-        else -> ContactDataType.Other
-    }
 
 private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
     id?.let { contactDataNo -> ContactDataIdAndroid(contactDataNo = contactDataNo) }
