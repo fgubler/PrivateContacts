@@ -6,12 +6,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CHANGE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import com.alexstyl.contactstore.MutableContact
 
 class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidContactSaveRepository {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
@@ -67,9 +69,21 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidCon
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadRepository.resolveContact(contactId, originalContactRaw)
 
-        withContactStore { contactStore ->
-            contactStore.execute {
+        return try {
+            withContactStore { contactStore ->
+                contactStore.execute {
+                    val contactToUpdate = MutableContact()
+                    contactToUpdate.updateChangedBaseData(originalContact = originalContact, changedContact = contact)
+
+                    // TODO change the rest as well
+
+                    update(contactToUpdate)
+                }
             }
+            ContactSaveResult.Success
+        } catch (e: Exception) {
+            logger.error("Failed to change contact $contactId", e)
+            ContactSaveResult.Failure(UNABLE_TO_CHANGE_CONTACT)
         }
     }
 
