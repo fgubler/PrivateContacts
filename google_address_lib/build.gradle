@@ -58,6 +58,7 @@ test {
     // }
 }
 
+// TODO try to replace some of the dependencies with kotlin coroutines?
 dependencies {
     implementation 'org.checkerframework:checker-qual:3.27.0'
     implementation 'com.google.guava:guava:31.0.1-android'
