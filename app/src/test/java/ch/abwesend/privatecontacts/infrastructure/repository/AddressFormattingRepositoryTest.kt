@@ -259,6 +259,106 @@ class AddressFormattingRepositoryTest : TestBase() {
         assertThat(result).isEqualTo(expectedAddress)
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = [DE, US])
+    fun `should be able to handle the entire address being in the street field`(countryCode: String) {
+        val street = """
+            Bahnhofstrasse 15
+            8000 Zuerich
+            Zuerich
+            Schweiz
+        """.trimIndent()
+        val neighborhood = ""
+        val postalCode = ""
+        val city = ""
+        val region = ""
+        val expectedAddress = """
+            Bahnhofstrasse 15,
+            8000 Zuerich,
+            Zuerich,
+            Schweiz
+        """.trimIndent()
+
+        val result = underTest.formatAddress(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            country = countryCode,
+            useFallbackForEmptyAddress = false,
+        )
+
+        val cleanedResult = result.replace("\r", "") // linebreaks may be \r\n...
+        assertThat(cleanedResult).isEqualTo(expectedAddress)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = [DE, US])
+    fun `should be able to handle address with neighborhood being in the street field`(countryCode: String) {
+        val street = """
+            Bahnhofstrasse 15
+            Wiedikon
+            8000 Zuerich
+            Zuerich
+            Schweiz
+        """.trimIndent()
+        val neighborhood = ""
+        val postalCode = ""
+        val city = ""
+        val region = ""
+        val expectedAddress = """
+            Bahnhofstrasse 15,
+            Wiedikon,
+            8000 Zuerich,
+            Zuerich,
+            Schweiz
+        """.trimIndent()
+
+        val result = underTest.formatAddress(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            country = countryCode,
+            useFallbackForEmptyAddress = false,
+        )
+
+        val cleanedResult = result.replace("\r", "") // linebreaks may be \r\n...
+        assertThat(cleanedResult).isEqualTo(expectedAddress)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = [DE, US])
+    fun `should be able to handle a partial address being in the street field`(countryCode: String) {
+        val street = """
+            Bahnhofstrasse 15
+            Zuerich
+        """.trimIndent()
+        val neighborhood = ""
+        val postalCode = ""
+        val city = ""
+        val region = ""
+        val expectedAddress = """
+            Bahnhofstrasse 15,
+            Zuerich
+        """.trimIndent()
+
+        val result = underTest.formatAddress(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            country = countryCode,
+            useFallbackForEmptyAddress = false,
+        )
+
+        val cleanedResult = result.replace("\r", "") // linebreaks may be \r\n...
+        assertThat(cleanedResult).isEqualTo(expectedAddress)
+    }
+
     private fun throwInvalidCountry(country: String): Nothing =
         throw IllegalArgumentException("Invalid countryCode '$country'")
 }
