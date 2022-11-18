@@ -4,13 +4,14 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
+import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationEntity
 
-class ContactGroupRepository : RepositoryBase() {
+class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
     suspend fun getContactGroups(contactId: IContactIdInternal): List<ContactGroup> = withDatabase { database ->
         val contactGroupRelations = database.contactGroupRelationDao().getRelationsForContact(contactId.uuid)
         val contactGroupNames = contactGroupRelations.map { it.contactGroupName }
@@ -26,6 +27,11 @@ class ContactGroupRepository : RepositoryBase() {
         database.contactGroupDao().createMissingContactGroups(contactGroups)
         database.contactGroupRelationDao().updateContactGroupRelations(contactId, contactGroups)
     }
+
+    override suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>): Unit =
+        withDatabase { database ->
+            database.contactGroupDao().createMissingContactGroups(contactGroups)
+        }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: List<IContactGroup>) {
         logger.debug("Creating missing contact groups")
