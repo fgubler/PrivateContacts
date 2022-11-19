@@ -7,9 +7,10 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -82,9 +83,16 @@ class ContactLoadService {
             is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
         }
 
-    // TODO use proper batch-handling
-    suspend fun resolveContacts(contacts: Collection<ContactId>): List<IContact> =
+    suspend fun resolveContacts(contactIds: Collection<ContactId>): Map<ContactId, IContact?> =
         withContext(dispatchers.default) {
-            contacts.mapAsync { resolveContact(it) }
+            contactIds.mapAsyncChunked { contactId ->
+                val contact = try {
+                    resolveContact(contactId)
+                } catch (e: Exception) {
+                    logger.warning("Failed to load contact $contactId", e)
+                    null
+                }
+                contactId to contact
+            }.toMap()
         }
 }

@@ -68,17 +68,13 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase(), IAndroidCon
             ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
-    override suspend fun doesContactExist(contactId: IContactIdExternal): Boolean = withContactStore { contactStore ->
-        logger.debug("Checking for contact existence: $contactId")
-        checkContactReadPermission { exception -> throw exception }
-
-        val existingContact = contactStore.fetchContacts(predicate = ContactLookup(contactId = contactId.contactNo))
-            .asFlow()
-            .flowOn(dispatchers.io)
-            .firstOrNull()
-            .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
-            ?.firstOrNull()
-        existingContact != null
+    suspend fun doContactsExist(contactIds: Set<IContactIdExternal>): Map<IContactIdExternal, Boolean> {
+        logger.debug("Checking for contact existence of ${contactIds.size} contacts")
+        val existingContactIds = loadContactsSnapshot().map { it.id }.toSet()
+        val existenceByContactId = contactIds.associateWith { existingContactIds.contains(it) }
+        val numberOfExisting = existenceByContactId.filter { it.value }.size
+        logger.debug("Checking for contact existence: $numberOfExisting exist")
+        return existenceByContactId
     }
 
     private suspend fun loadFullContact(contactNo: Long): Contact? = withContactStore { contactStore ->
@@ -103,6 +99,19 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase(), IAndroidCon
                 .orEmpty()
                 .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
         }
+    }
+
+    private suspend fun loadContactsSnapshot(
+        predicate: ContactPredicate? = null
+    ): List<IContactBase> = withContactStore { contactStore ->
+        checkContactReadPermission { exception -> throw exception }
+
+        contactStore.fetchContacts(predicate = predicate)
+            .asFlow()
+            .flowOn(dispatchers.io)
+            .firstOrNull()
+            .orEmpty()
+            .mapNotNull { it.toContactBase(rethrowExceptions = false) }
     }
 
     private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {

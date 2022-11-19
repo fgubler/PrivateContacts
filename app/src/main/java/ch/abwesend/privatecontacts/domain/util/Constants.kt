@@ -13,4 +13,7 @@ object Constants {
 
     val doubleLinebreak: String
         get() = linebreak + linebreak
+
+    /** chunk-size for "expensive" operations run in parallel; e.g. database access) */
+    const val defaultChunkSize: Int = 100
 }
