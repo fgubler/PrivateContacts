@@ -88,7 +88,7 @@ class ContactLoadService {
             contactIds.mapAsyncChunked { contactId ->
                 val contact = try {
                     resolveContact(contactId)
-                } catch(e: Exception) {
+                } catch (e: Exception) {
                     logger.warning("Failed to load contact $contactId", e)
                     null
                 }

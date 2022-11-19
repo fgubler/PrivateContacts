@@ -23,7 +23,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -44,6 +43,7 @@ class ContactTypeChangeService {
     private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()
 
+    // TODO add proper batch-processing (e.g. for the deletion of the old contacts)
     suspend fun changeContactType(
         contacts: Collection<IContactBase>,
         newType: ContactType
