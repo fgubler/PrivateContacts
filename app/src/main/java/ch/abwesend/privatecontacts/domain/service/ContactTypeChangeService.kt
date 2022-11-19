@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
@@ -23,6 +23,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -43,7 +44,6 @@ class ContactTypeChangeService {
     private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()
 
-    // TODO add proper batch processing
     suspend fun changeContactType(
         contacts: Collection<IContactBase>,
         newType: ContactType
@@ -51,14 +51,25 @@ class ContactTypeChangeService {
         val contactIds = contacts
             .filter { it.type != newType }
             .map { it.id }
-        val fullContacts = loadService.resolveContacts(contactIds)
-        logger.debug("Resolved ${fullContacts.size} full contacts to change their type.")
+        val numberOfContacts = contactIds.size
+
+        val fullContactsByContactId = loadService.resolveContacts(contactIds)
+        val fullContacts = fullContactsByContactId.values.filterNotNull()
+        logger.debug("Resolved ${fullContacts.size} of $numberOfContacts full contacts to change their type.")
+
+        val numberOfUnresolvedContacts = fullContactsByContactId
+            .filter { (_, contact) -> contact == null }
+            .size
+        if (numberOfUnresolvedContacts > 0) {
+            // not shown to the user because those contacts, apparently no longer exist so the info is useless to them
+            logger.warning("Failed to resolve $numberOfUnresolvedContacts of $numberOfContacts contacts.")
+        }
 
         val contactGroups = fullContacts.flatMap { it.contactGroups }.distinctBy { it.id }
         contactGroupRepository.createMissingContactGroups(contactGroups) // avoid race-conditions later on
 
         val partialResults = fullContacts
-            .mapAsync { contact -> contact.id to changeContactType(contact, newType) }
+            .mapAsyncChunked { contact -> contact.id to changeContactType(contact, newType) }
             .toMap()
 
         val successfulContacts = partialResults.filterValues { it is Success }.map { it.key }.toSet()
