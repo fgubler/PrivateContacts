@@ -243,23 +243,27 @@ class ContactTypeChangeServiceTest : TestBase() {
     fun `should change the type of multiple contacts`() {
         val contactIds = listOf(
             someExternalContactId(contactNo = 123), // success
+            someExternalContactId(contactNo = 234), // error when resolving
             someExternalContactId(contactNo = 456), // error when saving
             someExternalContactId(contactNo = 789), // error when deleting
             someExternalContactId(contactNo = 666), // throws an exception
         )
         val contacts = contactIds.map { someContactEditable(id = it, type = PUBLIC) }
-        coEvery { loadService.resolveContacts(any()) } returns contacts
+        val resolvedContacts = contacts
+            .associateBy { it.id }
+            .mapValues { (_, contact) -> contact.takeUnless { it.id == contactIds[1] } }
+        coEvery { loadService.resolveContacts(any()) } returns resolvedContacts
         coEvery { saveService.saveContact(any()) } answers {
             val contact = firstArg<IContactEditable>()
             when (contact.id) {
-                in listOf(contactIds[0], contactIds[2]) -> Success
-                contactIds[3] -> throw Exception("Some Test Exception")
+                in listOf(contactIds[0], contactIds[3]) -> Success
+                contactIds[4] -> throw Exception("Some Test Exception")
                 else -> Failure(UNKNOWN_ERROR)
             }
         }
         coEvery { saveService.deleteContact(any()) } answers {
             val contact = firstArg<IContactBase>()
-            if (contact.id in listOf(contactIds[0], contactIds[1])) ContactDeleteResult.Success
+            if (contact.id in listOf(contactIds[0], contactIds[2])) ContactDeleteResult.Success
             else ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
 
@@ -268,6 +272,7 @@ class ContactTypeChangeServiceTest : TestBase() {
         assertThat(result.completelyFailed).isFalse
         assertThat(result.completelySuccessful).isFalse
         assertThat(result.successfulChanges).isEqualTo(listOf(contactIds[0]))
-        assertThat(result.failedChanges.keys).isEqualTo(setOf(contactIds[1], contactIds[2], contactIds[3]))
+        // the contact which could not be resolved will just be ignored
+        assertThat(result.failedChanges.keys).isEqualTo(setOf(contactIds[2], contactIds[3], contactIds[4]))
     }
 }
