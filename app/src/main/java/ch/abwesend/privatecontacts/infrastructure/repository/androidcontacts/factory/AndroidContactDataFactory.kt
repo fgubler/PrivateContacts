@@ -51,7 +51,7 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }.removeDuplicates()
+    }.removePhoneNumberDuplicates()
 }
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
@@ -183,6 +183,10 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
         ?: ContactDataIdAndroidWithoutNo().also {
             logger.debug("No ID found for contact data of type ${label.simpleClassName}.")
         }
+
+@VisibleForTesting
+internal fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> = removeDuplicates()
+    .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
 
 @VisibleForTesting
 internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
