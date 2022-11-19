@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.lib.flow
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,15 +33,17 @@ suspend fun <T> ResourceFlowCollector<T>.emitError(error: Throwable) = emit(Erro
 suspend fun <T> ResourceFlowCollector<T>.emitInactive() = emit(InactiveResource())
 
 suspend fun <T> MutableResourceStateFlow<T>.withLoadingState(loader: suspend () -> T): T? =
-    try {
-        emitLoading()
-        val result = loader()
-        emitReady(result)
-        result
-    } catch (e: Exception) {
-        emitError(e)
-        logger.error("Failed to load data", e)
-        null
+    coroutineScope {
+        try {
+            emitLoading()
+            val result = loader()
+            emitReady(result)
+            result
+        } catch (e: Exception) {
+            emitError(e)
+            logger.error("Failed to load data", e)
+            null
+        }
     }
 
 fun <TThis, TOther, TResult> ResourceFlow<TThis>.combineResource(
