@@ -124,4 +124,41 @@ class ContactLoadServiceTest : TestBase() {
         assertThat(result).hasSize(1)
         assertThat(result[contactId]).isEqualTo(contact)
     }
+
+    @Test
+    fun `resolving contacts should be able to deal with a mix of internal and external ones`() {
+        val internalId = someInternalContactId()
+        val externalId = someExternalContactId()
+        val contactIds = listOf(internalId, externalId)
+        val internalContact = someContactEditable(id = internalId)
+        val externalContact = someContactEditable(id = externalId)
+        coEvery { contactRepository.resolveContact(any()) } returns internalContact
+        coEvery { androidContactRepository.resolveContact(any()) } returns externalContact
+
+        val result = runBlocking { underTest.resolveContacts(contactIds) }
+
+        coVerify { contactRepository.resolveContact(internalId) }
+        coVerify { androidContactRepository.resolveContact(externalId) }
+        assertThat(result).hasSize(2)
+        assertThat(result[internalId]).isEqualTo(internalContact)
+        assertThat(result[externalId]).isEqualTo(externalContact)
+    }
+
+    @Test
+    fun `resolving contacts should be able to deal with exceptions`() {
+        val internalId = someInternalContactId()
+        val externalId = someExternalContactId()
+        val contactIds = listOf(internalId, externalId)
+        val externalContact = someContactEditable(id = externalId)
+        coEvery { contactRepository.resolveContact(any()) } throws IllegalArgumentException("Some Test")
+        coEvery { androidContactRepository.resolveContact(any()) } returns externalContact
+
+        val result = runBlocking { underTest.resolveContacts(contactIds) }
+
+        coVerify { contactRepository.resolveContact(internalId) }
+        coVerify { androidContactRepository.resolveContact(externalId) }
+        assertThat(result).hasSize(2)
+        assertThat(result[internalId]).isNull()
+        assertThat(result[externalId]).isEqualTo(externalContact)
+    }
 }
