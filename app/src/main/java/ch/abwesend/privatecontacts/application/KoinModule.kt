@@ -79,6 +79,7 @@ internal val koinModule = module {
 
     // Repositories
     single<IAndroidContactLoadRepository> { AndroidContactLoadRepository() }
+    single { AndroidContactLoadRepository() }
     single<IAndroidContactSaveRepository> { AndroidContactSaveRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
