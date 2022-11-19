@@ -15,20 +15,23 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 
-fun Contact.getContactData(): List<ContactData> = getPhoneNumbers() +
-    getEmailAddresses() +
-    getPhysicalAddresses() +
-    getWebsites() +
-    getRelationships() +
-    getEventDates()
+fun Contact.getContactData(): List<ContactData> {
+    val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
+    return getPhoneNumbers() +
+        getEmailAddresses() +
+        getPhysicalAddresses(addressFormattingRepository) +
+        getWebsites() +
+        getRelationships() +
+        getEventDates()
+}
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
     val telephoneService: TelephoneService by injectAnywhere()
@@ -48,7 +51,7 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }.removeDuplicates()
+    }.removePhoneNumberDuplicates()
 }
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
@@ -67,24 +70,19 @@ private fun Contact.getEmailAddresses(): List<EmailAddress> {
     }.removeDuplicates()
 }
 
-private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> {
+private fun Contact.getPhysicalAddresses(formattingRepository: IAddressFormattingRepository): List<PhysicalAddress> {
     return postalAddresses.mapIndexed { index, address ->
         val contactDataId = address.toContactDataId()
         val type = address.label.toContactDataType()
 
-        val cityWithPostalCode = listOf(address.value.postCode, address.value.city)
-            .filterNot { it.isEmpty() }
-            .joinToString(separator = " ")
-
-        val completeAddress = listOfNotNull(
-            address.value.street,
-            address.value.neighborhood,
-            cityWithPostalCode,
-            address.value.region,
-            address.value.country
+        val completeAddress = formattingRepository.formatAddress(
+            street = address.value.street,
+            neighborhood = address.value.neighborhood,
+            city = address.value.city,
+            postalCode = address.value.postCode,
+            region = address.value.region,
+            country = address.value.country,
         )
-            .filterNot { it.isEmpty() }
-            .joinToString(separator = ",${Constants.linebreak}")
 
         PhysicalAddress(
             id = contactDataId,
@@ -187,7 +185,15 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
         }
 
 @VisibleForTesting
+internal fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> = removeDuplicates()
+    .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
+
+@VisibleForTesting
 internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
-    groupBy { it.displayValue }
+    removeDuplicatesBy { it.displayValue }
+        .removeDuplicatesBy { it.value }
+
+private fun <T : BaseGenericContactData<S>, S, R> List<T>.removeDuplicatesBy(attributeSelector: (T) -> R): List<T> =
+    groupBy(attributeSelector)
         .map { (_, value) -> value.minByOrNull { it.type.priority } }
         .filterNotNull()

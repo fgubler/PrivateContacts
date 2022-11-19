@@ -54,7 +54,7 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
     }
 
     @Test
-    fun `should create missing contact groups`() {
+    fun `should create missing contact groups and replace relationships`() {
         val contactId = someContactId()
         val existingContactGroupsEntities = listOf(
             someContactGroupEntity(name = "Group 1", notes = "Notes 1"),
@@ -73,6 +73,30 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs
 
         runBlocking { underTest.storeContactGroups(contactId, contactGroupEntities) }
+
+        coVerify { contactGroupDao.getGroupNames() }
+        coVerify { contactGroupDao.insertAll(newContactGroupEntities) }
+        coVerify { contactGroupRelationDao.deleteRelationsForContact(contactId.uuid) }
+        coVerify { contactGroupRelationDao.insertAll(any()) }
+    }
+
+    @Test
+    fun `should only create missing contact groups`() {
+        val existingContactGroupsEntities = listOf(
+            someContactGroupEntity(name = "Group 1", notes = "Notes 1"),
+            someContactGroupEntity(name = "Group 2", notes = "Notes 2"),
+            someContactGroupEntity(name = "Group 3", notes = "Notes 3"),
+        )
+        val newContactGroupEntities = listOf(
+            someContactGroupEntity(name = "New Group 1"),
+            someContactGroupEntity(name = "New Group 2"),
+        )
+        val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
+        val contactGroupEntities = existingContactGroupsEntities.take(2) + newContactGroupEntities
+        coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
+        coEvery { contactGroupDao.insertAll(any()) } just runs
+
+        runBlocking { underTest.createMissingContactGroups(contactGroupEntities) }
 
         coVerify { contactGroupDao.getGroupNames() }
         coVerify { contactGroupDao.insertAll(newContactGroupEntities) }

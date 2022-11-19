@@ -56,6 +56,7 @@ fun someContactDataTypeEntity(
 fun somePhoneNumber(
     id: ContactDataId = someContactDataId(),
     value: String = "1234",
+    formattedValue: String = value,
     type: ContactDataType = Mobile,
     sortOrder: Int = 0,
     isMainNumber: Boolean = false,
@@ -63,6 +64,7 @@ fun somePhoneNumber(
 ): PhoneNumber = PhoneNumber(
     id = id,
     value = value,
+    formattedValue = formattedValue,
     type = type,
     isMain = isMainNumber,
     modelStatus = modelStatus,
