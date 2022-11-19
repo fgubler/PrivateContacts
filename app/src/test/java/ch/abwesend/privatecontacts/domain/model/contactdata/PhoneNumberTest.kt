@@ -7,14 +7,12 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.testutil.TestBase
-import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)

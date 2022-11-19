@@ -197,4 +197,3 @@ private fun <T : BaseGenericContactData<S>, S, R> List<T>.removeDuplicatesBy(att
     groupBy(attributeSelector)
         .map { (_, value) -> value.minByOrNull { it.type.priority } }
         .filterNotNull()
-
