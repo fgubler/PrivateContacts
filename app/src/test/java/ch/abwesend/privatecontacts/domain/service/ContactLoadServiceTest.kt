@@ -109,7 +109,7 @@ class ContactLoadServiceTest : TestBase() {
 
         coVerify { contactRepository.resolveContact(contactId) }
         assertThat(result).hasSize(1)
-        assertThat(result.first()).isEqualTo(contact)
+        assertThat(result[contactId]).isEqualTo(contact)
     }
 
     @Test
@@ -122,6 +122,6 @@ class ContactLoadServiceTest : TestBase() {
 
         coVerify { androidContactRepository.resolveContact(contactId) }
         assertThat(result).hasSize(1)
-        assertThat(result.first()).isEqualTo(contact)
+        assertThat(result[contactId]).isEqualTo(contact)
     }
 }

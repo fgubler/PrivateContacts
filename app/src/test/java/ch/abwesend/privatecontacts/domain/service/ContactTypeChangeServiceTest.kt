@@ -248,7 +248,8 @@ class ContactTypeChangeServiceTest : TestBase() {
             someExternalContactId(contactNo = 666), // throws an exception
         )
         val contacts = contactIds.map { someContactEditable(id = it, type = PUBLIC) }
-        coEvery { loadService.resolveContacts(any()) } returns contacts
+        val resolvedContacts = contacts.associateBy { it.id }
+        coEvery { loadService.resolveContacts(any()) } returns resolvedContacts
         coEvery { saveService.saveContact(any()) } answers {
             val contact = firstArg<IContactEditable>()
             when (contact.id) {
