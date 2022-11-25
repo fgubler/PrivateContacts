@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.database
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
@@ -141,8 +142,8 @@ class DatabaseInitializer {
                     ),
                 ),
                 contactGroups = mutableListOf(
-                    ContactGroup(id = ContactGroupId("Future TestUsers"), notes = "2D"),
-                    ContactGroup(id = ContactGroupId("Random Dudes"), notes = ""),
+                    ContactGroup(id = ContactGroupId("Future TestUsers"), notes = "2D", modelStatus = NEW),
+                    ContactGroup(id = ContactGroupId("Random Dudes"), notes = "", modelStatus = NEW),
                 ),
             ),
             ContactEditable(
