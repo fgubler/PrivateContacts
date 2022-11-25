@@ -6,10 +6,16 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import com.alexstyl.contactstore.Label
 
+fun ContactDataType.toLabel(category: ContactDataCategory, originalLabel: Label?): Label {
+    // try avoiding translation-losses in the labels
+    return if (originalLabel?.toContactDataType() == this) originalLabel
+    else toLabel(category)
+}
+
 /**
  * Beware: when changing this method, you also need to change [toContactDataType]
  */
-fun ContactDataType.toLabel(category: ContactDataCategory): Label =
+private fun ContactDataType.toLabel(category: ContactDataCategory): Label =
     when (this) {
         ContactDataType.Anniversary -> Label.DateAnniversary
         ContactDataType.Birthday -> Label.DateBirthday
