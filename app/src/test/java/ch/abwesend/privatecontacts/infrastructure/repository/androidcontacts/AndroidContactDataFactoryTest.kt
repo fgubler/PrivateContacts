@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepositor
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.removeDuplicates
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.removePhoneNumberDuplicates
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
@@ -178,6 +179,26 @@ class AndroidContactDataFactoryTest : TestBase() {
         )
 
         val result = phoneNumbers.removeDuplicates()
+
+        assertThat(result).hasSameSizeAs(expectedResult)
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `should remove duplicates of the same number in different formatting`() {
+        val number1 = "+41 44 123 44 55"
+        val number2 = "+41-44-123-44-55"
+        val number3 = "+41441234455"
+        val phoneNumbers = listOf(
+            somePhoneNumber(value = number1, formattedValue = number2, type = Mobile),
+            somePhoneNumber(value = number2, formattedValue = number3, type = Business),
+            somePhoneNumber(value = number3, formattedValue = number1, type = Other),
+        )
+        val expectedResult = listOf(
+            phoneNumbers[0],
+        )
+
+        val result = phoneNumbers.removePhoneNumberDuplicates()
 
         assertThat(result).hasSameSizeAs(expectedResult)
         assertThat(result).isEqualTo(expectedResult)

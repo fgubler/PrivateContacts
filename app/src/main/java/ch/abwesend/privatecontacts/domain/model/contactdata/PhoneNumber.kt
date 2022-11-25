@@ -69,8 +69,12 @@ data class PhoneNumber(
                 modelStatus = ModelStatus.NEW,
             )
 
-        fun formatValueForSearch(value: String): String =
-            value.filter { it.isDigit() }
+        fun formatValueForSearch(value: String): String {
+            val withoutCountryPlus = if (value.startsWith("+")) {
+                "00" + value.substring(startIndex = 1)
+            } else value
+            return withoutCountryPlus.filter { it.isDigit() }
+        }
     }
 }
 

@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupEntity
@@ -32,7 +33,7 @@ fun someContactGroupRelationEntity(
 fun someContactGroup(
     name: String = "SomeGroup",
     notes: String = "SomeGroup Description",
-    modelStatus: ModelStatus = ModelStatus.CHANGED,
+    modelStatus: ModelStatus = UNCHANGED,
 ): ContactGroup = ContactGroup(
     id = ContactGroupId(name = name),
     notes = notes,

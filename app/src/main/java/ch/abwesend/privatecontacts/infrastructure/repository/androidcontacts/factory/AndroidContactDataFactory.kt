@@ -49,7 +49,7 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
             isMain = index == 0,
             modelStatus = ModelStatus.UNCHANGED,
         )
-    }.removeDuplicates()
+    }.removePhoneNumberDuplicates()
 }
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
@@ -152,7 +152,15 @@ private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
         }
 
 @VisibleForTesting
+internal fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> = removeDuplicates()
+    .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
+
+@VisibleForTesting
 internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
-    groupBy { it.displayValue }
+    removeDuplicatesBy { it.displayValue }
+        .removeDuplicatesBy { it.value }
+
+private fun <T : BaseGenericContactData<S>, S, R> List<T>.removeDuplicatesBy(attributeSelector: (T) -> R): List<T> =
+    groupBy(attributeSelector)
         .map { (_, value) -> value.minByOrNull { it.type.priority } }
         .filterNotNull()

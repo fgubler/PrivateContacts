@@ -6,6 +6,9 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toEntity
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
@@ -19,6 +22,7 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -58,52 +62,50 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should create missing contact groups and replace relationships`() {
         val contactId = someContactId()
-        val existingContactGroupsEntities = listOf(
-            someContactGroupEntity(name = "Group 1", notes = "Notes 1"),
-            someContactGroupEntity(name = "Group 2", notes = "Notes 2"),
-            someContactGroupEntity(name = "Group 3", notes = "Notes 3"),
+        val existingContactGroups = listOf(
+            someContactGroup(name = "Group 1", notes = "Notes 1", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 2", notes = "Notes 2", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 3", notes = "Notes 3", modelStatus = UNCHANGED),
         )
         val newContactGroups = listOf(
-            someContactGroup(name = "New Group 1"),
-            someContactGroup(name = "New Group 2"),
+            someContactGroup(name = "New Group 1", modelStatus = NEW),
+            someContactGroup(name = "New Group 2", modelStatus = NEW),
         )
-        val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
-        val contactGroups = newContactGroups +
-            existingContactGroupsEntities.take(2).map { it.toContactGroup() }
-        coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        val newContactGroupEntities = newContactGroups.map { it.toEntity() }
+        val contactGroups = existingContactGroups.take(2) + newContactGroups
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
         coEvery { contactGroupRelationDao.deleteRelationsForContact(any()) } just runs
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs
 
         runBlocking { underTest.storeContactGroups(contactId, contactGroups) }
 
-        coVerify { contactGroupDao.getGroupNames() }
-        coVerify { contactGroupDao.insertAll(newContactGroups.map { it.toEntity() }) }
+        coVerify { contactGroupDao.upsertAll(newContactGroupEntities) }
         coVerify { contactGroupRelationDao.deleteRelationsForContact(contactId.uuid) }
         coVerify { contactGroupRelationDao.insertAll(any()) }
     }
 
     @Test
     fun `should only create missing contact groups`() {
-        val existingContactGroupsEntities = listOf(
-            someContactGroupEntity(name = "Group 1", notes = "Notes 1"),
-            someContactGroupEntity(name = "Group 2", notes = "Notes 2"),
-            someContactGroupEntity(name = "Group 3", notes = "Notes 3"),
+        val existingContactGroups = listOf(
+            someContactGroup(name = "Group 1", notes = "Notes 1", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 2", notes = "Notes 2", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 3", notes = "Notes 3", modelStatus = UNCHANGED),
         )
         val newContactGroups = listOf(
-            someContactGroup(name = "New Group 1"),
-            someContactGroup(name = "New Group 2"),
+            someContactGroup(name = "New Group 1", modelStatus = NEW),
+            someContactGroup(name = "New Group 2", modelStatus = NEW),
         )
-        val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
-        val contactGroups = newContactGroups +
-            existingContactGroupsEntities.take(2).map { it.toContactGroup() }
-        coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        val newContactGroupEntities = newContactGroups.map { it.toEntity() }
+        val contactGroups = existingContactGroups.take(2) + newContactGroups
+
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
 
         runBlocking { underTest.createMissingContactGroups(contactGroups) }
 
-        coVerify { contactGroupDao.getGroupNames() }
-        coVerify { contactGroupDao.insertAll(newContactGroups.map { it.toEntity() }) }
+        val capturedGroups = slot<List<ContactGroupEntity>>()
+        coVerify { contactGroupDao.upsertAll(capture(capturedGroups)) }
+        assertThat(capturedGroups.isCaptured).isTrue
+        assertThat(capturedGroups.captured).isEqualTo(newContactGroupEntities)
     }
 
     @Test
@@ -114,18 +116,18 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
             someContactGroupEntity(name = "Group 2", notes = "Notes 2"),
             someContactGroupEntity(name = "Group 3", notes = "Notes 3"),
         )
-        val newContactGroups = listOf(
-            someContactGroup(name = "New Group 1"),
-            someContactGroup(name = "New Group 2"),
+        val newContactGroupEntities = listOf(
+            someContactGroupEntity(name = "New Group 1"),
+            someContactGroupEntity(name = "New Group 2"),
         )
         val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
-        val contactGroups = newContactGroups +
-            existingContactGroupsEntities.take(2).map { it.toContactGroup() }
-        val contactGroupRelations = contactGroups.map {
-            someContactGroupRelationEntity(contactId = contactId.uuid, groupName = it.id.name)
+        val contactGroupEntities = existingContactGroupsEntities.take(2) + newContactGroupEntities
+        val contactGroups = contactGroupEntities.map { it.toContactGroup() }
+        val contactGroupRelations = contactGroupEntities.map {
+            someContactGroupRelationEntity(contactId = contactId.uuid, groupName = it.name)
         }
         coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
         coEvery { contactGroupRelationDao.deleteRelationsForContact(any()) } just runs
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs
 
