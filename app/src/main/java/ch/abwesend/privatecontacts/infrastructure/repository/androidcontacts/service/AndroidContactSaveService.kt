@@ -15,15 +15,13 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.updateChangedBaseData
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.updateChangedContactData
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.updateChangedImage
 import com.alexstyl.contactstore.mutableCopy
 
 class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactSaveRepository: AndroidContactSaveRepository by injectAnywhere()
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
+    private val changesApplicationService: AndroidContactChangesApplicationService by injectAnywhere()
 
     override suspend fun deleteContacts(contactIds: List<IContactIdExternal>): ContactBatchChangeResult =
         try {
@@ -76,13 +74,16 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
             val contactToChange = originalContactRaw.mutableCopy {
-                updateChangedBaseData(originalContact = originalContact, changedContact = contact)
-                updateChangedImage(changedContact = contact)
-                updateChangedContactData(changedContact = contact)
+                changesApplicationService.updateChangedBaseData(
+                    originalContact = originalContact,
+                    changedContact = contact,
+                    mutableContact = this,
+                )
+                changesApplicationService.updateChangedImage(changedContact = contact, mutableContact = this)
+                changesApplicationService.updateChangedContactData(changedContact = contact, mutableContact = this)
             }
 
-            // TODO update contact-groups (on the contact and per se)
-
+            // TODO update contact-groups on contact(per se and on the contact)
             contactSaveRepository.updateContact(contactToChange)
 
             ContactSaveResult.Success
