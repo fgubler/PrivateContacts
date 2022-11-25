@@ -29,17 +29,14 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
     }
 
     override suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>): Unit =
-        withDatabase { database ->
-            database.contactGroupDao().createMissingContactGroups(contactGroups)
-        }
+        withDatabase { database -> database.contactGroupDao().createMissingContactGroups(contactGroups) }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: List<IContactGroup>) {
         logger.debug("Creating missing contact groups")
-        val existingGroupNames = getGroupNames().toSet()
-        val newGroups = contactGroups
-            .filter { !existingGroupNames.contains(it.id.name) }
+        val uniqueGroups = contactGroups
+            .distinctBy { it.id }
             .map { it.toEntity() }
-        insertAll(newGroups)
+        upsertAll(uniqueGroups)
     }
 
     private suspend fun ContactGroupRelationDao.updateContactGroupRelations(

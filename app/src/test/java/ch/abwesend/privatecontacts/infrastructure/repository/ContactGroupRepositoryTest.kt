@@ -68,14 +68,14 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
         val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
         val contactGroupEntities = existingContactGroupsEntities.take(2) + newContactGroupEntities
         coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
         coEvery { contactGroupRelationDao.deleteRelationsForContact(any()) } just runs
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs
 
         runBlocking { underTest.storeContactGroups(contactId, contactGroupEntities) }
 
         coVerify { contactGroupDao.getGroupNames() }
-        coVerify { contactGroupDao.insertAll(newContactGroupEntities) }
+        coVerify { contactGroupDao.upsertAll(newContactGroupEntities) }
         coVerify { contactGroupRelationDao.deleteRelationsForContact(contactId.uuid) }
         coVerify { contactGroupRelationDao.insertAll(any()) }
     }
@@ -94,12 +94,12 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
         val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
         val contactGroupEntities = existingContactGroupsEntities.take(2) + newContactGroupEntities
         coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
 
         runBlocking { underTest.createMissingContactGroups(contactGroupEntities) }
 
         coVerify { contactGroupDao.getGroupNames() }
-        coVerify { contactGroupDao.insertAll(newContactGroupEntities) }
+        coVerify { contactGroupDao.upsertAll(newContactGroupEntities) }
     }
 
     @Test
@@ -120,7 +120,7 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
             someContactGroupRelationEntity(contactId = contactId.uuid, groupName = it.name)
         }
         coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
-        coEvery { contactGroupDao.insertAll(any()) } just runs
+        coEvery { contactGroupDao.upsertAll(any()) } just runs
         coEvery { contactGroupRelationDao.deleteRelationsForContact(any()) } just runs
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs
 
