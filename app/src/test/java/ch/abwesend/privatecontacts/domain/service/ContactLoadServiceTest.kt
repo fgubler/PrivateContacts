@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
@@ -37,7 +37,7 @@ class ContactLoadServiceTest : TestBase() {
     private lateinit var contactRepository: IContactRepository
 
     @MockK
-    private lateinit var androidContactRepository: IAndroidContactLoadRepository
+    private lateinit var androidContactService: IAndroidContactLoadService
 
     @MockK
     private lateinit var easterEggService: EasterEggService
@@ -49,7 +49,7 @@ class ContactLoadServiceTest : TestBase() {
         super.setupKoinModule(module)
         module.single { contactRepository }
         module.single { easterEggService }
-        module.single { androidContactRepository }
+        module.single { androidContactService }
     }
 
     @Test
@@ -91,11 +91,11 @@ class ContactLoadServiceTest : TestBase() {
     fun `resolving a contact should resolve an external contact`() {
         val contactId = someExternalContactId()
         val contact = someContactEditable(id = contactId)
-        coEvery { androidContactRepository.resolveContact(any()) } returns contact
+        coEvery { androidContactService.resolveContact(any()) } returns contact
 
         val result = runBlocking { underTest.resolveContact(contactId) }
 
-        coVerify { androidContactRepository.resolveContact(contactId) }
+        coVerify { androidContactService.resolveContact(contactId) }
         assertThat(result).isEqualTo(contact)
     }
 
@@ -116,11 +116,11 @@ class ContactLoadServiceTest : TestBase() {
     fun `resolving contacts should resolve external contacts`() {
         val contactId = someExternalContactId()
         val contact = someContactEditable(id = contactId)
-        coEvery { androidContactRepository.resolveContact(any()) } returns contact
+        coEvery { androidContactService.resolveContact(any()) } returns contact
 
         val result = runBlocking { underTest.resolveContacts(listOf(contactId)) }
 
-        coVerify { androidContactRepository.resolveContact(contactId) }
+        coVerify { androidContactService.resolveContact(contactId) }
         assertThat(result).hasSize(1)
         assertThat(result[contactId]).isEqualTo(contact)
     }
@@ -133,12 +133,12 @@ class ContactLoadServiceTest : TestBase() {
         val internalContact = someContactEditable(id = internalId)
         val externalContact = someContactEditable(id = externalId)
         coEvery { contactRepository.resolveContact(any()) } returns internalContact
-        coEvery { androidContactRepository.resolveContact(any()) } returns externalContact
+        coEvery { androidContactService.resolveContact(any()) } returns externalContact
 
         val result = runBlocking { underTest.resolveContacts(contactIds) }
 
         coVerify { contactRepository.resolveContact(internalId) }
-        coVerify { androidContactRepository.resolveContact(externalId) }
+        coVerify { androidContactService.resolveContact(externalId) }
         assertThat(result).hasSize(2)
         assertThat(result[internalId]).isEqualTo(internalContact)
         assertThat(result[externalId]).isEqualTo(externalContact)
@@ -151,12 +151,12 @@ class ContactLoadServiceTest : TestBase() {
         val contactIds = listOf(internalId, externalId)
         val externalContact = someContactEditable(id = externalId)
         coEvery { contactRepository.resolveContact(any()) } throws IllegalArgumentException("Some Test")
-        coEvery { androidContactRepository.resolveContact(any()) } returns externalContact
+        coEvery { androidContactService.resolveContact(any()) } returns externalContact
 
         val result = runBlocking { underTest.resolveContacts(contactIds) }
 
         coVerify { contactRepository.resolveContact(internalId) }
-        coVerify { androidContactRepository.resolveContact(externalId) }
+        coVerify { androidContactService.resolveContact(externalId) }
         assertThat(result).hasSize(2)
         assertThat(result[internalId]).isNull()
         assertThat(result[externalId]).isEqualTo(externalContact)

@@ -111,22 +111,19 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
     @Test
     fun `should replace the existing group-relations with the new ones`() {
         val contactId = someContactId()
-        val existingContactGroupsEntities = listOf(
-            someContactGroupEntity(name = "Group 1", notes = "Notes 1"),
-            someContactGroupEntity(name = "Group 2", notes = "Notes 2"),
-            someContactGroupEntity(name = "Group 3", notes = "Notes 3"),
+        val existingContactGroups = listOf(
+            someContactGroup(name = "Group 1", notes = "Notes 1", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 2", notes = "Notes 2", modelStatus = UNCHANGED),
+            someContactGroup(name = "Group 3", notes = "Notes 3", modelStatus = UNCHANGED),
         )
-        val newContactGroupEntities = listOf(
-            someContactGroupEntity(name = "New Group 1"),
-            someContactGroupEntity(name = "New Group 2"),
+        val newContactGroups = listOf(
+            someContactGroup(name = "New Group 1", modelStatus = NEW),
+            someContactGroup(name = "New Group 2", modelStatus = NEW),
         )
-        val existingContactGroupNames = existingContactGroupsEntities.map { it.name }
-        val contactGroupEntities = existingContactGroupsEntities.take(2) + newContactGroupEntities
-        val contactGroups = contactGroupEntities.map { it.toContactGroup() }
-        val contactGroupRelations = contactGroupEntities.map {
-            someContactGroupRelationEntity(contactId = contactId.uuid, groupName = it.name)
+        val contactGroups = existingContactGroups.take(2) + newContactGroups
+        val contactGroupRelations = contactGroups.map {
+            someContactGroupRelationEntity(contactId = contactId.uuid, groupName = it.id.name)
         }
-        coEvery { contactGroupDao.getGroupNames() } returns existingContactGroupNames
         coEvery { contactGroupDao.upsertAll(any()) } just runs
         coEvery { contactGroupRelationDao.deleteRelationsForContact(any()) } just runs
         coEvery { contactGroupRelationDao.insertAll(any()) } just runs

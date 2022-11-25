@@ -9,7 +9,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.fac
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.Note
-import com.alexstyl.contactstore.SaveRequest
 
 fun MutableContact.updateChangedBaseData(originalContact: IContact, changedContact: IContact) {
     if (originalContact.firstName != changedContact.firstName) {
@@ -41,10 +40,6 @@ fun MutableContact.updateChangedImage(changedContact: IContact) {
             imageData = newImage.fullImage?.let { ImageData(it) }
         }
     }
-}
-
-fun SaveRequest.updateContactGroups(changedContact: IContact) {
-    // TODO not yet implemented
 }
 
 fun MutableContact.updateChangedContactData(changedContact: IContact) {

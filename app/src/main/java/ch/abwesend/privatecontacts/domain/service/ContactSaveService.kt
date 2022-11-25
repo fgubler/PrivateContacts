@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
@@ -29,7 +29,7 @@ class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
     private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val androidContactRepository: IAndroidContactSaveRepository by injectAnywhere()
+    private val androidContactService: IAndroidContactSaveService by injectAnywhere()
 
     suspend fun saveContact(contact: IContactEditable): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
@@ -67,7 +67,7 @@ class ContactSaveService {
 
         return if (contactIdChanged || contact.isNew) {
             ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
-        } else androidContactRepository.updateContact(newContactId, contact)
+        } else androidContactService.updateContact(newContactId, contact)
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
@@ -85,7 +85,7 @@ class ContactSaveService {
         } else ContactBatchChangeResult.empty()
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
-            androidContactRepository.deleteContacts(externalContactIds)
+            androidContactService.deleteContacts(externalContactIds)
         } else ContactBatchChangeResult.empty()
 
         return internalResult.combine(externalResult)

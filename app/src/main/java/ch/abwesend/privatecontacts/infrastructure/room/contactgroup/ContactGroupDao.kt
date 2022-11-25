@@ -20,9 +20,6 @@ interface ContactGroupDao {
     @Query("SELECT * FROM ContactGroupEntity WHERE name in (:groupNames)")
     suspend fun getGroups(groupNames: List<String>): List<ContactGroupEntity>
 
-    @Query("SELECT name FROM ContactGroupEntity")
-    suspend fun getGroupNames(): List<String>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(data: List<ContactGroupEntity>)
 
