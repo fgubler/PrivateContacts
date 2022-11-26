@@ -86,9 +86,21 @@ class ArchitectureTest {
         .should().accessClassesThat().resideInAPackage(EXT_CONTACT_STORE_PACKAGE)
 
     @ArchTest
+    val `only androidcontacts package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+
+    @ArchTest
     val `only addressformatting package may access Google address library`: ArchRule = noClasses()
         .that().resideOutsideOfPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
         .should().accessClassesThat().resideInAPackage(EXT_ADDRESS_LIBRARY_PACKAGE)
+
+    @ArchTest
+    val `only addressformatting package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
 
     private fun layers() = Architectures.layeredArchitecture()
         .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)

@@ -152,6 +152,11 @@ class ContactTypeChangeService {
         val newImageStatus = computeNewStatus(image.modelStatus)
         image = image.copy(modelStatus = newImageStatus)
 
+        contactGroups.replaceAll { contactGroup ->
+            val newStatus = computeNewStatus(contactGroup.modelStatus)
+            contactGroup.copy(modelStatus = newStatus)
+        }
+
         contactDataSet.replaceAll { contactData ->
             val newStatus = computeNewStatus(contactData.modelStatus)
             contactData.overrideStatus(newStatus)
