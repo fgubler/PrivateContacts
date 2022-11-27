@@ -21,7 +21,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactSaveRepository: AndroidContactSaveRepository by injectAnywhere()
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
-    private val changesApplicationService: AndroidContactChangesApplicationService by injectAnywhere()
+    private val contactChangeService: AndroidContactChangeService by injectAnywhere()
 
     override suspend fun deleteContacts(contactIds: List<IContactIdExternal>): ContactBatchChangeResult =
         try {
@@ -74,13 +74,13 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
             val contactToChange = originalContactRaw.mutableCopy {
-                changesApplicationService.updateChangedBaseData(
+                contactChangeService.updateChangedBaseData(
                     originalContact = originalContact,
                     changedContact = contact,
                     mutableContact = this,
                 )
-                changesApplicationService.updateChangedImage(changedContact = contact, mutableContact = this)
-                changesApplicationService.updateChangedContactData(changedContact = contact, mutableContact = this)
+                contactChangeService.updateChangedImage(changedContact = contact, mutableContact = this)
+                contactChangeService.updateChangedContactData(changedContact = contact, mutableContact = this)
             }
 
             // TODO update contact-groups on contact(per se and on the contact)

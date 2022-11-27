@@ -42,7 +42,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangesApplicationService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -78,7 +78,7 @@ internal val koinModule = module {
     single<IAndroidContactLoadService> { AndroidContactLoadService() }
     single { AndroidContactLoadService() }
     single<IAndroidContactSaveService> { AndroidContactSaveService() }
-    single { AndroidContactChangesApplicationService() }
+    single { AndroidContactChangeService() }
 
     single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
