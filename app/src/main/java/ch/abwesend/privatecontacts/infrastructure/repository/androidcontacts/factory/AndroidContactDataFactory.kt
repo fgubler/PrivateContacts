@@ -4,9 +4,12 @@ import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroidWithoutNo
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -24,11 +27,12 @@ import com.alexstyl.contactstore.LabeledValue
 fun Contact.getContactData(): List<ContactData> {
     val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
     return getPhoneNumbers() +
-        getEmailAddresses() +
-        getPhysicalAddresses(addressFormattingRepository) +
-        getWebsites() +
-        getRelationships() +
-        getEventDates()
+            getEmailAddresses() +
+            getPhysicalAddresses(addressFormattingRepository) +
+            getWebsites() +
+            getRelationships() +
+            getEventDates() +
+            getCompanies()
 }
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
@@ -143,6 +147,22 @@ private fun Contact.getEventDates(): List<EventDate> {
             modelStatus = ModelStatus.UNCHANGED,
         )
     }.removeDuplicates()
+}
+
+private fun Contact.getCompanies(): List<Company> {
+    val contactDataId = ContactDataIdInternal.randomId() // a bit of a hack but kind of unavoidable
+    val type = ContactDataType.Business
+    val index = 0 // there is only one company
+
+    val company = Company(
+        id = contactDataId,
+        sortOrder = index,
+        type = type,
+        value = organization,
+        isMain = index == 0,
+        modelStatus = ModelStatus.UNCHANGED,
+    )
+    return listOf(company)
 }
 
 private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =

@@ -74,6 +74,7 @@ class AndroidContactChangeService {
         mutableContact.updateWebsites(changedContact.contactDataSet)
         mutableContact.updateRelationships(changedContact.contactDataSet)
         mutableContact.updateEventDates(changedContact.contactDataSet)
+        // companies cannot be edited because Android only allows one while we allow several => a bit of a mess
     }
 
     private fun MutableContact.updatePhoneNumbers(contactData: List<ContactData>) {

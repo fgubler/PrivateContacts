@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataGeneric
@@ -71,10 +72,15 @@ object ContactDataEditCommonComponents {
         showIfEmpty: Boolean,
         valueFieldConfig: TextFieldConfig = TextFieldConfig(),
         initiallyExpanded: Boolean = false,
+        showForExternalContacts: Boolean = true,
         noinline factory: (sortOrder: Int) -> T,
         noinline waitForCustomType: (ContactData) -> Unit,
         crossinline onChanged: @DisallowComposableCalls (IContactEditable) -> Unit,
     ) {
+        if (contact.isExternal && !showForExternalContacts) {
+            return
+        }
+
         val onEntryChanged: (T) -> Unit = remember(contact) {
             { newEntry ->
                 contact.contactDataSet.addOrReplace(newEntry)
