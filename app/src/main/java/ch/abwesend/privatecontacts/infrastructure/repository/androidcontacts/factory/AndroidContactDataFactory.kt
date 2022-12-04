@@ -27,12 +27,12 @@ import com.alexstyl.contactstore.LabeledValue
 fun Contact.getContactData(): List<ContactData> {
     val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
     return getPhoneNumbers() +
-            getEmailAddresses() +
-            getPhysicalAddresses(addressFormattingRepository) +
-            getWebsites() +
-            getRelationships() +
-            getEventDates() +
-            getCompanies()
+        getEmailAddresses() +
+        getPhysicalAddresses(addressFormattingRepository) +
+        getWebsites() +
+        getRelationships() +
+        getEventDates() +
+        getCompanies()
 }
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {

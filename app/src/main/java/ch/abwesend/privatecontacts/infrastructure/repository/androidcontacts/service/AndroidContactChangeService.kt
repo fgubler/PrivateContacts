@@ -184,7 +184,7 @@ class AndroidContactChangeService {
         correspondingOldData?.let { remove(it) }
     }
 
-    private fun <TInternal: ContactData, TExternal : Any> MutableList<LabeledValue<TExternal>>.upsertContactData(
+    private fun <TInternal : ContactData, TExternal : Any> MutableList<LabeledValue<TExternal>>.upsertContactData(
         contactData: TInternal,
         oldContactDataByNo: Map<Long?, LabeledValue<TExternal>>,
         mapper: (TInternal) -> TExternal?,
