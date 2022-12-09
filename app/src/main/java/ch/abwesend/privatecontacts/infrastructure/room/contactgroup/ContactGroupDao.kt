@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.room.contactgroup
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 
 @Dao
@@ -22,11 +23,8 @@ interface ContactGroupDao {
     @Query("SELECT name FROM ContactGroupEntity")
     suspend fun getGroupNames(): List<String>
 
-    @Insert
-    suspend fun insert(data: ContactGroupEntity)
-
-    @Insert
-    suspend fun insertAll(data: List<ContactGroupEntity>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertAll(data: List<ContactGroupEntity>)
 
     @Delete
     suspend fun delete(data: ContactGroupEntity)

@@ -65,8 +65,13 @@ class ContactTypeChangeService {
             logger.warning("Failed to resolve $numberOfUnresolvedContacts of $numberOfContacts contacts.")
         }
 
-        val contactGroups = fullContacts.flatMap { it.contactGroups }.distinctBy { it.id }
-        contactGroupRepository.createMissingContactGroups(contactGroups) // avoid race-conditions later on
+        try {
+            val contactGroups = fullContacts.flatMap { it.contactGroups }
+            contactGroupRepository.createMissingContactGroups(contactGroups) // bulk-operation
+        } catch (e: Exception) {
+            logger.error("Failed to create contact groups as batch-operation", e)
+            // will be created individually, instead
+        }
 
         val partialResults = fullContacts
             .mapAsyncChunked { contact -> contact.id to changeContactType(contact, newType) }
@@ -146,6 +151,11 @@ class ContactTypeChangeService {
 
         val newImageStatus = computeNewStatus(image.modelStatus)
         image = image.copy(modelStatus = newImageStatus)
+
+        contactGroups.replaceAll { contactGroup ->
+            val newStatus = computeNewStatus(contactGroup.modelStatus)
+            contactGroup.copy(modelStatus = newStatus)
+        }
 
         contactDataSet.replaceAll { contactData ->
             val newStatus = computeNewStatus(contactData.modelStatus)

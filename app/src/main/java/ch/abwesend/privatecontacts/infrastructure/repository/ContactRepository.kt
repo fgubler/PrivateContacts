@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
@@ -161,7 +162,20 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             }
         } catch (e: Exception) {
             logger.error("Failed to create contact ${contact.id}", e)
+            rollBackContactCreation(contactId)
             ContactSaveResult.Failure(UNKNOWN_ERROR)
+        }
+
+    /** if creating a contact fails, it should leave no trace */
+    private suspend fun rollBackContactCreation(contactId: IContactIdInternal): ContactDeleteResult =
+        try {
+            withDatabase { database ->
+                database.contactDao().delete(contactId.uuid)
+                ContactDeleteResult.Success
+            }
+        } catch (e: Exception) {
+            logger.error("Failed to roll back contact-creation $contactId", e)
+            ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
 
     override suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult =

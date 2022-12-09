@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
@@ -82,6 +83,25 @@ object ContactDataEditComponents {
             valueFieldConfig = TextFieldConfig(minHeight = 80.dp, maxLines = 5),
             showIfEmpty = showIfEmpty,
             factory = { PhysicalAddress.createEmpty(it) },
+            waitForCustomType = waitForCustomType,
+            onChanged = onChanged
+        )
+    }
+
+    @Composable
+    fun Relationships(
+        contact: IContactEditable,
+        showIfEmpty: Boolean,
+        waitForCustomType: (ContactData) -> Unit,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
+        ContactDataCategory(
+            contact = contact,
+            categoryTitle = Relationship.labelPlural,
+            fieldLabel = Relationship.labelSingular,
+            icon = Relationship.icon,
+            showIfEmpty = showIfEmpty,
+            factory = { Relationship.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
         )

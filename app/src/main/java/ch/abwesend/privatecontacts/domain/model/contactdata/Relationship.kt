@@ -73,7 +73,7 @@ data class Relationship(
             Relationship(
                 id = createContactDataId(),
                 sortOrder = sortOrder,
-                type = Other,
+                type = RelationshipFriend,
                 value = "",
                 isMain = (sortOrder == 0),
                 modelStatus = ModelStatus.NEW,

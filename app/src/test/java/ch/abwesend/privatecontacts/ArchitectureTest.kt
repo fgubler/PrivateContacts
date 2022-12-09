@@ -23,9 +23,17 @@ private const val APPLICATION_PACKAGE = "$ROOT_PACKAGE.application.."
 private const val VIEW_PACKAGE = "$ROOT_PACKAGE.view.."
 private const val DOMAIN_PACKAGE = "$ROOT_PACKAGE.domain.."
 private const val DOMAIN_LIB_PACKAGE = "$DOMAIN_PACKAGE.lib.."
-private const val INFRASTRUCTURE_PACKAGE = "$ROOT_PACKAGE.infrastructure.."
+private const val INFRASTRUCTURE_PACKAGE_PARTIAL = "$ROOT_PACKAGE.infrastructure"
+private const val INFRASTRUCTURE_PACKAGE = "$INFRASTRUCTURE_PACKAGE_PARTIAL.."
+
+private const val INFRASTRUCTURE_CONTACT_STORE_PACKAGE =
+    "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.androidcontacts.."
+private const val INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE =
+    "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.addressformatting.."
 
 private const val EXT_KOIN_PACKAGE = "org.koin.core.component.."
+private const val EXT_CONTACT_STORE_PACKAGE = "com.alexstyl.contactstore.."
+private const val EXT_ADDRESS_LIBRARY_PACKAGE = "com.google.i18n.addressinput.."
 
 // layers
 private const val APPLICATION_LAYER = "APPLICATION"
@@ -70,6 +78,29 @@ class ArchitectureTest {
         .that().haveSimpleNameNotContaining("Koin")
         .and().haveSimpleNameNotContaining("Application")
         .should().accessClassesThat().resideInAPackage(EXT_KOIN_PACKAGE)
+
+    @ArchTest
+    val `only androidcontacts package may access ContactStore library`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(EXT_CONTACT_STORE_PACKAGE)
+
+    @ArchTest
+    val `only androidcontacts package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+
+    @ArchTest
+    val `only addressformatting package may access Google address library`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(EXT_ADDRESS_LIBRARY_PACKAGE)
+
+    @ArchTest
+    val `only addressformatting package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
 
     private fun layers() = Architectures.layeredArchitecture()
         .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)

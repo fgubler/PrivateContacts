@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
@@ -100,8 +102,8 @@ class ContactRepositoryTest : RepositoryTestBase() {
     @Test
     fun `creating a contact should also create contact groups`() {
         val groups = listOf(
-            someContactGroup(name = "Group1"),
-            someContactGroup(name = "Group2"),
+            someContactGroup(name = "Group1", modelStatus = NEW),
+            someContactGroup(name = "Group2", modelStatus = NEW),
         )
         val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
         coEvery { contactDao.insert(any()) } returns Unit
@@ -163,8 +165,8 @@ class ContactRepositoryTest : RepositoryTestBase() {
     @Test
     fun `updating a contact should also update the contact groups`() {
         val groups = listOf(
-            someContactGroup(name = "Group1"),
-            someContactGroup(name = "Group2"),
+            someContactGroup(name = "Group1", modelStatus = CHANGED),
+            someContactGroup(name = "Group2", modelStatus = CHANGED),
         )
         val (contactId, contact) = someContactEditableWithId(contactGroups = groups)
         coEvery { contactDao.update(any()) } returns Unit
