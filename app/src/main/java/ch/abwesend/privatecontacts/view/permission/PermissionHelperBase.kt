@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIED
+import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ERROR
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
@@ -94,10 +95,15 @@ abstract class PermissionHelperBase {
         currentPermissions = permissions
         currentResultCallback = onPermissionResult
 
-        if (permissions.size == 1) {
-            singleResultObserver.launch(permissions.first())
-        } else {
-            multipleResultsObserver.launch(permissions.toTypedArray())
+        try {
+            if (permissions.size == 1) {
+                singleResultObserver.launch(permissions.first())
+            } else {
+                multipleResultsObserver.launch(permissions.toTypedArray())
+            }
+        } catch (e: IllegalStateException) {
+            logger.error("Failed to show permission-request dialog for $permissions", e)
+            onPermissionResult(ERROR)
         }
     }
 }

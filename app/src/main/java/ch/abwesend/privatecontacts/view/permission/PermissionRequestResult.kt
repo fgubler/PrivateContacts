@@ -11,4 +11,5 @@ enum class PermissionRequestResult(val usable: Boolean) {
     NEWLY_GRANTED(usable = true),
     PARTIALLY_NEWLY_GRANTED(usable = true),
     DENIED(usable = false),
+    ERROR(usable = false),
 }
