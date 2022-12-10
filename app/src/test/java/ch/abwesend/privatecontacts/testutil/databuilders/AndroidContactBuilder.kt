@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import android.net.Uri
+import ch.abwesend.privatecontacts.testutil.toLabeledValue
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
@@ -8,6 +9,7 @@ import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MailAddress
+import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.PhoneNumber
 import com.alexstyl.contactstore.PostalAddress
@@ -17,6 +19,7 @@ import com.alexstyl.contactstore.thumbnailUri
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
+import io.mockk.spyk
 import java.time.LocalDate
 
 fun someAndroidContact(
@@ -67,6 +70,68 @@ fun someAndroidContact(
     return mock
 }
 
+fun someMutableAndroidContact(
+    contactId: Long = 123123,
+    firstName: String = "Luke",
+    middleName: String = "",
+    lastName: String = "Skywalker",
+    displayName: String = "$firstName $lastName",
+    nickName: String = displayName,
+    note: String = "daddy issues",
+    contactData: ContactDataContainer = ContactDataContainer.createEmpty(),
+    organisation: String = "",
+    thumbnailUri: Uri = someUri("some thumbnail uri"),
+    imageData: ImageData = ImageData(ByteArray(0)),
+): MutableContact {
+    val contact = spyk(MutableContact())
+
+    mockkStatic(Contact::thumbnailUri)
+    every { contact.contactId } returns contactId
+    every { contact.displayName } returns displayName
+    every { contact.thumbnailUri } returns thumbnailUri
+
+    contact.firstName = firstName
+    contact.lastName = lastName
+    contact.middleName = middleName
+    contact.nickname = nickName
+    contact.note = Note(note)
+    contact.phones.addAll(
+        contactData.phoneNumbers.mapIndexed { index, elem ->
+            PhoneNumber(elem).toLabeledValue(label = Label.PhoneNumberMobile, id = index)
+        }
+    )
+    contact.mails.addAll(
+        contactData.emailAddresses.mapIndexed { index, elem ->
+            MailAddress(elem).toLabeledValue(label = Label.Other, id = index)
+        }
+    )
+    contact.webAddresses.addAll(
+        contactData.websites.mapIndexed { index, elem ->
+            WebAddress(someUri(elem)).toLabeledValue(label = Label.WebsiteHomePage, id = index)
+        }
+    )
+    contact.postalAddresses.addAll(
+        contactData.physicalAddresses.mapIndexed { index, elem ->
+            PostalAddress(elem).toLabeledValue(label = Label.LocationHome, id = index)
+        }
+    )
+    contact.relations.addAll(
+        contactData.relationships.mapIndexed { index, elem ->
+            Relation(elem).toLabeledValue(label = Label.RelationSister, id = index)
+        }
+    )
+    contact.events.addAll(
+        contactData.eventDates.mapIndexed { index, elem ->
+            EventDate(elem.dayOfMonth, elem.monthValue, elem.year)
+                .toLabeledValue(label = Label.DateBirthday, id = index)
+        }
+    )
+    contact.imageData = imageData
+    contact.organization = organisation
+
+    return contact
+}
+
 fun someUri(path: String): Uri {
     val mock = mockk<Uri>(relaxed = true)
 
@@ -86,4 +151,25 @@ fun someAndroidContactGroup(
     every { mock.note } returns notes
 
     return mock
+}
+
+data class ContactDataContainer(
+    val phoneNumbers: List<String>,
+    val emailAddresses: List<String>,
+    val physicalAddresses: List<String>,
+    val websites: List<String>,
+    val relationships: List<String>,
+    val eventDates: List<LocalDate>,
+) {
+    companion object {
+        fun createEmpty(): ContactDataContainer =
+            ContactDataContainer(
+                phoneNumbers = emptyList(),
+                emailAddresses = emptyList(),
+                physicalAddresses = emptyList(),
+                websites = emptyList(),
+                relationships = emptyList(),
+                eventDates = emptyList(),
+            )
+    }
 }
