@@ -12,6 +12,8 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.rep
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
+import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -82,5 +84,29 @@ class AndroidContactLoadServiceTest : TestBase() {
         }
 
         assertThat(thrownException).isEqualTo(exception)
+    }
+
+    @Test
+    fun `should check whether contacts exist`() {
+        val existingContactIds = listOf(
+            someExternalContactId(contactNo = 1),
+            someExternalContactId(contactNo = 2),
+            someExternalContactId(contactNo = 3),
+            someExternalContactId(contactNo = 4),
+        )
+        val notExistingContactIds = listOf(
+            someExternalContactId(contactNo = 40),
+            someExternalContactId(contactNo = 41),
+            someExternalContactId(contactNo = 42),
+        )
+        val existingContacts = existingContactIds.map { someContactBase(id = it) }
+        val allContactsIds = existingContactIds + notExistingContactIds
+        val expectedResult = existingContactIds.associateWith { true } + notExistingContactIds.associateWith { false }
+        coEvery { contactLoadRepository.loadContactsSnapshot(any()) } returns existingContacts
+
+        val result = runBlocking { underTest.doContactsExist(allContactsIds.toSet()) }
+
+        coVerify { contactLoadRepository.loadContactsSnapshot(predicate = null) }
+        assertThat(result).isEqualTo(expectedResult)
     }
 }
