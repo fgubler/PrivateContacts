@@ -161,8 +161,9 @@ private fun Contact.getCompanies(): List<Company> {
         value = organization,
         isMain = index == 0,
         modelStatus = ModelStatus.UNCHANGED,
-    )
-    return listOf(company)
+    ).takeIf { organization.isNotEmpty() }
+
+    return listOfNotNull(company)
 }
 
 private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
