@@ -27,6 +27,9 @@ class AndroidContactPermissionHelper : PermissionHelperBase() {
                 PermissionRequestResult.DENIED -> {
                     logger.debug("Android contacts: permissions denied")
                 }
+                PermissionRequestResult.ERROR -> {
+                    logger.debug("Android contacts: error while requesting permissions")
+                }
                 PermissionRequestResult.ALREADY_GRANTED -> {
                     logger.debug("Android contacts: permissions already granted")
                 }

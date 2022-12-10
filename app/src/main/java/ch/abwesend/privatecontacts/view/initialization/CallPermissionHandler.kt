@@ -28,6 +28,7 @@ import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ALREADY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.DENIED
+import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.ERROR
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.NEWLY_GRANTED
 import ch.abwesend.privatecontacts.view.permission.PermissionRequestResult.PARTIALLY_NEWLY_GRANTED
 
@@ -126,7 +127,7 @@ private fun ComponentActivity.requestPermissionsForCallerIdentification(
                 val postfix = if (result == NEWLY_GRANTED) "" else " partially"
                 logger.debug("Call detection: permission/role granted$postfix")
             }
-            DENIED -> {
+            DENIED, ERROR -> {
                 Settings.repository.observeIncomingCalls = false
                 logger.debug("Call detection: permission/role denied")
             }
