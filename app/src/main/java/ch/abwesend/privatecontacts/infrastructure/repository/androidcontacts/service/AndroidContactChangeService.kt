@@ -33,7 +33,6 @@ import com.alexstyl.contactstore.PostalAddress as ContactStorePostalAddress
 import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
-// TODO add tests
 class AndroidContactChangeService {
     fun updateChangedBaseData(originalContact: IContact, changedContact: IContact, mutableContact: MutableContact) {
         if (originalContact.firstName != changedContact.firstName) {
@@ -51,8 +50,8 @@ class AndroidContactChangeService {
     }
 
     /**
-     * Beware: untested (the UI cannot change images yet)
-     * TODO test
+     * Beware: not yet tested manually (the UI cannot change images yet)
+     * TODO test manually
      */
     fun updateChangedImage(changedContact: IContact, mutableContact: MutableContact) {
         val newImage = changedContact.image
@@ -107,6 +106,7 @@ class AndroidContactChangeService {
         ) { newAddress -> ContactStorePostalAddress(street = newAddress.value) }
     }
 
+    /** Beware: Uri.parse() needs to be mocked in unit-tests */
     private fun MutableContact.updateWebsites(contactData: List<ContactData>) {
         val websites = contactData.filterIsInstance<Website>()
         logger.debug("Updating ${websites.size} websites on contact $contactId")
@@ -150,7 +150,6 @@ class AndroidContactChangeService {
         }
     }
 
-    // TODO test
     private fun <TInternal : ContactData, TExternal : Any> updateContactDataOfType(
         newContactData: List<TInternal>,
         mutableDataOnContact: MutableList<LabeledValue<TExternal>>,
