@@ -15,6 +15,7 @@ import com.alexstyl.contactstore.PhoneNumber
 import com.alexstyl.contactstore.PostalAddress
 import com.alexstyl.contactstore.Relation
 import com.alexstyl.contactstore.WebAddress
+import com.alexstyl.contactstore.mutableCopy
 import com.alexstyl.contactstore.thumbnailUri
 import io.mockk.every
 import io.mockk.mockk
