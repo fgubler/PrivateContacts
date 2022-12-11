@@ -22,10 +22,10 @@ const val PAGING_DEPRECATION = "No longer using paging because it would not work
  * restrict the type of the ID. The contact.id property will be ignored.
  */
 interface IContactRepository {
-    suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>>
+    suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>>
 
     @Deprecated(PAGING_DEPRECATION)
-    suspend fun getContactsPaged(
+    suspend fun loadContactsPaged(
         searchConfig: ContactSearchConfig,
         loadSize: Int,
         offsetInRows: Int

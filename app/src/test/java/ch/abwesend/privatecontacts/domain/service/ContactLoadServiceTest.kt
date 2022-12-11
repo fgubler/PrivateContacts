@@ -55,7 +55,7 @@ class ContactLoadServiceTest : TestBase() {
     @Test
     fun `search should check for easter eggs`() {
         val query = "Test"
-        coEvery { contactRepository.getContactsAsFlow(any()) } returns mockk()
+        coEvery { contactRepository.loadContactsAsFlow(any()) } returns mockk()
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
         runBlocking { underTest.searchSecretContacts(query) }
@@ -64,15 +64,40 @@ class ContactLoadServiceTest : TestBase() {
     }
 
     @Test
-    fun `search should pass the query to the paging logic`() {
+    fun `search should pass the query to the repository`() {
         val query = "Test"
-        coEvery { contactRepository.getContactsAsFlow(any()) } returns mockk()
+        coEvery { contactRepository.loadContactsAsFlow(any()) } returns mockk()
         every { easterEggService.checkSearchForEasterEggs(any()) } just runs
 
         runBlocking { underTest.searchSecretContacts(query) }
 
         verify { easterEggService.checkSearchForEasterEggs(query) }
-        coVerify { contactRepository.getContactsAsFlow(ContactSearchConfig.Query(query)) }
+        coVerify { contactRepository.loadContactsAsFlow(ContactSearchConfig.Query(query)) }
+    }
+
+    @Test
+    fun `loading all should load internal and external contacts`() {
+        coEvery { contactRepository.loadContactsAsFlow(any()) } returns mockk()
+        coEvery { androidContactService.loadContactsAsFlow(any()) } returns mockk()
+
+        runBlocking { underTest.loadAllContacts() }
+
+        coVerify { contactRepository.loadContactsAsFlow(ContactSearchConfig.All) }
+        coVerify { androidContactService.loadContactsAsFlow(ContactSearchConfig.All) }
+    }
+
+    @Test
+    fun `search should search for internal and external contacts`() {
+        val query = "Test"
+        coEvery { contactRepository.loadContactsAsFlow(any()) } returns mockk()
+        coEvery { androidContactService.loadContactsAsFlow(any()) } returns mockk()
+        every { easterEggService.checkSearchForEasterEggs(any()) } just runs
+
+        runBlocking { underTest.searchAllContacts(query) }
+
+        verify { easterEggService.checkSearchForEasterEggs(query) }
+        coVerify { contactRepository.loadContactsAsFlow(ContactSearchConfig.Query(query)) }
+        coVerify { androidContactService.loadContactsAsFlow(ContactSearchConfig.Query(query)) }
     }
 
     @Test
