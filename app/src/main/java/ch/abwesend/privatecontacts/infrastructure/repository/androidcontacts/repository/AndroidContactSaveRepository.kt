@@ -6,7 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import com.alexstyl.contactstore.MutableContact
 
 class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
-    suspend fun deleteContacts(contactIds: List<IContactIdExternal>) {
+    suspend fun deleteContacts(contactIds: Set<IContactIdExternal>) {
         checkContactWritePermission { exception -> throw exception }
         withContactStore { contactStore ->
             contactStore.execute { contactIds.forEach { delete(it.contactNo) } }

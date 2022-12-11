@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 
 interface IAndroidContactSaveService {
-    suspend fun deleteContacts(contactIds: List<IContactIdExternal>): ContactBatchChangeResult
+    suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult
     suspend fun updateContact(contactId: IContactIdExternal, contact: IContact): ContactSaveResult
     suspend fun createContact(contact: IContact): ContactSaveResult
 }

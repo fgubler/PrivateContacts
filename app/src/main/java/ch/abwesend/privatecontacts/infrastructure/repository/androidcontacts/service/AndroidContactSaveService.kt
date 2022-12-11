@@ -22,17 +22,19 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
     private val contactChangeService: AndroidContactChangeService by injectAnywhere()
 
-    override suspend fun deleteContacts(contactIds: List<IContactIdExternal>): ContactBatchChangeResult =
-        try {
-            contactSaveRepository.deleteContacts(contactIds)
-            checkForSuccessfulDeletion(contactIds)
+    override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult {
+        val toDelete = contactIds.toSet()
+        return try {
+            contactSaveRepository.deleteContacts(toDelete)
+            checkForSuccessfulDeletion(toDelete)
         } catch (t: Throwable) {
             logger.error("Failed to delete contacts $contactIds", t)
-            checkForPartialDeletionSuccess(contactIds)
+            checkForPartialDeletionSuccess(toDelete)
         }
+    }
 
-    private suspend fun checkForSuccessfulDeletion(contactIds: List<IContactIdExternal>): ContactBatchChangeResult {
-        val existenceByContactId = contactLoadService.doContactsExist(contactIds.toSet())
+    private suspend fun checkForSuccessfulDeletion(contactIds: Set<IContactIdExternal>): ContactBatchChangeResult {
+        val existenceByContactId = contactLoadService.doContactsExist(contactIds)
         val deletedContacts = existenceByContactId.filter { !it.value }.keys.toList()
         val notDeletedContacts: Map<ContactId, ContactBatchChangeErrors> = existenceByContactId
             .filter { it.value }.keys
@@ -46,9 +48,9 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 
-    private suspend fun checkForPartialDeletionSuccess(contactIds: List<IContactIdExternal>): ContactBatchChangeResult {
+    private suspend fun checkForPartialDeletionSuccess(contactIds: Set<IContactIdExternal>): ContactBatchChangeResult {
         val deletedContacts: Set<ContactId> = try {
-            val doContactsExist = contactLoadService.doContactsExist(contactIds.toSet())
+            val doContactsExist = contactLoadService.doContactsExist(contactIds)
             doContactsExist.filter { !it.value }.keys
         } catch (t: Throwable) {
             logger.error("Failed to check if some contacts were deleted successfully", t)
