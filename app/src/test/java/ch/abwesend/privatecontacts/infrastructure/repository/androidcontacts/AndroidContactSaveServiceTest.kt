@@ -68,7 +68,7 @@ class AndroidContactSaveServiceTest : TestBase() {
             ContactIdAndroid(contactNo = 123123),
             ContactIdAndroid(contactNo = 345608),
         )
-        coJustRun { saveRepository.deleteContacts(contactIds) }
+        coJustRun { saveRepository.deleteContacts(any()) }
         coEvery { loadService.doContactsExist(any()) } answers {
             val passedContactIds = firstArg<Set<IContactIdExternal>>()
             passedContactIds.associateWith { false }
@@ -76,7 +76,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
         val result = runBlocking { underTest.deleteContacts(contactIds) }
 
-        coVerify { saveRepository.deleteContacts(contactIds) }
+        coVerify { saveRepository.deleteContacts(contactIds.toSet()) }
         coVerify { loadService.doContactsExist(contactIds.toSet()) }
         assertThat(result.completelySuccessful).isTrue
     }
@@ -87,7 +87,7 @@ class AndroidContactSaveServiceTest : TestBase() {
             ContactIdAndroid(contactNo = 123123),
             ContactIdAndroid(contactNo = 345608),
         )
-        coJustRun { saveRepository.deleteContacts(contactIds) }
+        coJustRun { saveRepository.deleteContacts(any()) }
         coEvery { loadService.doContactsExist(any()) } answers {
             val passedContactIds = firstArg<Set<IContactIdExternal>>()
             passedContactIds.associateWith { it != passedContactIds.first() }
@@ -95,7 +95,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
         val result = runBlocking { underTest.deleteContacts(contactIds) }
 
-        coVerify { saveRepository.deleteContacts(contactIds) }
+        coVerify { saveRepository.deleteContacts(contactIds.toSet()) }
         coVerify { loadService.doContactsExist(contactIds.toSet()) }
         assertThat(result.completelySuccessful).isFalse
         assertThat(result.successfulChanges).isEqualTo(listOf(contactIds[0]))
@@ -109,7 +109,7 @@ class AndroidContactSaveServiceTest : TestBase() {
             ContactIdAndroid(contactNo = 123123),
             ContactIdAndroid(contactNo = 345608),
         )
-        coEvery { saveRepository.deleteContacts(contactIds) } throws IllegalStateException("Test")
+        coEvery { saveRepository.deleteContacts(any()) } throws IllegalStateException("Test")
         coEvery { loadService.doContactsExist(any()) } answers {
             val passedContactIds = firstArg<Set<IContactIdExternal>>()
             passedContactIds.associateWith { it != passedContactIds.first() }
@@ -117,7 +117,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
         val result = runBlocking { underTest.deleteContacts(contactIds) }
 
-        coVerify { saveRepository.deleteContacts(contactIds) }
+        coVerify { saveRepository.deleteContacts(contactIds.toSet()) }
         coVerify { loadService.doContactsExist(contactIds.toSet()) }
         assertThat(result.completelySuccessful).isFalse
         assertThat(result.successfulChanges).isEqualTo(listOf(contactIds[0]))
