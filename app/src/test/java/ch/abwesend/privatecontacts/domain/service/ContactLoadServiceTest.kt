@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -109,6 +110,8 @@ class ContactLoadServiceTest : TestBase() {
         val result = runBlocking { underTest.resolveContact(contactId) }
 
         coVerify { contactRepository.resolveContact(contactId) }
+        confirmVerified(androidContactService)
+        confirmVerified(contactRepository)
         assertThat(result).isEqualTo(contact)
     }
 
@@ -121,6 +124,8 @@ class ContactLoadServiceTest : TestBase() {
         val result = runBlocking { underTest.resolveContact(contactId) }
 
         coVerify { androidContactService.resolveContact(contactId) }
+        confirmVerified(androidContactService)
+        confirmVerified(contactRepository)
         assertThat(result).isEqualTo(contact)
     }
 
@@ -133,6 +138,8 @@ class ContactLoadServiceTest : TestBase() {
         val result = runBlocking { underTest.resolveContacts(listOf(contactId)) }
 
         coVerify { contactRepository.resolveContact(contactId) }
+        confirmVerified(androidContactService)
+        confirmVerified(contactRepository)
         assertThat(result).hasSize(1)
         assertThat(result[contactId]).isEqualTo(contact)
     }
@@ -146,6 +153,8 @@ class ContactLoadServiceTest : TestBase() {
         val result = runBlocking { underTest.resolveContacts(listOf(contactId)) }
 
         coVerify { androidContactService.resolveContact(contactId) }
+        confirmVerified(androidContactService)
+        confirmVerified(contactRepository)
         assertThat(result).hasSize(1)
         assertThat(result[contactId]).isEqualTo(contact)
     }
