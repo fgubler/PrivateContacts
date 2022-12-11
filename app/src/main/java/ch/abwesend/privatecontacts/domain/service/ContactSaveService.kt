@@ -15,12 +15,13 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -73,7 +74,11 @@ class ContactSaveService {
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
         val batchResult = deleteContacts(setOf(contact.id))
         return if (batchResult.completelySuccessful) ContactDeleteResult.Success
-        else ContactDeleteResult.Failure(UNKNOWN_ERROR)
+        else {
+            val errors = batchResult.flattenedErrors().errors.distinct()
+            val resultingError = errors.firstOrNull() ?: UNABLE_TO_DELETE_CONTACT
+            ContactDeleteResult.Failure(resultingError)
+        }
     }
 
     suspend fun deleteContacts(contactIds: Set<ContactId>): ContactBatchChangeResult {
