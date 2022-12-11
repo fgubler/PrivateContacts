@@ -9,11 +9,13 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -202,6 +204,35 @@ class ContactSaveServiceTest : TestBase() {
             coVerify { androidContactSaveService.createContact(contact) }
         } else {
             coVerify { contactRepository.createContact(any(), contact) }
+        }
+        confirmVerified(contactRepository)
+        confirmVerified(androidContactSaveService)
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun `should delete external contacts externally and internal ones internally`(isExternal: Boolean) {
+        val externalContactId = someExternalContactId()
+        val internalContactId = someContactId()
+        val contactId = if (isExternal) externalContactId else internalContactId
+        val contact = someContactEditable(id = contactId)
+        coEvery { contactRepository.deleteContacts(any()) } answers {
+            ContactBatchChangeResult.success(firstArg())
+        }
+        coEvery { androidContactSaveService.deleteContacts(any()) } answers {
+            ContactBatchChangeResult.success(firstArg())
+        }
+
+        val resultSingle = runBlocking { underTest.deleteContact(contact) }
+        val resultBatch = runBlocking { underTest.deleteContacts(setOf(contact.id)) }
+
+        assertThat(resultSingle).isEqualTo(ContactDeleteResult.Success)
+        assertThat(resultBatch.completelySuccessful).isTrue
+        assertThat(resultBatch.successfulChanges).isEqualTo(listOf(contact.id))
+        if (isExternal) {
+            coVerify(exactly = 2) { androidContactSaveService.deleteContacts(listOf(externalContactId)) }
+        } else {
+            coVerify(exactly = 2) { contactRepository.deleteContacts(listOf(internalContactId)) }
         }
         confirmVerified(contactRepository)
         confirmVerified(androidContactSaveService)
