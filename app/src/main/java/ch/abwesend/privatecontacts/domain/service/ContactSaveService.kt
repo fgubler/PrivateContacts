@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -59,16 +58,16 @@ class ContactSaveService {
     }
 
     private suspend fun saveContactExternally(contact: IContact): ContactSaveResult {
-        val oldContactId = contact.id
-        val newContactId = when (oldContactId) {
-            is IContactIdInternal -> return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
-            is IContactIdExternal -> oldContactId
+        return when (val contactId = contact.id) {
+            is IContactIdInternal -> {
+                // changing the contact from internal to external is treated as creating a new one
+                androidContactService.createContact(contact)
+            }
+            is IContactIdExternal -> {
+                if (contact.isNew) androidContactService.createContact(contact)
+                else androidContactService.updateContact(contactId, contact)
+            }
         }
-        val contactIdChanged = newContactId != oldContactId
-
-        return if (contactIdChanged || contact.isNew) {
-            ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
-        } else androidContactService.updateContact(newContactId, contact)
     }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
