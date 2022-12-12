@@ -12,8 +12,8 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
 import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadRepository
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
@@ -42,6 +42,9 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
@@ -72,15 +75,18 @@ internal val koinModule = module {
     single { ContactTypeChangeService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
+    single<IAndroidContactLoadService> { AndroidContactLoadService() }
+    single { AndroidContactLoadService() }
+    single<IAndroidContactSaveService> { AndroidContactSaveService() }
+    single { AndroidContactChangeService() }
 
     single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
 
     // Repositories
-    single<IAndroidContactLoadRepository> { AndroidContactLoadRepository() }
     single { AndroidContactLoadRepository() }
-    single<IAndroidContactSaveRepository> { AndroidContactSaveRepository() }
+    single { AndroidContactSaveRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single<IAddressFormattingRepository> { AddressFormattingRepository() }

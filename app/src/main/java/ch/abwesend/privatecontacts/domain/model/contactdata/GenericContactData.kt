@@ -1,7 +1,7 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 sealed interface BaseGenericContactData<TValue> : ContactData {
-    val value: TValue
+    override val value: TValue
 }
 
 interface GenericContactData<TValue, TThis : GenericContactData<TValue, TThis>> : BaseGenericContactData<TValue> {

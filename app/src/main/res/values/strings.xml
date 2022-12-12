@@ -46,6 +46,7 @@
     <string name="validation_error">Validation error</string>
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
+    <string name="unable_to_save_contact">The contact could not be saved</string>
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
@@ -68,6 +69,8 @@
     <string name="type_anniversary">Anniversary</string>
     <string name="type_main">Main</string>
     <string name="type_relationship_sibling">Sibling</string>
+    <string name="type_relationship_brother">Brother</string>
+    <string name="type_relationship_sister">Sister</string>
     <string name="type_relationship_parent">Parent</string>
     <string name="type_relationship_child">Child</string>
     <string name="type_relationship_partner">Partner</string>

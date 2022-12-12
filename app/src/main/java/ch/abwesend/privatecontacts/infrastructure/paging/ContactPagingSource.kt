@@ -33,7 +33,7 @@ class ContactPagingSource(
         val loadSize = params.loadSize
 
         return try {
-            val contacts = contactRepository.getContactsPaged(
+            val contacts = contactRepository.loadContactsPaged(
                 searchConfig = searchConfig,
                 loadSize = loadSize,
                 offsetInRows = (pageNumber - 1) * PAGE_SIZE,

@@ -38,7 +38,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
     private val contactImageRepository: ContactImageRepository by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
 
-    override suspend fun getContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
+    override suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         withDatabase { database ->
             val dataFlow = when (searchConfig) {
                 is ContactSearchConfig.All -> database.contactDao().getAllAsFlow()
@@ -58,7 +58,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }
 
     @Deprecated(PAGING_DEPRECATION)
-    override suspend fun getContactsPaged(
+    override suspend fun loadContactsPaged(
         searchConfig: ContactSearchConfig,
         loadSize: Int,
         offsetInRows: Int,

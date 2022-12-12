@@ -133,7 +133,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         result.forEachIndexed { index, contactData ->
             assertThat(contactData).isInstanceOf(Relationship::class.java)
             assertThat((contactData as Relationship).value).isEqualTo(sisters[index])
-            assertThat(contactData.type).isEqualTo(ContactDataType.RelationshipSibling)
+            assertThat(contactData.type).isEqualTo(ContactDataType.RelationshipSister)
         }
     }
 

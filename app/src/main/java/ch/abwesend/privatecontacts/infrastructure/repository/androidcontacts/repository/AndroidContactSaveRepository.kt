@@ -1,61 +1,27 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import com.alexstyl.contactstore.MutableContact
 
-class AndroidContactSaveRepository : AndroidContactRepositoryBase(), IAndroidContactSaveRepository {
-    private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
-
-    override suspend fun deleteContacts(contactIds: List<IContactIdExternal>): ContactBatchChangeResult =
-        try {
-            checkContactWritePermission { exception -> throw exception }
-
-            withContactStore { contactStore ->
-                contactStore.execute { contactIds.forEach { delete(it.contactNo) } }
-            }
-
-            val existenceByContactId = contactLoadRepository.doContactsExist(contactIds.toSet())
-            val deletedContacts = existenceByContactId.filter { !it.value }.keys.toList()
-            val notDeletedContacts: Map<ContactId, ContactBatchChangeErrors> = existenceByContactId
-                .filter { it.value }.keys
-                .associateWith {
-                    ContactBatchChangeErrors(
-                        errors = listOf(UNABLE_TO_DELETE_CONTACT),
-                        validationErrors = emptyList(),
-                    )
-                }
-
-            ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
-        } catch (t: Throwable) {
-            logger.error("Failed to delete contacts $contactIds", t)
-            checkForPartialSuccess(contactIds)
+class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
+    suspend fun deleteContacts(contactIds: Set<IContactIdExternal>) {
+        checkContactWritePermission { exception -> throw exception }
+        withContactStore { contactStore ->
+            contactStore.execute { contactIds.forEach { delete(it.contactNo) } }
         }
-
-    private suspend fun checkForPartialSuccess(contactIds: List<IContactIdExternal>): ContactBatchChangeResult {
-        val deletedContacts: Set<ContactId> = try {
-            val doContactsExist = contactLoadRepository.doContactsExist(contactIds.toSet())
-            doContactsExist.filter { !it.value }.keys
-        } catch (t: Throwable) {
-            logger.error("Failed to check if some contacts were deleted successfully", t)
-            emptySet()
+    }
+    suspend fun updateContact(contact: MutableContact) {
+        checkContactWritePermission { exception -> throw exception }
+        withContactStore { contactStore ->
+            contactStore.execute { update(contact) }
         }
-        val notDeletedContacts = contactIds
-            .minus(deletedContacts)
-            .associateWith {
-                ContactBatchChangeErrors(
-                    errors = listOf(UNABLE_TO_DELETE_CONTACT),
-                    validationErrors = emptyList(),
-                )
-            }
-        return ContactBatchChangeResult(
-            successfulChanges = deletedContacts.toList(),
-            failedChanges = notDeletedContacts,
-        )
+    }
+
+    // TODO implement
+    suspend fun createContact(contact: MutableContact): ContactSaveResult {
+        checkContactWritePermission { exception -> throw exception }
+        return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
     }
 }

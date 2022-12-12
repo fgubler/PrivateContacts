@@ -31,7 +31,7 @@ fun someInternalContactId(): ContactIdInternal = ContactIdInternal.randomId()
 fun someExternalContactId(contactNo: Long = 442): ContactIdAndroid = ContactIdAndroid(contactNo = contactNo)
 
 fun someContactBase(
-    id: ContactIdInternal = someInternalContactId(),
+    id: ContactId = someInternalContactId(),
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "",

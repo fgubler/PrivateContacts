@@ -140,6 +140,7 @@ object ContactDataEditComponents {
             fieldLabel = Company.labelSingular,
             icon = Company.icon,
             showIfEmpty = showIfEmpty,
+            showForExternalContacts = false,
             factory = { Company.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged

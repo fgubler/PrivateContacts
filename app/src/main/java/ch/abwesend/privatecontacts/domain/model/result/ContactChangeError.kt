@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.R
 enum class ContactChangeError(@StringRes val label: Int) {
     UNABLE_TO_DELETE_CONTACT(R.string.unable_to_delete_contact),
     UNABLE_TO_RESOLVE_CONTACT(R.string.unable_to_resolve_contact),
+    UNABLE_TO_SAVE_CONTACT(R.string.unable_to_save_contact),
 
     UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE(R.string.type_change_create_new_contact_error),
     UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE(R.string.type_change_delete_old_contact_error),

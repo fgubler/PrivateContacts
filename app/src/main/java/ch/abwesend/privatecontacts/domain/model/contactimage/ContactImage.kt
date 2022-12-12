@@ -17,8 +17,17 @@ data class ContactImage(
     val isEmpty: Boolean
         get() = thumbnailUri.isNullOrEmpty() && (fullImage == null || fullImage.isEmpty())
 
+    fun contentEquals(other: ContactImage): Boolean {
+        return thumbnailUri == other.thumbnailUri &&
+            if (fullImage != null && other.fullImage != null) fullImage.isEqualTo(other.fullImage)
+            else fullImage == null && other.fullImage == null
+    }
+
     companion object {
         val empty: ContactImage
             get() = ContactImage(thumbnailUri = null, fullImage = null, modelStatus = UNCHANGED)
     }
 }
+
+private fun ByteArray.isEqualTo(other: ByteArray): Boolean =
+    size == other.size && (0..size).all { this[it] == other[it] }

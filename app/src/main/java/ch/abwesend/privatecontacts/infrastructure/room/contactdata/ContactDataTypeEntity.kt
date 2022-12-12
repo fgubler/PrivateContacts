@@ -16,12 +16,14 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.MOBILE_BUSINESS
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_BROTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_CHILD
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FRIEND
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SIBLING
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_SISTER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_WORK
 
 /**
@@ -45,6 +47,8 @@ fun ContactDataTypeEntity.toContactDataType(): ContactDataType {
         CUSTOM -> ContactDataType.CustomValue(customValue.orEmpty())
 
         RELATIONSHIP_SIBLING -> ContactDataType.RelationshipSibling
+        RELATIONSHIP_BROTHER -> ContactDataType.RelationshipBrother
+        RELATIONSHIP_SISTER -> ContactDataType.RelationshipSister
         RELATIONSHIP_PARENT -> ContactDataType.RelationshipParent
         RELATIONSHIP_CHILD -> ContactDataType.RelationshipChild
         RELATIONSHIP_RELATIVE -> ContactDataType.RelationshipRelative

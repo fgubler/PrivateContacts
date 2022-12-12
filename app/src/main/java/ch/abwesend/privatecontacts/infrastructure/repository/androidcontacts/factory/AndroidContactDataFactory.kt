@@ -4,9 +4,11 @@ import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroidWithoutNo
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
@@ -20,7 +22,6 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
-import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 
 fun Contact.getContactData(): List<ContactData> {
@@ -30,7 +31,8 @@ fun Contact.getContactData(): List<ContactData> {
         getPhysicalAddresses(addressFormattingRepository) +
         getWebsites() +
         getRelationships() +
-        getEventDates()
+        getEventDates() +
+        getCompanies()
 }
 
 private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
@@ -147,36 +149,22 @@ private fun Contact.getEventDates(): List<EventDate> {
     }.removeDuplicates()
 }
 
-private fun Label.toContactDataType(): ContactDataType =
-    when (this) {
-        Label.PhoneNumberMobile -> ContactDataType.Mobile
-        Label.PhoneNumberCompanyMain -> ContactDataType.Business
-        Label.PhoneNumberWorkMobile -> ContactDataType.MobileBusiness
-        Label.Main -> ContactDataType.Main
-        Label.LocationHome -> ContactDataType.Personal
-        Label.LocationWork -> ContactDataType.Business
-        Label.DateBirthday -> ContactDataType.Birthday
-        Label.DateAnniversary -> ContactDataType.Anniversary
-        Label.WebsiteHomePage -> ContactDataType.Main
-        Label.Other -> ContactDataType.Other
+private fun Contact.getCompanies(): List<Company> {
+    val contactDataId = ContactDataIdInternal.randomId() // a bit of a hack but kind of unavoidable
+    val type = ContactDataType.Business
+    val index = 0 // there is only one company
 
-        Label.RelationBrother -> ContactDataType.RelationshipSibling
-        Label.RelationSister -> ContactDataType.RelationshipSibling
-        Label.RelationChild -> ContactDataType.RelationshipChild
-        Label.RelationFather -> ContactDataType.RelationshipParent
-        Label.RelationMother -> ContactDataType.RelationshipParent
-        Label.RelationParent -> ContactDataType.RelationshipParent
-        Label.RelationPartner -> ContactDataType.RelationshipPartner
-        Label.RelationDomesticPartner -> ContactDataType.RelationshipPartner
-        Label.RelationRelative -> ContactDataType.RelationshipRelative
-        Label.RelationFriend -> ContactDataType.RelationshipFriend
-        Label.RelationManager -> ContactDataType.RelationshipWork
-        Label.RelationReferredBy -> ContactDataType.Other
-        Label.RelationSpouse -> ContactDataType.RelationshipPartner
+    val company = Company(
+        id = contactDataId,
+        sortOrder = index,
+        type = type,
+        value = organization,
+        isMain = index == 0,
+        modelStatus = ModelStatus.UNCHANGED,
+    ).takeIf { organization.isNotEmpty() }
 
-        is Label.Custom -> ContactDataType.CustomValue(customValue = label)
-        else -> ContactDataType.Other
-    }
+    return listOfNotNull(company)
+}
 
 private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
     id?.let { contactDataNo -> ContactDataIdAndroid(contactDataNo = contactDataNo) }

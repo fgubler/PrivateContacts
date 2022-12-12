@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
@@ -23,6 +24,8 @@ import java.time.LocalDate
 import java.util.UUID
 
 fun someContactDataId(): ContactDataId = createContactDataId()
+fun someContactDataIdExternal(contactDataNo: Int = 42): ContactDataId =
+    ContactDataIdAndroid(contactDataNo = contactDataNo.toLong())
 
 fun someContactDataEntity(
     id: UUID = UUID.randomUUID(),

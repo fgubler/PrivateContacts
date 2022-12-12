@@ -132,6 +132,7 @@ object AboutScreen {
             )
             Button(
                 modifier = Modifier.padding(start = 5.dp),
+                enabled = errorText.isNotEmpty(),
                 onClick = {
                     sendUserReportAsException(errorText)
                     Toast.makeText(context, R.string.error_report_sent_confirmation, Toast.LENGTH_SHORT).show()
@@ -144,7 +145,11 @@ object AboutScreen {
     }
 
     private fun sendUserReportAsException(text: String) {
-        logger.logToCrashlytics(UserFeedbackPseudoException(text))
+        if (text.isNotEmpty()) {
+            val fullText = "Received user-feedback: $text"
+            logger.warning(fullText)
+            logger.logToCrashlytics(UserFeedbackPseudoException(fullText))
+        }
     }
 
     @Composable

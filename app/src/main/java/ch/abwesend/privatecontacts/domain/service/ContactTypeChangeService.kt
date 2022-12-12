@@ -161,6 +161,11 @@ class ContactTypeChangeService {
             val newStatus = computeNewStatus(contactData.modelStatus)
             contactData.overrideStatus(newStatus)
         }
+
+        contactGroups.replaceAll { contactGroup ->
+            val newStatus = computeNewStatus(contactGroup.modelStatus)
+            contactGroup.copy(modelStatus = newStatus)
+        }
     }
 
     private fun IContactEditable.changeContactDataToInternalIds() {

@@ -14,14 +14,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
-import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveRepository
+import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
@@ -29,7 +29,7 @@ class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
     private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val androidContactRepository: IAndroidContactSaveRepository by injectAnywhere()
+    private val androidContactService: IAndroidContactSaveService by injectAnywhere()
 
     suspend fun saveContact(contact: IContactEditable): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
@@ -41,7 +41,7 @@ class ContactSaveService {
 
         return when (contact.type) {
             ContactType.SECRET -> saveContactInternally(contact)
-            ContactType.PUBLIC -> ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+            ContactType.PUBLIC -> saveContactExternally(contact)
         }
     }
 
@@ -57,10 +57,27 @@ class ContactSaveService {
         else contactRepository.updateContact(newContactId, contact)
     }
 
+    private suspend fun saveContactExternally(contact: IContact): ContactSaveResult {
+        return when (val contactId = contact.id) {
+            is IContactIdInternal -> {
+                // changing the contact from internal to external is treated as creating a new one
+                androidContactService.createContact(contact)
+            }
+            is IContactIdExternal -> {
+                if (contact.isNew) androidContactService.createContact(contact)
+                else androidContactService.updateContact(contactId, contact)
+            }
+        }
+    }
+
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
         val batchResult = deleteContacts(setOf(contact.id))
         return if (batchResult.completelySuccessful) ContactDeleteResult.Success
-        else ContactDeleteResult.Failure(UNKNOWN_ERROR)
+        else {
+            val errors = batchResult.flattenedErrors().errors.distinct()
+            val resultingError = errors.firstOrNull() ?: UNABLE_TO_DELETE_CONTACT
+            ContactDeleteResult.Failure(resultingError)
+        }
     }
 
     suspend fun deleteContacts(contactIds: Set<ContactId>): ContactBatchChangeResult {
@@ -72,7 +89,7 @@ class ContactSaveService {
         } else ContactBatchChangeResult.empty()
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
-            androidContactRepository.deleteContacts(externalContactIds)
+            androidContactService.deleteContacts(externalContactIds)
         } else ContactBatchChangeResult.empty()
 
         return internalResult.combine(externalResult)

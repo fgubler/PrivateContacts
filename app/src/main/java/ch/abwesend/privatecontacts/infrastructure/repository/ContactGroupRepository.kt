@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
@@ -50,6 +51,12 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
         contactGroups: List<IContactGroup>
     ) {
         logger.debug("Updating contact group relations")
+
+        if (contactGroups.all { it.modelStatus == ModelStatus.UNCHANGED }) {
+            logger.debug("No contact group relations to update")
+            return
+        }
+
         val newRelations = contactGroups.map { contactGroup ->
             ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
         }
