@@ -20,7 +20,7 @@ buildscript {
         junitJupiterVersion = "5.8.2"
         junit5AndroidVersion = "1.3.0"
         archUnitVersion = "0.22.0"
-        mockkVersion = "1.13.2"
+        mockkVersion = "1.13.3"
     }
     repositories {
         google()
