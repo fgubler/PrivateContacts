@@ -18,6 +18,9 @@ interface SettingsRepository : ISettingsState {
     override var orderByFirstName: Boolean
     override var showContactTypeInList: Boolean
 
+    override var showExtraButtonsInEditScreen: Boolean
+    override var invertTopAndBottomBars: Boolean
+
     override var showInitialAppInfoDialog: Boolean // invisible
 
     // Defaults

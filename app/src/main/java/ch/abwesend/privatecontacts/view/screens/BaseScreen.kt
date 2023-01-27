@@ -23,12 +23,15 @@ import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
 import kotlinx.coroutines.CoroutineScope
 
+private val hidden: @Composable () -> Unit = {}
+
 @Composable
 fun BaseScreen(
     screenContext: ScreenContext,
     selectedScreen: Screen,
     /** if false, only back-navigation is allowed */
     allowFullNavigation: Boolean = false,
+    invertTopAndBottomBars: Boolean = screenContext.settings.invertTopAndBottomBars,
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     topBarActions: @Composable RowScope.() -> Unit = {},
@@ -47,7 +50,8 @@ fun BaseScreen(
 ) {
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = topBar,
+        topBar = if (invertTopAndBottomBars) hidden else topBar,
+        bottomBar = if (invertTopAndBottomBars) topBar else hidden,
         drawerContent = { SideDrawerContent(selectedScreen, scaffoldState, screenContext.router::navigateToScreen) },
         floatingActionButton = floatingActionButton,
         content = { padding -> content(padding) },

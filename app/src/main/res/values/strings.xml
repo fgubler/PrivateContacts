@@ -210,6 +210,8 @@
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
     <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
+    <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
+    <string name="settings_entry_invert_top_and_bottom_bars">Show the navigation-bar at the bottom of the screen</string>
     <string name="settings_entry_default_contact_type">Default contact-type</string>
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
     <string name="settings_entry_call_detection">Match incoming calls with contacts</string>

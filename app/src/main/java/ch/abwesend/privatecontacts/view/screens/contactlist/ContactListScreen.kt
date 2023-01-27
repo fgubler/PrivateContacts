@@ -8,11 +8,13 @@ package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.LeadingIconTab
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -30,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
@@ -86,8 +89,15 @@ object ContactListScreen {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(padding)
             ) {
-                TabBox(screenContext)
-                ContactListContent(screenContext)
+                if (screenContext.settings.invertTopAndBottomBars) {
+                    Surface(modifier = Modifier.weight(1.0f)) { // let the tabs get their space first
+                        ContactListContent(screenContext)
+                    }
+                    TabBox(screenContext)
+                } else {
+                    TabBox(screenContext)
+                    ContactListContent(screenContext)
+                }
             }
         }
     }
@@ -148,7 +158,11 @@ object ContactListScreen {
 
     @Composable
     private fun AddContactButton(screenContext: ScreenContext) {
-        FloatingActionButton(onClick = { createContact(screenContext) }) {
+        val verticalOffset = if (screenContext.settings.invertTopAndBottomBars) -45 else 0 // space for tab-headers
+        FloatingActionButton(
+            modifier = Modifier.offset(y = verticalOffset.dp),
+            onClick = { createContact(screenContext) },
+        ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.create_contact),

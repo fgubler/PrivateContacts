@@ -14,6 +14,10 @@ interface ISettingsState {
     val appTheme: AppTheme
     val orderByFirstName: Boolean
     val showContactTypeInList: Boolean
+    /** show extra save and cancel buttons at the bottom of the edit-screen */
+    val showExtraButtonsInEditScreen: Boolean
+    /** show the top-bar at the bottom */
+    val invertTopAndBottomBars: Boolean
 
     val showInitialAppInfoDialog: Boolean
 
@@ -47,6 +51,9 @@ data class SettingsState(
     override val orderByFirstName: Boolean,
     override val showContactTypeInList: Boolean,
 
+    override val showExtraButtonsInEditScreen: Boolean,
+    override val invertTopAndBottomBars: Boolean,
+
     override val showInitialAppInfoDialog: Boolean,
 
     override val defaultContactType: ContactType,
@@ -65,6 +72,8 @@ data class SettingsState(
             appTheme = AppTheme.SYSTEM_SETTINGS,
             orderByFirstName = true,
             showContactTypeInList = true,
+            showExtraButtonsInEditScreen = true,
+            invertTopAndBottomBars = false,
             showIncomingCallsOnLockScreen = true,
             showInitialAppInfoDialog = true,
             requestIncomingCallPermissions = true,

@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -53,6 +52,8 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
+import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
@@ -87,7 +88,9 @@ object ContactEditScreen {
         }
 
         selectedContact?.let { contact ->
-            Scaffold(
+            BaseScreen(
+                screenContext = screenContext,
+                selectedScreen = ContactEdit,
                 topBar = {
                     ContactEditTopBar(
                         screenContext = screenContext,
@@ -106,7 +109,10 @@ object ContactEditScreen {
                         showAllFields = showAllFields,
                         modifier = Modifier.weight(1F)
                     )
-                    ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+
+                    if (screenContext.settings.showExtraButtonsInEditScreen) {
+                        ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+                    }
                 }
 
                 // Dialogs

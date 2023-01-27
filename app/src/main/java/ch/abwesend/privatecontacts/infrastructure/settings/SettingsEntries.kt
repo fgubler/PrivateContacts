@@ -27,6 +27,14 @@ internal val showContactTypeInListEntry = SettingsEntry(
     key = booleanPreferencesKey("showContactTypeInList"),
     defaultValue = SettingsState.defaultSettings.showContactTypeInList
 )
+internal val showExtraButtonsInEditScreenEntry = SettingsEntry(
+    key = booleanPreferencesKey("showExtraButtonsInEditScreen"),
+    defaultValue = SettingsState.defaultSettings.showExtraButtonsInEditScreen
+)
+internal val invertTopAndBottomBarsEntry = SettingsEntry(
+    key = booleanPreferencesKey("invertTopAndBottomBars"),
+    defaultValue = SettingsState.defaultSettings.invertTopAndBottomBars
+)
 internal val incomingCallsOnLockScreenEntry = SettingsEntry(
     key = booleanPreferencesKey("showIncomingCallsOnLockScreen"),
     defaultValue = SettingsState.defaultSettings.showIncomingCallsOnLockScreen
