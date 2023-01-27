@@ -119,6 +119,24 @@ object SettingsScreen {
                 value = currentSettings.showContactTypeInList,
                 onValueChanged = { settingsRepository.showContactTypeInList = it }
             )
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_extra_buttons_in_edit_screen,
+                description = null,
+                value = currentSettings.showExtraButtonsInEditScreen,
+                onValueChanged = { settingsRepository.showExtraButtonsInEditScreen = it }
+            )
+            SettingsCheckbox(
+                label = R.string.settings_entry_invert_top_and_bottom_bars,
+                description = null,
+                value = currentSettings.invertTopAndBottomBars,
+                onValueChanged = {
+                    settingsRepository.invertTopAndBottomBars = it
+                    settingsRepository.showExtraButtonsInEditScreen = !it // the buttons don't make sense if true
+                }
+            )
         }
     }
 

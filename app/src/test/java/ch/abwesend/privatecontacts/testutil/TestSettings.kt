@@ -29,6 +29,8 @@ data class TestSettings(
     override var showAndroidContacts: Boolean = currentSettings.showAndroidContacts
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
     override var currentVersion: Int = 0
+    override var showExtraButtonsInEditScreen: Boolean = currentSettings.showExtraButtonsInEditScreen
+    override var invertTopAndBottomBars: Boolean = currentSettings.invertTopAndBottomBars
 
     override fun overrideSettingsWith(settings: ISettingsState) {
         // Do nothing

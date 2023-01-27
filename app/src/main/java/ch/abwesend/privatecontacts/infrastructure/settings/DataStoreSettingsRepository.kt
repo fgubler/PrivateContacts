@@ -56,6 +56,14 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showContactTypeInList
         set(value) = dataStore.setValue(showContactTypeInListEntry, value)
 
+    override var showExtraButtonsInEditScreen: Boolean
+        get() = currentSettings.showExtraButtonsInEditScreen
+        set(value) { dataStore.setValue(showExtraButtonsInEditScreenEntry, value) }
+
+    override var invertTopAndBottomBars: Boolean
+        get() = currentSettings.invertTopAndBottomBars
+        set(value) { dataStore.setValue(invertTopAndBottomBarsEntry, value) }
+
     override var showIncomingCallsOnLockScreen: Boolean
         get() = currentSettings.showIncomingCallsOnLockScreen
         set(value) = dataStore.setValue(incomingCallsOnLockScreenEntry, value)

@@ -11,7 +11,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -50,6 +49,7 @@ import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
+import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
@@ -68,7 +68,9 @@ object ContactDetailScreen {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
 
-        Scaffold(
+        BaseScreen(
+            screenContext = screenContext,
+            selectedScreen = Screen.ContactDetail,
             topBar = {
                 ContactDetailTopBar(
                     screenContext = screenContext,
