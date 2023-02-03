@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
@@ -125,6 +126,8 @@ fun someEventDate(
     sortOrder = sortOrder,
 )
 
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("URLs don't work in Unit-Tests, so the Websites are lost...")
 fun someWebsite(
     id: ContactDataId = someContactDataId(),
     value: String = "www.private-contacts.com",
@@ -156,3 +159,13 @@ fun someRelationship(
     modelStatus = modelStatus,
     sortOrder = sortOrder,
 )
+
+fun someListOfContactData(modelStatus: ModelStatus = ModelStatus.NEW): List<ContactData> =
+    listOf(
+        somePhoneNumber(modelStatus = modelStatus),
+        someEmailAddress(modelStatus = modelStatus),
+        somePhysicalAddress(modelStatus = modelStatus),
+        someEventDate(modelStatus = modelStatus),
+        someRelationship(modelStatus = modelStatus),
+        // no websites: they don't work in unit-tests
+    )

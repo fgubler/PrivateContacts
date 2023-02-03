@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.testutil.databuilders
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
@@ -73,6 +74,7 @@ fun someContactEditable(
     contactGroups: List<ContactGroup> = emptyList(),
     image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
+    saveInAccount: ContactAccount? = null,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
     firstName = firstName,
@@ -84,6 +86,7 @@ fun someContactEditable(
     contactGroups = contactGroups,
     isNew = isNew,
     image = image,
+    saveInAccount = saveInAccount,
 )
 
 fun someExternalContactEditable(
@@ -169,6 +172,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
+    saveInAccount: ContactAccount? = null,
 ): IContactEditable = ContactEditable(
     id = id,
     firstName = firstName,
@@ -180,4 +184,5 @@ fun <T : ContactId> someContactEditableGeneric(
     contactDataSet = contactData.toMutableList(),
     contactGroups = contactGroups.toMutableList(),
     isNew = isNew,
+    saveInAccount = saveInAccount,
 )

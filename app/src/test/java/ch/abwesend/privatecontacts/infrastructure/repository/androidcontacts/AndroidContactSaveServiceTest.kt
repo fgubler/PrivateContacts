@@ -25,14 +25,9 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
-import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
-import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
 import ch.abwesend.privatecontacts.testutil.databuilders.someMutableAndroidContact
-import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
-import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
-import ch.abwesend.privatecontacts.testutil.databuilders.someRelationship
-import ch.abwesend.privatecontacts.testutil.databuilders.someWebsite
 import com.alexstyl.contactstore.MutableContact
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -154,11 +149,14 @@ class AndroidContactSaveServiceTest : TestBase() {
     }
 
     @Test
-    fun `should update contact base-data successfully`() {
+    fun `should update contact successfully`() {
         val contactId = someExternalContactId()
         val originalContact = someContactEditable(id = contactId, firstName = "some first", lastName = "some last")
-        val changedContact = someContactEditable(id = contactId)
         val androidContact = someMutableAndroidContact(contactId = contactId.contactNo)
+        val changedContact = someContactEditable(
+            id = contactId,
+            contactData = someListOfContactData(ModelStatus.NEW)
+        )
         coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
         coEvery { loadService.resolveContact(any(), any()) } returns originalContact
         coJustRun { saveRepository.updateContact(any()) }
@@ -171,46 +169,17 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(slot.isCaptured).isTrue
         val capturedContact = slot.captured
         assertThat(capturedContact.contactId).isEqualTo(contactId.contactNo)
+        // properties which were changed
         assertThat(capturedContact.firstName).isEqualTo(changedContact.firstName)
         assertThat(capturedContact.lastName).isEqualTo(changedContact.lastName)
-        // TODO check why these two do not work
-//        assertThat(capturedContact.nickname).isEqualTo(changedContact.nickname)
-//        assertThat(capturedContact.note).isEqualTo(changedContact.notes)
+        // properties which were not changed
+        assertThat(capturedContact.nickname).isEqualTo(androidContact.nickname)
+        assertThat(capturedContact.note?.raw).isEqualTo(androidContact.note?.raw)
+        // contact-data
+        val capturedContactTransformed = capturedContact.toContact(emptyList(), rethrowExceptions = true)
+        assertThat(capturedContactTransformed).isNotNull
+        assertContactDataEquals(changedContact, capturedContactTransformed!!)
     }
-
-    // TODO fix
-//    @Test
-//    fun `should update contact contact-data successfully`() {
-//        val contactId = someExternalContactId()
-//        val originalContact = someContactEditable(id = contactId)
-//        val changedContact = someContactEditable(
-//            id = contactId,
-//            contactData = listOf(
-//                somePhoneNumber(modelStatus = ModelStatus.NEW),
-//                someEmailAddress(modelStatus = ModelStatus.NEW),
-//                somePhysicalAddress(modelStatus = ModelStatus.NEW),
-//                someEventDate(modelStatus = ModelStatus.NEW),
-//                someWebsite(modelStatus = ModelStatus.NEW),
-//                someRelationship(modelStatus = ModelStatus.NEW),
-//            )
-//        )
-//        val androidContact = someMutableAndroidContact(contactId = contactId.contactNo)
-//        coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
-//        coEvery { loadService.resolveContact(any(), any()) } returns originalContact
-//        coJustRun { saveRepository.updateContact(any()) }
-//
-//        val result = runBlocking { underTest.updateContact(contactId, changedContact) }
-//
-//        val slot = slot<MutableContact>()
-//        coVerify { saveRepository.updateContact(capture(slot)) }
-//        assertThat(result).isEqualTo(ContactSaveResult.Success)
-//        assertThat(slot.isCaptured).isTrue
-//        val capturedContact = slot.captured
-//        assertThat(capturedContact.contactId).isEqualTo(contactId.contactNo)
-//        val capturedContactTransformed = capturedContact.toContact(emptyList(), rethrowExceptions = true)
-//        assertThat(capturedContactTransformed).isNotNull
-//        assertContactDataEquals(originalContact, capturedContactTransformed!!)
-//    }
 
     @Test
     fun `should catch exceptions during update and return an error`() {
@@ -229,16 +198,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create contact successfully`() {
-        val newContact = someContactEditable(
-            contactData = listOf(
-                somePhoneNumber(modelStatus = ModelStatus.NEW),
-                someEmailAddress(modelStatus = ModelStatus.NEW),
-                somePhysicalAddress(modelStatus = ModelStatus.NEW),
-                someEventDate(modelStatus = ModelStatus.NEW),
-                someWebsite(modelStatus = ModelStatus.NEW),
-                someRelationship(modelStatus = ModelStatus.NEW),
-            )
-        )
+        val newContact = someContactEditable(contactData = someListOfContactData(ModelStatus.NEW))
         coJustRun { saveRepository.createContact(any(), any()) }
 
         val result = runBlocking { underTest.createContact(newContact) }
@@ -251,13 +211,21 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.contactId).isEqualTo(-1)
         assertThat(capturedContact.firstName).isEqualTo(newContact.firstName)
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
-        // TODO check why these two don't work
-//        assertThat(capturedContact.nickname).isEqualTo(newContact.nickname)
-//        assertThat(capturedContact.note).isEqualTo(newContact.notes)
+        assertThat(capturedContact.nickname).isEqualTo(newContact.nickname)
+        assertThat(capturedContact.note?.raw).isEqualTo(newContact.notes)
         val capturedContactTransformed = capturedContact.toContact(groups = emptyList(), rethrowExceptions = true)
         assertThat(capturedContactTransformed).isNotNull
-        // TODO fix
-        //        assertContactDataEquals(newContact, capturedContactTransformed!!)
+        assertContactDataEquals(newContact, capturedContactTransformed!!)
+    }
+
+    @Test
+    fun `should create contact locally if no account is passed`() {
+        val newContact = someContactEditable(saveInAccount = null)
+        coJustRun { saveRepository.createContact(any(), any()) }
+
+        runBlocking { underTest.createContact(newContact) }
+
+        coVerify { saveRepository.createContact(any(), saveInAccount = null) }
     }
 
     private fun assertContactDataEquals(contact1: IContact, contact2: IContact) {
