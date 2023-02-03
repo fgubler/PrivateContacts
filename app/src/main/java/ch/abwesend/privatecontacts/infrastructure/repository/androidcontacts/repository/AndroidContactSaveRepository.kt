@@ -1,8 +1,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
-import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.MutableContact
 
 class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
@@ -19,9 +18,13 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
         }
     }
 
-    // TODO implement
-    suspend fun createContact(contact: MutableContact): ContactSaveResult {
+    /** [saveInAccount] if null is passed, the account is stored locally */
+    suspend fun createContact(contact: MutableContact, saveInAccount: InternetAccount?) {
         checkContactWritePermission { exception -> throw exception }
-        return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+        withContactStore { contactStore ->
+            contactStore.execute {
+                insert(contact, saveInAccount)
+            }
+        }
     }
 }

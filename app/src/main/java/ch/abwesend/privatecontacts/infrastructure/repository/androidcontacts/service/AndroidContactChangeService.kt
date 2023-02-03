@@ -34,17 +34,17 @@ import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
-    fun updateChangedBaseData(originalContact: IContact, changedContact: IContact, mutableContact: MutableContact) {
-        if (originalContact.firstName != changedContact.firstName) {
+    fun updateChangedBaseData(originalContact: IContact?, changedContact: IContact, mutableContact: MutableContact) {
+        if (originalContact?.firstName != changedContact.firstName) {
             mutableContact.firstName = changedContact.firstName
         }
-        if (originalContact.lastName != changedContact.lastName) {
+        if (originalContact?.lastName != changedContact.lastName) {
             mutableContact.lastName = changedContact.lastName
         }
-        if (originalContact.nickname != changedContact.nickname) {
+        if (originalContact?.nickname != changedContact.nickname) {
             mutableContact.nickname = changedContact.nickname
         }
-        if (originalContact.notes != changedContact.notes) {
+        if (originalContact?.notes != changedContact.notes) {
             mutableContact.note = Note(changedContact.notes)
         }
     }

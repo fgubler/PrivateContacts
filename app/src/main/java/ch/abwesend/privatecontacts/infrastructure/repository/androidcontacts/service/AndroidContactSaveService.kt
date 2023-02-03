@@ -4,7 +4,6 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -12,8 +11,10 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
+import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.mutableCopy
 
 class AndroidContactSaveService : IAndroidContactSaveService {
@@ -94,8 +95,29 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
-    // TODO implement
     override suspend fun createContact(contact: IContact): ContactSaveResult {
-        return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+        return try {
+            val mutableContact = contact.toAndroidContact()
+            val account = contact.saveInAccount?.toInternetAccount()
+
+            // TODO update contact-groups on contact(per se and on the contact)
+            contactSaveRepository.createContact(mutableContact, account)
+            ContactSaveResult.Success
+        } catch (e: Exception) {
+            logger.error("Failed to create contact ${contact.id}", e)
+            ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)
+        }
+    }
+
+    private fun IContact.toAndroidContact(): MutableContact {
+        val mutableContact = MutableContact()
+        contactChangeService.updateChangedBaseData(
+            originalContact = null,
+            changedContact = this,
+            mutableContact = mutableContact,
+        )
+        contactChangeService.updateChangedImage(changedContact = this, mutableContact = mutableContact)
+        contactChangeService.updateChangedContactData(changedContact = this, mutableContact = mutableContact)
+        return mutableContact
     }
 }

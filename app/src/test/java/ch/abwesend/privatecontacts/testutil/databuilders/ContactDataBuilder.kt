@@ -17,6 +17,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobi
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactdata.createContactDataId
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataTypeEntity
@@ -76,12 +79,28 @@ fun somePhoneNumber(
 
 fun someEmailAddress(
     id: ContactDataId = someContactDataId(),
-    value: String = "1234",
+    value: String = "luke@jedi.com",
     type: ContactDataType = ContactDataType.Personal,
     sortOrder: Int = 0,
     isMain: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): EmailAddress = EmailAddress(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun somePhysicalAddress(
+    id: ContactDataId = someContactDataId(),
+    value: String = "Jedi-Street 134",
+    type: ContactDataType = ContactDataType.Personal,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): PhysicalAddress = PhysicalAddress(
     id = id,
     value = value,
     type = type,
@@ -98,6 +117,38 @@ fun someEventDate(
     isMain: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): EventDate = EventDate(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someWebsite(
+    id: ContactDataId = someContactDataId(),
+    value: String = "www.private-contacts.com",
+    type: ContactDataType = ContactDataType.Personal,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): Website = Website(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someRelationship(
+    id: ContactDataId = someContactDataId(),
+    value: String = "Darth Vader",
+    type: ContactDataType = ContactDataType.RelationshipBrother,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): Relationship = Relationship(
     id = id,
     value = value,
     type = type,
