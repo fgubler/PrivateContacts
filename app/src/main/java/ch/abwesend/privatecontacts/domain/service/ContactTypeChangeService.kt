@@ -20,7 +20,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
@@ -33,14 +32,12 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.errorsOrEmpty
 import ch.abwesend.privatecontacts.domain.model.result.validationErrorsOrEmpty
-import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.withContext
 
 class ContactTypeChangeService {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
-    private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val dispatchers: IDispatchers by injectAnywhere()
 
     // TODO add proper batch-processing (e.g. for the deletion of the old contacts)
@@ -48,6 +45,8 @@ class ContactTypeChangeService {
         contacts: Collection<IContactBase>,
         newType: ContactType
     ): ContactBatchChangeResult = withContext(dispatchers.default) {
+        val strategy = ContactTypeChangeStrategy.fromContactType(newType)
+
         val contactIds = contacts
             .filter { it.type != newType }
             .map { it.id }
@@ -65,16 +64,10 @@ class ContactTypeChangeService {
             logger.warning("Failed to resolve $numberOfUnresolvedContacts of $numberOfContacts contacts.")
         }
 
-        try {
-            val contactGroups = fullContacts.flatMap { it.contactGroups }
-            contactGroupRepository.createMissingContactGroups(contactGroups) // bulk-operation
-        } catch (e: Exception) {
-            logger.error("Failed to create contact groups as batch-operation", e)
-            // will be created individually, instead
-        }
+        strategy.createContactGroups(fullContacts)
 
         val partialResults = fullContacts
-            .mapAsyncChunked { contact -> contact.id to changeContactType(contact, newType) }
+            .mapAsyncChunked { contact -> contact.id to changeContactType(contact, strategy) }
             .toMap()
 
         val successfulContacts = partialResults.filterValues { it is Success }.map { it.key }.toSet()
@@ -96,52 +89,43 @@ class ContactTypeChangeService {
     }
 
     suspend fun changeContactType(contact: IContact, newType: ContactType): ContactSaveResult {
+        return if (newType == contact.type) {
+            logger.debug("No contact-type change necessary: just save it normally.")
+            saveService.saveContact(contact.asEditable())
+        } else {
+            val strategy = ContactTypeChangeStrategy.fromContactType(newType)
+            changeContactType(contact, strategy)
+        }
+    }
+
+    private suspend fun changeContactType(contact: IContact, strategy: ContactTypeChangeStrategy): ContactSaveResult {
+        val newType = strategy.correspondingContactType
         logger.debug("Trying to change contact-type from ${contact.type} to $newType")
         return try {
             val contactEditable = contact.asEditable()
-            when (newType) {
-                contact.type -> {
-                    logger.debug("No contact-type change necessary: just save it normally.")
-                    saveService.saveContact(contactEditable)
-                }
-                ContactType.PUBLIC -> Failure(NOT_YET_IMPLEMENTED_FOR_INTERNAL_CONTACTS)
-                ContactType.SECRET -> changeContactTypeToSecret(contactEditable, newType)
-            }
+            changeContactContent(contactEditable, strategy)
         } catch (e: Exception) {
             logger.error("Failed to change contact type for ${contact.id}", e)
             Failure(UNKNOWN_ERROR)
         }
     }
 
-    private suspend fun changeContactTypeToSecret(contact: IContactEditable, newType: ContactType): ContactSaveResult {
+    private suspend fun changeContactContent(
+        contact: IContactEditable,
+        strategy: ContactTypeChangeStrategy
+    ): ContactSaveResult {
         val oldContact = contact.toContactBase()
-        // the internal ID will be set automatically, while saving
+        // the ID of the correct type will be set automatically, while saving
         val newContact = contact.deepCopy(isContactNew = true)
-        newContact.type = newType
-        newContact.setModelStatusNew()
-        newContact.changeContactDataToInternalIds()
 
-        logger.debug("Saving contact with new type $newType")
-        val saveResult = saveService.saveContact(newContact)
+        newContact.type = strategy.correspondingContactType
+        newContact.updateModelStatus()
+        strategy.changeContactDataIds(newContact)
 
-        return when (saveResult) {
-            is ValidationFailure -> {
-                logger.warning("Failed to save contact due to validation")
-                saveResult
-            }
-            is Failure -> {
-                logger.warning("Failed to save contact ${oldContact.id} with new type $newType")
-                val errors = listOf(UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE)
-                Failure(errors + saveResult.errors)
-            }
-            is Success -> {
-                logger.debug("Successfully saved contact with new type $newType")
-                deleteContactWithOldType(oldContact)
-            }
-        }
+        return saveChangedContactAndDeleteOld(newContact, oldContact, strategy)
     }
 
-    private fun IContactEditable.setModelStatusNew() {
+    private fun IContactEditable.updateModelStatus() {
         val computeNewStatus: (oldStatus: ModelStatus) -> ModelStatus = { oldStatus ->
             when (oldStatus) {
                 DELETED -> UNCHANGED // if it was to be deleted, just don't add it
@@ -168,8 +152,32 @@ class ContactTypeChangeService {
         }
     }
 
-    private fun IContactEditable.changeContactDataToInternalIds() {
-        contactDataSet.replaceAll { contactData -> contactData.changeToInternalId() }
+    private suspend fun saveChangedContactAndDeleteOld(
+        newContact: IContactEditable,
+        oldContact: IContactBase,
+        strategy: ContactTypeChangeStrategy,
+    ): ContactSaveResult {
+        val newType = strategy.correspondingContactType
+        logger.debug("Saving contact with new type $newType")
+        val saveResult = saveService.saveContact(newContact)
+
+        return when (saveResult) {
+            is ValidationFailure -> {
+                logger.warning("Failed to save contact due to validation")
+                saveResult
+            }
+            is Failure -> {
+                logger.warning("Failed to save contact ${oldContact.id} with new type $newType")
+                val errors = listOf(UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE)
+                Failure(errors + saveResult.errors)
+            }
+            is Success -> {
+                logger.debug("Successfully saved contact with new type $newType")
+                if (strategy.deleteOldContactAfterCreatingNew) {
+                    deleteContactWithOldType(oldContact)
+                } else saveResult
+            }
+        }
     }
 
     private suspend fun deleteContactWithOldType(contact: IContactBase): ContactSaveResult {
