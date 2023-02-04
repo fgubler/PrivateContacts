@@ -46,3 +46,4 @@ value class ContactDataIdAndroidWithoutNo(val uuid: UUID = UUID.randomUUID()) : 
  * but the user might change that while editing the contact, so we change as late as possible.
  */
 fun createContactDataId(): ContactDataId = ContactDataIdInternal.randomId()
+fun createExternalDummyContactDataId(): ContactDataId = ContactDataIdAndroidWithoutNo()

@@ -50,6 +50,7 @@ data class EventDate(
 
     override fun overrideStatus(newStatus: ModelStatus): ContactData = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
+    override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
 
     override fun changeValue(value: LocalDate?): EventDate {
         val status = modelStatus.tryChangeTo(CHANGED)
