@@ -169,3 +169,13 @@ fun someListOfContactData(modelStatus: ModelStatus = ModelStatus.NEW): List<Cont
         someRelationship(modelStatus = modelStatus),
         // no websites: they don't work in unit-tests
     )
+
+fun someListOfExternalContactData(modelStatus: ModelStatus = ModelStatus.NEW): List<ContactData> =
+    listOf(
+        somePhoneNumber(id = someContactDataIdExternal(123), modelStatus = modelStatus),
+        someEmailAddress(id = someContactDataIdExternal(234), modelStatus = modelStatus),
+        somePhysicalAddress(id = someContactDataIdExternal(345), modelStatus = modelStatus),
+        someEventDate(id = someContactDataIdExternal(456), modelStatus = modelStatus),
+        someRelationship(id = someContactDataIdExternal(567), modelStatus = modelStatus),
+        // no websites: they don't work in unit-tests
+    )

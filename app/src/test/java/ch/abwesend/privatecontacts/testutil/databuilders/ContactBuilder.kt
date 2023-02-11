@@ -63,6 +63,46 @@ fun someContactEntity(
     fullTextSearch = fullTextSearch,
 )
 
+/** decides on internal- vs. external-Contact by the type of the passed ID */
+fun someContactEditableByIdType(
+    id: ContactId,
+    firstName: String = "John",
+    lastName: String = "Snow",
+    nickname: String = "Lord Snow",
+    notes: String = "Tries to do the right thing. Often badly.",
+    contactData: List<ContactData> = emptyList(),
+    contactGroups: List<ContactGroup> = emptyList(),
+    image: ContactImage = ContactImage.empty,
+    isNew: Boolean = false,
+    saveInAccount: ContactAccount? = null,
+): IContactEditable =
+    when (id) {
+        is IContactIdExternal -> someExternalContactEditable(
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            notes = notes,
+            contactData = contactData,
+            contactGroups = contactGroups,
+            isNew = isNew,
+            image = image,
+            saveInAccount = saveInAccount,
+        )
+        is IContactIdInternal -> someContactEditable(
+            id = id,
+            firstName = firstName,
+            lastName = lastName,
+            nickname = nickname,
+            notes = notes,
+            contactData = contactData,
+            contactGroups = contactGroups,
+            isNew = isNew,
+            image = image,
+            saveInAccount = saveInAccount,
+        )
+    }
+
 fun someContactEditable(
     id: ContactId = someInternalContactId(),
     firstName: String = "John",
@@ -100,6 +140,7 @@ fun someExternalContactEditable(
     contactGroups: List<ContactGroup> = emptyList(),
     image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
+    saveInAccount: ContactAccount? = null,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
     firstName = firstName,
@@ -111,6 +152,7 @@ fun someExternalContactEditable(
     contactGroups = contactGroups,
     isNew = isNew,
     image = image,
+    saveInAccount = saveInAccount,
 )
 
 fun someContactEditableWithId(
