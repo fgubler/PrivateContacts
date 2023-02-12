@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -19,6 +23,8 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
+import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 
 sealed interface ContactTypeChangeMenuConfig {
@@ -31,7 +37,10 @@ sealed interface ContactTypeChangeMenuConfig {
     val confirmationDialogTextRes: Int
 
     @Composable
-    fun ConfirmationDialogAdditionalContent(contacts: Collection<IContactBaseWithAccountInformation>) {}
+    fun ConfirmationDialogAdditionalContent(
+        contacts: Collection<IContactBaseWithAccountInformation>,
+        changeSaveButtonState: (enabled: Boolean) -> Unit,
+    ) {}
 
     @ExperimentalMaterialApi
     companion object {
@@ -55,6 +64,8 @@ object ContactTypeChangeToSecretMenuConfig : ContactTypeChangeMenuConfig {
 
 @ExperimentalMaterialApi
 object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
+    private val accountService: AccountService by injectAnywhere()
+
     override val targetType: ContactType = ContactType.PUBLIC
 
     @StringRes override val menuTextSingularRes: Int = R.string.make_contact_public
@@ -64,9 +75,12 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
     @StringRes override val confirmationDialogTextRes: Int = R.string.make_contact_public_text
 
     @Composable
-    override fun ConfirmationDialogAdditionalContent(contacts: Collection<IContactBaseWithAccountInformation>) {
-        val selectedOption = ResDropDownOption<ContactAccount?>(labelRes = R.string.local_phone_contacts, value = null)
-        val options = listOf(selectedOption) // TODO add other options
+    override fun ConfirmationDialogAdditionalContent(
+        contacts: Collection<IContactBaseWithAccountInformation>,
+        changeSaveButtonState: (enabled: Boolean) -> Unit,
+    ) {
+        val options = remember { getAccountOptions() }
+        var selectedOption: DropDownOption<ContactAccount?> by remember { mutableStateOf(options.first()) }
 
         Spacer(modifier = Modifier.height(30.dp))
         DropDownField(
@@ -75,11 +89,23 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
             options = options,
             isScrolling = { false },
         ) { newValue ->
+            changeSaveButtonState(false)
+            options.firstOrNull { it.value == newValue }?.let { selectedOption = it }
             contacts.forEach { it.saveInAccount = newValue }
+            changeSaveButtonState(true)
         }
 
-        // TODO delete this part as soon as more options are ready
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = "More options will be added soon...", fontStyle = FontStyle.Italic)
+        Text(text = "More options will be added in the future...", fontStyle = FontStyle.Italic)
+    }
+
+    private fun getAccountOptions(): List<DropDownOption<ContactAccount?>> {
+        val accounts = accountService.loadAvailableAccounts()
+        val accountOptions = accounts.map { StringDropDownOption(label = it.displayName, value = it) }
+        val localContactsOption = ResDropDownOption<ContactAccount?>(
+            labelRes = R.string.local_phone_contacts,
+            value = null,
+        )
+        return accountOptions + localContactsOption
     }
 }

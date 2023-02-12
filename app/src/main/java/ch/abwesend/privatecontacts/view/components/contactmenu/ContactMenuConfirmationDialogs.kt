@@ -4,6 +4,9 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
@@ -25,15 +28,19 @@ fun ChangeContactTypeConfirmationDialog(
         val contactsWithAccountInformation = remember(contacts) {
             contacts.map { it.withAccountInformation() }
         }
+        var saveButtonEnabled by remember { mutableStateOf(true) }
 
         YesNoDialog(
             title = titleRes,
             text = {
                 Column {
                     Text(text = stringResource(id = config.confirmationDialogTextRes))
-                    config.ConfirmationDialogAdditionalContent(contacts = contactsWithAccountInformation)
+                    config.ConfirmationDialogAdditionalContent(contacts = contactsWithAccountInformation) { enabled ->
+                        saveButtonEnabled = enabled
+                    }
                 }
             },
+            yesButtonEnabled = saveButtonEnabled,
             onYes = { hideDialog(true) },
             onNo = { hideDialog(false) },
         )
