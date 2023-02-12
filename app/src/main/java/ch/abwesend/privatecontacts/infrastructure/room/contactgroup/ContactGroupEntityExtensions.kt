@@ -14,7 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 fun IContactGroup.toEntity(): ContactGroupEntity = ContactGroupEntity(name = id.name, notes = notes)
 
 fun ContactGroupEntity.toContactGroup(): ContactGroup {
-    val id = ContactGroupId(name = name, groupNo = null) // TODO consider saving the groupNo in the DB
+    val id = ContactGroupId(name = name, groupNo = null) // do not save groupNo in DB to avoid inconsistencies
     return ContactGroup(id = id, notes = notes, modelStatus = UNCHANGED)
 }
 
