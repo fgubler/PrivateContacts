@@ -25,7 +25,7 @@ class AndroidAccountService(private val context: Context) : AccountService {
             logger.warning("Missing permission to load accounts: cannot suggest more than local-contacts.")
             emptyList()
         } else {
-            val accounts =  AccountManager.get(context).accounts
+            val accounts = AccountManager.get(context).accounts
             accounts
                 .map { ContactAccount(username = it.name, accountProvider = it.type) }
                 .also { logger.debug("Found ${it.size} accounts") }
