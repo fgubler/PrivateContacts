@@ -7,6 +7,8 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGroup
@@ -31,11 +33,16 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
         database.contactGroupRelationDao().updateContactGroupRelations(contactId, contactGroups)
     }
 
-    override suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>) {
-        bulkOperation(contactGroups) { database, groupsChunk ->
-            database.contactGroupDao().createMissingContactGroups(groupsChunk)
+    override suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>): ContactSaveResult =
+        try {
+            bulkOperation(contactGroups) { database, groupsChunk ->
+                database.contactGroupDao().createMissingContactGroups(groupsChunk)
+            }
+            ContactSaveResult.Success
+        } catch (e: Exception) {
+            logger.error("Failed to create contact groups as batch-operation", e)
+            ContactSaveResult.Failure(UNABLE_TO_CREATE_CONTACT_GROUP)
         }
-    }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
         logger.debug("Creating missing contact groups")

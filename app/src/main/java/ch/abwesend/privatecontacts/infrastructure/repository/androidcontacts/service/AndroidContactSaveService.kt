@@ -7,6 +7,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -79,7 +80,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
-            createContactGroupsIfNecessary(contact.contactGroups)
+            val contactGroupResult = createContactGroupsIfNecessary(contact.contactGroups)
             val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
 
             val contactToChange = originalContactRaw.mutableCopy {
@@ -98,7 +99,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
             }
 
             contactSaveRepository.updateContact(contactToChange)
-            ContactSaveResult.Success
+            contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user
         } catch (e: Exception) {
             logger.error("Failed to change contact $contactId", e)
             ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)
@@ -107,26 +108,31 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
     override suspend fun createContact(contact: IContact): ContactSaveResult {
         return try {
-            createContactGroupsIfNecessary(contact.contactGroups)
+            val contactGroupResult = createContactGroupsIfNecessary(contact.contactGroups)
             val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
 
             val mutableContact = contact.toAndroidContact(existingGroups)
             val account = contact.saveInAccount?.toInternetAccount()
 
             contactSaveRepository.createContact(mutableContact, account)
-            ContactSaveResult.Success
+            contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user
         } catch (e: Exception) {
             logger.error("Failed to create contact ${contact.id}", e)
             ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)
         }
     }
 
-    override suspend fun createContactGroupsIfNecessary(groups: List<ContactGroup>) {
-        val existingGroups = contactLoadService.getAllContactGroups()
-        val groupsToCreate = filterForContactGroupsToCreate(groups = groups, existingGroups = existingGroups)
-        val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup() }
-        contactSaveRepository.createContactGroups(transformedGroups)
-    }
+    override suspend fun createContactGroupsIfNecessary(groups: List<ContactGroup>): ContactSaveResult =
+        try {
+            val existingGroups = contactLoadService.getAllContactGroups()
+            val groupsToCreate = filterForContactGroupsToCreate(groups = groups, existingGroups = existingGroups)
+            val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup() }
+            contactSaveRepository.createContactGroups(transformedGroups)
+            ContactSaveResult.Success
+        } catch(e: Exception) {
+            logger.error("Failed to create contact groups", e)
+            ContactSaveResult.Failure(UNABLE_TO_CREATE_CONTACT_GROUP)
+        }
 
     private fun filterForContactGroupsToCreate(
         groups: List<ContactGroup>,

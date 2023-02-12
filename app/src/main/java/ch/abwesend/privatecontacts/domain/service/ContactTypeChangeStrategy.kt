@@ -6,10 +6,10 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
@@ -35,13 +35,9 @@ object ChangeContactToSecretStrategy : ContactTypeChangeStrategy {
     override val deleteOldContactAfterCreatingNew: Boolean = true
 
     override suspend fun createContactGroups(contacts: List<IContact>) {
-        try {
-            val contactGroups = contacts.flatMap { it.contactGroups }
-            contactGroupRepository.createMissingContactGroups(contactGroups) // bulk-operation
-        } catch (e: Exception) {
-            logger.error("Failed to create contact groups as batch-operation", e)
-            // will be created individually, instead
-        }
+        val contactGroups = contacts.flatMap { it.contactGroups }
+        contactGroupRepository.createMissingContactGroups(contactGroups)
+        // if it fails, it will later be created individually: is slower but still works
     }
 
     override fun changeContactDataIds(contact: IContactEditable) {
@@ -50,11 +46,15 @@ object ChangeContactToSecretStrategy : ContactTypeChangeStrategy {
 }
 
 object ChangeContactToPublicStrategy : ContactTypeChangeStrategy {
+    private val contactSaveService: IAndroidContactSaveService by injectAnywhere()
+
     override val correspondingContactType: ContactType = ContactType.PUBLIC
     override val deleteOldContactAfterCreatingNew: Boolean = true
 
     override suspend fun createContactGroups(contacts: List<IContact>) {
-        // TODO implement to store contact-groups as well
+        val contactGroups = contacts.flatMap { it.contactGroups }
+        contactSaveService.createContactGroupsIfNecessary(contactGroups)
+        // if it fails, it will later be created individually: is slower but still works
     }
 
     override fun changeContactDataIds(contact: IContactEditable) {
