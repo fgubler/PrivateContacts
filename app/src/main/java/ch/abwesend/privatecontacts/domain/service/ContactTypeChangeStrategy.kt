@@ -53,7 +53,7 @@ object ChangeContactToPublicStrategy : ContactTypeChangeStrategy {
 
     override suspend fun createContactGroups(contacts: List<IContact>) {
         val contactGroups = contacts.flatMap { it.contactGroups }
-        contactSaveService.createContactGroupsIfNecessary(contactGroups)
+        contactSaveService.createMissingContactGroups(contactGroups)
         // if it fails, it will later be created individually: is slower but still works
     }
 

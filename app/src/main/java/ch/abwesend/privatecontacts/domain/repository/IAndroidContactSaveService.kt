@@ -16,5 +16,5 @@ interface IAndroidContactSaveService {
     suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult
     suspend fun updateContact(contactId: IContactIdExternal, contact: IContact): ContactSaveResult
     suspend fun createContact(contact: IContact): ContactSaveResult
-    suspend fun createContactGroupsIfNecessary(groups: List<ContactGroup>): ContactSaveResult
+    suspend fun createMissingContactGroups(groups: List<ContactGroup>): ContactSaveResult
 }

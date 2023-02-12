@@ -80,7 +80,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
-            val contactGroupResult = createContactGroupsIfNecessary(contact.contactGroups)
+            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
             val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
 
             val contactToChange = originalContactRaw.mutableCopy {
@@ -108,7 +108,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
     override suspend fun createContact(contact: IContact): ContactSaveResult {
         return try {
-            val contactGroupResult = createContactGroupsIfNecessary(contact.contactGroups)
+            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
             val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
 
             val mutableContact = contact.toAndroidContact(existingGroups)
@@ -122,7 +122,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
-    override suspend fun createContactGroupsIfNecessary(groups: List<ContactGroup>): ContactSaveResult =
+    override suspend fun createMissingContactGroups(groups: List<ContactGroup>): ContactSaveResult =
         try {
             val existingGroups = contactLoadService.getAllContactGroups()
             val groupsToCreate = filterForContactGroupsToCreate(groups = groups, existingGroups = existingGroups)
