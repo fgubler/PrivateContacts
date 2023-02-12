@@ -67,7 +67,7 @@ class ContactTypeChangeService {
         strategy.createContactGroups(fullContacts)
 
         val partialResults = fullContacts
-            .mapAsyncChunked { contact -> contact.id to changeContactType(contact, strategy) }
+            .mapAsyncChunked(chunkSize = 10) { contact -> contact.id to changeContactType(contact, strategy) }
             .toMap()
 
         val successfulContacts = partialResults.filterValues { it is Success }.map { it.key }.toSet()
