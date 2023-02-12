@@ -36,3 +36,6 @@ interface ILogger {
 inline fun ILogger.error(message: String) {
     error(message, LoggingException(message))
 }
+
+/** log a message which must not be sent to Firebase for privacy-reasons */
+fun ILogger.debugLocally(message: String) = debug(message)
