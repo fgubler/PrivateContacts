@@ -20,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
@@ -47,12 +48,12 @@ class ContactTypeChangeService {
     ): ContactBatchChangeResult = withContext(dispatchers.default) {
         val strategy = ContactTypeChangeStrategy.fromContactType(newType)
 
-        val contactIds = contacts
+        val baseContacts = contacts
             .filter { it.type != newType }
-            .map { it.id }
-        val numberOfContacts = contactIds.size
+            .map { it.withAccountInformation() }
+        val numberOfContacts = baseContacts.size
 
-        val fullContactsByContactId = loadService.resolveContacts(contactIds)
+        val fullContactsByContactId = loadService.resolveContactsWithAccountInformation(baseContacts)
         val fullContacts = fullContactsByContactId.values.filterNotNull()
         logger.debug("Resolved ${fullContacts.size} of $numberOfContacts full contacts to change their type.")
 

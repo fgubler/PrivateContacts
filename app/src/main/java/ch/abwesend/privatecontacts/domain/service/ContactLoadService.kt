@@ -14,8 +14,10 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
@@ -95,4 +97,20 @@ class ContactLoadService {
                 contactId to contact
             }.toMap()
         }
+
+    // TODO add unit tests
+    suspend fun resolveContactsWithAccountInformation(
+        baseContacts: Collection<IContactBaseWithAccountInformation>
+    ): Map<ContactId, IContact?> {
+        val baseContactsById = baseContacts.associateBy { it.id }
+        val contactIds = baseContactsById.keys
+        val resolvedContacts = resolveContacts(contactIds)
+        return resolvedContacts.mapValues { (id, resolvedContact) ->
+            baseContactsById[id]?.let { correspondingContact ->
+                resolvedContact?.asEditable()?.also { editableContact ->
+                    editableContact.saveInAccount = correspondingContact.saveInAccount
+                }
+            }
+        }
+    }
 }

@@ -1,11 +1,14 @@
 package ch.abwesend.privatecontacts.view.components.contactmenu
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
@@ -19,10 +22,18 @@ fun ChangeContactTypeConfirmationDialog(
     if (visible) {
         @StringRes val titleRes = if (contacts.size == 1) config.confirmationDialogTitleSingularRes
         else config.confirmationDialogTitlePluralRes
+        val contactsWithAccountInformation = remember(contacts) {
+            contacts.map { it.withAccountInformation() }
+        }
 
         YesNoDialog(
             title = titleRes,
-            text = config.confirmationDialogTextRes,
+            text = {
+                Column {
+                    Text(text = stringResource(id = config.confirmationDialogTextRes))
+                    config.ConfirmationDialogAdditionalContent(contacts = contactsWithAccountInformation)
+                }
+            },
             onYes = { hideDialog(true) },
             onNo = { hideDialog(false) },
         )

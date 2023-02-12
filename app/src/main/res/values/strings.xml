@@ -249,5 +249,8 @@
     <string name="secret_contacts_tab_title">Secret Contacts</string>
     <string name="all_contacts_tab_title">All Contacts</string>
 
+    <string name="target_account">Target account</string>
+    <string name="local_phone_contacts">Local phone contacts</string>
+
 
 </resources>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -54,6 +55,7 @@ import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
+@ExperimentalMaterialApi
 @FlowPreview
 @ExperimentalComposeUiApi
 @Composable
@@ -114,6 +116,7 @@ private fun SearchTopBar(
     BackHandler { resetSearch() }
 }
 
+@ExperimentalMaterialApi
 @Composable
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
@@ -139,6 +142,7 @@ private fun BulkModeTopBar(
     BackHandler { disableBulkMode() }
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun BulkModeActionsMenu(
     viewModel: ContactListViewModel,
@@ -168,6 +172,7 @@ fun BulkModeActionsMenu(
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 private fun ChangeContactTypeMenuItem(
     viewModel: ContactListViewModel,
