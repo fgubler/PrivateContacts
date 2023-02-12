@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
@@ -44,11 +44,12 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
-import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
+import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
@@ -154,22 +155,31 @@ fun BulkModeActionsMenu(
         }
         if (selectedContacts.isNotEmpty()) {
             Divider()
-            MakeContactSecretMenuItem(viewModel, selectedContacts, onCloseMenu)
+            ContactType.values().forEach { targetType ->
+                ChangeContactTypeMenuItem(
+                    viewModel = viewModel,
+                    contacts = selectedContacts,
+                    targetType = targetType,
+                    onCloseMenu = onCloseMenu,
+                )
+            }
             DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
         }
     }
 }
 
 @Composable
-private fun MakeContactSecretMenuItem(
+private fun ChangeContactTypeMenuItem(
     viewModel: ContactListViewModel,
     contacts: Set<IContactBase>,
+    targetType: ContactType,
     onCloseMenu: () -> Unit,
 ) {
-    if (contacts.any { it.type != SECRET }) {
-        MakeContactSecretMenuItem(contacts = contacts) { changeContacts ->
+    if (contacts.any { it.type != targetType }) {
+        val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
+        ChangeContactTypeMenuItem(contacts = contacts, config = config) { changeContacts ->
             if (changeContacts) {
-                viewModel.changeContactType(contacts, SECRET)
+                viewModel.changeContactType(contacts, targetType)
             }
             onCloseMenu()
         }

@@ -7,20 +7,22 @@ import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
+import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
 @Composable
-fun MakeContactSecretConfirmationDialog(
+fun ChangeContactTypeConfirmationDialog(
     contacts: Set<IContactBase>,
     visible: Boolean,
+    config: ContactTypeChangeMenuConfig,
     hideDialog: (changeContactType: Boolean) -> Unit,
 ) {
     if (visible) {
-        @StringRes val titleRes = if (contacts.size == 1) R.string.make_contact_secret_title
-        else R.string.make_contacts_secret_title
+        @StringRes val titleRes = if (contacts.size == 1) config.confirmationDialogTitleSingularRes
+        else config.confirmationDialogTitlePluralRes
 
         YesNoDialog(
             title = titleRes,
-            text = R.string.make_contact_secret_text,
+            text = config.confirmationDialogTextRes,
             onYes = { hideDialog(true) },
             onNo = { hideDialog(false) },
         )

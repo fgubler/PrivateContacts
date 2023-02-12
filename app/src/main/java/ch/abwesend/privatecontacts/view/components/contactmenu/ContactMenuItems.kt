@@ -11,11 +11,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
 @Composable
-fun MakeContactSecretMenuItem(contacts: Set<IContactBase>, onCloseMenu: (changeContactType: Boolean) -> Unit) {
-    @StringRes val labelRes = if (contacts.size == 1) R.string.make_contact_secret
-    else R.string.make_contacts_secret
+fun ChangeContactTypeMenuItem(
+    contacts: Set<IContactBase>,
+    config: ContactTypeChangeMenuConfig,
+    onCloseMenu: (changeContactType: Boolean) -> Unit,
+) {
+    @StringRes val labelRes = if (contacts.size == 1) config.menuTextSingularRes
+    else config.menuTextPluralRes
 
     var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
 
@@ -23,9 +28,10 @@ fun MakeContactSecretMenuItem(contacts: Set<IContactBase>, onCloseMenu: (changeC
         Text(stringResource(id = labelRes))
     }
 
-    MakeContactSecretConfirmationDialog(
+    ChangeContactTypeConfirmationDialog(
         contacts = contacts,
         visible = confirmationDialogVisible,
+        config = config,
         hideDialog = { changeContacts ->
             confirmationDialogVisible = false
             onCloseMenu(changeContacts)

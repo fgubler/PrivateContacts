@@ -18,9 +18,6 @@ fun DeleteContactsLoadingDialog(deleteMultiple: Boolean) {
 @Composable
 fun ChangeContactTypeLoadingDialog(changeMultiple: Boolean) {
     if (changeMultiple) { // changing one contact is so fast, a loading-screen does not make sense
-        @StringRes val title =
-            if (changeMultiple) R.string.make_contacts_secret_progress
-            else R.string.make_contact_secret_progress
-        SimpleProgressDialog(title = title, allowRunningInBackground = false)
+        SimpleProgressDialog(title = R.string.type_change_progress, allowRunningInBackground = false)
     }
 }
