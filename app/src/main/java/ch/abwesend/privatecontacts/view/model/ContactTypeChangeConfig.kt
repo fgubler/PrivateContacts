@@ -28,7 +28,7 @@ sealed interface ContactTypeChangeMenuConfig {
     }
 }
 
-object ContactTypeChangeToSecretMenuConfig: ContactTypeChangeMenuConfig {
+object ContactTypeChangeToSecretMenuConfig : ContactTypeChangeMenuConfig {
     override val targetType: ContactType = ContactType.SECRET
 
     @StringRes override val menuTextSingularRes: Int = R.string.make_contact_secret
@@ -38,7 +38,7 @@ object ContactTypeChangeToSecretMenuConfig: ContactTypeChangeMenuConfig {
     @StringRes override val confirmationDialogTextRes: Int = R.string.make_contact_secret_text
 }
 
-object ContactTypeChangeToPublicMenuConfig: ContactTypeChangeMenuConfig {
+object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
     override val targetType: ContactType = ContactType.PUBLIC
 
     @StringRes override val menuTextSingularRes: Int = R.string.make_contact_public

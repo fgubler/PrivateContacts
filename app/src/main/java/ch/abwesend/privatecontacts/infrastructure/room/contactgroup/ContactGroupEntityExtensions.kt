@@ -17,4 +17,3 @@ fun ContactGroupEntity.toContactGroup(): ContactGroup {
     val id = ContactGroupId(name = name, groupNo = null) // do not save groupNo in DB to avoid inconsistencies
     return ContactGroup(id = id, notes = notes, modelStatus = UNCHANGED)
 }
-

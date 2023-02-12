@@ -15,8 +15,8 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import com.alexstyl.contactstore.MutableContact
@@ -129,7 +129,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
             val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup() }
             contactSaveRepository.createContactGroups(transformedGroups)
             ContactSaveResult.Success
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             logger.error("Failed to create contact groups", e)
             ContactSaveResult.Failure(UNABLE_TO_CREATE_CONTACT_GROUP)
         }

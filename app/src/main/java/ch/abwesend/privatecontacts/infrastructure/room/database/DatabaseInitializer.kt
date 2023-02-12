@@ -143,7 +143,7 @@ class DatabaseInitializer {
                 ),
                 contactGroups = mutableListOf(
                     ContactGroup(
-                        id = ContactGroupId(name = "Future TestUsers", groupNo =  1),
+                        id = ContactGroupId(name = "Future TestUsers", groupNo = 1),
                         notes = "2D",
                         modelStatus = NEW,
                     ),

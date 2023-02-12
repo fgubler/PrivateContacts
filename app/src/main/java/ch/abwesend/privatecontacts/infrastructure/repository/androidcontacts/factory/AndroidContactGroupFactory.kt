@@ -20,4 +20,3 @@ fun ContactGroup.toNewAndroidContactGroup(): MutableContactGroup {
     androidGroup.note = notes
     return androidGroup
 }
-
