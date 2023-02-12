@@ -8,5 +8,8 @@ import com.alexstyl.contactstore.ContactGroup as AndroidContactGroup
 fun List<AndroidContactGroup>.toContactGroups(): List<ContactGroup> =
     map { it.toContactGroup() }
 
-fun AndroidContactGroup.toContactGroup(): ContactGroup =
-    ContactGroup(id = ContactGroupId(name = title), notes = note.orEmpty(), modelStatus = UNCHANGED)
+fun AndroidContactGroup.toContactGroup(): ContactGroup {
+    val id = ContactGroupId(name = title, groupNo = groupId)
+    return ContactGroup(id = id, notes = note.orEmpty(), modelStatus = UNCHANGED)
+}
+

@@ -2,9 +2,11 @@ package ch.abwesend.privatecontacts.domain.model.contactgroup
 
 sealed interface IContactGroupId {
     val name: String
+    /** for contact-groups from Android */
+    val groupNo: Long?
 }
 
-@JvmInline
-value class ContactGroupId(
-    override val name: String
+data class ContactGroupId(
+    override val name: String,
+    override val groupNo: Long?
 ) : IContactGroupId
