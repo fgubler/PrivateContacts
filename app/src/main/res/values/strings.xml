@@ -58,7 +58,9 @@
 
     <string name="type">Type</string>
     <string name="secret_contact">Secret</string>
+    <string name="secret_contact_explanation">Secret contacts are only stored within this app and not shared with anyone.</string>
     <string name="public_contact">Public</string>
+    <string name="public_contact_explanation">Public contacts are stored in Android\'s standard contact-database and are shared with other apps on the phone.</string>
     <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
     <string name="type_mobile_business">Mobile Business</string>
@@ -98,6 +100,7 @@
     <string name="image">Image</string>
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>
+    <string name="visibility">Visibility</string>
     <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>
