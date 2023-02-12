@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -214,16 +215,12 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun Visibility(
-        contact: IContactEditable,
-        onChanged: (IContactEditable) -> Unit
-    ) {
-        val viewRequester = remember { BringIntoViewRequester() }
+    private fun Visibility(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
         ContactCategory(
             categoryTitle = R.string.visibility,
             icon = Icons.Default.Visibility,
-            modifier = Modifier.bringIntoViewRequester(viewRequester),
-            alignContentWithTitle = false,
+            initiallyExpanded = contact.isNew,
+            alignContentWithTitle = true,
         ) {
             val selectedOption = with(contact.type) {
                 StringDropDownOption(label = stringResource(id = label), value = this)
@@ -237,14 +234,16 @@ object ContactEditScreenContent {
             var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                DropDownField(
-                    labelRes = R.string.type,
-                    selectedOption = selectedOption,
-                    options = options,
-                    isScrolling = { parent.isScrolling },
-                ) { newValue ->
-                    contact.type = newValue
-                    onChanged(contact)
+                Surface(modifier = Modifier.weight(1.0f)) {
+                    DropDownField(
+                        labelRes = R.string.type,
+                        selectedOption = selectedOption,
+                        options = options,
+                        isScrolling = { parent.isScrolling },
+                    ) { newValue ->
+                        contact.type = newValue
+                        onChanged(contact)
+                    }
                 }
 
                 InfoIconButton { showTypeInfoDialog = true }
