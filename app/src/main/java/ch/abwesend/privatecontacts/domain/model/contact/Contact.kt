@@ -36,8 +36,3 @@ data class ContactBase(
     override val displayName: String,
 ) : IContactBase
 
-/**
- * Account in which a contact can be stored.
- * Only relevant for new, external contacts
- */
-data class ContactAccount(val username: String, val accountProvider: String)
