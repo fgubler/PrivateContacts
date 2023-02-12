@@ -296,7 +296,7 @@ class ContactTypeChangeServiceTest : TestBase() {
         val resolvedContacts = contacts
             .associateBy { it.id }
             .mapValues { (_, contact) -> contact.takeUnless { it.id == contactIds[1] } }
-        coEvery { loadService.resolveContacts(any()) } returns resolvedContacts
+        coEvery { loadService.resolveContactsWithAccountInformation(any()) } returns resolvedContacts
         coEvery { saveService.saveContact(any()) } answers {
             val contact = firstArg<IContactEditable>()
             when (contact.id) {

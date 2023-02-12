@@ -95,11 +95,11 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
 
         val contactGroupIds = contact?.groups.orEmpty().map { it.groupId }
         return if (contactGroupIds.isEmpty()) emptyList()
-        else loadContactGroups(GroupsPredicate.GroupLookup(contactGroupIds))
+        else loadContactGroupsByPredicate(GroupsPredicate.GroupLookup(contactGroupIds))
             .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
     }
 
-    suspend fun loadContactGroups(predicate: GroupsPredicate?): List<ContactGroup> =
+    suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> =
         withContactStore { contactStore ->
             contactStore.fetchContactGroups(predicate)
                 .asFlow()

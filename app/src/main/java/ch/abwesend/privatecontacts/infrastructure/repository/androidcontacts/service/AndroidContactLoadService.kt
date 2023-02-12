@@ -62,7 +62,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     }
 
     suspend fun getAllContactGroups(): List<ContactGroup> =
-        contactLoadRepository.loadContactGroups(predicate = null)
+        contactLoadRepository.loadContactGroupsByPredicate(predicate = null)
             .map { it.toContactGroup() }
 
     private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
