@@ -35,4 +35,3 @@ data class ContactBase(
     override val type: ContactType,
     override val displayName: String,
 ) : IContactBase
-

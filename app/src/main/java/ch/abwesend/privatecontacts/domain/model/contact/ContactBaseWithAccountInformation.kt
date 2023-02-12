@@ -13,7 +13,7 @@ interface IContactBaseWithAccountInformation : IContactBase {
 data class ContactBaseWithAccountInformation(
     private val contactBase: IContactBase,
     override var saveInAccount: ContactAccount?
-): IContactBase by contactBase, IContactBaseWithAccountInformation
+) : IContactBase by contactBase, IContactBaseWithAccountInformation
 
 fun IContactBase.withAccountInformation(): IContactBaseWithAccountInformation =
     if (this is IContactBaseWithAccountInformation) this
