@@ -55,8 +55,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
+import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
-import ch.abwesend.privatecontacts.view.model.StringDropDownOption
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Companies
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
@@ -223,13 +223,10 @@ object ContactEditScreenContent {
             alignContentWithTitle = true,
         ) {
             val selectedOption = with(contact.type) {
-                StringDropDownOption(label = stringResource(id = label), value = this)
+                ResDropDownOption(labelRes = label, value = this)
             }
             val options = ContactType.values().map {
-                StringDropDownOption(
-                    label = stringResource(it.label),
-                    value = it
-                )
+                ResDropDownOption(labelRes = it.label, value = it)
             }
             var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
 
