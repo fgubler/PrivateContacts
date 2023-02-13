@@ -9,9 +9,9 @@ package ch.abwesend.privatecontacts.infrastructure.service
 import android.accounts.AccountManager
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ACCOUNT_PROVIDER_GOOGLE
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
+import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService.Companion.ACCOUNT_PROVIDER_GOOGLE
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
