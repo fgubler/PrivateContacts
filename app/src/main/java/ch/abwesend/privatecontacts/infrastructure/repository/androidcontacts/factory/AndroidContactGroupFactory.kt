@@ -8,6 +8,7 @@ import com.alexstyl.contactstore.ContactGroup as AndroidContactGroup
 
 fun List<AndroidContactGroup>.toContactGroups(): List<ContactGroup> =
     map { it.toContactGroup() }
+        .distinctBy { it.id.name } // needs to be unique within the app
 
 fun AndroidContactGroup.toContactGroup(): ContactGroup {
     val id = ContactGroupId(name = title, groupNo = groupId)
