@@ -95,7 +95,7 @@ object ContactEditScreenContent {
             if (contactDataWaitingForCustomType != null) {
                 logger.warning(
                     "overwriting contact data waiting for custom type: " +
-                            "from $contactDataWaitingForCustomType to $contactData"
+                        "from $contactDataWaitingForCustomType to $contactData"
                 )
             }
             contactDataWaitingForCustomType = contactData
@@ -228,7 +228,6 @@ object ContactEditScreenContent {
                 ContactTypeField(contact, onChanged)
                 AccountSelectionField(contact, onChanged)
             }
-
         }
     }
 
