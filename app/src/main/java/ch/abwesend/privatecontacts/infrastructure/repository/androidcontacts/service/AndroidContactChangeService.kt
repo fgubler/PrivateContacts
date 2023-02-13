@@ -52,10 +52,6 @@ class AndroidContactChangeService {
         }
     }
 
-    /**
-     * Beware: not yet tested manually (the UI cannot change images yet)
-     * TODO test manually
-     */
     fun updateChangedImage(changedContact: IContact, mutableContact: MutableContact) {
         val newImage = changedContact.image
 
@@ -79,7 +75,13 @@ class AndroidContactChangeService {
         // companies cannot be edited because Android only allows one while we allow several => a bit of a mess
     }
 
-    // TODO add unit-tests and test manually
+    // TODO add unit-tests
+    // TODO test manually for actually updating, not just creating (as soon as the UI can do that)
+    /**
+     * Adds / updates the contact-groups.
+     * Beware: when storing a contact in the local contact-list (instead of e.g. a Google account),
+     * for some reason, contact-groups can get lost.
+     */
     fun updateContactGroups(
         changedContact: IContact,
         mutableContact: MutableContact,
