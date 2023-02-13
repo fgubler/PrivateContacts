@@ -54,6 +54,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.ScreenContext
@@ -94,7 +95,7 @@ object ContactEditScreenContent {
             if (contactDataWaitingForCustomType != null) {
                 logger.warning(
                     "overwriting contact data waiting for custom type: " +
-                        "from $contactDataWaitingForCustomType to $contactData"
+                            "from $contactDataWaitingForCustomType to $contactData"
                 )
             }
             contactDataWaitingForCustomType = contactData
@@ -223,35 +224,57 @@ object ContactEditScreenContent {
             initiallyExpanded = contact.isNew,
             alignContentWithTitle = true,
         ) {
-            val selectedOption = with(contact.type) {
-                ResDropDownOption(labelRes = label, value = this)
+            Column {
+                ContactTypeField(contact, onChanged)
+                AccountSelectionField(contact, onChanged)
             }
-            val options = ContactType.values().map {
-                ResDropDownOption(labelRes = it.label, value = it)
-            }
-            var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(modifier = Modifier.weight(1.0f)) {
-                    DropDownField(
-                        labelRes = R.string.type,
-                        selectedOption = selectedOption,
-                        options = options,
-                        isScrolling = { parent.isScrolling },
-                    ) { newValue ->
-                        contact.type = newValue
-                        onChanged(contact)
-                    }
+        }
+    }
+
+    @Composable
+    private fun ContactTypeField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
+        var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
+
+        val selectedOption = with(contact.type) {
+            ResDropDownOption(labelRes = label, value = this)
+        }
+        val options = ContactType.values().map {
+            ResDropDownOption(labelRes = it.label, value = it)
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(modifier = Modifier.weight(1.0f)) {
+                DropDownField(
+                    labelRes = R.string.type,
+                    selectedOption = selectedOption,
+                    options = options,
+                    isScrolling = { parent.isScrolling },
+                ) { newValue ->
+                    contact.type = newValue
+                    onChanged(contact)
                 }
+            }
 
-                InfoIconButton { showTypeInfoDialog = true }
+            InfoIconButton { showTypeInfoDialog = true }
+        }
 
-                if (showTypeInfoDialog) {
-                    ContactTypeExplanationDialog { showTypeInfoDialog = false }
+        if (showTypeInfoDialog) {
+            ContactTypeExplanationDialog { showTypeInfoDialog = false }
+        }
+    }
+
+    @Composable
+    private fun AccountSelectionField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) =
+        when (contact.type) {
+            ContactType.SECRET -> Unit
+            ContactType.PUBLIC -> {
+                AccountSelectionDropDownField { newValue ->
+                    contact.saveInAccount = newValue
+                    onChanged(contact)
                 }
             }
         }
-    }
 
     @Composable
     private fun ContactTypeExplanationDialog(onClose: () -> Unit) {
