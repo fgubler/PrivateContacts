@@ -112,13 +112,14 @@ object ContactEditScreenContent {
 
         val scrollState = rememberScrollState()
         parent.isScrolling = scrollState.isScrollInProgress
+        val hasWritePermission = remember { screenContext.contactEditViewModel.hasContactWritePermission }
 
         Column(
             modifier = modifier.verticalScroll(scrollState)
         ) {
             PersonalInformation(contact, onChanged)
 
-            if (contact.isNew) {
+            if (contact.isNew && hasWritePermission) {
                 Visibility(contact = contact, onChanged = onChanged)
             }
 
