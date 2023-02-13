@@ -128,6 +128,7 @@ fun <T> SettingsDropDown(
     DropDownComponent(
         options = options,
         isScrolling = { parent.isScrolling },
+        maxMenuItemWidth = 200.dp,
         onValueChanged = onValueChanged,
     ) { _, modifier ->
         Row(
