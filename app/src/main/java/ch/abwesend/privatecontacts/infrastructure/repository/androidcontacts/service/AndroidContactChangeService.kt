@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import android.net.Uri
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
@@ -21,7 +22,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
+import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MutableContact
@@ -34,25 +37,21 @@ import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
-    fun updateChangedBaseData(originalContact: IContact, changedContact: IContact, mutableContact: MutableContact) {
-        if (originalContact.firstName != changedContact.firstName) {
+    fun updateChangedBaseData(originalContact: IContact?, changedContact: IContact, mutableContact: MutableContact) {
+        if (originalContact?.firstName != changedContact.firstName) {
             mutableContact.firstName = changedContact.firstName
         }
-        if (originalContact.lastName != changedContact.lastName) {
+        if (originalContact?.lastName != changedContact.lastName) {
             mutableContact.lastName = changedContact.lastName
         }
-        if (originalContact.nickname != changedContact.nickname) {
+        if (originalContact?.nickname != changedContact.nickname) {
             mutableContact.nickname = changedContact.nickname
         }
-        if (originalContact.notes != changedContact.notes) {
+        if (originalContact?.notes != changedContact.notes) {
             mutableContact.note = Note(changedContact.notes)
         }
     }
 
-    /**
-     * Beware: not yet tested manually (the UI cannot change images yet)
-     * TODO test manually
-     */
     fun updateChangedImage(changedContact: IContact, mutableContact: MutableContact) {
         val newImage = changedContact.image
 
@@ -75,6 +74,51 @@ class AndroidContactChangeService {
         mutableContact.updateEventDates(changedContact.contactDataSet)
         // companies cannot be edited because Android only allows one while we allow several => a bit of a mess
     }
+
+    // TODO add unit-tests
+    // TODO test manually for actually updating, not just creating (as soon as the UI can do that)
+    /**
+     * Adds / updates the contact-groups.
+     * Beware: when storing a contact in the local contact-list (instead of e.g. a Google account),
+     * for some reason, contact-groups can get lost.
+     */
+    fun updateContactGroups(
+        changedContact: IContact,
+        mutableContact: MutableContact,
+        allContactGroups: List<ContactGroup>
+    ) {
+        val newGroups = changedContact.contactGroups
+        if (newGroups.none { it.modelStatus != ModelStatus.UNCHANGED }) {
+            logger.debug("No contact-groups to change")
+            return
+        }
+
+        logger.debug("Some contact-groups were changed, added or deleted")
+
+        val allGroupsByName = allContactGroups.associateBy { it.id.name }
+        val oldContactGroupNos = mutableContact.groups.map { it.groupId }.toSet()
+        val contactGroupsToChange = newGroups.filter { it.modelStatus in listOf(NEW, CHANGED) }
+        val contactGroupsToDelete = newGroups.filter { it.modelStatus == DELETED }
+
+        contactGroupsToDelete.forEach { group ->
+            val groupNo = group.getGroupNoOrNull(allGroupsByName)
+            groupNo?.let { mutableContact.groups.removeIf { it.groupId == groupNo } }
+                ?: logger.debugLocally("Failed to delete group '${group.id.name}': not found")
+        }
+
+        contactGroupsToChange.forEach { newGroup ->
+            val groupNo = newGroup.getGroupNoOrNull(allGroupsByName)
+            if (oldContactGroupNos.contains(groupNo)) {
+                logger.debugLocally("Group ${newGroup.id} already on contact: no need to add it")
+            } else {
+                groupNo?.let { mutableContact.groups.add(GroupMembership(it)) }
+                    ?: logger.debugLocally("Failed to add group '${newGroup.id.name}': not found")
+            }
+        }
+    }
+
+    private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
+        id.groupNo ?: allContactGroupsByName[id.name]?.id?.groupNo
 
     private fun MutableContact.updatePhoneNumbers(contactData: List<ContactData>) {
         val phoneNumbers = contactData.filterIsInstance<PhoneNumber>()
@@ -156,7 +200,7 @@ class AndroidContactChangeService {
         mapper: (TInternal) -> TExternal?,
     ) {
         val contactDataCategory = newContactData.firstOrNull()?.javaClass?.simpleName ?: "[Unknown]"
-        if (newContactData.all { it.modelStatus == ModelStatus.UNCHANGED }) {
+        if (newContactData.none { it.modelStatus != ModelStatus.UNCHANGED }) {
             logger.debug("No contact-data of category $contactDataCategory to change")
             return
         }
@@ -167,10 +211,10 @@ class AndroidContactChangeService {
         val contactDataToChange = newContactData.filter { it.modelStatus in listOf(NEW, CHANGED) }
         val contactDataToDelete = newContactData.filter { it.modelStatus == DELETED }
 
-        contactDataToDelete.forEach { number -> mutableDataOnContact.deleteContactData(number, oldContactDataByNo) }
+        contactDataToDelete.forEach { dataSet -> mutableDataOnContact.deleteContactData(dataSet, oldContactDataByNo) }
 
-        contactDataToChange.forEach { newNumber ->
-            mutableDataOnContact.upsertContactData(newNumber, oldContactDataByNo, mapper)
+        contactDataToChange.forEach { newDataSet ->
+            mutableDataOnContact.upsertContactData(newDataSet, oldContactDataByNo, mapper)
         }
     }
 

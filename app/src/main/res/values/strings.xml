@@ -48,6 +48,7 @@
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
     <string name="unable_to_save_contact">The contact could not be saved</string>
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
+    <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
@@ -58,7 +59,9 @@
 
     <string name="type">Type</string>
     <string name="secret_contact">Secret</string>
+    <string name="secret_contact_explanation">Secret contacts are only stored within this app and not shared with anyone.</string>
     <string name="public_contact">Public</string>
+    <string name="public_contact_explanation">Public contacts are stored in Android\'s standard contact-database and are shared with other apps on the phone.</string>
     <string name="type_personal">Personal</string>
     <string name="type_business">Business</string>
     <string name="type_mobile_business">Mobile Business</string>
@@ -98,6 +101,7 @@
     <string name="image">Image</string>
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>
+    <string name="visibility">Visibility</string>
     <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>
@@ -147,13 +151,20 @@
     <string name="make_contact_secret">Change contact to \'Secret\'</string>
     <string name="make_contact_secret_title">Change contact to \'Secret\'</string>
     <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.</string>
-    <string name="make_contact_secret_progress">Contact is being changed to \'Secret\'</string>
 
     <string name="make_contacts_secret">Change contacts to \'Secret\'</string>
     <string name="make_contacts_secret_title">Change contacts to \'Secret\'</string>
-    <string name="make_contacts_secret_progress">Contacts are being changed to \'Secret\'</string>
-    <string name="make_contacts_secret_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be changed.</string>
-    <string name="make_contacts_secret_full_error">Something went wrong. No contacts could be changed.</string>
+
+    <string name="make_contact_public">Change contact to \'Public\'</string>
+    <string name="make_contact_public_title">Change contact to \'Public\'</string>
+    <string name="make_contact_public_text">Changing a contact to \'Public\' means that it is copied to the public contact-database of Android and afterwards deleted from this app.</string>
+
+    <string name="make_contacts_public">Change contacts to \'Public\'</string>
+    <string name="make_contacts_public_title">Change contacts to \'Public\'</string>
+
+    <string name="type_change_progress">Contact visibility is being changed</string>
+    <string name="type_change_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be changed.</string>
+    <string name="type_change_full_error">Something went wrong. No contacts could be changed.</string>
 
     <string name="type_change_create_new_contact_error">The new contact could not be created. Therefore, the old contact of type was not deleted to avoid the loss of your data.</string>
     <string name="type_change_delete_old_contact_error">The old contact could not be deleted. However, the new contact has been created. You can now delete the old one manually.</string>
@@ -237,6 +248,9 @@
 
     <string name="secret_contacts_tab_title">Secret Contacts</string>
     <string name="all_contacts_tab_title">All Contacts</string>
+
+    <string name="target_account">Target account</string>
+    <string name="local_phone_contacts">Local phone contacts</string>
 
 
 </resources>

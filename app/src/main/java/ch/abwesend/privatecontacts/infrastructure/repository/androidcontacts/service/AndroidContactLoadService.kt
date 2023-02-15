@@ -12,12 +12,14 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactPredicate
@@ -58,6 +60,10 @@ class AndroidContactLoadService : IAndroidContactLoadService {
         logger.debug("Checking for contact existence: $numberOfExisting exist")
         return existenceByContactId
     }
+
+    suspend fun getAllContactGroups(): List<ContactGroup> =
+        contactLoadRepository.loadContactGroupsByPredicate(predicate = null)
+            .map { it.toContactGroup() }
 
     private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {

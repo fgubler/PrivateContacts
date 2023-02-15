@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.service
 
+import android.Manifest.permission.GET_ACCOUNTS
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.WRITE_CONTACTS
 import android.content.Context
@@ -20,6 +21,9 @@ class AndroidPermissionService : PermissionService {
 
     override fun hasContactWritePermission(): Boolean =
         hasPermission(WRITE_CONTACTS)
+
+    override fun hasReadAccountsPermission(): Boolean =
+        hasPermission(GET_ACCOUNTS)
 
     private fun hasPermission(permission: String): Boolean {
         val context: Context = getAnywhere()

@@ -1,26 +1,46 @@
 package ch.abwesend.privatecontacts.view.components.contactmenu
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
+import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
 @Composable
-fun MakeContactSecretConfirmationDialog(
+fun ChangeContactTypeConfirmationDialog(
     contacts: Set<IContactBase>,
     visible: Boolean,
+    config: ContactTypeChangeMenuConfig,
     hideDialog: (changeContactType: Boolean) -> Unit,
 ) {
     if (visible) {
-        @StringRes val titleRes = if (contacts.size == 1) R.string.make_contact_secret_title
-        else R.string.make_contacts_secret_title
+        @StringRes val titleRes = if (contacts.size == 1) config.confirmationDialogTitleSingularRes
+        else config.confirmationDialogTitlePluralRes
+        val contactsWithAccountInformation = remember(contacts) {
+            contacts.map { it.withAccountInformation() }
+        }
+        var saveButtonEnabled by remember { mutableStateOf(true) }
 
         YesNoDialog(
             title = titleRes,
-            text = R.string.make_contact_secret_text,
+            text = {
+                Column {
+                    Text(text = stringResource(id = config.confirmationDialogTextRes))
+                    config.ConfirmationDialogAdditionalContent(contacts = contactsWithAccountInformation) { enabled ->
+                        saveButtonEnabled = enabled
+                    }
+                }
+            },
+            yesButtonEnabled = saveButtonEnabled,
             onYes = { hideDialog(true) },
             onNo = { hideDialog(false) },
         )

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.testutil
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -25,6 +26,7 @@ data class TestContact(
     override val id: ContactIdInternal,
     override val type: ContactType,
     override val image: ContactImage,
+    override val saveInAccount: ContactAccount? = null,
 ) : IContact {
     override val displayName: String
         get() = getFullName()

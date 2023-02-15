@@ -33,9 +33,10 @@ fun someContactGroupRelationEntity(
 fun someContactGroup(
     name: String = "SomeGroup",
     notes: String = "SomeGroup Description",
+    groupNo: Long? = null,
     modelStatus: ModelStatus = UNCHANGED,
 ): ContactGroup = ContactGroup(
-    id = ContactGroupId(name = name),
+    id = ContactGroupId(name = name, groupNo = groupNo),
     notes = notes,
     modelStatus = modelStatus,
 )

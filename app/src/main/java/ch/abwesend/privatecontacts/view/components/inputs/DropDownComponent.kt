@@ -32,7 +32,7 @@ fun <T> DropDownComponent(
     options: List<DropDownOption<T>>,
     isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
-    maxMenuItemWidth: Dp = 200.dp,
+    maxMenuItemWidth: Dp = Dp.Unspecified,
     content: @Composable (dropDownExpanded: Boolean, modifier: Modifier) -> Unit,
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }

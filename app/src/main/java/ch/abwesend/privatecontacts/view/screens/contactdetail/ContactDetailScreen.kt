@@ -29,8 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
@@ -42,9 +41,10 @@ import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
-import ch.abwesend.privatecontacts.view.components.contactmenu.MakeContactSecretMenuItem
+import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.routing.AppRouter
@@ -72,10 +72,7 @@ object ContactDetailScreen {
             screenContext = screenContext,
             selectedScreen = Screen.ContactDetail,
             topBar = {
-                ContactDetailTopBar(
-                    screenContext = screenContext,
-                    contact = contactResource.valueOrNull
-                )
+                ContactDetailTopBar(screenContext = screenContext, contact = contactResource.valueOrNull)
             }
         ) { padding ->
             val modifier = Modifier.padding(padding)
@@ -183,26 +180,32 @@ object ContactDetailScreen {
         onCloseMenu: () -> Unit,
     ) {
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-            MakeContactSecretMenuItem(screenContext.contactDetailViewModel, contact, onCloseMenu)
+            ContactType.values().forEach { targetType ->
+                ChangeContactTypeMenuItem(
+                    viewModel = screenContext.contactDetailViewModel,
+                    contact = contact,
+                    targetType = targetType,
+                    onCloseMenu = onCloseMenu,
+                )
+            }
             DeleteMenuItem(screenContext, contact, onCloseMenu)
         }
     }
 
     @Composable
-    private fun MakeContactSecretMenuItem(
+    private fun ChangeContactTypeMenuItem(
         viewModel: ContactDetailViewModel,
         contact: IContact,
+        targetType: ContactType,
         onCloseMenu: () -> Unit,
     ) {
-        when (contact.type) {
-            SECRET -> Unit
-            PUBLIC -> {
-                MakeContactSecretMenuItem(contacts = setOf(contact)) { changeContact ->
-                    if (changeContact) {
-                        viewModel.changeContactType(contact, SECRET)
-                    }
-                    onCloseMenu()
+        if (contact.type != targetType) {
+            val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
+            ChangeContactTypeMenuItem(contacts = setOf(contact), config = config) { changeContact ->
+                if (changeContact) {
+                    viewModel.changeContactType(contact, targetType)
                 }
+                onCloseMenu()
             }
         }
     }

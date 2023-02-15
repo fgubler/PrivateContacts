@@ -37,6 +37,7 @@ data class Website(
 
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
+    override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
 
     override fun delete(): Website {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

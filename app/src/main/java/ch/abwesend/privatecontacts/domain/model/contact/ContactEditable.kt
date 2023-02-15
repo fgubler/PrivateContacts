@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.settings.Settings
 
-interface IContactEditable : IContact {
+interface IContactEditable : IContact, IContactBaseWithAccountInformation {
     override var firstName: String
     override var lastName: String
     override var nickname: String
@@ -36,6 +36,7 @@ data class ContactEditable(
     override val contactDataSet: MutableList<ContactData>,
     override val contactGroups: MutableList<ContactGroup>,
     override val isNew: Boolean = false,
+    override var saveInAccount: ContactAccount? = null,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()

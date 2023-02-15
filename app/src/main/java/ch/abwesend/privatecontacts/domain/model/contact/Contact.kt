@@ -25,6 +25,9 @@ interface IContact : IContactBase {
     val contactGroups: List<ContactGroup>
     val image: ContactImage
     val isNew: Boolean
+
+    /** only relevant for new, external contacts */
+    val saveInAccount: ContactAccount?
 }
 
 data class ContactBase(

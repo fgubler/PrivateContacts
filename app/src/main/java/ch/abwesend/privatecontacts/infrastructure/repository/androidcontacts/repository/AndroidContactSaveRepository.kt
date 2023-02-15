@@ -1,13 +1,17 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
-import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS
-import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
+import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.MutableContact
+import com.alexstyl.contactstore.MutableContactGroup
 
 class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
     suspend fun deleteContacts(contactIds: Set<IContactIdExternal>) {
+        if (contactIds.isEmpty()) {
+            return
+        }
         checkContactWritePermission { exception -> throw exception }
+
         withContactStore { contactStore ->
             contactStore.execute { contactIds.forEach { delete(it.contactNo) } }
         }
@@ -19,9 +23,28 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
         }
     }
 
-    // TODO implement
-    suspend fun createContact(contact: MutableContact): ContactSaveResult {
+    /** [saveInAccount] if null is passed, the account is stored locally */
+    suspend fun createContact(contact: MutableContact, saveInAccount: InternetAccount?) {
         checkContactWritePermission { exception -> throw exception }
-        return ContactSaveResult.Failure(NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS)
+        withContactStore { contactStore ->
+            contactStore.execute {
+                insert(contact, saveInAccount)
+            }
+        }
+    }
+
+    suspend fun createContactGroups(groups: List<MutableContactGroup>) {
+        if (groups.isEmpty()) {
+            return
+        }
+        checkContactWritePermission { exception -> throw exception }
+
+        withContactStore { contactStore ->
+            contactStore.execute {
+                groups.forEach {
+                    insertGroup(it)
+                }
+            }
+        }
     }
 }

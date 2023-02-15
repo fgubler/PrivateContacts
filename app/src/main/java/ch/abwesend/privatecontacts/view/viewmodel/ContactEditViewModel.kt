@@ -19,12 +19,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ContactEditViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
+    private val permissionService: PermissionService by injectAnywhere()
 
     var originalContact: IContact? = null
         private set
@@ -34,6 +36,9 @@ class ContactEditViewModel : ViewModel() {
 
     private val _saveResult = EventFlow.createShared<ContactSaveResult>()
     val saveResult: Flow<ContactSaveResult> = _saveResult
+
+    val hasContactWritePermission: Boolean
+        get() = permissionService.hasContactWritePermission()
 
     fun selectContact(contact: IContact) {
         val editable = contact.asEditable()

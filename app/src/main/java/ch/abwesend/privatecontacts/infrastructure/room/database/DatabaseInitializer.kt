@@ -142,8 +142,16 @@ class DatabaseInitializer {
                     ),
                 ),
                 contactGroups = mutableListOf(
-                    ContactGroup(id = ContactGroupId("Future TestUsers"), notes = "2D", modelStatus = NEW),
-                    ContactGroup(id = ContactGroupId("Random Dudes"), notes = "", modelStatus = NEW),
+                    ContactGroup(
+                        id = ContactGroupId(name = "Future TestUsers", groupNo = 1),
+                        notes = "2D",
+                        modelStatus = NEW,
+                    ),
+                    ContactGroup(
+                        id = ContactGroupId(name = "Random Dudes", groupNo = 2),
+                        notes = "",
+                        modelStatus = NEW,
+                    ),
                 ),
             ),
             ContactEditable(

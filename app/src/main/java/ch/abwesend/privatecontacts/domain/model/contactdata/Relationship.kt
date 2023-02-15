@@ -47,6 +47,7 @@ data class Relationship(
 
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
+    override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
 
     override fun delete(): Relationship {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

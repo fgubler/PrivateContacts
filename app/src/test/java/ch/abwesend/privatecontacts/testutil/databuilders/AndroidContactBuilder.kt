@@ -144,11 +144,13 @@ fun someUri(path: String): Uri {
 fun someAndroidContactGroup(
     title: String = "SomeGroup",
     notes: String = "Just some random group",
+    groupId: Long = 123,
 ): ContactGroup {
     val mock = mockk<ContactGroup>()
 
     every { mock.title } returns title
     every { mock.note } returns notes
+    every { mock.groupId } returns groupId
 
     return mock
 }

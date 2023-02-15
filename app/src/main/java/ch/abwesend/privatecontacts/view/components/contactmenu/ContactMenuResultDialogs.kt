@@ -78,7 +78,7 @@ fun ChangeContactTypeErrorDialog(
                         formatArgs = formatArgs
                     )
                 }
-                else -> stringResource(id = R.string.make_contacts_secret_full_error)
+                else -> stringResource(id = R.string.type_change_full_error)
             }
 
             val errorDescriptions = errors.distinct().map { stringResource(id = it.label) }
