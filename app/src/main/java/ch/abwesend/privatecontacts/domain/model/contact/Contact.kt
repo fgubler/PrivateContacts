@@ -27,7 +27,7 @@ interface IContact : IContactBase {
     val isNew: Boolean
 
     /** only relevant for new, external contacts */
-    val saveInAccount: ContactAccount?
+    val saveInAccount: ContactAccount
 }
 
 data class ContactBase(

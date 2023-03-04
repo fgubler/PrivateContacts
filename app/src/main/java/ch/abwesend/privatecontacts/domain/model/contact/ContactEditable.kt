@@ -36,7 +36,7 @@ data class ContactEditable(
     override val contactDataSet: MutableList<ContactData>,
     override val contactGroups: MutableList<ContactGroup>,
     override val isNew: Boolean = false,
-    override var saveInAccount: ContactAccount? = null,
+    override var saveInAccount: ContactAccount = ContactAccount.AppInternal,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()

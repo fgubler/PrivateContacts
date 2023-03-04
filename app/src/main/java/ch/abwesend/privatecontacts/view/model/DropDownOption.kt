@@ -16,6 +16,14 @@ interface DropDownOption<out T> {
     fun getLabel(): String
 }
 
+data class DynamicStringDropDownOption<T>(
+    private val labelProvider: @Composable () -> String,
+    override val value: T,
+) : DropDownOption<T> {
+    @Composable
+    override fun getLabel() = labelProvider()
+}
+
 data class StringDropDownOption<T>(private val label: String, override val value: T) : DropDownOption<T> {
     @Composable
     override fun getLabel() = label

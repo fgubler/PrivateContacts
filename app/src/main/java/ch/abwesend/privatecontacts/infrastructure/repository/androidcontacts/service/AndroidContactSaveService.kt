@@ -15,7 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccountOrNull
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
@@ -112,7 +112,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
             val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
 
             val mutableContact = contact.toAndroidContact(existingGroups)
-            val account = contact.saveInAccount?.toInternetAccount()
+            val account = contact.saveInAccount.toInternetAccountOrNull()
 
             contactSaveRepository.createContact(mutableContact, account)
             contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user

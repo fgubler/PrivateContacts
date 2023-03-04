@@ -10,6 +10,7 @@ import android.accounts.AccountManager
 import android.content.Context
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount.OnlineAccount
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService.Companion.ACCOUNT_PROVIDER_GOOGLE
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
@@ -26,11 +27,12 @@ class AndroidAccountService(private val context: Context) : AccountService {
             emptyList()
         } else {
             val accounts = AccountManager.get(context).accounts
-            accounts
-                .map { ContactAccount(username = it.name, accountProvider = it.type) }
+            val onlineAccounts: List<ContactAccount> = accounts
+                .map { OnlineAccount(username = it.name, accountProvider = it.type) }
                 .also { logger.debug("Found ${it.size} accounts") }
                 .filter { knownAccountProviders.contains(it.accountProvider) }
                 .also { logger.debug("Found ${it.size} accounts of known providers") }
                 .sortedBy { it.username } // just to make the order constant
+            onlineAccounts + ContactAccount.LocalPhoneContacts
         }
 }

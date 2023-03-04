@@ -26,7 +26,7 @@ data class TestContact(
     override val id: ContactIdInternal,
     override val type: ContactType,
     override val image: ContactImage,
-    override val saveInAccount: ContactAccount? = null,
+    override val saveInAccount: ContactAccount = ContactAccount.AppInternal,
 ) : IContact {
     override val displayName: String
         get() = getFullName()

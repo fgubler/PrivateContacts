@@ -250,6 +250,7 @@
     <string name="all_contacts_tab_title">All Contacts</string>
 
     <string name="target_account">Target account</string>
+    <string name="app_internal">Within this app</string>
     <string name="local_phone_contacts">Local phone contacts</string>
 
 
