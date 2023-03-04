@@ -99,8 +99,11 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
             .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
     }
 
-    suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> =
-        withContactStore { contactStore ->
+    suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> {
+        logger.debug("Resolving contact groups by predicate")
+        checkContactReadPermission { exception -> throw exception }
+
+        return withContactStore { contactStore ->
             contactStore.fetchContactGroups(predicate)
                 .asFlow()
                 .flowOn(dispatchers.io)
@@ -108,4 +111,5 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
                 .orEmpty()
                 .also { logger.debug("Found ${it.size} contact-groups for predicated $predicate") }
         }
+    }
 }
