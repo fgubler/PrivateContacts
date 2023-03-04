@@ -1,6 +1,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
@@ -36,6 +37,7 @@ fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): I
             image = getImage(),
             contactDataSet = getContactData().toMutableList(),
             contactGroups = groups.toContactGroups().toMutableList(),
+            saveInAccount = ContactAccount.None,
         )
     } catch (t: Throwable) {
         logger.warning("Failed to map android contact with id = $contactId", t)

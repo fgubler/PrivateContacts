@@ -74,7 +74,7 @@ fun someContactEditableByIdType(
     contactGroups: List<ContactGroup> = emptyList(),
     image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
-    saveInAccount: ContactAccount = ContactAccount.AppInternal,
+    saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable =
     when (id) {
         is IContactIdExternal -> someExternalContactEditable(
@@ -114,7 +114,7 @@ fun someContactEditable(
     contactGroups: List<ContactGroup> = emptyList(),
     image: ContactImage = ContactImage.empty,
     isNew: Boolean = false,
-    saveInAccount: ContactAccount = ContactAccount.AppInternal,
+    saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
     firstName = firstName,
@@ -214,7 +214,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactData: List<ContactData> = emptyList(),
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
-    saveInAccount: ContactAccount = ContactAccount.AppInternal,
+    saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = ContactEditable(
     id = id,
     firstName = firstName,

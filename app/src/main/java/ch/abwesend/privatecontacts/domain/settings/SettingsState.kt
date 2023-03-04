@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.settings
 
 import ch.abwesend.privatecontacts.BuildConfig
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 
 interface ISettingsState {
@@ -23,6 +24,7 @@ interface ISettingsState {
 
     // Defaults
     val defaultContactType: ContactType
+    val defaultExternalContactAccount: ContactAccount
 
     // Incoming Call Detection
     /** Whether call-detection should be attempted */
@@ -57,6 +59,7 @@ data class SettingsState(
     override val showInitialAppInfoDialog: Boolean,
 
     override val defaultContactType: ContactType,
+    override val defaultExternalContactAccount: ContactAccount,
 
     override val requestIncomingCallPermissions: Boolean,
     override val observeIncomingCalls: Boolean,
@@ -81,6 +84,7 @@ data class SettingsState(
             showAndroidContacts = true,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.SECRET,
+            defaultExternalContactAccount = ContactAccount.defaultForExternal,
             currentVersion = BuildConfig.VERSION_CODE,
         )
     }

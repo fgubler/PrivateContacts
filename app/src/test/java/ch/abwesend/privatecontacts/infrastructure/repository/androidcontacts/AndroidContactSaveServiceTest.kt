@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -225,7 +226,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create contact locally if no account is passed`() {
-        val newContact = someContactEditable(saveInAccount = null)
+        val newContact = someContactEditable(saveInAccount = ContactAccount.LocalPhoneContacts)
         coJustRun { saveRepository.createContact(any(), any()) }
         coEvery { loadService.getAllContactGroups() } returns emptyList()
 

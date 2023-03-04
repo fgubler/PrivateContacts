@@ -17,4 +17,4 @@ data class ContactBaseWithAccountInformation(
 
 fun IContactBase.withAccountInformation(): IContactBaseWithAccountInformation =
     if (this is IContactBaseWithAccountInformation) this
-    else ContactBaseWithAccountInformation(contactBase = this, saveInAccount = ContactAccount.AppInternal)
+    else ContactBaseWithAccountInformation(contactBase = this, saveInAccount = ContactAccount.None)

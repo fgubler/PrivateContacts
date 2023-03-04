@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
@@ -71,7 +72,8 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
         changeSaveButtonState: (enabled: Boolean) -> Unit,
     ) {
         Spacer(modifier = Modifier.height(30.dp))
-        AccountSelectionDropDownField { newValue ->
+        val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
+        AccountSelectionDropDownField(defaultAccount) { newValue ->
             changeSaveButtonState(false)
             contacts.forEach { it.saveInAccount = newValue }
             changeSaveButtonState(true)

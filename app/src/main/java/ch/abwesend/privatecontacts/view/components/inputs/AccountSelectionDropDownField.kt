@@ -70,8 +70,8 @@ private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {
 }
 
 internal typealias DropDownFieldProvider =
-        @Composable (
-            options: List<DropDownOption<ContactAccount>>,
-            selectedOption: DropDownOption<ContactAccount>,
-            onOptionSelected: (ContactAccount) -> Unit
-        ) -> Unit
+    @Composable (
+        options: List<DropDownOption<ContactAccount>>,
+        selectedOption: DropDownOption<ContactAccount>,
+        onOptionSelected: (ContactAccount) -> Unit
+    ) -> Unit

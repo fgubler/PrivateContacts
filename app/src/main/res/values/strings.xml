@@ -224,7 +224,9 @@
     <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
     <string name="settings_entry_invert_top_and_bottom_bars">Show the navigation-bar at the bottom of the screen</string>
     <string name="settings_entry_default_contact_type">Default contact-type</string>
+    <string name="settings_entry_default_external_contact_account">Default contact account</string>
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
+    <string name="settings_entry_default_external_contact_account_description">Public contacts can either be stored on locally on the device or e.g. in your Google account.</string>
     <string name="settings_entry_call_detection">Match incoming calls with contacts</string>
     <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen</string>
