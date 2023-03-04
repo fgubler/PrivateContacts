@@ -15,6 +15,12 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 class AndroidContactPermissionHelper : PermissionHelperBase() {
     override val permissions: List<String> = listOf(READ_CONTACTS, WRITE_CONTACTS, GET_ACCOUNTS)
 
+    fun runIfPermissionsGranted(onGranted: () -> Unit) = requestAndroidContactPermissions { result ->
+        if (result.usable) {
+            onGranted()
+        }
+    }
+
     fun requestAndroidContactPermissions(onResult: (PermissionRequestResult) -> Unit) {
         logger.debug("Checking permissions for accessing Android contacts")
 

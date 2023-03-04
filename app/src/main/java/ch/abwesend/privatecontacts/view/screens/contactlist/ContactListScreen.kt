@@ -80,7 +80,7 @@ object ContactListScreen {
             allowFullNavigation = true,
             scaffoldState = scaffoldState,
             topBar = {
-                ContactListTopBar(
+                ContactListTopBar.ContactListTopBar(
                     viewModel = screenContext.contactListViewModel,
                     scaffoldState = scaffoldState,
                 )

@@ -35,6 +35,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -47,6 +48,7 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsRes
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.routing.AppRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
@@ -62,6 +64,7 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalComposeUiApi
 @FlowPreview
 object ContactDetailScreen {
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
 
     @Composable
     fun Screen(screenContext: ScreenContext) {
@@ -203,7 +206,9 @@ object ContactDetailScreen {
             val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
             ChangeContactTypeMenuItem(contacts = setOf(contact), config = config) { changeContact ->
                 if (changeContact) {
-                    viewModel.changeContactType(contact, targetType)
+                    contactPermissionHelper.runIfPermissionsGranted {
+                        viewModel.changeContactType(contact, targetType)
+                    }
                 }
                 onCloseMenu()
             }

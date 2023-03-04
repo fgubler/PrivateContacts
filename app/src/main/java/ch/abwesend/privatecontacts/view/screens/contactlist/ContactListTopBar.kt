@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -51,6 +52,7 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
@@ -58,182 +60,188 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalMaterialApi
 @FlowPreview
 @ExperimentalComposeUiApi
-@Composable
-fun ContactListTopBar(
-    viewModel: ContactListViewModel,
-    scaffoldState: ScaffoldState,
-) {
-    val screenStateState = viewModel.screenState
-    when (val screenState = screenStateState.value) {
-        is Normal -> NormalTopBar(
-            scaffoldState = scaffoldState,
-            reloadContacts = { viewModel.reloadContacts() },
-            showSearch = { viewModel.showSearch() }
-        )
-        is Search -> SearchTopBar(
-            searchText = screenState.searchText,
-            changeSearchText = { viewModel.changeSearchQuery(it) },
-            resetSearch = { viewModel.reloadContacts(resetSearch = true) }
-        )
-        is BulkMode -> BulkModeTopBar(
-            viewModel = viewModel,
-            selectedContacts = screenState.selectedContacts,
-            disableBulkMode = { viewModel.setBulkMode(enabled = false) }
-        )
-    }
-}
+object ContactListTopBar {
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
 
-@Composable
-private fun NormalTopBar(
-    scaffoldState: ScaffoldState,
-    reloadContacts: () -> Unit,
-    showSearch: () -> Unit,
-) {
-    val coroutineScope = rememberCoroutineScope()
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
-        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
-        actions = {
-            RefreshIconButton { reloadContacts() }
-            SearchIconButton { showSearch() }
-        }
-    )
-}
-
-@ExperimentalComposeUiApi
-@Composable
-private fun SearchTopBar(
-    searchText: String,
-    changeSearchText: (String) -> Unit,
-    resetSearch: () -> Unit
-) {
-    val backgroundColor = MaterialTheme.colors.background
-    TopAppBar(
-        backgroundColor = backgroundColor,
-        title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
-        navigationIcon = { BackIconButton { resetSearch() } },
-    )
-    BackHandler { resetSearch() }
-}
-
-@ExperimentalMaterialApi
-@Composable
-private fun BulkModeTopBar(
-    viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactBase>,
-    disableBulkMode: () -> Unit
-) {
-    var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
-
-    TopAppBar(
-        title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
-        navigationIcon = { CancelIconButton { disableBulkMode() } },
-        actions = {
-            MoreActionsIconButton { dropDownMenuExpanded = true }
-            BulkModeActionsMenu(
+    @Composable
+    fun ContactListTopBar(
+        viewModel: ContactListViewModel,
+        scaffoldState: ScaffoldState,
+    ) {
+        val screenStateState = viewModel.screenState
+        when (val screenState = screenStateState.value) {
+            is Normal -> NormalTopBar(
+                scaffoldState = scaffoldState,
+                reloadContacts = { viewModel.reloadContacts() },
+                showSearch = { viewModel.showSearch() }
+            )
+            is Search -> SearchTopBar(
+                searchText = screenState.searchText,
+                changeSearchText = { viewModel.changeSearchQuery(it) },
+                resetSearch = { viewModel.reloadContacts(resetSearch = true) }
+            )
+            is BulkMode -> BulkModeTopBar(
                 viewModel = viewModel,
-                selectedContacts = selectedContacts,
-                expanded = dropDownMenuExpanded
-            ) {
-                dropDownMenuExpanded = false
-            }
-        }
-    )
-    BackHandler { disableBulkMode() }
-}
-
-@ExperimentalMaterialApi
-@Composable
-fun BulkModeActionsMenu(
-    viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactBase>,
-    expanded: Boolean,
-    onCloseMenu: () -> Unit,
-) {
-    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-        DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
-            Text(stringResource(id = R.string.select_all))
-        }
-        DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
-            Text(stringResource(id = R.string.deselect_all))
-        }
-        if (selectedContacts.isNotEmpty()) {
-            Divider()
-            ContactType.values().forEach { targetType ->
-                ChangeContactTypeMenuItem(
-                    viewModel = viewModel,
-                    contacts = selectedContacts,
-                    targetType = targetType,
-                    onCloseMenu = onCloseMenu,
-                )
-            }
-            DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
+                selectedContacts = screenState.selectedContacts,
+                disableBulkMode = { viewModel.setBulkMode(enabled = false) }
+            )
         }
     }
-}
 
-@ExperimentalMaterialApi
-@Composable
-private fun ChangeContactTypeMenuItem(
-    viewModel: ContactListViewModel,
-    contacts: Set<IContactBase>,
-    targetType: ContactType,
-    onCloseMenu: () -> Unit,
-) {
-    if (contacts.any { it.type != targetType }) {
-        val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
-        ChangeContactTypeMenuItem(contacts = contacts, config = config) { changeContacts ->
-            if (changeContacts) {
-                viewModel.changeContactType(contacts, targetType)
+    @Composable
+    private fun NormalTopBar(
+        scaffoldState: ScaffoldState,
+        reloadContacts: () -> Unit,
+        showSearch: () -> Unit,
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        TopAppBar(
+            title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
+            navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
+            actions = {
+                RefreshIconButton { reloadContacts() }
+                SearchIconButton { showSearch() }
+            }
+        )
+    }
+
+    @ExperimentalComposeUiApi
+    @Composable
+    private fun SearchTopBar(
+        searchText: String,
+        changeSearchText: (String) -> Unit,
+        resetSearch: () -> Unit
+    ) {
+        val backgroundColor = MaterialTheme.colors.background
+        TopAppBar(
+            backgroundColor = backgroundColor,
+            title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
+            navigationIcon = { BackIconButton { resetSearch() } },
+        )
+        BackHandler { resetSearch() }
+    }
+
+    @ExperimentalMaterialApi
+    @Composable
+    private fun BulkModeTopBar(
+        viewModel: ContactListViewModel,
+        selectedContacts: Set<IContactBase>,
+        disableBulkMode: () -> Unit
+    ) {
+        var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
+
+        TopAppBar(
+            title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
+            navigationIcon = { CancelIconButton { disableBulkMode() } },
+            actions = {
+                MoreActionsIconButton { dropDownMenuExpanded = true }
+                BulkModeActionsMenu(
+                    viewModel = viewModel,
+                    selectedContacts = selectedContacts,
+                    expanded = dropDownMenuExpanded
+                ) {
+                    dropDownMenuExpanded = false
+                }
+            }
+        )
+        BackHandler { disableBulkMode() }
+    }
+
+    @ExperimentalMaterialApi
+    @Composable
+    fun BulkModeActionsMenu(
+        viewModel: ContactListViewModel,
+        selectedContacts: Set<IContactBase>,
+        expanded: Boolean,
+        onCloseMenu: () -> Unit,
+    ) {
+        DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+            DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
+                Text(stringResource(id = R.string.select_all))
+            }
+            DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
+                Text(stringResource(id = R.string.deselect_all))
+            }
+            if (selectedContacts.isNotEmpty()) {
+                Divider()
+                ContactType.values().forEach { targetType ->
+                    ChangeContactTypeMenuItem(
+                        viewModel = viewModel,
+                        contacts = selectedContacts,
+                        targetType = targetType,
+                        onCloseMenu = onCloseMenu,
+                    )
+                }
+                DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
+            }
+        }
+    }
+
+    @ExperimentalMaterialApi
+    @Composable
+    private fun ChangeContactTypeMenuItem(
+        viewModel: ContactListViewModel,
+        contacts: Set<IContactBase>,
+        targetType: ContactType,
+        onCloseMenu: () -> Unit,
+    ) {
+        if (contacts.any { it.type != targetType }) {
+            val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
+            ChangeContactTypeMenuItem(contacts = contacts, config = config) { changeContacts ->
+                if (changeContacts) {
+                    contactPermissionHelper.runIfPermissionsGranted {
+                        viewModel.changeContactType(contacts, targetType)
+                    }
+                }
+                onCloseMenu()
+            }
+        }
+    }
+
+    @Composable
+    private fun DeleteMenuItem(
+        viewModel: ContactListViewModel,
+        selectedContacts: Set<IContactBase>,
+        onCloseMenu: () -> Unit,
+    ) {
+        DeleteContactMenuItem(contacts = selectedContacts) { delete ->
+            if (delete) {
+                val contactIds = selectedContacts.map { it.id }.toSet()
+                viewModel.deleteContacts(contactIds)
             }
             onCloseMenu()
         }
     }
-}
 
-@Composable
-private fun DeleteMenuItem(
-    viewModel: ContactListViewModel,
-    selectedContacts: Set<IContactBase>,
-    onCloseMenu: () -> Unit,
-) {
-    DeleteContactMenuItem(contacts = selectedContacts) { delete ->
-        if (delete) {
-            val contactIds = selectedContacts.map { it.id }.toSet()
-            viewModel.deleteContacts(contactIds)
+    @ExperimentalComposeUiApi
+    @Composable
+    private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
+        val focusRequester = remember { FocusRequester() }
+        val manager = createKeyboardAndFocusManager()
+
+        TextField(
+            value = query,
+            onValueChange = onQueryChanged,
+            maxLines = 1,
+            colors = TextFieldDefaults.textFieldColors(backgroundColor = backgroundColor),
+            modifier = Modifier.focusRequester(focusRequester),
+            placeholder = { Text(text = stringResource(id = R.string.search)) },
+            leadingIcon = { SearchIcon() },
+            trailingIcon = {
+                if (query.isNotEmpty()) {
+                    CancelIcon(Modifier.clickable { onQueryChanged("") })
+                }
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(onSearch = {
+                manager.closeKeyboardAndClearFocus()
+            })
+        )
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
         }
-        onCloseMenu()
-    }
-}
-
-@ExperimentalComposeUiApi
-@Composable
-private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
-    val focusRequester = remember { FocusRequester() }
-    val manager = createKeyboardAndFocusManager()
-
-    TextField(
-        value = query,
-        onValueChange = onQueryChanged,
-        maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = backgroundColor),
-        modifier = Modifier.focusRequester(focusRequester),
-        placeholder = { Text(text = stringResource(id = R.string.search)) },
-        leadingIcon = { SearchIcon() },
-        trailingIcon = {
-            if (query.isNotEmpty()) {
-                CancelIcon(Modifier.clickable { onQueryChanged("") })
-            }
-        },
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search
-        ),
-        keyboardActions = KeyboardActions(onSearch = {
-            manager.closeKeyboardAndClearFocus()
-        })
-    )
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
     }
 }

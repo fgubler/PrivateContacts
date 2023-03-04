@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -44,6 +45,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.util.Constants
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconButton
@@ -52,6 +54,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
@@ -62,6 +65,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 object ContactEditScreen {
+    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
 
     @Composable
@@ -191,7 +196,12 @@ object ContactEditScreen {
     }
 
     private fun onSave(screenContext: ScreenContext, contact: IContactEditable) {
-        screenContext.contactEditViewModel.saveContact(contact)
+        when (contact.type) {
+            ContactType.SECRET -> screenContext.contactEditViewModel.saveContact(contact)
+            ContactType.PUBLIC -> contactPermissionHelper.runIfPermissionsGranted {
+                screenContext.contactEditViewModel.saveContact(contact)
+            }
+        }
     }
 
     private fun onSaveResult(
