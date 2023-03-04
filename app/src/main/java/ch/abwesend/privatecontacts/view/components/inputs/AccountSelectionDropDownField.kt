@@ -23,16 +23,33 @@ import ch.abwesend.privatecontacts.view.model.DynamicStringDropDownOption
 /** Dropdown to select from the available accounts on the device into which contacts can be saved */
 @ExperimentalMaterialApi
 @Composable
-fun AccountSelectionDropDownField(onValueChanged: (ContactAccount) -> Unit) {
-    val options = remember { getAccountOptions() }
-    var selectedOption: DropDownOption<ContactAccount> by remember { mutableStateOf(options.first()) }
+fun AccountSelectionDropDownField(defaultAccount: ContactAccount, onValueChanged: (ContactAccount) -> Unit) =
+    AccountSelectionDropDownField(
+        defaultAccount = defaultAccount,
+        onValueChanged = onValueChanged,
+    ) { options, selectedOption, onOptionSelected ->
+        DropDownField(
+            labelRes = R.string.target_account,
+            selectedOption = selectedOption,
+            options = options,
+            isScrolling = { false },
+        ) { newValue -> onOptionSelected(newValue) }
+    }
 
-    DropDownField(
-        labelRes = R.string.target_account,
-        selectedOption = selectedOption,
-        options = options,
-        isScrolling = { false },
-    ) { newValue ->
+@ExperimentalMaterialApi
+@Composable
+fun AccountSelectionDropDownField(
+    defaultAccount: ContactAccount,
+    onValueChanged: (ContactAccount) -> Unit,
+    dropDownFieldProvider: DropDownFieldProvider,
+) {
+    val options = remember { getAccountOptions() }
+    var selectedOption: DropDownOption<ContactAccount> by remember {
+        val option = options.firstOrNull { it.value == defaultAccount } ?: options.first()
+        mutableStateOf(option)
+    }
+
+    dropDownFieldProvider(options, selectedOption) { newValue ->
         options.firstOrNull { it.value == newValue }?.let { selectedOption = it }
         onValueChanged(newValue)
     }
@@ -51,3 +68,10 @@ private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {
         )
     }
 }
+
+internal typealias DropDownFieldProvider =
+        @Composable (
+            options: List<DropDownOption<ContactAccount>>,
+            selectedOption: DropDownOption<ContactAccount>,
+            onOptionSelected: (ContactAccount) -> Unit
+        ) -> Unit
