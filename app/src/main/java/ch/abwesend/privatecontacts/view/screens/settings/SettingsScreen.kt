@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -210,6 +211,7 @@ object SettingsScreen {
     private fun DefaultValuesCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         SettingsCategory(titleRes = R.string.settings_category_default_values) {
             DefaultContactTypeField(settingsRepository, currentSettings)
+            Divider()
             DefaultContactAccountField(settingsRepository, currentSettings)
         }
     }
