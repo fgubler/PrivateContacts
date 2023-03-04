@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 fun ChangeContactTypeMenuItem(
     contacts: Set<IContactBase>,
     config: ContactTypeChangeMenuConfig,
+    enabled: Boolean,
     onCloseMenu: (changeContactType: Boolean) -> Unit,
 ) {
     @StringRes val labelRes = if (contacts.size == 1) config.menuTextSingularRes
@@ -24,7 +25,7 @@ fun ChangeContactTypeMenuItem(
 
     var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
 
-    DropdownMenuItem(onClick = { confirmationDialogVisible = true }) {
+    DropdownMenuItem(enabled = enabled, onClick = { confirmationDialogVisible = true }) {
         Text(stringResource(id = labelRes))
     }
 

@@ -30,6 +30,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
@@ -48,6 +49,7 @@ class ContactListViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
+    private val permissionService: PermissionService by injectAnywhere()
 
     private var showSearch: Boolean = false
         set(value) {
@@ -112,6 +114,9 @@ class ContactListViewModel : ViewModel() {
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
+
+    val hasContactWritePermission: Boolean
+        get() = permissionService.hasContactWritePermission()
 
     fun selectTab(tab: ContactListTab) {
         _selectedTab.value = tab
