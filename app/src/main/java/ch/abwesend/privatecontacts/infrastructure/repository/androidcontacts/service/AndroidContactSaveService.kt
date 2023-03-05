@@ -1,13 +1,12 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.filterForChanged
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
@@ -28,6 +27,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
     private val contactChangeService: AndroidContactChangeService by injectAnywhere()
+    private val contactAccountService: AndroidContactAccountService by injectAnywhere()
 
     override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult {
         val toDelete = contactIds.toSet()
@@ -81,8 +81,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
-            // TODO when a contact is updated, "saveInAccount" is always "NONE" => does not yet work properly
-            val contactGroupResult = createMissingContactGroups(contact.saveInAccount, contact.contactGroups)
+            val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
             val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
 
             val contactToChange = originalContactRaw.mutableCopy {
@@ -105,6 +104,17 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         } catch (e: Exception) {
             logger.error("Failed to change contact $contactId", e)
             ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)
+        }
+    }
+
+    private suspend fun createMissingContactGroupsOnUpdate(contact: IContact): ContactSaveResult {
+        val changedGroups = contact.contactGroups.filterForChanged()
+        return if (changedGroups.isEmpty()) {
+            logger.debug("No contact-groups were changed: nothing to create")
+            ContactSaveResult.Success
+        } else {
+            val correspondingAccount = contactAccountService.getBestGuessForCorrespondingAccount(contact)
+            createMissingContactGroups(correspondingAccount, contact.contactGroups)
         }
     }
 
@@ -143,7 +153,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         groups: List<ContactGroup>,
         existingGroups: List<ContactGroup>
     ): List<ContactGroup> {
-        val changedGroups = groups.filter { it.modelStatus in listOf(NEW, CHANGED) }
+        val changedGroups = groups.filterForChanged()
 
         val matchingGroupsById = changedGroups.filter { changedGroup ->
             existingGroups.any { existingGroup -> existingGroup.id.groupNo == changedGroup.id.groupNo }
