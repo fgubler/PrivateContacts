@@ -74,7 +74,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
 
     private fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
-            val predicate = ContactPredicate.NameLookup(query) // this actually searches over all fields
+            val predicate = ContactPredicate.ContactLookup(query)
             val contacts = contactLoadRepository.createContactsBaseFlow(predicate).firstOrNull()
             emit(contacts.orEmpty())
         }.also { duration -> logger.debug("Loading android contacts for query '$query' took $duration ms") }

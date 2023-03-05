@@ -16,7 +16,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.fac
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
-import com.alexstyl.contactstore.ContactPredicate.ContactLookup
+import com.alexstyl.contactstore.ContactPredicate.ContactIdLookup
 import com.alexstyl.contactstore.DisplayNameStyle.Alternative
 import com.alexstyl.contactstore.DisplayNameStyle.Primary
 import com.alexstyl.contactstore.GroupsPredicate
@@ -40,7 +40,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
 
         return withContactStore { contactStore ->
             contactStore.fetchContacts(
-                predicate = ContactLookup(contactId = contactId.contactNo),
+                predicate = ContactIdLookup(contactId = contactId.contactNo),
                 columnsToFetch = allContactColumns()
             ).asFlow()
                 .flowOn(dispatchers.io)
