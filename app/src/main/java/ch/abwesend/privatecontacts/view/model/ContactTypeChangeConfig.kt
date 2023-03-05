@@ -73,6 +73,7 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
     ) {
         Spacer(modifier = Modifier.height(30.dp))
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
+        contacts.forEach { it.saveInAccount = defaultAccount } // needed if the user just clicks "ok"
         AccountSelectionDropDownField(defaultAccount) { newValue ->
             changeSaveButtonState(false)
             contacts.forEach { it.saveInAccount = newValue }
