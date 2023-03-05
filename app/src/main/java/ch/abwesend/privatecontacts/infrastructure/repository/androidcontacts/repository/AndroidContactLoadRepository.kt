@@ -89,17 +89,25 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
         return contacts
     }
 
+    suspend fun loadAllContactGroups(): List<ContactGroup>  = loadContactGroupsByPredicate(predicate = null)
+
     suspend fun loadContactGroups(contact: Contact?): List<ContactGroup> {
         logger.debug("Resolving contact groups for contact ${contact?.contactId}")
-        checkContactReadPermission { exception -> throw exception }
-
         val contactGroupIds = contact?.groups.orEmpty().map { it.groupId }
-        return if (contactGroupIds.isEmpty()) emptyList()
-        else loadContactGroupsByPredicate(GroupsPredicate.GroupLookup(contactGroupIds))
+        return loadContactGroupsByIds(contactGroupIds)
             .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
     }
 
-    suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> {
+    suspend fun loadContactGroupsByIds(contactGroupIds: List<Long>): List<ContactGroup> {
+        logger.debug("Resolving contact groups for ${contactGroupIds.size}")
+        return if (contactGroupIds.isEmpty()) emptyList()
+        else {
+            checkContactReadPermission { exception -> throw exception }
+            loadContactGroupsByPredicate(GroupsPredicate.GroupLookup(contactGroupIds))
+        }
+    }
+
+    private suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> {
         logger.debug("Resolving contact groups by predicate")
         checkContactReadPermission { exception -> throw exception }
 
