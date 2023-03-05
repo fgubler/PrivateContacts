@@ -89,7 +89,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
         return contacts
     }
 
-    suspend fun loadAllContactGroups(): List<ContactGroup>  = loadContactGroupsByPredicate(predicate = null)
+    suspend fun loadAllContactGroups(): List<ContactGroup> = loadContactGroupsByPredicate(predicate = null)
 
     suspend fun loadContactGroups(contact: Contact?): List<ContactGroup> {
         logger.debug("Resolving contact groups for contact ${contact?.contactId}")

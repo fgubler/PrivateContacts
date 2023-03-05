@@ -43,7 +43,7 @@ class AndroidContactAccountService {
     /** @return null if no groups were found, the most-used account otherwise */
     private fun guessAccountFromContactGroups(contactGroups: List<ContactGroup>): ContactAccount? =
         if (contactGroups.isNotEmpty()) {
-            val groupsByAccount =  contactGroups.groupBy { it.account } // here, null means "local phone contacts"
+            val groupsByAccount = contactGroups.groupBy { it.account } // here, null means "local phone contacts"
             val dominantAccount = groupsByAccount.maxByOrNull { (_, groups) -> groups.size }?.key
             dominantAccount.toContactAccount()
         } else null
