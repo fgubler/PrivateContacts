@@ -113,7 +113,6 @@ dependencies {
 
     // Others
     implementation "androidx.paging:paging-runtime-ktx:${pagingVersion}"
-    implementation "androidx.paging:paging-compose:1.0.0-alpha17"
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' // beware 1.2.0 might not work
