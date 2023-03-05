@@ -8,12 +8,13 @@ package ch.abwesend.privatecontacts.domain.model.contactimage
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.domain.model.WithModelStatus
 
 data class ContactImage(
     val thumbnailUri: String?,
     val fullImage: ByteArray?,
-    val modelStatus: ModelStatus,
-) {
+    override val modelStatus: ModelStatus,
+) : WithModelStatus {
     val isEmpty: Boolean
         get() = thumbnailUri.isNullOrEmpty() && (fullImage == null || fullImage.isEmpty())
 

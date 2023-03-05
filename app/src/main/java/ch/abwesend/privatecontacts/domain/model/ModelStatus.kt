@@ -54,5 +54,7 @@ interface WithModelStatus {
     val modelStatus: ModelStatus
 }
 
-fun <T : WithModelStatus> Collection<T>.filterForChanged(): List<T> =
-    filter { it.modelStatus in listOf(ModelStatus.NEW, ModelStatus.CHANGED) }
+fun <T : WithModelStatus> Collection<T>.filterForChanged(): List<T> {
+    val changedStatusValues = listOf(ModelStatus.NEW, ModelStatus.CHANGED)
+    return filter { it.modelStatus in changedStatusValues }
+}

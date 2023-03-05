@@ -7,8 +7,9 @@
 package ch.abwesend.privatecontacts.domain.model.contactdata
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.WithModelStatus
 
-sealed interface ContactData {
+sealed interface ContactData : WithModelStatus {
     val id: ContactDataId
     val sortOrder: Int // ascending (0 comes first)
     val category: ContactDataCategory
@@ -16,7 +17,6 @@ sealed interface ContactData {
     val isMain: Boolean
     val allowedTypes: List<ContactDataType>
     val isEmpty: Boolean
-    val modelStatus: ModelStatus
 
     val displayValue: String
     val value: Any?

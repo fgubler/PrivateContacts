@@ -23,6 +23,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.filterForChanged
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
@@ -97,7 +98,7 @@ class AndroidContactChangeService {
 
         val allGroupsByName = allContactGroups.associateBy { it.id.name }
         val oldContactGroupNos = mutableContact.groups.map { it.groupId }.toSet()
-        val contactGroupsToChange = newGroups.filter { it.modelStatus in listOf(NEW, CHANGED) }
+        val contactGroupsToChange = newGroups.filterForChanged()
         val contactGroupsToDelete = newGroups.filter { it.modelStatus == DELETED }
 
         contactGroupsToDelete.forEach { group ->
@@ -208,7 +209,7 @@ class AndroidContactChangeService {
         logger.debug("Some contact-data of category $contactDataCategory was changed, added or deleted")
 
         val oldContactDataByNo = mutableDataOnContact.associateBy { it.id }
-        val contactDataToChange = newContactData.filter { it.modelStatus in listOf(NEW, CHANGED) }
+        val contactDataToChange = newContactData.filterForChanged()
         val contactDataToDelete = newContactData.filter { it.modelStatus == DELETED }
 
         contactDataToDelete.forEach { dataSet -> mutableDataOnContact.deleteContactData(dataSet, oldContactDataByNo) }
