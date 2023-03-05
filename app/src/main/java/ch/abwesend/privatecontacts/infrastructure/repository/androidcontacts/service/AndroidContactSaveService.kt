@@ -3,6 +3,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -80,8 +81,9 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
-            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
-            val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
+            // TODO when a contact is updated, "saveInAccount" is always "NONE" => does not yet work properly
+            val contactGroupResult = createMissingContactGroups(contact.saveInAccount, contact.contactGroups)
+            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
 
             val contactToChange = originalContactRaw.mutableCopy {
                 contactChangeService.updateChangedBaseData(
@@ -108,8 +110,8 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
     override suspend fun createContact(contact: IContact): ContactSaveResult {
         return try {
-            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
-            val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
+            val contactGroupResult = createMissingContactGroups(contact.saveInAccount, contact.contactGroups)
+            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
 
             val mutableContact = contact.toAndroidContact(existingGroups)
             val account = contact.saveInAccount.toInternetAccountOrNull()
@@ -122,11 +124,14 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
-    override suspend fun createMissingContactGroups(groups: List<ContactGroup>): ContactSaveResult =
+    override suspend fun createMissingContactGroups(
+        account: ContactAccount,
+        groups: List<ContactGroup>,
+    ): ContactSaveResult =
         try {
-            val existingGroups = contactLoadService.getAllContactGroups()
+            val existingGroups = contactLoadService.getContactGroups(account)
             val groupsToCreate = filterForContactGroupsToCreate(groups = groups, existingGroups = existingGroups)
-            val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup() }
+            val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup(account) }
             contactSaveRepository.createContactGroups(transformedGroups)
             ContactSaveResult.Success
         } catch (e: Exception) {

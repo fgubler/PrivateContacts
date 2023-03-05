@@ -159,7 +159,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         )
         coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
         coEvery { loadService.resolveContact(any(), any()) } returns originalContact
-        coEvery { loadService.getAllContactGroups() } returns emptyList()
+        coEvery { loadService.getContactGroups(any()) } returns emptyList()
         coJustRun { saveRepository.updateContact(any()) }
         coJustRun { saveRepository.createContactGroups(any()) }
 
@@ -203,7 +203,7 @@ class AndroidContactSaveServiceTest : TestBase() {
     fun `should create contact successfully`() {
         val newContact = someContactEditable(contactData = someListOfContactData(ModelStatus.NEW))
         coJustRun { saveRepository.createContact(any(), any()) }
-        coEvery { loadService.getAllContactGroups() } returns emptyList()
+        coEvery { loadService.getContactGroups(any()) } returns emptyList()
         coJustRun { saveRepository.createContactGroups(any()) }
 
         val result = runBlocking { underTest.createContact(newContact) }
@@ -228,7 +228,7 @@ class AndroidContactSaveServiceTest : TestBase() {
     fun `should create contact locally if no account is passed`() {
         val newContact = someContactEditable(saveInAccount = ContactAccount.LocalPhoneContacts)
         coJustRun { saveRepository.createContact(any(), any()) }
-        coEvery { loadService.getAllContactGroups() } returns emptyList()
+        coEvery { loadService.getContactGroups(any()) } returns emptyList()
 
         runBlocking { underTest.createContact(newContact) }
 
