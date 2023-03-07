@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.calldetection
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -18,13 +19,16 @@ import androidx.core.app.NotificationCompat.VISIBILITY_SECRET
 import androidx.core.app.NotificationManagerCompat
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
 
 class CallNotificationRepository {
+    private val permissionService: PermissionService by injectAnywhere()
     private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
@@ -35,10 +39,16 @@ class CallNotificationRepository {
         }
     }
 
+    @SuppressLint("MissingPermission") // it is actually checked...
     fun showIncomingCallNotification(
         context: Context,
         notificationText: String,
     ) {
+        if (!permissionService.hasNotificationsPermission()) {
+            logger.warning("Trying to post a notification without notification-permission")
+            return
+        }
+
         context.createNotificationChannel()
 
         val title = context.getString(R.string.incoming_call_title)
