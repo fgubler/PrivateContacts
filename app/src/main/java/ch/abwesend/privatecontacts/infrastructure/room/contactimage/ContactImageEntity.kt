@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.infrastructure.room.contactimage
 
 import androidx.room.ColumnInfo
-import androidx.room.ColumnInfo.BLOB
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -27,6 +26,6 @@ import java.util.UUID
 class ContactImageEntity(
     @PrimaryKey val contactId: UUID,
     val thumbnailUri: String?,
-    @ColumnInfo(typeAffinity = BLOB)
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     val fullImage: ByteArray?
 )

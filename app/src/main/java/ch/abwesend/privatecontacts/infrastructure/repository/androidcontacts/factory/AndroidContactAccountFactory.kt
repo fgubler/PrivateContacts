@@ -19,5 +19,8 @@ fun ContactAccount.toInternetAccountOrNull(): InternetAccount? =
 fun OnlineAccount.toInternetAccount(): InternetAccount =
     InternetAccount(name = username, type = accountProvider)
 
-fun InternetAccount.toContactAccount(): OnlineAccount =
+fun InternetAccount?.toContactAccount(): ContactAccount =
+    this?.toOnlineAccount() ?: LocalPhoneContacts
+
+fun InternetAccount.toOnlineAccount(): OnlineAccount =
     OnlineAccount(username = name, accountProvider = type)
