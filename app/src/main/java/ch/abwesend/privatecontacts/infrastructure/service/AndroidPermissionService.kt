@@ -28,8 +28,8 @@ class AndroidPermissionService : PermissionService {
         hasPermission(GET_ACCOUNTS)
 
     override fun hasNotificationsPermission(): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-                || hasPermission(POST_NOTIFICATIONS)
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            hasPermission(POST_NOTIFICATIONS)
 
     private fun hasPermission(permission: String): Boolean {
         val context: Context = getAnywhere()
