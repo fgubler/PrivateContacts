@@ -128,25 +128,21 @@ fun <T> SettingsDropDown(
     DropDownComponent(
         options = options,
         isScrolling = { parent.isScrolling },
-        maxMenuItemWidth = 200.dp,
         onValueChanged = onValueChanged,
     ) { _, modifier ->
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier.heightIn(min = 45.dp),
+        Column(
+            modifier = modifier
+                .heightIn(min = 45.dp)
+                .padding(top = 10.dp, bottom = 10.dp)
         ) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween,) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    SettingsLabel(labelRes = label)
-                    description?.let { SettingsDescription(descriptionRes = it) }
-                }
+            Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                SettingsLabel(labelRes = label)
                 selectedOption?.let {
                     Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
                 }
             }
+            Spacer(modifier = Modifier.height(5.dp))
+            description?.let { SettingsDescription(descriptionRes = it) }
         }
     }
 }

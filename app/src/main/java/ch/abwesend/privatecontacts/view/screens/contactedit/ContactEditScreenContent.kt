@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -250,7 +251,9 @@ object ContactEditScreenContent {
                     options = options,
                     isScrolling = { parent.isScrolling },
                 ) { newValue ->
+                    val oldValue = contact.type
                     contact.type = newValue
+                    adaptSaveInAccount(contact, oldValue, newValue)
                     onChanged(contact)
                 }
             }
@@ -263,12 +266,19 @@ object ContactEditScreenContent {
         }
     }
 
+    private fun adaptSaveInAccount(contact: IContactEditable, oldType: ContactType, newType: ContactType) {
+        if (oldType != newType) {
+            val newAccount = ContactAccount.currentDefaultForContactType(newType)
+            contact.saveInAccount = newAccount
+        }
+    }
+
     @Composable
     private fun AccountSelectionField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) =
         when (contact.type) {
             ContactType.SECRET -> Unit
             ContactType.PUBLIC -> {
-                AccountSelectionDropDownField { newValue ->
+                AccountSelectionDropDownField(defaultAccount = contact.saveInAccount) { newValue ->
                     contact.saveInAccount = newValue
                     onChanged(contact)
                 }

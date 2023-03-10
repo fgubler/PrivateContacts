@@ -52,9 +52,16 @@ object ChangeContactToPublicStrategy : ContactTypeChangeStrategy {
     override val deleteOldContactAfterCreatingNew: Boolean = true
 
     override suspend fun createContactGroups(contacts: List<IContact>) {
-        val contactGroups = contacts.flatMap { it.contactGroups }
-        contactSaveService.createMissingContactGroups(contactGroups)
-        // if it fails, it will later be created individually: is slower but still works
+        val contactGroupsByAccount = contacts
+            .groupBy { it.saveInAccount }
+            .mapValues { (_, correspondingContacts) ->
+                correspondingContacts.flatMap { it.contactGroups }
+            }
+
+        contactGroupsByAccount.forEach { (account, correspondingContacts) ->
+            contactSaveService.createMissingContactGroups(account, correspondingContacts)
+            // if it fails, it will later be created individually: is slower but still works
+        }
     }
 
     override fun changeContactDataIds(contact: IContactEditable) {

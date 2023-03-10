@@ -1,12 +1,12 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
-import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.filterForChanged
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
@@ -15,7 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccountOrNull
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
@@ -27,6 +27,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
     private val contactChangeService: AndroidContactChangeService by injectAnywhere()
+    private val contactAccountService: AndroidContactAccountService by injectAnywhere()
 
     override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult {
         val toDelete = contactIds.toSet()
@@ -80,8 +81,8 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
         val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
         return try {
-            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
-            val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
+            val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
+            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
 
             val contactToChange = originalContactRaw.mutableCopy {
                 contactChangeService.updateChangedBaseData(
@@ -106,13 +107,24 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
+    private suspend fun createMissingContactGroupsOnUpdate(contact: IContact): ContactSaveResult {
+        val changedGroups = contact.contactGroups.filterForChanged()
+        return if (changedGroups.isEmpty()) {
+            logger.debug("No contact-groups were changed: nothing to create")
+            ContactSaveResult.Success
+        } else {
+            val correspondingAccount = contactAccountService.getBestGuessForCorrespondingAccount(contact)
+            createMissingContactGroups(correspondingAccount, contact.contactGroups)
+        }
+    }
+
     override suspend fun createContact(contact: IContact): ContactSaveResult {
         return try {
-            val contactGroupResult = createMissingContactGroups(contact.contactGroups)
-            val existingGroups = contactLoadService.getAllContactGroups() // including the just created ones
+            val contactGroupResult = createMissingContactGroups(contact.saveInAccount, contact.contactGroups)
+            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
 
             val mutableContact = contact.toAndroidContact(existingGroups)
-            val account = contact.saveInAccount?.toInternetAccount()
+            val account = contact.saveInAccount.toInternetAccountOrNull()
 
             contactSaveRepository.createContact(mutableContact, account)
             contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user
@@ -122,11 +134,14 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
-    override suspend fun createMissingContactGroups(groups: List<ContactGroup>): ContactSaveResult =
+    override suspend fun createMissingContactGroups(
+        account: ContactAccount,
+        groups: List<ContactGroup>,
+    ): ContactSaveResult =
         try {
-            val existingGroups = contactLoadService.getAllContactGroups()
+            val existingGroups = contactLoadService.getContactGroups(account)
             val groupsToCreate = filterForContactGroupsToCreate(groups = groups, existingGroups = existingGroups)
-            val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup() }
+            val transformedGroups = groupsToCreate.map { it.toNewAndroidContactGroup(account) }
             contactSaveRepository.createContactGroups(transformedGroups)
             ContactSaveResult.Success
         } catch (e: Exception) {
@@ -138,7 +153,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         groups: List<ContactGroup>,
         existingGroups: List<ContactGroup>
     ): List<ContactGroup> {
-        val changedGroups = groups.filter { it.modelStatus in listOf(NEW, CHANGED) }
+        val changedGroups = groups.filterForChanged()
 
         val matchingGroupsById = changedGroups.filter { changedGroup ->
             existingGroups.any { existingGroup -> existingGroup.id.groupNo == changedGroup.id.groupNo }

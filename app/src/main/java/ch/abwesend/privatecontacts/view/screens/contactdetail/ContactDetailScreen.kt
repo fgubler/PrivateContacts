@@ -164,9 +164,11 @@ object ContactDetailScreen {
                     MoreActionsIconButton(enabled = buttonsEnabled) {
                         dropDownMenuExpanded = true
                     }
-                    ActionsMenu(screenContext = screenContext, contact = contact, expanded = dropDownMenuExpanded) {
-                        dropDownMenuExpanded = false
-                    }
+                    ActionsMenu(
+                        viewModel = screenContext.contactDetailViewModel,
+                        contact = contact,
+                        expanded = dropDownMenuExpanded
+                    ) { dropDownMenuExpanded = false }
                 }
             }
         )
@@ -174,21 +176,23 @@ object ContactDetailScreen {
 
     @Composable
     fun ActionsMenu(
-        screenContext: ScreenContext,
+        viewModel: ContactDetailViewModel,
         contact: IContact,
         expanded: Boolean,
         onCloseMenu: () -> Unit,
     ) {
+        val hasWritePermission = remember { viewModel.hasContactWritePermission }
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
             ContactType.values().forEach { targetType ->
                 ChangeContactTypeMenuItem(
-                    viewModel = screenContext.contactDetailViewModel,
+                    viewModel = viewModel,
                     contact = contact,
                     targetType = targetType,
+                    enabled = hasWritePermission || !targetType.androidPermissionRequired,
                     onCloseMenu = onCloseMenu,
                 )
             }
-            DeleteMenuItem(screenContext, contact, onCloseMenu)
+            DeleteMenuItem(viewModel, contact, onCloseMenu)
         }
     }
 
@@ -197,11 +201,12 @@ object ContactDetailScreen {
         viewModel: ContactDetailViewModel,
         contact: IContact,
         targetType: ContactType,
+        enabled: Boolean,
         onCloseMenu: () -> Unit,
     ) {
         if (contact.type != targetType) {
             val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
-            ChangeContactTypeMenuItem(contacts = setOf(contact), config = config) { changeContact ->
+            ChangeContactTypeMenuItem(contacts = setOf(contact), config = config, enabled = enabled) { changeContact ->
                 if (changeContact) {
                     viewModel.changeContactType(contact, targetType)
                 }
@@ -212,13 +217,13 @@ object ContactDetailScreen {
 
     @Composable
     private fun DeleteMenuItem(
-        screenContext: ScreenContext,
+        viewModel: ContactDetailViewModel,
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
         DeleteContactMenuItem(contacts = setOf(contact)) { delete ->
             if (delete) {
-                screenContext.contactDetailViewModel.deleteContact(contact)
+                viewModel.deleteContact(contact)
             }
             onCloseMenu()
         }

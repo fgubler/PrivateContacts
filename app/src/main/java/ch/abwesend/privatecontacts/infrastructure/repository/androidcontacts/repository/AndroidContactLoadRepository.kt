@@ -16,7 +16,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.fac
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
-import com.alexstyl.contactstore.ContactPredicate.ContactLookup
+import com.alexstyl.contactstore.ContactPredicate.ContactIdLookup
 import com.alexstyl.contactstore.DisplayNameStyle.Alternative
 import com.alexstyl.contactstore.DisplayNameStyle.Primary
 import com.alexstyl.contactstore.GroupsPredicate
@@ -40,7 +40,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
 
         return withContactStore { contactStore ->
             contactStore.fetchContacts(
-                predicate = ContactLookup(contactId = contactId.contactNo),
+                predicate = ContactIdLookup(contactId = contactId.contactNo),
                 columnsToFetch = allContactColumns()
             ).asFlow()
                 .flowOn(dispatchers.io)
@@ -89,18 +89,29 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
         return contacts
     }
 
+    suspend fun loadAllContactGroups(): List<ContactGroup> = loadContactGroupsByPredicate(predicate = null)
+
     suspend fun loadContactGroups(contact: Contact?): List<ContactGroup> {
         logger.debug("Resolving contact groups for contact ${contact?.contactId}")
-        checkContactReadPermission { exception -> throw exception }
-
         val contactGroupIds = contact?.groups.orEmpty().map { it.groupId }
-        return if (contactGroupIds.isEmpty()) emptyList()
-        else loadContactGroupsByPredicate(GroupsPredicate.GroupLookup(contactGroupIds))
+        return loadContactGroupsByIds(contactGroupIds)
             .also { logger.debug("Found ${it.size} contact-groups for contact ${contact?.contactId}") }
     }
 
-    suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> =
-        withContactStore { contactStore ->
+    suspend fun loadContactGroupsByIds(contactGroupIds: List<Long>): List<ContactGroup> {
+        logger.debug("Resolving contact groups for ${contactGroupIds.size}")
+        return if (contactGroupIds.isEmpty()) emptyList()
+        else {
+            checkContactReadPermission { exception -> throw exception }
+            loadContactGroupsByPredicate(GroupsPredicate.GroupLookup(contactGroupIds))
+        }
+    }
+
+    private suspend fun loadContactGroupsByPredicate(predicate: GroupsPredicate?): List<ContactGroup> {
+        logger.debug("Resolving contact groups by predicate")
+        checkContactReadPermission { exception -> throw exception }
+
+        return withContactStore { contactStore ->
             contactStore.fetchContactGroups(predicate)
                 .asFlow()
                 .flowOn(dispatchers.io)
@@ -108,4 +119,5 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
                 .orEmpty()
                 .also { logger.debug("Found ${it.size} contact-groups for predicated $predicate") }
         }
+    }
 }

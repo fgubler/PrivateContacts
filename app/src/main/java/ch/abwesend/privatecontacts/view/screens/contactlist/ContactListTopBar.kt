@@ -150,6 +150,7 @@ fun BulkModeActionsMenu(
     expanded: Boolean,
     onCloseMenu: () -> Unit,
 ) {
+    val hasWritePermission = remember { viewModel.hasContactWritePermission }
     DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
         DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
             Text(stringResource(id = R.string.select_all))
@@ -164,6 +165,7 @@ fun BulkModeActionsMenu(
                     viewModel = viewModel,
                     contacts = selectedContacts,
                     targetType = targetType,
+                    enabled = hasWritePermission || !targetType.androidPermissionRequired,
                     onCloseMenu = onCloseMenu,
                 )
             }
@@ -178,11 +180,12 @@ private fun ChangeContactTypeMenuItem(
     viewModel: ContactListViewModel,
     contacts: Set<IContactBase>,
     targetType: ContactType,
+    enabled: Boolean,
     onCloseMenu: () -> Unit,
 ) {
     if (contacts.any { it.type != targetType }) {
         val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
-        ChangeContactTypeMenuItem(contacts = contacts, config = config) { changeContacts ->
+        ChangeContactTypeMenuItem(contacts = contacts, config = config, enabled = enabled) { changeContacts ->
             if (changeContacts) {
                 viewModel.changeContactType(contacts, targetType)
             }

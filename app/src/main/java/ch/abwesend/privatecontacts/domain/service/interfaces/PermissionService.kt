@@ -10,4 +10,5 @@ interface PermissionService {
     fun hasContactReadPermission(): Boolean
     fun hasContactWritePermission(): Boolean
     fun hasReadAccountsPermission(): Boolean
+    fun hasNotificationsPermission(): Boolean
 }

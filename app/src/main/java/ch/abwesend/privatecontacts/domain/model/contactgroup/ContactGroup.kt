@@ -1,11 +1,11 @@
 package ch.abwesend.privatecontacts.domain.model.contactgroup
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.WithModelStatus
 
-interface IContactGroup {
+interface IContactGroup : WithModelStatus {
     val id: IContactGroupId
     val notes: String
-    val modelStatus: ModelStatus
 }
 
 data class ContactGroup(

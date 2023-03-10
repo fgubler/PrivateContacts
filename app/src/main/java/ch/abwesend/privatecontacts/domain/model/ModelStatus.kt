@@ -49,3 +49,12 @@ sealed class ModelStatus {
         override fun isTransitionAllowed(targetStatus: ModelStatus): Boolean = false
     }
 }
+
+interface WithModelStatus {
+    val modelStatus: ModelStatus
+}
+
+fun <T : WithModelStatus> Collection<T>.filterForChanged(): List<T> {
+    val changedStatusValues = listOf(ModelStatus.NEW, ModelStatus.CHANGED)
+    return filter { it.modelStatus in changedStatusValues }
+}

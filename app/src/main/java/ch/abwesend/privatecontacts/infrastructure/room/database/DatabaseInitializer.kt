@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
@@ -62,6 +63,7 @@ class DatabaseInitializer {
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(),
                 contactGroups = mutableListOf(),
+                saveInAccount = ContactAccount.None,
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -153,6 +155,7 @@ class DatabaseInitializer {
                         modelStatus = NEW,
                     ),
                 ),
+                saveInAccount = ContactAccount.None,
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -181,6 +184,7 @@ class DatabaseInitializer {
                     ),
                 ),
                 contactGroups = mutableListOf(),
+                saveInAccount = ContactAccount.None,
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
@@ -217,6 +221,7 @@ class DatabaseInitializer {
                     ),
                 ),
                 contactGroups = mutableListOf(),
+                saveInAccount = ContactAccount.None,
             ),
         )
 }

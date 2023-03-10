@@ -9,6 +9,9 @@ package ch.abwesend.privatecontacts.infrastructure.settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccountType
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.applicationScope
@@ -27,6 +30,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     showAndroidContacts = getValue(showAndroidContactsEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
     defaultContactType = tryGetEnumValue(defaultContactTypeEntry),
+    defaultExternalContactAccount = buildDefaultContactAccount(),
     currentVersion = getValue(currentVersionEntry),
 )
 
@@ -57,6 +61,24 @@ internal fun <T : Enum<T>> DataStore<Preferences>.setEnumValue(settingsEntry: En
     applicationScope.launch {
         edit { preferences ->
             preferences[settingsEntry.key] = value.name
+        }
+    }
+}
+
+private fun Preferences.buildDefaultContactAccount(): ContactAccount {
+    val type = tryGetEnumValue(defaultExternalContactAccountTypeEntry)
+    logger.debug("loaded default contact account type $type")
+
+    return when (type) {
+        ContactAccountType.NONE -> ContactAccount.None
+        ContactAccountType.LOCAL_PHONE_CONTACTS -> ContactAccount.LocalPhoneContacts
+        ContactAccountType.ONLINE_ACCOUNT -> {
+            val username = getValue(defaultExternalContactAccountUsernameEntry)
+            val provider = getValue(defaultExternalContactAccountProviderEntry)
+
+            if (username.isNotEmpty() && provider.isNotEmpty()) {
+                ContactAccount.OnlineAccount(username = username, accountProvider = provider)
+            } else ContactAccount.defaultForExternal
         }
     }
 }

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.settings
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import kotlinx.coroutines.flow.Flow
 
@@ -25,6 +26,7 @@ interface SettingsRepository : ISettingsState {
 
     // Defaults
     override var defaultContactType: ContactType
+    override var defaultExternalContactAccount: ContactAccount
 
     // Incoming Call Detection
     override var observeIncomingCalls: Boolean

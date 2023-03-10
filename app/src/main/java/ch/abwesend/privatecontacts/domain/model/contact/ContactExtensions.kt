@@ -38,6 +38,7 @@ fun IContact.toContactEditable(): ContactEditable =
         image = image,
         contactDataSet = contactDataSet.toMutableList(),
         contactGroups = contactGroups.toMutableList(),
+        saveInAccount = ContactAccount.currentDefaultForContactType(type)
     )
 
 fun IContact.toContactBase(): ContactBase =

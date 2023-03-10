@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -19,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import com.alexstyl.contactstore.Contact
@@ -61,8 +63,9 @@ class AndroidContactLoadService : IAndroidContactLoadService {
         return existenceByContactId
     }
 
-    suspend fun getAllContactGroups(): List<ContactGroup> =
-        contactLoadRepository.loadContactGroupsByPredicate(predicate = null)
+    suspend fun getContactGroups(filterForAccount: ContactAccount): List<ContactGroup> =
+        contactLoadRepository.loadAllContactGroups()
+            .filter { it.account.toContactAccount() == filterForAccount }
             .map { it.toContactGroup() }
 
     private fun loadContacts(): ResourceFlow<List<IContactBase>> = flow {
@@ -74,7 +77,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
 
     private fun searchContacts(query: String): ResourceFlow<List<IContactBase>> = flow {
         measureTimeMillis {
-            val predicate = ContactPredicate.NameLookup(query) // this actually searches over all fields
+            val predicate = ContactPredicate.ContactLookup(query)
             val contacts = contactLoadRepository.createContactsBaseFlow(predicate).firstOrNull()
             emit(contacts.orEmpty())
         }.also { duration -> logger.debug("Loading android contacts for query '$query' took $duration ms") }
