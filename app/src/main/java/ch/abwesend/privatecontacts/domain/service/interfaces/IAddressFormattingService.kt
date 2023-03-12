@@ -1,6 +1,6 @@
-package ch.abwesend.privatecontacts.domain.repository
+package ch.abwesend.privatecontacts.domain.service.interfaces
 
-interface IAddressFormattingRepository {
+interface IAddressFormattingService {
     fun formatAddress(
         street: String,
         neighborhood: String,

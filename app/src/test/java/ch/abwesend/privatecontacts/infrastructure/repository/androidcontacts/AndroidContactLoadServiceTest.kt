@@ -7,7 +7,8 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -35,7 +36,10 @@ class AndroidContactLoadServiceTest : TestBase() {
     private lateinit var contactLoadRepository: AndroidContactLoadRepository
 
     @MockK
-    private lateinit var addressFormattingRepository: IAddressFormattingRepository
+    private lateinit var addressFormattingService: IAddressFormattingService
+
+    @MockK
+    private lateinit var telephoneService: TelephoneService
 
     @InjectMockKs
     private lateinit var underTest: AndroidContactLoadService
@@ -43,14 +47,15 @@ class AndroidContactLoadServiceTest : TestBase() {
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { contactLoadRepository }
-        module.single { addressFormattingRepository }
+        module.single { telephoneService }
+        module.single { addressFormattingService }
     }
 
     override fun setup() {
         super.setup()
 
         every {
-            addressFormattingRepository.formatAddress(any(), any(), any(), any(), any(), any())
+            addressFormattingService.formatAddress(any(), any(), any(), any(), any(), any())
         } answers {
             val arguments: List<String> = args.filterIsInstance<String>()
             arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()

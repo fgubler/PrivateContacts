@@ -17,28 +17,27 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.LabeledValue
 
-fun Contact.getContactData(): List<ContactData> {
-    val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
-    return getPhoneNumbers() +
+fun Contact.getContactData(
+    telephoneService: TelephoneService,
+    addressFormattingService: IAddressFormattingService,
+): List<ContactData> {
+    return getPhoneNumbers(telephoneService) +
         getEmailAddresses() +
-        getPhysicalAddresses(addressFormattingRepository) +
+        getPhysicalAddresses(addressFormattingService) +
         getWebsites() +
         getRelationships() +
         getEventDates() +
         getCompanies()
 }
 
-private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
-    val telephoneService: TelephoneService by injectAnywhere()
-
-    return phones.mapIndexed { index, phone ->
+private fun Contact.getPhoneNumbers(telephoneService: TelephoneService): List<PhoneNumber> =
+    phones.mapIndexed { index, phone ->
         val contactDataId = phone.toContactDataId()
         val type = phone.label.toContactDataType()
         val number = phone.value.raw
@@ -54,7 +53,6 @@ private fun Contact.getPhoneNumbers(): List<PhoneNumber> {
             modelStatus = ModelStatus.UNCHANGED,
         )
     }.removePhoneNumberDuplicates()
-}
 
 private fun Contact.getEmailAddresses(): List<EmailAddress> {
     return mails.mapIndexed { index, email ->
@@ -72,12 +70,12 @@ private fun Contact.getEmailAddresses(): List<EmailAddress> {
     }.removeDuplicates()
 }
 
-private fun Contact.getPhysicalAddresses(formattingRepository: IAddressFormattingRepository): List<PhysicalAddress> {
-    return postalAddresses.mapIndexed { index, address ->
+private fun Contact.getPhysicalAddresses(formattingService: IAddressFormattingService): List<PhysicalAddress> =
+    postalAddresses.mapIndexed { index, address ->
         val contactDataId = address.toContactDataId()
         val type = address.label.toContactDataType()
 
-        val completeAddress = formattingRepository.formatAddress(
+        val completeAddress = formattingService.formatAddress(
             street = address.value.street,
             neighborhood = address.value.neighborhood,
             city = address.value.city,
@@ -95,7 +93,6 @@ private fun Contact.getPhysicalAddresses(formattingRepository: IAddressFormattin
             modelStatus = ModelStatus.UNCHANGED,
         )
     }.removeDuplicates()
-}
 
 private fun Contact.getWebsites(): List<Website> {
     return webAddresses.mapIndexed { index, address ->

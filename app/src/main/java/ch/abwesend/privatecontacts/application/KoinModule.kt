@@ -10,8 +10,6 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.ApplicationScope
 import ch.abwesend.privatecontacts.domain.lib.coroutine.Dispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
-import ch.abwesend.privatecontacts.domain.repository.ContactPagerFactory
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
@@ -27,20 +25,21 @@ import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
-import ch.abwesend.privatecontacts.infrastructure.paging.ContactPagingSource
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactAccountService
@@ -56,6 +55,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidAccountService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidPermissionService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidTelephoneService
+import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
@@ -82,6 +82,7 @@ internal val koinModule = module {
     single<IAndroidContactLoadService> { AndroidContactLoadService() }
     single { AndroidContactLoadService() }
     single<IAndroidContactSaveService> { AndroidContactSaveService() }
+    single<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
     single { AndroidContactChangeService() }
     single { AndroidContactAccountService() }
 
@@ -94,7 +95,7 @@ internal val koinModule = module {
     single { AndroidContactSaveRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
-    single<IAddressFormattingRepository> { AddressFormattingRepository() }
+    single<IAddressFormattingService> { AddressFormattingService() }
     single<IContactGroupRepository> { ContactGroupRepository() }
     single { ContactDataRepository() }
     single { ContactGroupRepository() }
@@ -106,9 +107,6 @@ internal val koinModule = module {
     // Factories
     single<ILoggerFactory> { LoggerFactory() }
     single<IDatabaseFactory<AppDatabase>> { DatabaseFactory() }
-
-    @Suppress("DEPRECATION")
-    single<ContactPagerFactory> { ContactPagingSource.Companion }
 
     // Helpers
     single { IncomingCallHelper() }

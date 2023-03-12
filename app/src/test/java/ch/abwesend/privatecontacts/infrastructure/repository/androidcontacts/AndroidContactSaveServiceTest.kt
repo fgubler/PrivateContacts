@@ -15,20 +15,23 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
+import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
-import ch.abwesend.privatecontacts.testutil.databuilders.someMutableAndroidContact
-import com.alexstyl.contactstore.MutableContact
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
@@ -41,14 +44,12 @@ import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-@Disabled // TODO fix problem with mocking MutableContact and re-enable
 class AndroidContactSaveServiceTest : TestBase() {
     @MockK
     private lateinit var loadRepository: AndroidContactLoadRepository
@@ -63,10 +64,13 @@ class AndroidContactSaveServiceTest : TestBase() {
     private lateinit var telephoneService: TelephoneService
 
     @SpyK
-    private var addressFormattingRepository: IAddressFormattingRepository = AddressFormattingRepository()
+    private var addressFormattingService: IAddressFormattingService = AddressFormattingService()
 
     @SpyK
     private var changeService = AndroidContactChangeService()
+
+    @SpyK
+    private var mutableContactFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
 
     @InjectMockKs
     private lateinit var underTest: AndroidContactSaveService
@@ -78,7 +82,8 @@ class AndroidContactSaveServiceTest : TestBase() {
         module.single { loadService }
         module.single { changeService }
         module.single { telephoneService }
-        module.single { addressFormattingRepository }
+        module.single { addressFormattingService }
+        module.single { mutableContactFactory }
     }
 
     override fun setup() {
@@ -154,7 +159,7 @@ class AndroidContactSaveServiceTest : TestBase() {
     fun `should update contact successfully`() {
         val contactId = someExternalContactId()
         val originalContact = someContactEditable(id = contactId, firstName = "some first", lastName = "some last")
-        val androidContact = someMutableAndroidContact(contactId = contactId.contactNo)
+        val androidContact = someAndroidContactMutable(contactId = contactId.contactNo)
         val changedContact = someContactEditable(
             id = contactId,
             contactData = someListOfContactData(ModelStatus.NEW)
@@ -167,7 +172,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
         val result = runBlocking { underTest.updateContact(contactId, changedContact) }
 
-        val slot = slot<MutableContact>()
+        val slot = slot<IAndroidContactMutable>()
         coVerify { saveRepository.updateContact(capture(slot)) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
         assertThat(slot.isCaptured).isTrue
@@ -180,10 +185,14 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.nickname).isEqualTo(androidContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(androidContact.note?.raw)
         // contact-data
-        // TODO fix and reinsert: they work locally but not on github
-//        val capturedContactTransformed = capturedContact.toContact(emptyList(), rethrowExceptions = false)
-//        assertThat(capturedContactTransformed).isNotNull
-//        assertContactDataEquals(changedContact, capturedContactTransformed!!)
+        val capturedContactTransformed = capturedContact.toContact(
+            groups = emptyList(),
+            telephoneService = telephoneService,
+            addressFormattingService = addressFormattingService,
+            rethrowExceptions = true,
+        )
+        assertThat(capturedContactTransformed).isNotNull
+        assertContactDataEquals(changedContact, capturedContactTransformed!!)
     }
 
     @Test
@@ -191,7 +200,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         val contactId = someExternalContactId()
         val originalContact = someContactEditable(id = contactId, firstName = "some first", lastName = "some last")
         val changedContact = someContactEditable(id = contactId)
-        val androidContact = someMutableAndroidContact(contactId = contactId.contactNo)
+        val androidContact = someAndroidContactMutable(contactId = contactId.contactNo)
         coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
         coEvery { loadService.resolveContact(any(), any()) } returns originalContact
         coEvery { saveRepository.updateContact(any()) } throws IllegalArgumentException("Test")
@@ -210,7 +219,7 @@ class AndroidContactSaveServiceTest : TestBase() {
 
         val result = runBlocking { underTest.createContact(newContact) }
 
-        val contactSlot = slot<MutableContact>()
+        val contactSlot = slot<IAndroidContactMutable>()
         coVerify { saveRepository.createContact(capture(contactSlot), any()) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
         assertThat(contactSlot.isCaptured).isTrue
@@ -220,10 +229,14 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
         assertThat(capturedContact.nickname).isEqualTo(newContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(newContact.notes)
-        // TODO fix and reinsert: they work locally but not on github
-//        val capturedContactTransformed = capturedContact.toContact(groups = emptyList(), rethrowExceptions = false)
-//        assertThat(capturedContactTransformed).isNotNull
-//        assertContactDataEquals(newContact, capturedContactTransformed!!)
+        val capturedContactTransformed = capturedContact.toContact(
+            groups = emptyList(),
+            telephoneService = telephoneService,
+            addressFormattingService = addressFormattingService,
+            rethrowExceptions = true,
+        )
+        assertThat(capturedContactTransformed).isNotNull
+        assertContactDataEquals(newContact, capturedContactTransformed!!)
     }
 
     @Test

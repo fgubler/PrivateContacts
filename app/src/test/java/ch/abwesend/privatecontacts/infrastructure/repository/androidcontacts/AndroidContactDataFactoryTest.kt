@@ -17,7 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.removeDuplicates
@@ -42,12 +42,11 @@ class AndroidContactDataFactoryTest : TestBase() {
     private lateinit var telephoneService: TelephoneService
 
     @MockK
-    private lateinit var addressFormattingRepository: IAddressFormattingRepository
+    private lateinit var addressFormattingService: IAddressFormattingService
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { telephoneService }
-        module.single { addressFormattingRepository }
     }
 
     override fun setup() {
@@ -55,7 +54,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
         every {
-            addressFormattingRepository.formatAddress(any(), any(), any(), any(), any(), any())
+            addressFormattingService.formatAddress(any(), any(), any(), any(), any(), any())
         } answers {
             val arguments: List<String> = args.filterIsInstance<String>()
             arguments.filter { it.isNotEmpty() }.joinToString(" ").trim()
@@ -67,7 +66,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val phoneNumbers = listOf("123", "456", "789")
         val androidContact = someAndroidContact(phoneNumbers = phoneNumbers)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(phoneNumbers)
         result.forEachIndexed { index, contactData ->
@@ -82,7 +81,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val emailAddresses = listOf("a@b.ch", "c@d.ch", "e@f.ch")
         val androidContact = someAndroidContact(emails = emailAddresses)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(emailAddresses)
         result.forEachIndexed { index, contactData ->
@@ -97,7 +96,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val websites = listOf("www.abc.ch", "https://www.skynet.com", "http://www.old.org")
         val androidContact = someAndroidContact(websites = websites)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(websites)
         result.forEachIndexed { index, contactData ->
@@ -112,7 +111,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val addresses = listOf("Alphastreet 15", "Betastreet 16 Baltimore", "Gammastreet 77 Baltimore USA")
         val androidContact = someAndroidContact(addresses = addresses)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(addresses)
         result.forEachIndexed { index, contactData ->
@@ -127,7 +126,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val sisters = listOf("Vin", "Nina", "Audrey")
         val androidContact = someAndroidContact(sisters = sisters)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(sisters)
         result.forEachIndexed { index, contactData ->
@@ -143,7 +142,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val birthdays = listOf(now, now.minusDays(1), now.minusDays(5))
         val androidContact = someAndroidContact(birthdays = birthdays)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(telephoneService, addressFormattingService)
 
         assertThat(result).hasSameSizeAs(birthdays)
         result.forEachIndexed { index, contactData ->

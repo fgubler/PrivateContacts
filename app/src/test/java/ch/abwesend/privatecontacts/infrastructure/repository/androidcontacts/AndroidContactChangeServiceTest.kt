@@ -14,32 +14,42 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.ContactDataContainer
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataIdExternal
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
-import ch.abwesend.privatecontacts.testutil.databuilders.someMutableAndroidContact
 import ch.abwesend.privatecontacts.testutil.mockUriParse
 import com.alexstyl.contactstore.ImageData
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.koin.core.module.Module
 import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-@Disabled // TODO fix problem with mocking MutableContact and re-enable
 class AndroidContactChangeServiceTest : TestBase() {
+    @SpyK
+    private var mutableContactFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactChangeService
+
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { mutableContactFactory }
+    }
 
     @Test
     fun `should set base-data on mutable contact`() {
@@ -55,7 +65,7 @@ class AndroidContactChangeServiceTest : TestBase() {
             nickname = "changed nick",
             notes = "changed notes",
         )
-        val mutableContact = someMutableAndroidContact()
+        val mutableContact = someAndroidContactMutable()
 
         underTest.updateChangedBaseData(
             originalContact = originalContact,
@@ -84,7 +94,7 @@ class AndroidContactChangeServiceTest : TestBase() {
             nickname = "",
             notes = "changed notes",
         )
-        val mutableContact = someMutableAndroidContact(
+        val mutableContact = someAndroidContactMutable(
             firstName = androidFirstName,
             lastName = "android last",
             nickName = "android nick",
@@ -109,7 +119,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val changedContact = someContactEditable(
             image = image
         )
-        val mutableContact = someMutableAndroidContact(imageData = ImageData(ByteArray(size = 0)))
+        val mutableContact = someAndroidContactMutable(imageData = ImageData(ByteArray(size = 0)))
 
         underTest.updateChangedImage(changedContact = changedContact, mutableContact = mutableContact)
 
@@ -122,7 +132,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val changedContact = someContactEditable(
             image = image
         )
-        val mutableContact = someMutableAndroidContact(imageData = ImageData(ByteArray(size = 0)))
+        val mutableContact = someAndroidContactMutable(imageData = ImageData(ByteArray(size = 0)))
 
         underTest.updateChangedImage(changedContact = changedContact, mutableContact = mutableContact)
 
@@ -137,7 +147,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val changedContact = someContactEditable(
             image = image
         )
-        val mutableContact = someMutableAndroidContact(imageData = ImageData(ByteArray(size = 0)))
+        val mutableContact = someAndroidContactMutable(imageData = ImageData(ByteArray(size = 0)))
 
         underTest.updateChangedImage(changedContact = changedContact, mutableContact = mutableContact)
 
@@ -149,7 +159,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     fun `should add new contact data (or update if it already exists)`(dataAlreadyExists: Boolean) {
         val oldData = if (dataAlreadyExists) createContactBaseData() else ContactDataContainer.createEmpty()
         val newData = createContactBaseData(variant = true)
-        val mutableContact = someMutableAndroidContact(contactData = oldData)
+        val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
             contactData = prepareContactDataForInternalContact(data = newData, modelStatus = ModelStatus.NEW)
         )
@@ -174,7 +184,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     fun `should update changed contact data (or insert it if it does not yet exist)`(dataAlreadyExists: Boolean) {
         val oldData = if (dataAlreadyExists) createContactBaseData() else ContactDataContainer.createEmpty()
         val newData = createContactBaseData(variant = true)
-        val mutableContact = someMutableAndroidContact(contactData = oldData)
+        val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
             contactData = prepareContactDataForInternalContact(data = newData, modelStatus = ModelStatus.CHANGED)
         )
@@ -197,7 +207,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     @Test
     fun `should leave unchanged contact data as-is`() {
         val data = createContactBaseData()
-        val mutableContact = someMutableAndroidContact(contactData = ContactDataContainer.createEmpty())
+        val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
             contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.UNCHANGED)
         )
@@ -215,7 +225,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     @Test
     fun `should remove deleted contact data`() {
         val data = createContactBaseData()
-        val mutableContact = someMutableAndroidContact(contactData = data)
+        val mutableContact = someAndroidContactMutable(contactData = data)
         val changedContact = someContactEditable(
             contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.DELETED)
         )
@@ -233,7 +243,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     @Test
     fun `should just do nothing if data to-delete is not there`() {
         val data = createContactBaseData()
-        val mutableContact = someMutableAndroidContact(contactData = ContactDataContainer.createEmpty())
+        val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
             contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.DELETED)
         )

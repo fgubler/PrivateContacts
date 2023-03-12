@@ -1,10 +1,10 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.testutil
+package ch.abwesend.privatecontacts.testutil.androidcontacts
 
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
