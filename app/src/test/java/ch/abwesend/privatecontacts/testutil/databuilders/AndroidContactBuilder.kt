@@ -1,7 +1,10 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import android.net.Uri
-import ch.abwesend.privatecontacts.testutil.toLabeledValue
+import ch.abwesend.privatecontacts.domain.util.getAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
+import ch.abwesend.privatecontacts.testutil.androidcontacts.toLabeledValue
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
@@ -9,7 +12,6 @@ import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MailAddress
-import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.PhoneNumber
 import com.alexstyl.contactstore.PostalAddress
@@ -70,7 +72,7 @@ fun someAndroidContact(
     return mock
 }
 
-fun someMutableAndroidContact(
+fun someAndroidContactMutable(
     contactId: Long = 123123,
     firstName: String = "Luke",
     middleName: String = "",
@@ -82,8 +84,9 @@ fun someMutableAndroidContact(
     organisation: String = "",
     thumbnailUri: Uri = someUri("some thumbnail uri"),
     imageData: ImageData = ImageData(ByteArray(0)),
-): MutableContact {
-    val contact = spyk(MutableContact())
+): IAndroidContactMutable {
+    val factory = getAnywhere<IAndroidContactMutableFactory>()
+    val contact = spyk(factory.create())
 
     mockkStatic(Contact::thumbnailUri)
     every { contact.contactId } returns contactId

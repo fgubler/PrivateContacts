@@ -1,8 +1,8 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.InternetAccount
-import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.MutableContactGroup
 
 class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
@@ -16,19 +16,21 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
             contactStore.execute { contactIds.forEach { delete(it.contactNo) } }
         }
     }
-    suspend fun updateContact(contact: MutableContact) {
+    suspend fun updateContact(contact: IAndroidContactMutable) {
+        val mutableContact = contact.toMutableContact()
         checkContactWritePermission { exception -> throw exception }
         withContactStore { contactStore ->
-            contactStore.execute { update(contact) }
+            contactStore.execute { update(mutableContact) }
         }
     }
 
     /** [saveInAccount] if null is passed, the account is stored locally */
-    suspend fun createContact(contact: MutableContact, saveInAccount: InternetAccount?) {
+    suspend fun createContact(contact: IAndroidContactMutable, saveInAccount: InternetAccount?) {
+        val mutableContact = contact.toMutableContact()
         checkContactWritePermission { exception -> throw exception }
         withContactStore { contactStore ->
             contactStore.execute {
-                insert(contact, saveInAccount)
+                insert(mutableContact, saveInAccount)
             }
         }
     }

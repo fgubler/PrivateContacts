@@ -41,6 +41,8 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactAccountService
@@ -82,6 +84,7 @@ internal val koinModule = module {
     single<IAndroidContactLoadService> { AndroidContactLoadService() }
     single { AndroidContactLoadService() }
     single<IAndroidContactSaveService> { AndroidContactSaveService() }
+    single<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
     single { AndroidContactChangeService() }
     single { AndroidContactAccountService() }
 

@@ -15,12 +15,12 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeE
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccountOrNull
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
-import com.alexstyl.contactstore.MutableContact
-import com.alexstyl.contactstore.mutableCopy
 
 class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactSaveRepository: AndroidContactSaveRepository by injectAnywhere()
@@ -28,6 +28,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactLoadService: AndroidContactLoadService by injectAnywhere()
     private val contactChangeService: AndroidContactChangeService by injectAnywhere()
     private val contactAccountService: AndroidContactAccountService by injectAnywhere()
+    private val contactMutableFactory: IAndroidContactMutableFactory by injectAnywhere()
 
     override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult {
         val toDelete = contactIds.toSet()
@@ -83,21 +84,21 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         return try {
             val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
             val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
+            val contactToChange = contactMutableFactory.toAndroidContactMutable(originalContactRaw)
 
-            val contactToChange = originalContactRaw.mutableCopy {
-                contactChangeService.updateChangedBaseData(
-                    originalContact = originalContact,
-                    changedContact = contact,
-                    mutableContact = this,
-                )
-                contactChangeService.updateChangedImage(changedContact = contact, mutableContact = this)
-                contactChangeService.updateChangedContactData(changedContact = contact, mutableContact = this)
-                contactChangeService.updateContactGroups(
-                    changedContact = contact,
-                    mutableContact = this,
-                    allContactGroups = existingGroups,
-                )
-            }
+            contactChangeService.updateChangedBaseData(
+                originalContact = originalContact,
+                changedContact = contact,
+                mutableContact = contactToChange,
+            )
+            contactChangeService.updateChangedImage(changedContact = contact, mutableContact = contactToChange)
+            contactChangeService.updateChangedContactData(changedContact = contact, mutableContact = contactToChange)
+
+            contactChangeService.updateContactGroups(
+                changedContact = contact,
+                mutableContact = contactToChange,
+                allContactGroups = existingGroups,
+            )
 
             contactSaveRepository.updateContact(contactToChange)
             contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user
@@ -168,8 +169,8 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         return unmatchedGroups
     }
 
-    private fun IContact.toAndroidContact(allContactGroups: List<ContactGroup>): MutableContact {
-        val mutableContact = MutableContact()
+    private fun IContact.toAndroidContact(allContactGroups: List<ContactGroup>): IAndroidContactMutable {
+        val mutableContact = contactMutableFactory.create()
         contactChangeService.updateChangedBaseData(
             originalContact = null,
             changedContact = this,

@@ -25,10 +25,10 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterForChanged
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.LabeledValue
-import com.alexstyl.contactstore.MutableContact
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.EventDate as ContactStoreEventDate
 import com.alexstyl.contactstore.MailAddress as ContactStoreMailAddress
@@ -38,7 +38,11 @@ import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
-    fun updateChangedBaseData(originalContact: IContact?, changedContact: IContact, mutableContact: MutableContact) {
+    fun updateChangedBaseData(
+        originalContact: IContact?,
+        changedContact: IContact,
+        mutableContact: IAndroidContactMutable
+    ) {
         if (originalContact?.firstName != changedContact.firstName) {
             mutableContact.firstName = changedContact.firstName
         }
@@ -53,7 +57,7 @@ class AndroidContactChangeService {
         }
     }
 
-    fun updateChangedImage(changedContact: IContact, mutableContact: MutableContact) {
+    fun updateChangedImage(changedContact: IContact, mutableContact: IAndroidContactMutable) {
         val newImage = changedContact.image
 
         when (newImage.modelStatus) {
@@ -66,7 +70,7 @@ class AndroidContactChangeService {
         }
     }
 
-    fun updateChangedContactData(changedContact: IContact, mutableContact: MutableContact) {
+    fun updateChangedContactData(changedContact: IContact, mutableContact: IAndroidContactMutable) {
         mutableContact.updatePhoneNumbers(changedContact.contactDataSet)
         mutableContact.updateEmailAddresses(changedContact.contactDataSet)
         mutableContact.updatePhysicalAddresses(changedContact.contactDataSet)
@@ -85,7 +89,7 @@ class AndroidContactChangeService {
      */
     fun updateContactGroups(
         changedContact: IContact,
-        mutableContact: MutableContact,
+        mutableContact: IAndroidContactMutable,
         allContactGroups: List<ContactGroup>
     ) {
         val newGroups = changedContact.contactGroups
@@ -121,7 +125,7 @@ class AndroidContactChangeService {
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
         id.groupNo ?: allContactGroupsByName[id.name]?.id?.groupNo
 
-    private fun MutableContact.updatePhoneNumbers(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updatePhoneNumbers(contactData: List<ContactData>) {
         val phoneNumbers = contactData.filterIsInstance<PhoneNumber>()
         logger.debug("Updating ${phoneNumbers.size} phone numbers on contact $contactId")
 
@@ -131,7 +135,7 @@ class AndroidContactChangeService {
         ) { newPhoneNumber -> ContactStorePhoneNumber(raw = newPhoneNumber.value) }
     }
 
-    private fun MutableContact.updateEmailAddresses(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updateEmailAddresses(contactData: List<ContactData>) {
         val emailAddresses = contactData.filterIsInstance<EmailAddress>()
         logger.debug("Updating ${emailAddresses.size} email addresses on contact $contactId")
 
@@ -141,7 +145,7 @@ class AndroidContactChangeService {
         ) { newEmailAddress -> ContactStoreMailAddress(raw = newEmailAddress.value) }
     }
 
-    private fun MutableContact.updatePhysicalAddresses(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updatePhysicalAddresses(contactData: List<ContactData>) {
         val addresses = contactData.filterIsInstance<PhysicalAddress>()
         logger.debug("Updating ${addresses.size} physical addresses on contact $contactId")
 
@@ -152,7 +156,7 @@ class AndroidContactChangeService {
     }
 
     /** Beware: Uri.parse() needs to be mocked in unit-tests */
-    private fun MutableContact.updateWebsites(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updateWebsites(contactData: List<ContactData>) {
         val websites = contactData.filterIsInstance<Website>()
         logger.debug("Updating ${websites.size} websites on contact $contactId")
 
@@ -167,7 +171,7 @@ class AndroidContactChangeService {
         }
     }
 
-    private fun MutableContact.updateRelationships(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updateRelationships(contactData: List<ContactData>) {
         val relationships = contactData.filterIsInstance<Relationship>()
         logger.debug("Updating ${relationships.size} relationships on contact $contactId")
 
@@ -177,7 +181,7 @@ class AndroidContactChangeService {
         ) { newRelationship -> ContactStoreRelation(name = newRelationship.value) }
     }
 
-    private fun MutableContact.updateEventDates(contactData: List<ContactData>) {
+    private fun IAndroidContactMutable.updateEventDates(contactData: List<ContactData>) {
         val eventDates = contactData.filterIsInstance<EventDate>()
         logger.debug("Updating ${eventDates.size} events on contact $contactId")
 
