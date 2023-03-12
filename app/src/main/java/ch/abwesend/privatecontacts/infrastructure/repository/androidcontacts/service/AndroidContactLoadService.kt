@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
@@ -35,6 +36,7 @@ import kotlin.system.measureTimeMillis
  */
 class AndroidContactLoadService : IAndroidContactLoadService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
+    private val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
 
     override fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {
@@ -50,8 +52,11 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     suspend fun resolveContact(contactId: IContactIdExternal, contactRaw: Contact): IContact {
         val contactGroups = contactLoadRepository.loadContactGroups(contactRaw)
 
-        return contactRaw.toContact(groups = contactGroups, rethrowExceptions = true)
-            ?: throw IllegalStateException("Could not convert contact $contactId to local data-model")
+        return contactRaw.toContact(
+            groups = contactGroups,
+            addressFormattingRepository = addressFormattingRepository,
+            rethrowExceptions = true,
+        ) ?: throw IllegalStateException("Could not convert contact $contactId to local data-model")
     }
 
     suspend fun doContactsExist(contactIds: Set<IContactIdExternal>): Map<IContactIdExternal, Boolean> {

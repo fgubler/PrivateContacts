@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 
@@ -24,7 +25,11 @@ fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
         else null
     }
 
-fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): IContact? =
+fun Contact.toContact(
+    groups: List<ContactGroup>,
+    addressFormattingRepository: IAddressFormattingRepository,
+    rethrowExceptions: Boolean
+): IContact? =
     try {
         val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
         ContactEditable(
@@ -35,7 +40,7 @@ fun Contact.toContact(groups: List<ContactGroup>, rethrowExceptions: Boolean): I
             nickname = nickname,
             notes = note?.raw.orEmpty(),
             image = getImage(),
-            contactDataSet = getContactData().toMutableList(),
+            contactDataSet = getContactData(addressFormattingRepository).toMutableList(),
             contactGroups = groups.toContactGroups().toMutableList(),
             saveInAccount = ContactAccount.None,
         )

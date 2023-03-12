@@ -47,7 +47,6 @@ class AndroidContactDataFactoryTest : TestBase() {
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { telephoneService }
-        module.single { addressFormattingRepository }
     }
 
     override fun setup() {
@@ -67,7 +66,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val phoneNumbers = listOf("123", "456", "789")
         val androidContact = someAndroidContact(phoneNumbers = phoneNumbers)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(phoneNumbers)
         result.forEachIndexed { index, contactData ->
@@ -82,7 +81,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val emailAddresses = listOf("a@b.ch", "c@d.ch", "e@f.ch")
         val androidContact = someAndroidContact(emails = emailAddresses)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(emailAddresses)
         result.forEachIndexed { index, contactData ->
@@ -97,7 +96,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val websites = listOf("www.abc.ch", "https://www.skynet.com", "http://www.old.org")
         val androidContact = someAndroidContact(websites = websites)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(websites)
         result.forEachIndexed { index, contactData ->
@@ -112,7 +111,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val addresses = listOf("Alphastreet 15", "Betastreet 16 Baltimore", "Gammastreet 77 Baltimore USA")
         val androidContact = someAndroidContact(addresses = addresses)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(addresses)
         result.forEachIndexed { index, contactData ->
@@ -127,7 +126,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val sisters = listOf("Vin", "Nina", "Audrey")
         val androidContact = someAndroidContact(sisters = sisters)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(sisters)
         result.forEachIndexed { index, contactData ->
@@ -143,7 +142,7 @@ class AndroidContactDataFactoryTest : TestBase() {
         val birthdays = listOf(now, now.minusDays(1), now.minusDays(5))
         val androidContact = someAndroidContact(birthdays = birthdays)
 
-        val result = androidContact.getContactData()
+        val result = androidContact.getContactData(addressFormattingRepository)
 
         assertThat(result).hasSameSizeAs(birthdays)
         result.forEachIndexed { index, contactData ->

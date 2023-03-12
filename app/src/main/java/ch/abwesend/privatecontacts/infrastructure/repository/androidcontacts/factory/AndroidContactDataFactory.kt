@@ -24,8 +24,7 @@ import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.LabeledValue
 
-fun Contact.getContactData(): List<ContactData> {
-    val addressFormattingRepository: IAddressFormattingRepository by injectAnywhere()
+fun Contact.getContactData(addressFormattingRepository: IAddressFormattingRepository): List<ContactData> {
     return getPhoneNumbers() +
         getEmailAddresses() +
         getPhysicalAddresses(addressFormattingRepository) +
