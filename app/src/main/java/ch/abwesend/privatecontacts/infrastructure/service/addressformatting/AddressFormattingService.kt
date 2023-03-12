@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.service.addressformatting
 
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.util.Constants
 import com.google.i18n.addressinput.common.AddressData
@@ -39,39 +40,64 @@ class AddressFormattingService : IAddressFormattingService {
         val countryCode = if (validCountry) country else currentLocale.country
         val languageCode = if (validCountry) null else currentLocale.language
 
-        val formatInterpreter = FormatInterpreter(FormOptions().createSnapshot())
-        val builder = AddressData.Builder()
-            .setAddress(street)
-            .setDependentLocality(neighborhood)
-            .setLocality(city)
-            .setPostalCode(postalCode)
-            .setAdminArea(region)
-            .setCountry(countryCode)
-
-        languageCode?.let { builder.setLanguageCode(it) }
-        val addressData = builder.build()
-
-        val addressFragmentsRaw: List<String?> = formatInterpreter.getEnvelopeAddress(addressData).orEmpty()
-        val addressFragments = addressFragmentsRaw
-            .map { it?.trim() }
-            .filterNot { it.isNullOrEmpty() }
-            .ifEmpty {
-                if (useFallbackForEmptyAddress) {
-                    getFallbackAddressFragments(
-                        street = street,
-                        neighborhood = neighborhood,
-                        postalCode = postalCode,
-                        city = city,
-                        region = region,
-                        country = countryCode,
-                    )
-                } else emptyList()
-            }
+        val addressFragments = getFormattedAddressFragments(
+            street = street,
+            neighborhood = neighborhood,
+            postalCode = postalCode,
+            city = city,
+            region = region,
+            countryCode = countryCode,
+            languageCode = languageCode,
+        ).ifEmpty {
+            if (useFallbackForEmptyAddress) {
+                getFallbackAddressFragments(
+                    street = street,
+                    neighborhood = neighborhood,
+                    postalCode = postalCode,
+                    city = city,
+                    region = region,
+                    countryCode = countryCode,
+                )
+            } else emptyList()
+        }
 
         return addressFragments
+            .filterNot { it.isEmpty() }
+            .map { it.trimEnd(',') }
             .joinToString(separator = ",${Constants.linebreak}")
             .trim()
     }
+
+    private fun getFormattedAddressFragments(
+        street: String,
+        neighborhood: String,
+        postalCode: String,
+        city: String,
+        region: String,
+        countryCode: String,
+        languageCode: String?,
+    ): List<String> =
+        try {
+            val formatInterpreter = FormatInterpreter(FormOptions().createSnapshot())
+            val builder = AddressData.Builder()
+                .setAddress(street)
+                .setDependentLocality(neighborhood)
+                .setLocality(city)
+                .setPostalCode(postalCode)
+                .setAdminArea(region)
+                .setCountry(countryCode)
+
+            languageCode?.let { builder.setLanguageCode(it) }
+            val addressData = builder.build()
+
+            val addressFragmentsRaw: List<String?> = formatInterpreter.getEnvelopeAddress(addressData).orEmpty()
+            addressFragmentsRaw
+                .mapNotNull { it?.trim() }
+                .filterNot { it.isEmpty() }
+        } catch (e: Exception) {
+            logger.warning("Failed to format address: caught exception from the Java-Code", e)
+            emptyList()
+        }
 
     private fun getFallbackAddressFragments(
         street: String,
@@ -79,7 +105,7 @@ class AddressFormattingService : IAddressFormattingService {
         postalCode: String,
         city: String,
         region: String,
-        country: String,
+        countryCode: String,
     ): List<String> {
         val cityWithPostalCode = listOf(postalCode, city)
             .filterNot { it.isEmpty() }
@@ -90,7 +116,7 @@ class AddressFormattingService : IAddressFormattingService {
             neighborhood,
             cityWithPostalCode,
             region,
-            country
+            countryCode
         )
 
         return addressFragments
