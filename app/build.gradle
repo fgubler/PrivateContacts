@@ -22,8 +22,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 33
-        versionCode 35
-        versionName "2.5.5"
+        versionCode 36
+        versionName "2.5.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -113,7 +113,7 @@ dependencies {
     // Others
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5' // beware 1.2.0 might not work
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
