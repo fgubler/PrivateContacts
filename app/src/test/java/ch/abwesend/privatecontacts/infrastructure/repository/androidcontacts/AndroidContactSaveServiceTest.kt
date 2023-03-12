@@ -185,7 +185,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.nickname).isEqualTo(androidContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(androidContact.note?.raw)
         // contact-data
-        val capturedContactTransformed = capturedContact.toContact(emptyList(), rethrowExceptions = false)
+        val capturedContactTransformed = capturedContact.toContact(emptyList(), rethrowExceptions = true)
         assertThat(capturedContactTransformed).isNotNull
         assertContactDataEquals(changedContact, capturedContactTransformed!!)
     }
@@ -224,7 +224,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
         assertThat(capturedContact.nickname).isEqualTo(newContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(newContact.notes)
-        val capturedContactTransformed = capturedContact.toContact(groups = emptyList(), rethrowExceptions = false)
+        val capturedContactTransformed = capturedContact.toContact(groups = emptyList(), rethrowExceptions = true)
         assertThat(capturedContactTransformed).isNotNull
         assertContactDataEquals(newContact, capturedContactTransformed!!)
     }
