@@ -1,6 +1,12 @@
-package ch.abwesend.privatecontacts.infrastructure.repository.addressformatting
+/*
+ * Private Contacts
+ * Copyright (c) 2023.
+ * Florian Gubler
+ */
 
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+package ch.abwesend.privatecontacts.infrastructure.service.addressformatting
+
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.util.Constants
 import com.google.i18n.addressinput.common.AddressData
 import com.google.i18n.addressinput.common.FormOptions
@@ -10,7 +16,7 @@ import java.util.Locale
 /**
  * See https://stackoverflow.com/questions/11269172/address-formatting-based-on-locale-in-android
  */
-class AddressFormattingRepository : IAddressFormattingRepository {
+class AddressFormattingService : IAddressFormattingService {
     private val countryCodes: Set<String> by lazy {
         Locale.getISOCountries().toSet()
     }

@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.util.Constants
-import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
+import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,15 +23,15 @@ private const val US = "US"
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class AddressFormattingRepositoryTest : TestBase() {
-    private lateinit var underTest: AddressFormattingRepository
+class AddressFormattingServiceTest : TestBase() {
+    private lateinit var underTest: AddressFormattingService
     private val linebreak = ",${Constants.linebreak}"
 
     private lateinit var previousLocale: Locale
 
     override fun setup() {
         super.setup()
-        underTest = AddressFormattingRepository()
+        underTest = AddressFormattingService()
         previousLocale = Locale.getDefault()
         Locale.setDefault(Locale.GERMANY)
     }

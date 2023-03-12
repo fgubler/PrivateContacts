@@ -29,7 +29,7 @@ private const val INFRASTRUCTURE_PACKAGE = "$INFRASTRUCTURE_PACKAGE_PARTIAL.."
 private const val INFRASTRUCTURE_CONTACT_STORE_PACKAGE =
     "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.androidcontacts.."
 private const val INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE =
-    "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.addressformatting.."
+    "$INFRASTRUCTURE_PACKAGE_PARTIAL.service.addressformatting.."
 
 private const val EXT_KOIN_PACKAGE = "org.koin.core.component.."
 private const val EXT_CONTACT_STORE_PACKAGE = "com.alexstyl.contactstore.."

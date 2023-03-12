@@ -15,9 +15,8 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.addressformatting.AddressFormattingRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
@@ -26,6 +25,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.rep
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
+import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
@@ -64,7 +64,7 @@ class AndroidContactSaveServiceTest : TestBase() {
     private lateinit var telephoneService: TelephoneService
 
     @SpyK
-    private var addressFormattingRepository: IAddressFormattingRepository = AddressFormattingRepository()
+    private var addressFormattingService: IAddressFormattingService = AddressFormattingService()
 
     @SpyK
     private var changeService = AndroidContactChangeService()
@@ -82,7 +82,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         module.single { loadService }
         module.single { changeService }
         module.single { telephoneService }
-        module.single { addressFormattingRepository }
+        module.single { addressFormattingService }
         module.single { mutableContactFactory }
     }
 
@@ -187,7 +187,8 @@ class AndroidContactSaveServiceTest : TestBase() {
         // contact-data
         val capturedContactTransformed = capturedContact.toContact(
             groups = emptyList(),
-            addressFormattingRepository = addressFormattingRepository,
+            telephoneService = telephoneService,
+            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         )
         assertThat(capturedContactTransformed).isNotNull
@@ -230,7 +231,8 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.note?.raw).isEqualTo(newContact.notes)
         val capturedContactTransformed = capturedContact.toContact(
             groups = emptyList(),
-            addressFormattingRepository = addressFormattingRepository,
+            telephoneService = telephoneService,
+            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         )
         assertThat(capturedContactTransformed).isNotNull

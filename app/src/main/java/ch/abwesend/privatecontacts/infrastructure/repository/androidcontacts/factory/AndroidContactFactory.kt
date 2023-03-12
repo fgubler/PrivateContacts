@@ -8,7 +8,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.repository.IAddressFormattingRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 
@@ -27,7 +28,8 @@ fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
 
 fun Contact.toContact(
     groups: List<ContactGroup>,
-    addressFormattingRepository: IAddressFormattingRepository,
+    telephoneService: TelephoneService,
+    addressFormattingService: IAddressFormattingService,
     rethrowExceptions: Boolean
 ): IContact? =
     try {
@@ -40,7 +42,7 @@ fun Contact.toContact(
             nickname = nickname,
             notes = note?.raw.orEmpty(),
             image = getImage(),
-            contactDataSet = getContactData(addressFormattingRepository).toMutableList(),
+            contactDataSet = getContactData(telephoneService, addressFormattingService).toMutableList(),
             contactGroups = groups.toContactGroups().toMutableList(),
             saveInAccount = ContactAccount.None,
         )
