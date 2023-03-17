@@ -19,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingS
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
@@ -32,9 +33,9 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutab
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
-import ch.abwesend.privatecontacts.testutil.databuilders.someInternetAccount
 import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
 import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
+import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.MutableContactGroup
 import io.mockk.coEvery
 import io.mockk.coJustRun
@@ -216,7 +217,16 @@ class AndroidContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create contact successfully`() {
-        val newContact = someContactEditable(contactData = someListOfContactData(ModelStatus.NEW))
+        val account = someOnlineAccount()
+        val newContact = someContactEditable(
+            saveInAccount = account,
+            contactData = someListOfContactData(ModelStatus.NEW),
+            contactGroups = listOf(
+                someContactGroup(name = "group1"),
+                someContactGroup(name = "group2"),
+            ),
+        )
+        val expectedInternetAccount = account.toInternetAccount()
         coJustRun { saveRepository.createContact(any(), any()) }
         coEvery { loadService.getContactGroups(any()) } returns emptyList()
         coJustRun { saveRepository.createContactGroups(any()) }
@@ -224,10 +234,14 @@ class AndroidContactSaveServiceTest : TestBase() {
         val result = runBlocking { underTest.createContact(newContact) }
 
         val contactSlot = slot<IAndroidContactMutable>()
-        coVerify { saveRepository.createContact(capture(contactSlot), any()) }
+        val accountSlot = slot<InternetAccount>()
+        coVerify { saveRepository.createContact(capture(contactSlot), capture(accountSlot)) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
         assertThat(contactSlot.isCaptured).isTrue
+        assertThat(accountSlot.isCaptured).isTrue
         val capturedContact = contactSlot.captured
+        val capturedAccount = accountSlot.captured
+        assertThat(capturedAccount).isEqualTo(expectedInternetAccount)
         assertThat(capturedContact.contactId).isEqualTo(-1)
         assertThat(capturedContact.firstName).isEqualTo(newContact.firstName)
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
@@ -261,7 +275,7 @@ class AndroidContactSaveServiceTest : TestBase() {
             someContactGroup(name = "group2", modelStatus = ModelStatus.NEW),
         )
         val account = someOnlineAccount()
-        val expectedInternetAccount = someInternetAccount(name = account.username, type = account.accountProvider)
+        val expectedInternetAccount = account.toInternetAccount()
         coEvery { loadService.getContactGroups(any()) } returns emptyList()
         coJustRun { saveRepository.createContactGroups(any()) }
 
