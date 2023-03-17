@@ -9,8 +9,9 @@ import com.alexstyl.contactstore.InternetAccount
 
 fun ContactAccount.toInternetAccountOrNull(): InternetAccount? =
     when (this) {
-        is None -> null.also {
+        is None -> {
             logger.warning("invalid account-type 'internal' for external contact ")
+            null
         }
         is LocalPhoneContacts -> null
         is OnlineAccount -> toInternetAccount()
