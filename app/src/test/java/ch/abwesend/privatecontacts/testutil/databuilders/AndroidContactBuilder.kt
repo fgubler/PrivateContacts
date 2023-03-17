@@ -9,6 +9,7 @@ import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
 import com.alexstyl.contactstore.ImageData
+import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MailAddress
@@ -157,6 +158,9 @@ fun someAndroidContactGroup(
 
     return mock
 }
+
+fun someInternetAccount(name: String = "alpha@beta.ch", type: String = "google.com"): InternetAccount =
+    InternetAccount(name, type)
 
 data class ContactDataContainer(
     val phoneNumbers: List<String>,
