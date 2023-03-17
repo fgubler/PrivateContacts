@@ -12,7 +12,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdIntern
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
-import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
@@ -22,7 +21,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -32,24 +30,19 @@ import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactTypeChangeStrategiesTest : TestBase() {
-    @MockK
-    private lateinit var contactGroupRepository: IContactGroupRepository
-
+class ChangeContactToPublicStrategyTest : TestBase() {
     @MockK
     private lateinit var contactSaveService: IAndroidContactSaveService
 
-    private val changeToPublicStrategy by lazy { ChangeContactToPublicStrategy } // lazy to avoid timing problems
-    private val changeToSecretStrategy by lazy { ChangeContactToSecretStrategy } // lazy to avoid timing problems
+    private val underTest = ChangeContactToPublicStrategy
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
-        module.single { contactGroupRepository }
         module.single { contactSaveService }
     }
 
     @Test
-    fun `change-to-public-strategy should create missing contact-groups in the correct account`() {
+    fun `should create missing contact-groups in the correct account`() {
         val accounts = listOf(
             someOnlineAccount(username = "A", provider = "B"),
             someOnlineAccount(username = "C", provider = "D"),
@@ -79,7 +72,7 @@ class ContactTypeChangeStrategiesTest : TestBase() {
         )
         coEvery { contactSaveService.createMissingContactGroups(any(), any()) } returns ContactSaveResult.Success
 
-        runBlocking { changeToPublicStrategy.createContactGroups(contacts) }
+        runBlocking { underTest.createContactGroups(contacts) }
 
         val capturedAccounts = mutableListOf<ContactAccount>()
         val capturedContactGroups = mutableListOf<List<ContactGroup>>()
@@ -96,53 +89,14 @@ class ContactTypeChangeStrategiesTest : TestBase() {
     }
 
     @Test
-    fun `change-to-public-strategy should change contact-data-IDs to external`() {
+    fun `should change contact-data-IDs to external`() {
         val originalContactData = someListOfContactData()
         val contact = someContactEditable(contactData = originalContactData)
 
-        changeToPublicStrategy.changeContactDataIds(contact)
+        underTest.changeContactDataIds(contact)
 
         val newContactData = contact.contactDataSet
         assertThat(originalContactData.all { it.id is IContactDataIdInternal }).isTrue // check test-setup
         assertThat(newContactData.all { it.id is IContactDataIdExternal }).isTrue
-    }
-
-    @Test
-    fun `change-to-secret-strategy should create missing contact-groups`() {
-        val contacts = listOf(
-            someContactEditable(
-                contactGroups = listOf(
-                    someContactGroup(name = "1.1"),
-                    someContactGroup(name = "1.2"),
-                ),
-            ),
-            someContactEditable(
-                contactGroups = listOf(
-                    someContactGroup(name = "2.1"),
-                    someContactGroup(name = "2.2"),
-                ),
-            ),
-        )
-        coEvery { contactGroupRepository.createMissingContactGroups(any()) } returns ContactSaveResult.Success
-
-        runBlocking { changeToSecretStrategy.createContactGroups(contacts) }
-
-        val capturedContactGroups = slot<List<ContactGroup>>()
-        coVerify(exactly = 1) { contactGroupRepository.createMissingContactGroups(capture(capturedContactGroups)) }
-        assertThat(capturedContactGroups.isCaptured).isTrue
-        assertThat(capturedContactGroups.captured).hasSize(4)
-        assertThat(capturedContactGroups.captured).isEqualTo(contacts[0].contactGroups + contacts[1].contactGroups)
-    }
-
-    @Test
-    fun `change-to-secret-strategy should change contact-data-IDs to internal`() {
-        val originalContactData = someListOfContactData(internalIds = false)
-        val contact = someContactEditable(contactData = originalContactData)
-
-        changeToSecretStrategy.changeContactDataIds(contact)
-
-        val newContactData = contact.contactDataSet
-        assertThat(originalContactData.all { it.id is IContactDataIdExternal }).isTrue // check test-setup
-        assertThat(newContactData.all { it.id is IContactDataIdInternal }).isTrue
     }
 }
