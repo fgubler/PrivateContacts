@@ -87,7 +87,7 @@ class ContactSaveServiceTest : TestBase() {
     }
 
     @Test
-    fun `should create new contact`() {
+    fun `should create new internal contact`() {
         val (contactId, contact) = someContactEditableWithId(isNew = true)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
         coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
@@ -101,7 +101,7 @@ class ContactSaveServiceTest : TestBase() {
     }
 
     @Test
-    fun `should update existing contact`() {
+    fun `should update existing internal contact`() {
         val (contactId, contact) = someContactEditableWithId(isNew = false)
         coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
         coEvery { contactRepository.updateContact(any(), any()) } returns ContactSaveResult.Success
