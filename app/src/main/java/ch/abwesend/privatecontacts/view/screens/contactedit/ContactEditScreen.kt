@@ -50,22 +50,24 @@ import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconBut
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
-import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.model.screencontext.IContactEditScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
+@ExperimentalContracts
 object ContactEditScreen {
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: IContactEditScreenContext) {
         val viewModel = screenContext.contactEditViewModel
         val selectedContact = viewModel.selectedContact
 
@@ -79,8 +81,8 @@ object ContactEditScreen {
             viewModel.saveResult.collect { result ->
                 showDiscardConfirmationDialog = false
                 onSaveResult(
-                    screenContext = screenContext,
                     result = result,
+                    onSuccess = { screenContext.returnToContactDetailScreen() },
                     setSavingErrors = { savingErrors = it },
                     setValidationErrors = { validationErrors = it },
                 )
@@ -104,7 +106,7 @@ object ContactEditScreen {
                 // The actual content
                 Column(modifier = Modifier.padding(padding)) {
                     ContactEditContent(
-                        screenContext = screenContext,
+                        viewModel = screenContext.contactEditViewModel,
                         contact = contact,
                         showAllFields = showAllFields,
                         modifier = Modifier.weight(1F)
@@ -138,7 +140,7 @@ object ContactEditScreen {
 
     @Composable
     private fun ButtonFooter(
-        screenContext: ScreenContext,
+        screenContext: IContactEditScreenContext,
         contact: IContactEditable,
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
@@ -159,7 +161,7 @@ object ContactEditScreen {
             }
             Spacer(modifier = Modifier.width(10.dp))
             Button(
-                onClick = { onSave(screenContext, contact) },
+                onClick = { onSave(screenContext.contactEditViewModel, contact) },
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.save))
@@ -169,7 +171,7 @@ object ContactEditScreen {
 
     @Composable
     private fun ContactEditTopBar(
-        screenContext: ScreenContext,
+        screenContext: IContactEditScreenContext,
         contact: IContactEditable,
         expanded: Boolean,
         showDiscardConfirmationDialog: () -> Unit,
@@ -185,55 +187,52 @@ object ContactEditScreen {
             },
             actions = {
                 ExpandCompressIconButton(expanded = expanded, onClick = onToggleExpanded)
-                SaveIconButton { onSave(screenContext, contact) }
+                SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
             }
         )
     }
 
-    private fun onSave(screenContext: ScreenContext, contact: IContactEditable) {
-        screenContext.contactEditViewModel.saveContact(contact)
+    private fun onSave(viewModel: ContactEditViewModel, contact: IContactEditable) {
+        viewModel.saveContact(contact)
     }
 
     private fun onSaveResult(
-        screenContext: ScreenContext,
         result: ContactSaveResult,
+        onSuccess: () -> Unit,
         setValidationErrors: (List<ContactValidationError>) -> Unit,
         setSavingErrors: (List<ContactChangeError>) -> Unit,
     ) {
         when (result) {
-            is Success -> {
-                screenContext.contactDetailViewModel.reloadContact() // update data there
-                screenContext.router.navigateUp()
-            }
+            is Success -> onSuccess()
             is Failure -> setSavingErrors(result.errors)
             is ValidationFailure -> setValidationErrors(result.validationErrors)
         }
     }
 
     private fun onDiscard(
-        screenContext: ScreenContext,
+        screenContext: IContactEditScreenContext,
         showConfirmationDialog: () -> Unit,
     ) {
-        if (hasChanges(screenContext)) {
+        if (hasChanges(screenContext.contactEditViewModel)) {
             showConfirmationDialog()
         } else {
             onDiscardConfirmed(screenContext)
         }
     }
 
-    private fun onDiscardConfirmed(screenContext: ScreenContext) {
-        screenContext.router.navigateUp()
+    private fun onDiscardConfirmed(screenContext: IContactEditScreenContext) {
+        screenContext.navigateUp()
         screenContext.contactEditViewModel.clearContact()
     }
 
-    private fun hasChanges(screenContext: ScreenContext): Boolean =
-        screenContext.contactEditViewModel.let {
+    private fun hasChanges(viewModel: ContactEditViewModel): Boolean =
+        viewModel.let {
             it.originalContact != it.selectedContact?.contact
         }
 
     @Composable
     private fun DiscardConfirmationDialog(
-        screenContext: ScreenContext,
+        screenContext: IContactEditScreenContext,
         visible: Boolean,
         hideDialog: () -> Unit
     ) {

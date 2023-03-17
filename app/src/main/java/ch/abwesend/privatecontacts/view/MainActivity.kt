@@ -51,11 +51,11 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallP
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
-import ch.abwesend.privatecontacts.view.routing.AppRouter
+import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
@@ -65,10 +65,12 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
+@ExperimentalContracts
 @FlowPreview
 class MainActivity : ComponentActivity() {
     private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
@@ -163,10 +165,10 @@ class MainActivity : ComponentActivity() {
         navController: NavHostController,
         settings: ISettingsState
     ): ScreenContext {
-        val router: AppRouter = getAnywhereWithParams(navController)
+        val router: GenericRouter = getAnywhereWithParams(navController)
 
         return ScreenContext(
-            router = router,
+            genericRouter = router,
             settings = settings,
             contactListViewModel = contactListViewModel,
             contactDetailViewModel = contactDetailViewModel,

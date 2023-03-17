@@ -45,9 +45,8 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactType
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
-import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
-import ch.abwesend.privatecontacts.view.routing.AppRouter
+import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.composeIfError
@@ -56,15 +55,17 @@ import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
+@ExperimentalContracts
 object ContactDetailScreen {
 
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: IContactDetailScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
 
@@ -78,19 +79,19 @@ object ContactDetailScreen {
             val modifier = Modifier.padding(padding)
             contactResource
                 .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
-                .composeIfInactive { NoContactLoaded(router = screenContext.router, modifier = modifier) }
+                .composeIfInactive { NoContactLoaded(modifier = modifier, navigateUp = screenContext::navigateUp) }
                 .composeIfLoading {
                     LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
                 }
                 .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
         }
 
-        DeleteResultObserver(viewModel, screenContext.router)
-        TypeChangeResultObserver(viewModel, screenContext.router)
+        DeleteResultObserver(viewModel = viewModel, onSuccess = screenContext::navigateUp)
+        TypeChangeResultObserver(viewModel = viewModel, onSuccess = screenContext::navigateUp)
     }
 
     @Composable
-    private fun DeleteResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
+    private fun DeleteResultObserver(viewModel: ContactDetailViewModel, onSuccess: () -> Unit) {
         var deletionErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
 
         DeleteContactsResultDialog(numberOfErrors = deletionErrors.size, numberOfAttemptedChanges = 1) {
@@ -100,7 +101,7 @@ object ContactDetailScreen {
         LaunchedEffect(Unit) {
             viewModel.deleteResult.collect { result ->
                 when (result) {
-                    is ContactDeleteResult.Success -> router.navigateUp()
+                    is ContactDeleteResult.Success -> onSuccess()
                     is ContactDeleteResult.Failure -> deletionErrors = result.errors
                 }
             }
@@ -108,7 +109,7 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun TypeChangeResultObserver(viewModel: ContactDetailViewModel, router: AppRouter) {
+    private fun TypeChangeResultObserver(viewModel: ContactDetailViewModel, onSuccess: () -> Unit) {
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
         var errors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         val changeSuccessful = validationErrors.isEmpty() && errors.isEmpty()
@@ -126,7 +127,7 @@ object ContactDetailScreen {
         LaunchedEffect(Unit) {
             viewModel.typeChangeResult.collect { result ->
                 when (result) {
-                    is ContactSaveResult.Success -> router.navigateUp()
+                    is ContactSaveResult.Success -> onSuccess()
                     is ContactSaveResult.ValidationFailure -> validationErrors = result.validationErrors
                     is ContactSaveResult.Failure -> errors = result.errors
                 }
@@ -136,10 +137,9 @@ object ContactDetailScreen {
 
     @Composable
     private fun ContactDetailTopBar(
-        screenContext: ScreenContext,
+        screenContext: IContactDetailScreenContext,
         contact: IContact?,
     ) {
-        val buttonsEnabled = contact != null
         @StringRes val title = R.string.screen_contact_details
 
         var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
@@ -153,15 +153,14 @@ object ContactDetailScreen {
                 )
             },
             navigationIcon = {
-                BackIconButton { screenContext.router.navigateUp() }
+                BackIconButton { screenContext.navigateUp() }
             },
             actions = {
                 if (contact != null) {
-                    EditIconButton(enabled = buttonsEnabled) {
-                        screenContext.contactEditViewModel.selectContact(contact)
-                        screenContext.router.navigateToScreen(Screen.ContactEdit)
+                    EditIconButton {
+                        screenContext.navigateToContactEditScreen(contact)
                     }
-                    MoreActionsIconButton(enabled = buttonsEnabled) {
+                    MoreActionsIconButton {
                         dropDownMenuExpanded = true
                     }
                     ActionsMenu(
@@ -230,16 +229,15 @@ object ContactDetailScreen {
     }
 
     @Composable
-    private fun NoContactLoaded(router: AppRouter, modifier: Modifier = Modifier) {
+    private fun NoContactLoaded(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
         FullScreenError(
             errorMessage = R.string.no_contact_selected,
             modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.back,
                 icon = Icons.Default.ArrowBack,
-            ) {
-                router.navigateUp()
-            }
+                onClick = navigateUp
+            )
         )
     }
 

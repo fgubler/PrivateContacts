@@ -60,7 +60,7 @@ import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepo
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
-import ch.abwesend.privatecontacts.view.routing.AppRouter
+import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import com.alexstyl.contactstore.ContactStore
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -113,7 +113,7 @@ internal val koinModule = module {
     single<IDispatchers> { Dispatchers }
 
     single { ApplicationScope() }
-    factory { AppRouter(get()) }
+    factory { GenericRouter(get()) }
 
     // Database
     single { DatabaseInitializer() }

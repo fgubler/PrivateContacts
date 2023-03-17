@@ -11,7 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 
-class AppRouter(private val navController: NavHostController) {
+class GenericRouter(private val navController: NavHostController) {
     fun navigateToScreen(screen: Screen, navOptions: NavOptions? = null): Boolean =
         tryNavigate(screen, navOptions)
 

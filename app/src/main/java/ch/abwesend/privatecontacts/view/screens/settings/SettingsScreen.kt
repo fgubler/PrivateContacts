@@ -33,15 +33,17 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.ISettingsScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
+@ExperimentalContracts
 object SettingsScreen {
     private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
     private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
@@ -51,7 +53,7 @@ object SettingsScreen {
         private set
 
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: ISettingsScreenContext) {
         val settingsRepository = Settings.repository
         val currentSettings = screenContext.settings
 
