@@ -22,10 +22,12 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalComposeUiApi
+@ExperimentalContracts
 object ContactDataEditComponents {
 
     @Composable
