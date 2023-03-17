@@ -41,138 +41,143 @@ import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 import ch.abwesend.privatecontacts.view.util.disabledContentColor
 import ch.abwesend.privatecontacts.view.util.normalContentColor
+import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalMaterialApi
-private val parent = SettingsScreen
+@ExperimentalContracts
+object SettingsComponents {
 
-@Composable
-fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
+    @ExperimentalMaterialApi
+    private val parent = SettingsScreen // TODO remove once google issue 212091796 is fixed
 
-@Composable
-fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.dp))
+    @Composable
+    fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
 
-@Composable
-fun SettingsCategory(
-    @StringRes titleRes: Int,
-    @StringRes infoPopupText: Int? = null,
-    hideInfoPopup: Boolean = false,
-    content: @Composable () -> Unit,
-) {
-    var showInfoPopup: Boolean by remember { mutableStateOf(false) }
+    @Composable
+    fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.dp))
 
-    Card {
-        Column(modifier = Modifier.padding(10.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                SectionSubtitle(titleRes = titleRes, addTopPadding = false)
-                infoPopupText?.takeIf { !hideInfoPopup }?.let {
-                    InfoIconButton { showInfoPopup = true }
-                }
-            }
-            content()
-        }
-    }
-
-    if (showInfoPopup && infoPopupText != null) {
-        OkDialog(
-            title = titleRes,
-            text = infoPopupText,
-        ) { showInfoPopup = false }
-    }
-}
-
-@Composable
-fun SettingsCheckbox(
-    @StringRes label: Int,
-    @StringRes description: Int?,
-    value: Boolean,
-    enabled: Boolean = true,
-    onValueChanged: (Boolean) -> Unit,
-) {
-    val textColor = if (enabled) normalContentColor() else disabledContentColor()
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onValueChanged(!value) },
+    @Composable
+    fun SettingsCategory(
+        @StringRes titleRes: Int,
+        @StringRes infoPopupText: Int? = null,
+        hideInfoPopup: Boolean = false,
+        content: @Composable () -> Unit,
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            SettingsLabel(labelRes = label, textColor = textColor)
-            description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
+        var showInfoPopup: Boolean by remember { mutableStateOf(false) }
+
+        Card {
+            Column(modifier = Modifier.padding(10.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    SectionSubtitle(titleRes = titleRes, addTopPadding = false)
+                    infoPopupText?.takeIf { !hideInfoPopup }?.let {
+                        InfoIconButton { showInfoPopup = true }
+                    }
+                }
+                content()
+            }
         }
-        Checkbox(
-            checked = value,
-            enabled = enabled,
-            onCheckedChange = onValueChanged,
-            modifier = Modifier.padding(start = 10.dp)
+
+        if (showInfoPopup && infoPopupText != null) {
+            OkDialog(
+                title = titleRes,
+                text = infoPopupText,
+            ) { showInfoPopup = false }
+        }
+    }
+
+    @Composable
+    fun SettingsCheckbox(
+        @StringRes label: Int,
+        @StringRes description: Int?,
+        value: Boolean,
+        enabled: Boolean = true,
+        onValueChanged: (Boolean) -> Unit,
+    ) {
+        val textColor = if (enabled) normalContentColor() else disabledContentColor()
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onValueChanged(!value) },
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                SettingsLabel(labelRes = label, textColor = textColor)
+                description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
+            }
+            Checkbox(
+                checked = value,
+                enabled = enabled,
+                onCheckedChange = onValueChanged,
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+    }
+
+    @ExperimentalMaterialApi
+    @Composable
+    fun <T> SettingsDropDown(
+        @StringRes label: Int,
+        @StringRes description: Int?,
+        value: T,
+        options: List<DropDownOption<T>>,
+        onValueChanged: (T) -> Unit,
+    ) {
+        val selectedOption = remember(value) { options.find { it.value == value } }
+
+        DropDownComponent(
+            options = options,
+            isScrolling = { parent.isScrolling },
+            onValueChanged = onValueChanged,
+        ) { _, modifier ->
+            Column(
+                modifier = modifier
+                    .heightIn(min = 45.dp)
+                    .padding(top = 10.dp, bottom = 10.dp)
+            ) {
+                Row(horizontalArrangement = Arrangement.SpaceBetween) {
+                    SettingsLabel(labelRes = label)
+                    selectedOption?.let {
+                        Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.height(5.dp))
+                description?.let { SettingsDescription(descriptionRes = it) }
+            }
+        }
+    }
+
+    @Composable
+    private fun SettingsLabel(
+        @StringRes labelRes: Int,
+        modifier: Modifier = Modifier,
+        textColor: Color = normalContentColor(),
+    ) {
+        Text(
+            text = stringResource(id = labelRes),
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.body1,
+            modifier = modifier,
+            color = textColor,
         )
     }
-}
 
-@ExperimentalMaterialApi
-@Composable
-fun <T> SettingsDropDown(
-    @StringRes label: Int,
-    @StringRes description: Int?,
-    value: T,
-    options: List<DropDownOption<T>>,
-    onValueChanged: (T) -> Unit,
-) {
-    val selectedOption = remember(value) { options.find { it.value == value } }
-
-    DropDownComponent(
-        options = options,
-        isScrolling = { parent.isScrolling },
-        onValueChanged = onValueChanged,
-    ) { _, modifier ->
-        Column(
-            modifier = modifier
-                .heightIn(min = 45.dp)
-                .padding(top = 10.dp, bottom = 10.dp)
-        ) {
-            Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                SettingsLabel(labelRes = label)
-                selectedOption?.let {
-                    Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
-                }
-            }
-            Spacer(modifier = Modifier.height(5.dp))
-            description?.let { SettingsDescription(descriptionRes = it) }
-        }
+    @Composable
+    private fun SettingsDescription(
+        @StringRes descriptionRes: Int,
+        modifier: Modifier = Modifier,
+        textColor: Color = normalContentColor(),
+    ) {
+        Text(
+            text = stringResource(id = descriptionRes),
+            fontStyle = FontStyle.Italic,
+            style = MaterialTheme.typography.body2,
+            color = textColor,
+            modifier = modifier,
+        )
     }
-}
-
-@Composable
-private fun SettingsLabel(
-    @StringRes labelRes: Int,
-    modifier: Modifier = Modifier,
-    textColor: Color = normalContentColor(),
-) {
-    Text(
-        text = stringResource(id = labelRes),
-        fontWeight = FontWeight.SemiBold,
-        style = MaterialTheme.typography.body1,
-        modifier = modifier,
-        color = textColor,
-    )
-}
-
-@Composable
-private fun SettingsDescription(
-    @StringRes descriptionRes: Int,
-    modifier: Modifier = Modifier,
-    textColor: Color = normalContentColor(),
-) {
-    Text(
-        text = stringResource(id = descriptionRes),
-        fontStyle = FontStyle.Italic,
-        style = MaterialTheme.typography.body2,
-        color = textColor,
-        modifier = modifier,
-    )
 }

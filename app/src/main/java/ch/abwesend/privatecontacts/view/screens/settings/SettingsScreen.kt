@@ -38,6 +38,11 @@ import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelpe
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategory
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategorySpacer
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
