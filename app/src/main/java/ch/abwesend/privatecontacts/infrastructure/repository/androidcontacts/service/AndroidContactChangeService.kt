@@ -14,7 +14,9 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -77,7 +79,7 @@ class AndroidContactChangeService {
         mutableContact.updateWebsites(changedContact.contactDataSet)
         mutableContact.updateRelationships(changedContact.contactDataSet)
         mutableContact.updateEventDates(changedContact.contactDataSet)
-        // companies cannot be edited because Android only allows one while we allow several => a bit of a mess
+        mutableContact.updateCompany(changedContact.contactDataSet)
     }
 
     // TODO add unit-tests
@@ -120,6 +122,18 @@ class AndroidContactChangeService {
                     ?: logger.debugLocally("Failed to add group '${newGroup.id.name}': not found")
             }
         }
+    }
+
+    /**
+     * Android only has a "Company" / "Organization" field which is (probably)
+     * supposed to mark that the entire contact is a company. It is a bit of a mess...
+     */
+    private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
+        val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
+        val mainCompany = companies.firstOrNull { it.type == ContactDataType.Main }
+            ?: companies.firstOrNull()
+
+        mainCompany?.let { organization = it.value }
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
