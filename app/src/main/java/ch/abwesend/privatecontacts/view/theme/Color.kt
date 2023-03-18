@@ -14,8 +14,8 @@ val primaryVariant = Color(0xFF303F9F)
 val secondary = Color(0xFFFF5252)
 
 object AppColors {
-    val grayText = Color(0xFF525252)
-    val grayBackground = Color(0xFFBBBBBB)
+    val greyText = Color(0xFF525252)
+    val greyBackground = Color(0xFFBBBBBB)
     val selectedItemOnLight = Color(0xFFADD8E6)
     val selectedItemOnDark = Color(0xFF303F9F)
     val goodGreen = Color(0xFF006633)
