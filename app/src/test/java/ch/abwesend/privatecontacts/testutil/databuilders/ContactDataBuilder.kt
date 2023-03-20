@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
@@ -152,6 +153,22 @@ fun someRelationship(
     isMain: Boolean = false,
     modelStatus: ModelStatus = ModelStatus.CHANGED,
 ): Relationship = Relationship(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someCompany(
+    id: ContactDataId = someContactDataId(),
+    value: String = "Sith Inc.",
+    type: ContactDataType = ContactDataType.Main,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): Company = Company(
     id = id,
     value = value,
     type = type,
