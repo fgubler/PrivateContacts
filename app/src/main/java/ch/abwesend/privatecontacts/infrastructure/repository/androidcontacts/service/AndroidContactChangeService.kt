@@ -17,6 +17,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -130,9 +132,10 @@ class AndroidContactChangeService {
      * supposed to mark that the entire contact is a company. It is a bit of a mess...
      */
     private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
+        val hasHigherPriority: (ContactDataType) -> Boolean = { type -> type == Main || type == Business }
         val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
-        val mainCompany = companies.firstOrNull { it.type == ContactDataType.Main && it.modelStatus.isChanged }
-            ?: companies.firstOrNull { it.type == ContactDataType.Main }
+        val mainCompany = companies.firstOrNull { hasHigherPriority(it.type) && it.modelStatus.isChanged }
+            ?: companies.firstOrNull { hasHigherPriority(it.type) }
             ?: companies.firstOrNull { it.modelStatus.isChanged }
 
         mainCompany?.takeIf { it.modelStatus.isChanged }?.let { organization = it.value }

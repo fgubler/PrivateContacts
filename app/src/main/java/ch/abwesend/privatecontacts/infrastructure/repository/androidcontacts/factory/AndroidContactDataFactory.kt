@@ -148,7 +148,7 @@ private fun Contact.getEventDates(): List<EventDate> {
 
 private fun Contact.getCompanies(): List<Company> {
     val contactDataId = ContactDataIdInternal.randomId() // a bit of a hack but kind of unavoidable
-    val type = ContactDataType.Business
+    val type = ContactDataType.Main
     val index = 0 // there is only one company
 
     val company = Company(
