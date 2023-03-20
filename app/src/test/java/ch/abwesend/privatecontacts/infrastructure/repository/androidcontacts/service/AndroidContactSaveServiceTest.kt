@@ -1,10 +1,10 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
@@ -23,9 +23,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.fac
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory

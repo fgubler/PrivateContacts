@@ -4,13 +4,9 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactAccount
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccountOrNull
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toOnlineAccount
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternetAccount
 import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount

@@ -1,17 +1,14 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.getContactData
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactBase
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact

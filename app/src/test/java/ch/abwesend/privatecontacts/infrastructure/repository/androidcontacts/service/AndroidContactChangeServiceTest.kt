@@ -1,10 +1,10 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -15,7 +15,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.ContactDataContainer
