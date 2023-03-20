@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterForChanged
+import ch.abwesend.privatecontacts.domain.model.isChanged
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
@@ -130,10 +131,11 @@ class AndroidContactChangeService {
      */
     private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
         val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
-        val mainCompany = companies.firstOrNull { it.type == ContactDataType.Main }
-            ?: companies.firstOrNull()
+        val mainCompany = companies.firstOrNull { it.type == ContactDataType.Main && it.modelStatus.isChanged }
+            ?: companies.firstOrNull { it.type == ContactDataType.Main }
+            ?: companies.firstOrNull { it.modelStatus.isChanged }
 
-        mainCompany?.let { organization = it.value }
+        mainCompany?.takeIf { it.modelStatus.isChanged }?.let { organization = it.value }
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
