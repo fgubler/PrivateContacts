@@ -149,12 +149,14 @@ fun someAndroidContactGroup(
     title: String = "SomeGroup",
     notes: String = "Just some random group",
     groupId: Long = 123,
+    account: InternetAccount = someInternetAccount(),
 ): ContactGroup {
     val mock = mockk<ContactGroup>()
 
     every { mock.title } returns title
     every { mock.note } returns notes
     every { mock.groupId } returns groupId
+    every { mock.account } returns account
 
     return mock
 }

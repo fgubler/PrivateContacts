@@ -20,6 +20,7 @@ class AndroidContactAccountService {
     /**
      * for an existing account, we don't know for certain which account it belongs to
      * => try guessing
+     * TODO try guessing by the number of contacts (resolved by their groups)
      * TODO find a way which involves less guessing and more knowing
      * TODO test manually once groups can be edited
      */
