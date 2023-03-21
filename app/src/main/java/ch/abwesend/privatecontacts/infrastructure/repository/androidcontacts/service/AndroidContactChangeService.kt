@@ -14,7 +14,11 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -24,6 +28,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterForChanged
+import ch.abwesend.privatecontacts.domain.model.isChanged
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
@@ -77,7 +82,7 @@ class AndroidContactChangeService {
         mutableContact.updateWebsites(changedContact.contactDataSet)
         mutableContact.updateRelationships(changedContact.contactDataSet)
         mutableContact.updateEventDates(changedContact.contactDataSet)
-        // companies cannot be edited because Android only allows one while we allow several => a bit of a mess
+        mutableContact.updateCompany(changedContact.contactDataSet)
     }
 
     // TODO add unit-tests
@@ -120,6 +125,20 @@ class AndroidContactChangeService {
                     ?: logger.debugLocally("Failed to add group '${newGroup.id.name}': not found")
             }
         }
+    }
+
+    /**
+     * Android only has a "Company" / "Organization" field which is (probably)
+     * supposed to mark that the entire contact is a company. It is a bit of a mess...
+     */
+    private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
+        val hasHigherPriority: (ContactDataType) -> Boolean = { type -> type == Main || type == Business }
+        val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
+        val mainCompany = companies.firstOrNull { hasHigherPriority(it.type) && it.modelStatus.isChanged }
+            ?: companies.firstOrNull { hasHigherPriority(it.type) }
+            ?: companies.firstOrNull { it.modelStatus.isChanged }
+
+        mainCompany?.takeIf { it.modelStatus.isChanged }?.let { organization = it.value }
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =

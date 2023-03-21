@@ -9,6 +9,7 @@ import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
 import com.alexstyl.contactstore.ImageData
+import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.MailAddress
@@ -148,15 +149,20 @@ fun someAndroidContactGroup(
     title: String = "SomeGroup",
     notes: String = "Just some random group",
     groupId: Long = 123,
+    account: InternetAccount = someInternetAccount(),
 ): ContactGroup {
     val mock = mockk<ContactGroup>()
 
     every { mock.title } returns title
     every { mock.note } returns notes
     every { mock.groupId } returns groupId
+    every { mock.account } returns account
 
     return mock
 }
+
+fun someInternetAccount(name: String = "alpha@beta.ch", type: String = "google.com"): InternetAccount =
+    InternetAccount(name, type)
 
 data class ContactDataContainer(
     val phoneNumbers: List<String>,

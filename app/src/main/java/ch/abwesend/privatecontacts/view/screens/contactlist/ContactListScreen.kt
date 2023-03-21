@@ -42,6 +42,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -51,8 +52,8 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactsUnk
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
-import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
+import ch.abwesend.privatecontacts.view.model.screencontext.IContactListScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
@@ -60,19 +61,23 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_C
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @FlowPreview
+@ExperimentalContracts
 object ContactListScreen {
     private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
 
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: IContactListScreenContext) {
         val scaffoldState = rememberScaffoldState()
+        val viewModel = screenContext.contactListViewModel
+        val settings = screenContext.settings
 
-        LaunchedEffect(Unit) { initializeScreen(screenContext) }
+        LaunchedEffect(Unit) { initializeScreen(viewModel, settings) }
 
         BaseScreen(
             screenContext = screenContext,
@@ -81,7 +86,7 @@ object ContactListScreen {
             scaffoldState = scaffoldState,
             topBar = {
                 ContactListTopBar(
-                    viewModel = screenContext.contactListViewModel,
+                    viewModel = viewModel,
                     scaffoldState = scaffoldState,
                 )
             },
@@ -91,36 +96,35 @@ object ContactListScreen {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(padding)
             ) {
-                if (screenContext.settings.invertTopAndBottomBars) {
+                if (settings.invertTopAndBottomBars) {
                     Surface(modifier = Modifier.weight(1.0f)) { // let the tabs get their space first
                         ContactListContent(screenContext)
                     }
-                    TabBox(screenContext)
+                    TabBox(viewModel, settings)
                 } else {
-                    TabBox(screenContext)
+                    TabBox(viewModel, settings)
                     ContactListContent(screenContext)
                 }
             }
         }
     }
 
-    private fun initializeScreen(screenContext: ScreenContext) {
-        screenContext.contactListViewModel.reloadContacts()
+    private fun initializeScreen(viewModel: ContactListViewModel, settings: ISettingsState) {
+        viewModel.reloadContacts()
 
-        when (screenContext.contactListViewModel.selectedTab.value) {
+        when (viewModel.selectedTab.value) {
             SECRET_CONTACTS -> { /* nothing to do */ }
-            ALL_CONTACTS -> if (!screenContext.settings.showAndroidContacts) {
-                screenContext.contactListViewModel.selectTab(ContactListTab.default)
+            ALL_CONTACTS -> if (!settings.showAndroidContacts) {
+                viewModel.selectTab(ContactListTab.default)
             }
         }
     }
 
     @Composable
-    private fun TabBox(screenContext: ScreenContext) {
-        val androidContactsEnabled = screenContext.settings.showAndroidContacts
+    private fun TabBox(viewModel: ContactListViewModel, settings: ISettingsState) {
+        val androidContactsEnabled = settings.showAndroidContacts
 
         if (androidContactsEnabled) {
-            val viewModel = remember { screenContext.contactListViewModel }
             val selectedTab = viewModel.selectedTab.value
 
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
@@ -159,7 +163,7 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun AddContactButton(screenContext: ScreenContext) {
+    private fun AddContactButton(screenContext: IContactListScreenContext) {
         val verticalOffset = if (screenContext.settings.invertTopAndBottomBars) -45 else 0 // space for tab-headers
         FloatingActionButton(
             modifier = Modifier.offset(y = verticalOffset.dp),
@@ -174,7 +178,7 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun ContactListContent(screenContext: ScreenContext) {
+    private fun ContactListContent(screenContext: IContactListScreenContext) {
         val viewModel = screenContext.contactListViewModel
         val contactsResource = viewModel.contacts.collectAsState(initial = InactiveResource()).value
 
@@ -266,22 +270,20 @@ object ContactListScreen {
         )
     }
 
-    private fun selectContact(screenContext: ScreenContext, contact: IContactBase, bulkMode: Boolean) {
+    private fun selectContact(screenContext: IContactListScreenContext, contact: IContactBase, bulkMode: Boolean) {
         if (bulkMode) {
             screenContext.contactListViewModel.toggleContactSelected(contact)
         } else {
-            screenContext.contactDetailViewModel.selectContact(contact)
-            screenContext.router.navigateToScreen(Screen.ContactDetail)
+            screenContext.navigateToContactDetailScreen(contact)
         }
     }
 
-    private fun longClickContact(screenContext: ScreenContext, contact: IContactBase) {
+    private fun longClickContact(screenContext: IContactListScreenContext, contact: IContactBase) {
         screenContext.contactListViewModel.setBulkMode(enabled = true)
         selectContact(screenContext, contact, bulkMode = true)
     }
 
-    private fun createContact(screenContext: ScreenContext) {
-        screenContext.contactEditViewModel.createContact()
-        screenContext.router.navigateToScreen(Screen.ContactEdit)
+    private fun createContact(screenContext: IContactListScreenContext) {
+        screenContext.navigateToContactCreateScreen()
     }
 }

@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.testutil.databuilders
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
@@ -160,15 +161,37 @@ fun someRelationship(
     sortOrder = sortOrder,
 )
 
-fun someListOfContactData(modelStatus: ModelStatus = ModelStatus.NEW): List<ContactData> =
+fun someCompany(
+    id: ContactDataId = someContactDataId(),
+    value: String = "Sith Inc.",
+    type: ContactDataType = ContactDataType.Main,
+    sortOrder: Int = 0,
+    isMain: Boolean = false,
+    modelStatus: ModelStatus = ModelStatus.CHANGED,
+): Company = Company(
+    id = id,
+    value = value,
+    type = type,
+    isMain = isMain,
+    modelStatus = modelStatus,
+    sortOrder = sortOrder,
+)
+
+fun someListOfContactData(
+    modelStatus: ModelStatus = ModelStatus.NEW,
+    internalIds: Boolean = true,
+): List<ContactData> =
     listOf(
-        somePhoneNumber(modelStatus = modelStatus),
-        someEmailAddress(modelStatus = modelStatus),
-        somePhysicalAddress(modelStatus = modelStatus),
-        someEventDate(modelStatus = modelStatus),
-        someRelationship(modelStatus = modelStatus),
+        somePhoneNumber(modelStatus = modelStatus, id = someContactDataId(internalIds)),
+        someEmailAddress(modelStatus = modelStatus, id = someContactDataId(internalIds)),
+        somePhysicalAddress(modelStatus = modelStatus, id = someContactDataId(internalIds)),
+        someEventDate(modelStatus = modelStatus, id = someContactDataId(internalIds)),
+        someRelationship(modelStatus = modelStatus, id = someContactDataId(internalIds)),
         // no websites: they don't work in unit-tests
     )
+
+private fun someContactDataId(internalId: Boolean): ContactDataId =
+    if (internalId) someContactDataId() else someContactDataIdExternal()
 
 fun someListOfExternalContactData(modelStatus: ModelStatus = ModelStatus.NEW): List<ContactData> =
     listOf(

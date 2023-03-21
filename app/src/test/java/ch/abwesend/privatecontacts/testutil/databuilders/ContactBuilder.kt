@@ -228,3 +228,8 @@ fun <T : ContactId> someContactEditableGeneric(
     isNew = isNew,
     saveInAccount = saveInAccount,
 )
+
+fun someOnlineAccount(
+    username: String = "yoda@jedi.com",
+    provider: String = "jedi.com",
+): ContactAccount.OnlineAccount = ContactAccount.OnlineAccount(username = username, accountProvider = provider)

@@ -19,15 +19,18 @@ import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.components.buttons.MenuBackButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
+import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
 import kotlinx.coroutines.CoroutineScope
+import kotlin.contracts.ExperimentalContracts
 
 private val hidden: @Composable () -> Unit = {}
 
+@ExperimentalContracts
 @Composable
 fun BaseScreen(
-    screenContext: ScreenContext,
+    screenContext: IScreenContextBase,
     selectedScreen: Screen,
     /** if false, only back-navigation is allowed */
     allowFullNavigation: Boolean = false,
@@ -39,10 +42,10 @@ fun BaseScreen(
         BaseTopBar(
             screenContext = screenContext,
             selectedScreen = selectedScreen,
-            allowFullNavigation = allowFullNavigation,
-            actions = topBarActions,
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
+            allowFullNavigation = allowFullNavigation && isGenericNavigationAllowed(screenContext),
+            actions = topBarActions,
         )
     },
     floatingActionButton: @Composable () -> Unit = {},
@@ -52,20 +55,28 @@ fun BaseScreen(
         scaffoldState = scaffoldState,
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
-        drawerContent = { SideDrawerContent(selectedScreen, scaffoldState, screenContext.router::navigateToScreen) },
         floatingActionButton = floatingActionButton,
+        drawerContent = {
+            if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {
+                SideDrawerContent(
+                    selectedScreen = selectedScreen,
+                    scaffoldState = scaffoldState,
+                    navigate = screenContext::navigateToSelfInitializingScreen,
+                )
+            }
+        },
         content = { padding -> content(padding) },
     )
 }
 
 @Composable
 private fun BaseTopBar(
-    screenContext: ScreenContext,
+    screenContext: IScreenContextBase,
     selectedScreen: Screen,
-    allowFullNavigation: Boolean,
-    actions: @Composable RowScope.() -> Unit = {},
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
+    allowFullNavigation: Boolean,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = selectedScreen.titleRes)) },
@@ -73,7 +84,7 @@ private fun BaseTopBar(
             if (allowFullNavigation) {
                 MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope)
             } else {
-                MenuBackButton(router = screenContext.router)
+                MenuBackButton(onBackButtonClicked = screenContext::navigateUp)
             }
         },
         actions = actions,

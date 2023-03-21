@@ -56,12 +56,14 @@ import ch.abwesend.privatecontacts.view.util.contactDataForDisplay
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.util.getTitle
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
+@ExperimentalContracts
 object ContactDataEditCommonComponents {
-    private val parent = ContactEditScreen
+    private val parent = ContactEditScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
     inline fun <reified T : StringBasedContactDataGeneric<T>> ContactDataCategory(

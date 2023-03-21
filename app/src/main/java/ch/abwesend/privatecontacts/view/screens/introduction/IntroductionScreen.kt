@@ -9,13 +9,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.routing.Screen.Introduction
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import kotlin.contracts.ExperimentalContracts
 
+@ExperimentalContracts
 object IntroductionScreen {
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: IScreenContextBase) {
         BaseScreen(screenContext = screenContext, selectedScreen = Introduction) { padding ->
             Column(modifier = Modifier.padding(padding).padding(10.dp)) {
                 SectionTitle(titleRes = R.string.screen_introduction, addTopPadding = false)

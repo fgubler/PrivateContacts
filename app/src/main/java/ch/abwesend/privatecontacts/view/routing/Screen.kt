@@ -15,16 +15,22 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import ch.abwesend.privatecontacts.R
 
+/**
+ * [selfInitializing] if false, the screen needs data to be passed from the previous screen.
+ * [showInSideDrawer] should only be true if [selfInitializing] is true.
+ */
 enum class Screen(
     val titleRes: Int,
     val icon: ImageVector,
     val key: String,
-    val showInSideDrawer: Boolean,
+    val selfInitializing: Boolean,
+    private val showInSideDrawer: Boolean,
 ) {
     ContactList(
         titleRes = R.string.screen_contact_list,
         icon = Icons.Default.Contacts,
         key = "ContactListScreen",
+        selfInitializing = true,
         showInSideDrawer = true,
     ),
 
@@ -32,6 +38,7 @@ enum class Screen(
         titleRes = R.string.screen_settings,
         icon = Icons.Default.Settings,
         key = "SettingsScreen",
+        selfInitializing = true,
         showInSideDrawer = true,
     ),
 
@@ -39,6 +46,7 @@ enum class Screen(
         titleRes = R.string.screen_introduction,
         icon = Icons.Default.Lightbulb,
         key = "Introduction",
+        selfInitializing = true,
         showInSideDrawer = true,
     ),
 
@@ -46,6 +54,7 @@ enum class Screen(
         titleRes = R.string.screen_about_the_app,
         icon = Icons.Default.Info,
         key = "AboutTheAppScreen",
+        selfInitializing = true,
         showInSideDrawer = true,
     ),
 
@@ -53,6 +62,7 @@ enum class Screen(
         titleRes = R.string.screen_contact_details,
         icon = Icons.Default.ContactPage,
         key = "ContactDetailScreen",
+        selfInitializing = false,
         showInSideDrawer = false,
     ),
 
@@ -60,11 +70,12 @@ enum class Screen(
         titleRes = R.string.screen_contact_edit,
         icon = Icons.Default.ContactPage,
         key = "ContactEditScreen",
+        selfInitializing = false,
         showInSideDrawer = false,
     );
 
     companion object {
         val sideDrawerScreens: List<Screen> =
-            values().filter { it.showInSideDrawer }
+            values().filter { it.showInSideDrawer && it.selfInitializing }
     }
 }

@@ -58,7 +58,6 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
-import ch.abwesend.privatecontacts.view.model.ScreenContext
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Companies
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
@@ -70,23 +69,26 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEd
 import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
+import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
 
+@ExperimentalContracts
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 object ContactEditScreenContent {
-    private val parent = ContactEditScreen
+    private val parent = ContactEditScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
     fun ContactEditContent(
-        screenContext: ScreenContext,
+        viewModel: ContactEditViewModel,
         contact: IContactEditable,
         showAllFields: Boolean,
         modifier: Modifier = Modifier,
     ) {
         val onChanged = { newContact: IContactEditable ->
-            screenContext.contactEditViewModel.changeContact(newContact)
+            viewModel.changeContact(newContact)
         }
 
         var contactDataWaitingForCustomType: ContactData? by remember { mutableStateOf(null) }
@@ -114,7 +116,7 @@ object ContactEditScreenContent {
 
         val scrollState = rememberScrollState()
         parent.isScrolling = scrollState.isScrollInProgress
-        val hasWritePermission = remember { screenContext.contactEditViewModel.hasContactWritePermission }
+        val hasWritePermission = remember { viewModel.hasContactWritePermission }
 
         Column(
             modifier = modifier.verticalScroll(scrollState)

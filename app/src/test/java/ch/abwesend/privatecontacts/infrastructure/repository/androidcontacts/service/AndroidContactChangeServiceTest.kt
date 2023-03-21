@@ -1,13 +1,14 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -15,11 +16,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.ContactDataContainer
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
+import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataIdExternal
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
@@ -202,6 +203,104 @@ class AndroidContactChangeServiceTest : TestBase() {
                 event.value.let { LocalDate.of(it.year!!, it.month, it.dayOfMonth) }
             }
         ).isNotEmpty.isEqualTo(newData.eventDates)
+    }
+
+    @Test
+    fun `should translate main-company to the organization-field`() {
+        val newMainCompanyName = "Main Inc."
+        val newCompanies = listOf(
+            someCompany(value = "Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
+            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
+            someCompany(value = "Other Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.NEW),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(newMainCompanyName)
+    }
+
+    @Test
+    fun `should not change if main-company is unchanged - even if there is a changed non-main`() {
+        val oldCompanyName = "Old Inc."
+        val newMainCompanyName = "Main Inc."
+        val newCompanies = listOf(
+            someCompany(value = "Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
+            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.UNCHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = oldCompanyName)
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(oldCompanyName)
+    }
+
+    @Test
+    fun `should treat types main and business the same way`() {
+        val businessName = "Business Inc."
+        val newCompanies = listOf(
+            someCompany(value = businessName, type = ContactDataType.Business, modelStatus = ModelStatus.CHANGED),
+            someCompany(value = "Main Inc.", type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(businessName) // because it is first in the list
+    }
+
+    @Test
+    fun `should prefer changed main-company over unchanged`() {
+        val newMainCompanyName = "Main Inc."
+        val newCompanies = listOf(
+            someCompany(value = "Other Main Inc.", type = ContactDataType.Main, modelStatus = ModelStatus.UNCHANGED),
+            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(newMainCompanyName)
+    }
+
+    @Test
+    fun `should use first changed non-main company if no main is present`() {
+        val expectedCompanyName = "Changed Other"
+        val newCompanies = listOf(
+            someCompany(value = "Unchanged Other", type = ContactDataType.Other, modelStatus = ModelStatus.UNCHANGED),
+            someCompany(value = expectedCompanyName, type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(expectedCompanyName)
+    }
+
+    @Test
+    fun `should not change anything if no changes were made`() {
+        val oldCompanyName = "Old Inc."
+        val newCompanies = listOf(
+            someCompany(value = "Unchanged 1", modelStatus = ModelStatus.UNCHANGED),
+            someCompany(value = "Unchanged 2", modelStatus = ModelStatus.UNCHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(organisation = oldCompanyName)
+        val changedContact = someContactEditable(contactData = newCompanies)
+        mockUriParse()
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.organization).isEqualTo(oldCompanyName)
     }
 
     @Test

@@ -32,18 +32,20 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.components.BulletPointListItem
 import ch.abwesend.privatecontacts.view.components.LinkText
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.openLink
 import ch.abwesend.privatecontacts.view.util.sendEmailMessage
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
+@ExperimentalContracts
 object AboutScreen {
     @Composable
-    fun Screen(screenContext: ScreenContext) {
+    fun Screen(screenContext: IScreenContextBase) {
         val context = LocalContext.current
         BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) { padding ->
             Column(modifier = Modifier.padding(padding).padding(10.dp)) {

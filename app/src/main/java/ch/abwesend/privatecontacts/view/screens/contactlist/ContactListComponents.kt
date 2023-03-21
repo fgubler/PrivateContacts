@@ -36,6 +36,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.view.components.FullScreenError
+import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.theme.selectedElement
 import ch.abwesend.privatecontacts.view.util.color
 
@@ -77,23 +78,44 @@ private fun ListOfContacts(
     onContactClicked: (IContactBase) -> Unit,
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
+    val contactsWithSubtitle = contacts.withFirstLetterSubtitles()
+
     LazyColumn(
         state = scrollingState,
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp)
     ) {
-        items(contacts) { contact ->
-            val selected = selectedContacts.contains(contact.id)
-            Contact(
-                contact = contact,
-                selected = selected,
-                showTypeIcon = showTypeIcons,
-                onClicked = onContactClicked,
-                onLongClicked = onContactLongClicked,
-            )
-        }
+        items(
+            items = contactsWithSubtitle,
+            contentType = { (subtitle, _) -> if (subtitle.isNullOrEmpty()) "Contact" else "Contact with Subtitle" },
+            itemContent = { (subtitle, contact) ->
+                val selected = selectedContacts.contains(contact.id)
+                subtitle?.let { Subtitle(text = it) }
+                Contact(
+                    contact = contact,
+                    selected = selected,
+                    showTypeIcon = showTypeIcons,
+                    onClicked = onContactClicked,
+                    onLongClicked = onContactLongClicked,
+                )
+            }
+        )
     }
+}
+
+private fun List<IContactBase>.withFirstLetterSubtitles(): List<Pair<String?, IContactBase>> =
+    mapIndexed { index, contact ->
+        val previousContact = if (index > 0) get(index - 1) else null
+        val firstLetter = contact.displayName.firstOrNull()
+        val hasSameFirstLetter = firstLetter == previousContact?.displayName?.firstOrNull()
+        val subtitle = if (hasSameFirstLetter) null else firstLetter?.uppercase()
+        subtitle to contact
+    }
+
+@Composable
+private fun Subtitle(text: String) {
+    Text(text = text, color = AppColors.greyText)
 }
 
 /** Beware: Need to draw the row even for null, otherwise, loading new pages does not work properly */

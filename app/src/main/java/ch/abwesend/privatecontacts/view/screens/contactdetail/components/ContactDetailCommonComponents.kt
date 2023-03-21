@@ -113,7 +113,7 @@ object ContactDetailCommonComponents {
                 imageVector = icon,
                 contentDescription = stringResource(id = title),
                 modifier = primaryIconModifier.padding(end = iconHorizontalPadding),
-                tint = AppColors.grayText
+                tint = AppColors.greyText
             )
             Column(modifier = Modifier.weight(1.0f)) {
                 Text(text = stringResource(id = title))

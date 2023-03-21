@@ -13,7 +13,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import ch.abwesend.privatecontacts.view.model.ScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactDetail
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
@@ -27,11 +27,13 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
 import ch.abwesend.privatecontacts.view.screens.introduction.IntroductionScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsScreen
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @FlowPreview
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
+@ExperimentalContracts
 @Composable
 fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {
     NavHost(navController = navController, startDestination = ContactList.key) {

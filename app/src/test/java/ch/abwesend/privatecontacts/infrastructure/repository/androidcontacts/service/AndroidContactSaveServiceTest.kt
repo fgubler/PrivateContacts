@@ -1,10 +1,10 @@
 /*
  * Private Contacts
- * Copyright (c) 2022.
+ * Copyright (c) 2023.
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
@@ -19,19 +19,21 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingS
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
+import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
+import com.alexstyl.contactstore.InternetAccount
+import com.alexstyl.contactstore.MutableContactGroup
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
@@ -212,7 +214,16 @@ class AndroidContactSaveServiceTest : TestBase() {
 
     @Test
     fun `should create contact successfully`() {
-        val newContact = someContactEditable(contactData = someListOfContactData(ModelStatus.NEW))
+        val account = someOnlineAccount()
+        val newContact = someContactEditable(
+            saveInAccount = account,
+            contactData = someListOfContactData(ModelStatus.NEW),
+            contactGroups = listOf(
+                someContactGroup(name = "group1"),
+                someContactGroup(name = "group2"),
+            ),
+        )
+        val expectedInternetAccount = account.toInternetAccount()
         coJustRun { saveRepository.createContact(any(), any()) }
         coEvery { loadService.getContactGroups(any()) } returns emptyList()
         coJustRun { saveRepository.createContactGroups(any()) }
@@ -220,10 +231,14 @@ class AndroidContactSaveServiceTest : TestBase() {
         val result = runBlocking { underTest.createContact(newContact) }
 
         val contactSlot = slot<IAndroidContactMutable>()
-        coVerify { saveRepository.createContact(capture(contactSlot), any()) }
+        val accountSlot = slot<InternetAccount>()
+        coVerify { saveRepository.createContact(capture(contactSlot), capture(accountSlot)) }
         assertThat(result).isEqualTo(ContactSaveResult.Success)
         assertThat(contactSlot.isCaptured).isTrue
+        assertThat(accountSlot.isCaptured).isTrue
         val capturedContact = contactSlot.captured
+        val capturedAccount = accountSlot.captured
+        assertThat(capturedAccount).isEqualTo(expectedInternetAccount)
         assertThat(capturedContact.contactId).isEqualTo(-1)
         assertThat(capturedContact.firstName).isEqualTo(newContact.firstName)
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
@@ -248,6 +263,60 @@ class AndroidContactSaveServiceTest : TestBase() {
         runBlocking { underTest.createContact(newContact) }
 
         coVerify { saveRepository.createContact(any(), saveInAccount = null) }
+    }
+
+    @Test
+    fun `should create contact-groups in the correct account`() {
+        val contactGroups = listOf(
+            someContactGroup(name = "group1", modelStatus = ModelStatus.NEW),
+            someContactGroup(name = "group2", modelStatus = ModelStatus.NEW),
+        )
+        val account = someOnlineAccount()
+        val expectedInternetAccount = account.toInternetAccount()
+        coEvery { loadService.getContactGroups(any()) } returns emptyList()
+        coJustRun { saveRepository.createContactGroups(any()) }
+
+        val result = runBlocking { underTest.createMissingContactGroups(account, contactGroups) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        val passedGroupsSlot = slot<List<MutableContactGroup>>()
+        coVerify { saveRepository.createContactGroups(capture(passedGroupsSlot)) }
+        assertThat(passedGroupsSlot.isCaptured).isTrue
+        val passedGroups = passedGroupsSlot.captured
+        assertThat(passedGroups).hasSize(2)
+        assertThat(passedGroups[0].title).isEqualTo(contactGroups[0].id.name)
+        assertThat(passedGroups[0].account).isEqualTo(expectedInternetAccount)
+        assertThat(passedGroups[1].title).isEqualTo(contactGroups[1].id.name)
+        assertThat(passedGroups[1].account).isEqualTo(expectedInternetAccount)
+    }
+
+    @Test
+    fun `should only create missing contact-groups (matching by name and groupNo)`() {
+        val newContactGroups = listOf(
+            someContactGroup(groupNo = 111, name = "group1", modelStatus = ModelStatus.NEW), // missing
+            someContactGroup(groupNo = 222, name = "group2", modelStatus = ModelStatus.NEW), // missing
+            someContactGroup(groupNo = 333, name = "group3", modelStatus = ModelStatus.NEW), // matching by groupNo
+            someContactGroup(groupNo = 444, name = "group4", modelStatus = ModelStatus.NEW), // matching by name
+        )
+        val existingContactGroups = listOf(
+            someContactGroup(groupNo = 333, name = "group3X"),
+            someContactGroup(groupNo = 999, name = "group4"),
+
+        )
+        val account = someOnlineAccount()
+        coEvery { loadService.getContactGroups(any()) } returns existingContactGroups
+        coJustRun { saveRepository.createContactGroups(any()) }
+
+        val result = runBlocking { underTest.createMissingContactGroups(account, newContactGroups) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        val passedGroupsSlot = slot<List<MutableContactGroup>>()
+        coVerify { saveRepository.createContactGroups(capture(passedGroupsSlot)) }
+        assertThat(passedGroupsSlot.isCaptured).isTrue
+        val passedGroups = passedGroupsSlot.captured
+        assertThat(passedGroups).hasSize(2)
+        assertThat(passedGroups[0].title).isEqualTo(newContactGroups[0].id.name)
+        assertThat(passedGroups[1].title).isEqualTo(newContactGroups[1].id.name)
     }
 
     private fun assertContactDataEquals(contact1: IContact, contact2: IContact) {
