@@ -12,7 +12,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactBase
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.map
  * Beware: Every public method must check for the permission
  */
 class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
+    private val contactFactory: AndroidContactFactory by injectAnywhere()
 
     suspend fun resolveContactRaw(contactId: IContactIdExternal): Contact {
         logger.debug("Resolving contact for id $contactId")
@@ -60,7 +62,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
             .flowOn(dispatchers.io)
             .firstOrNull()
             .orEmpty()
-            .mapNotNull { it.toContactBase(rethrowExceptions = false) }
+            .mapNotNull { contactFactory.toContactBase(contact = it, rethrowExceptions = false) }
     }
 
     suspend fun createContactsBaseFlow(
@@ -82,7 +84,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
 
         val contacts = androidContacts.map { contacts ->
             logger.debug("Loaded ${contacts.size} android contacts with predicate $predicate")
-            contacts.mapNotNull { it.toContactBase(rethrowExceptions = false) }
+            contacts.mapNotNull { contactFactory.toContactBase(contact = it, rethrowExceptions = false) }
                 .filter { validationService.validateContactBase(it).valid }
         }.flowOn(dispatchers.io)
 

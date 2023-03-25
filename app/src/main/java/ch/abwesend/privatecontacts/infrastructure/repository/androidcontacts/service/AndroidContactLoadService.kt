@@ -18,10 +18,8 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
-import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
@@ -37,8 +35,7 @@ import kotlin.system.measureTimeMillis
  */
 class AndroidContactLoadService : IAndroidContactLoadService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
-    private val addressFormattingService: IAddressFormattingService by injectAnywhere()
-    private val telephoneService: TelephoneService by injectAnywhere()
+    private val contactFactory: AndroidContactFactory by injectAnywhere()
 
     override fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {
@@ -54,10 +51,9 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     suspend fun resolveContact(contactId: IContactIdExternal, contactRaw: Contact): IContact {
         val contactGroups = contactLoadRepository.loadContactGroups(contactRaw)
 
-        return contactRaw.toContact(
+        return contactFactory.toContact(
+            contact = contactRaw,
             groups = contactGroups,
-            telephoneService = telephoneService,
-            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         ) ?: throw IllegalStateException("Could not convert contact $contactId to local data-model")
     }

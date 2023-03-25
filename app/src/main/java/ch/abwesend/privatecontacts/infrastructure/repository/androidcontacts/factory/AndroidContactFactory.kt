@@ -8,46 +8,49 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 
-fun Contact.toContactBase(rethrowExceptions: Boolean): IContactBase? =
-    try {
-        ContactBase(
-            id = ContactIdAndroid(contactNo = contactId),
-            type = ContactType.PUBLIC,
-            displayName = displayName,
-        )
-    } catch (t: Throwable) {
-        logger.warning("Failed to map android contact with id = $contactId", t)
-        if (rethrowExceptions) throw t
-        else null
-    }
+class AndroidContactFactory {
+    private val contactDataFactory: AndroidContactDataFactory by injectAnywhere()
 
-fun Contact.toContact(
-    groups: List<ContactGroup>,
-    telephoneService: TelephoneService,
-    addressFormattingService: IAddressFormattingService,
-    rethrowExceptions: Boolean
-): IContact? =
-    try {
-        val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
-        ContactEditable(
-            id = ContactIdAndroid(contactNo = contactId),
-            type = ContactType.PUBLIC,
-            firstName = "$firstName$middleNamePart",
-            lastName = lastName,
-            nickname = nickname,
-            notes = note?.raw.orEmpty(),
-            image = getImage(),
-            contactDataSet = getContactData(telephoneService, addressFormattingService).toMutableList(),
-            contactGroups = groups.toContactGroups().toMutableList(),
-            saveInAccount = ContactAccount.None,
-        )
-    } catch (t: Throwable) {
-        logger.warning("Failed to map android contact with id = $contactId", t)
-        if (rethrowExceptions) throw t
-        else null
+    fun toContactBase(contact: Contact, rethrowExceptions: Boolean): IContactBase? =
+        try {
+            ContactBase(
+                id = ContactIdAndroid(contactNo = contact.contactId),
+                type = ContactType.PUBLIC,
+                displayName = contact.displayName,
+            )
+        } catch (t: Throwable) {
+            logger.warning("Failed to map android contact with id = ${contact.contactId}", t)
+            if (rethrowExceptions) throw t
+            else null
+        }
+
+    fun toContact(
+        contact: Contact,
+        groups: List<ContactGroup>,
+        rethrowExceptions: Boolean
+    ): IContact? = with(contact) {
+        try {
+            val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
+            ContactEditable(
+                id = ContactIdAndroid(contactNo = contactId),
+                type = ContactType.PUBLIC,
+                firstName = "$firstName$middleNamePart",
+                lastName = lastName,
+                nickname = nickname,
+                notes = note?.raw.orEmpty(),
+                image = getImage(),
+                contactDataSet = contactDataFactory.getContactData(contact).toMutableList(),
+                contactGroups = groups.toContactGroups().toMutableList(),
+                saveInAccount = ContactAccount.None,
+            )
+        } catch (t: Throwable) {
+            logger.warning("Failed to map android contact with id = $contactId", t)
+            if (rethrowExceptions) throw t
+            else null
+        }
     }
+}

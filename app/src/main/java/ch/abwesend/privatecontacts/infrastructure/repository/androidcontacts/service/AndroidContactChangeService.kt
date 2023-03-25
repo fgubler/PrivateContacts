@@ -16,9 +16,8 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -28,11 +27,12 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterForChanged
-import ch.abwesend.privatecontacts.domain.model.isChanged
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
+import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.EventDate as ContactStoreEventDate
@@ -43,6 +43,8 @@ import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
+    private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
+
     fun updateChangedBaseData(
         originalContact: IContact?,
         changedContact: IContact,
@@ -82,7 +84,7 @@ class AndroidContactChangeService {
         mutableContact.updateWebsites(changedContact.contactDataSet)
         mutableContact.updateRelationships(changedContact.contactDataSet)
         mutableContact.updateEventDates(changedContact.contactDataSet)
-        mutableContact.updateCompany(changedContact.contactDataSet)
+        mutableContact.updateCompanies(changedContact.contactDataSet)
     }
 
     // TODO add unit-tests
@@ -130,15 +132,21 @@ class AndroidContactChangeService {
     /**
      * Android only has a "Company" / "Organization" field which is (probably)
      * supposed to mark that the entire contact is a company. It is a bit of a mess...
+     * => therefore we use a pseudo-relationship to store it.
      */
-    private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
-        val hasHigherPriority: (ContactDataType) -> Boolean = { type -> type == Main || type == Business }
-        val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
-        val mainCompany = companies.firstOrNull { hasHigherPriority(it.type) && it.modelStatus.isChanged }
-            ?: companies.firstOrNull { hasHigherPriority(it.type) }
-            ?: companies.firstOrNull { it.modelStatus.isChanged }
+    private fun IAndroidContactMutable.updateCompanies(contactData: List<ContactData>) {
+        val companies = contactData.filterIsInstance<Company>()
+        logger.debug("Updating ${companies.size} companies as pseudo-relationships on contact $contactId")
 
-        mainCompany?.takeIf { it.modelStatus.isChanged }?.let { organization = it.value }
+        updateContactDataOfType(
+            newContactData = companies,
+            mutableDataOnContact = relations,
+            labelMapper = { contactDataType, _, _ ->
+                val label = companyMappingService.mapToPseudoRelationshipLabel(contactDataType)
+                Label.Custom(label = label)
+            },
+            valueMapper = { newAddress -> ContactStoreRelation(name = newAddress.value) },
+        )
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
@@ -221,7 +229,8 @@ class AndroidContactChangeService {
     private fun <TInternal : ContactData, TExternal : Any> updateContactDataOfType(
         newContactData: List<TInternal>,
         mutableDataOnContact: MutableList<LabeledValue<TExternal>>,
-        mapper: (TInternal) -> TExternal?,
+        labelMapper: LabelMapper? = null,
+        valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataCategory = newContactData.firstOrNull()?.javaClass?.simpleName ?: "[Unknown]"
         if (newContactData.none { it.modelStatus != ModelStatus.UNCHANGED }) {
@@ -238,7 +247,7 @@ class AndroidContactChangeService {
         contactDataToDelete.forEach { dataSet -> mutableDataOnContact.deleteContactData(dataSet, oldContactDataByNo) }
 
         contactDataToChange.forEach { newDataSet ->
-            mutableDataOnContact.upsertContactData(newDataSet, oldContactDataByNo, mapper)
+            mutableDataOnContact.upsertContactData(newDataSet, oldContactDataByNo, labelMapper, valueMapper)
         }
     }
 
@@ -254,13 +263,15 @@ class AndroidContactChangeService {
     private fun <TInternal : ContactData, TExternal : Any> MutableList<LabeledValue<TExternal>>.upsertContactData(
         contactData: TInternal,
         oldContactDataByNo: Map<Long?, LabeledValue<TExternal>>,
-        mapper: (TInternal) -> TExternal?,
+        labelMapper: LabelMapper? = null,
+        valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataId = contactData.idExternal
         val correspondingOldData = oldContactDataByNo[contactDataId?.contactDataNo]
-        val newLabel = contactData.type.toLabel(contactData.category, correspondingOldData?.label)
+        val newLabel = labelMapper?.invoke(contactData.type, contactData.category, correspondingOldData?.label)
+            ?: contactData.type.toLabel(contactData.category, correspondingOldData?.label)
 
-        val mappedValue = mapper(contactData)
+        val mappedValue = valueMapper(contactData)
 
         mappedValue?.let {
             val transformedNewData = LabeledValue(value = it, label = newLabel)
@@ -278,3 +289,5 @@ class AndroidContactChangeService {
         get() = (id as? IContactDataIdExternal)
             .also { if (it == null) logger.warning("Phone number should have an external ID: $id") }
 }
+
+private typealias LabelMapper = (type: ContactDataType, category: ContactDataCategory, oldLabel: Label?) -> Label

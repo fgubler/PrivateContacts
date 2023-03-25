@@ -17,6 +17,8 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.OTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_BROTHER
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_CHILD
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FRIEND
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
@@ -123,7 +125,7 @@ sealed class ContactDataType {
     }
 
     object RelationshipChild : ContactDataType() {
-        override val key: Key = Key.RELATIONSHIP_CHILD
+        override val key: Key = RELATIONSHIP_CHILD
         override val titleRes: Int = R.string.type_relationship_child
         override val priority: Int = 820
     }
@@ -141,7 +143,7 @@ sealed class ContactDataType {
     }
 
     object RelationshipFriend : ContactDataType() {
-        override val key: Key = Key.RELATIONSHIP_FRIEND
+        override val key: Key = RELATIONSHIP_FRIEND
         override val titleRes: Int = R.string.type_relationship_friend
         override val priority: Int = 850
     }
@@ -177,6 +179,34 @@ sealed class ContactDataType {
         RELATIONSHIP_RELATIVE,
         RELATIONSHIP_PARTNER,
         RELATIONSHIP_FRIEND,
-        RELATIONSHIP_WORK,
+        RELATIONSHIP_WORK;
+
+        companion object {
+            fun parseOrNull(name: String): Key? = values().firstOrNull { it.name == name }
+        }
+    }
+
+    companion object {
+        fun fromKey(key: Key, customValue: String?): ContactDataType = when (key) {
+            PERSONAL -> Personal
+            BUSINESS -> Business
+            MOBILE -> Mobile
+            MOBILE_BUSINESS -> MobileBusiness
+            OTHER -> Other
+            BIRTHDAY -> Birthday
+            ANNIVERSARY -> Anniversary
+            MAIN -> Main
+            CUSTOM -> CustomValue(customValue.orEmpty())
+
+            RELATIONSHIP_SIBLING -> RelationshipSibling
+            RELATIONSHIP_BROTHER -> RelationshipBrother
+            RELATIONSHIP_SISTER -> RelationshipSister
+            RELATIONSHIP_PARENT -> RelationshipParent
+            RELATIONSHIP_CHILD -> RelationshipChild
+            RELATIONSHIP_RELATIVE -> RelationshipRelative
+            RELATIONSHIP_PARTNER -> RelationshipPartner
+            RELATIONSHIP_FRIEND -> RelationshipFriend
+            RELATIONSHIP_WORK -> RelationshipWork
+        }
     }
 }
