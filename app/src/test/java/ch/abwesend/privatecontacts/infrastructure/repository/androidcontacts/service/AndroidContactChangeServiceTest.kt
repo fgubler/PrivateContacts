@@ -7,8 +7,14 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
@@ -26,7 +32,10 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import ch.abwesend.privatecontacts.testutil.mockUriParse
 import com.alexstyl.contactstore.ImageData
+import com.alexstyl.contactstore.Label
+import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -44,12 +53,26 @@ class AndroidContactChangeServiceTest : TestBase() {
     @SpyK
     private var mutableContactFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
 
+    @MockK
+    private lateinit var companyMappingService: AndroidContactCompanyMappingService
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactChangeService
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { mutableContactFactory }
+        module.single { companyMappingService }
+    }
+
+    override fun setup() {
+        super.setup()
+        every { companyMappingService.mapToPseudoRelationshipLabel(any()) } answers {
+            val type: ContactDataType = firstArg()
+            val key = type.key
+            if (type is CustomValue) "${key.name}-${type.customValue}"
+            else key.name
+        }
     }
 
     @Test
@@ -143,7 +166,7 @@ class AndroidContactChangeServiceTest : TestBase() {
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun `should set added or changed image`(statusNew: Boolean) {
-        val modelStatus = if (statusNew) ModelStatus.NEW else ModelStatus.CHANGED
+        val modelStatus = if (statusNew) NEW else CHANGED
         val image = someContactImage(fullImage = ByteArray(size = 42), modelStatus = modelStatus)
         val changedContact = someContactEditable(
             image = image
@@ -162,7 +185,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val newData = createContactBaseData(variant = true)
         val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = ModelStatus.NEW)
+            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = NEW)
         )
         mockUriParse()
 
@@ -187,7 +210,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val newData = createContactBaseData(variant = true)
         val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = ModelStatus.CHANGED)
+            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = CHANGED)
         )
         mockUriParse()
 
@@ -206,101 +229,34 @@ class AndroidContactChangeServiceTest : TestBase() {
     }
 
     @Test
-    fun `should translate main-company to the organization-field`() {
-        val newMainCompanyName = "Main Inc."
-        val newCompanies = listOf(
-            someCompany(value = "Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
-            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
-            someCompany(value = "Other Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.NEW),
+    fun `should add new companies as relations`() {
+        val customType = "Dark Side"
+        val companies = listOf(
+            someCompany(value = "Company A", type = Main, modelStatus = NEW, sortOrder = 0),
+            someCompany(value = "Company B", type = Other, modelStatus = NEW, sortOrder = 1),
+            someCompany(value = "Company C", type = Business, modelStatus = NEW, sortOrder = 2),
+            someCompany(value = "Company D", type = CustomValue(customType), modelStatus = NEW, sortOrder = 3),
         )
-        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
-        val changedContact = someContactEditable(contactData = newCompanies)
+        val mutableContact = someAndroidContactMutable()
+        val changedContact = someContactEditable(contactData = companies)
         mockUriParse()
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
 
-        assertThat(mutableContact.organization).isEqualTo(newMainCompanyName)
-    }
-
-    @Test
-    fun `should not change if main-company is unchanged - even if there is a changed non-main`() {
-        val oldCompanyName = "Old Inc."
-        val newMainCompanyName = "Main Inc."
-        val newCompanies = listOf(
-            someCompany(value = "Side-Show Inc.", type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
-            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.UNCHANGED),
-        )
-        val mutableContact = someAndroidContactMutable(organisation = oldCompanyName)
-        val changedContact = someContactEditable(contactData = newCompanies)
-        mockUriParse()
-
-        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
-
-        assertThat(mutableContact.organization).isEqualTo(oldCompanyName)
-    }
-
-    @Test
-    fun `should treat types main and business the same way`() {
-        val businessName = "Business Inc."
-        val newCompanies = listOf(
-            someCompany(value = businessName, type = ContactDataType.Business, modelStatus = ModelStatus.CHANGED),
-            someCompany(value = "Main Inc.", type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
-        )
-        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
-        val changedContact = someContactEditable(contactData = newCompanies)
-        mockUriParse()
-
-        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
-
-        assertThat(mutableContact.organization).isEqualTo(businessName) // because it is first in the list
-    }
-
-    @Test
-    fun `should prefer changed main-company over unchanged`() {
-        val newMainCompanyName = "Main Inc."
-        val newCompanies = listOf(
-            someCompany(value = "Other Main Inc.", type = ContactDataType.Main, modelStatus = ModelStatus.UNCHANGED),
-            someCompany(value = newMainCompanyName, type = ContactDataType.Main, modelStatus = ModelStatus.CHANGED),
-        )
-        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
-        val changedContact = someContactEditable(contactData = newCompanies)
-        mockUriParse()
-
-        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
-
-        assertThat(mutableContact.organization).isEqualTo(newMainCompanyName)
-    }
-
-    @Test
-    fun `should use first changed non-main company if no main is present`() {
-        val expectedCompanyName = "Changed Other"
-        val newCompanies = listOf(
-            someCompany(value = "Unchanged Other", type = ContactDataType.Other, modelStatus = ModelStatus.UNCHANGED),
-            someCompany(value = expectedCompanyName, type = ContactDataType.Other, modelStatus = ModelStatus.CHANGED),
-        )
-        val mutableContact = someAndroidContactMutable(organisation = "Old Inc.")
-        val changedContact = someContactEditable(contactData = newCompanies)
-        mockUriParse()
-
-        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
-
-        assertThat(mutableContact.organization).isEqualTo(expectedCompanyName)
-    }
-
-    @Test
-    fun `should not change anything if no changes were made`() {
-        val oldCompanyName = "Old Inc."
-        val newCompanies = listOf(
-            someCompany(value = "Unchanged 1", modelStatus = ModelStatus.UNCHANGED),
-            someCompany(value = "Unchanged 2", modelStatus = ModelStatus.UNCHANGED),
-        )
-        val mutableContact = someAndroidContactMutable(organisation = oldCompanyName)
-        val changedContact = someContactEditable(contactData = newCompanies)
-        mockUriParse()
-
-        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
-
-        assertThat(mutableContact.organization).isEqualTo(oldCompanyName)
+        assertThat(mutableContact.relations).hasSameSizeAs(companies)
+        mutableContact.relations.indices.forEach { index ->
+            val relation = mutableContact.relations[index]
+            val company = companies[index]
+            assertThat(relation.value.name)
+                .describedAs("Company '${company.value}'")
+                .isEqualTo(company.value)
+            assertThat(relation.label).isInstanceOf(Label.Custom::class.java)
+            assertThat((relation.label as Label.Custom).label)
+                .describedAs("Company '${company.value}'")
+                .contains(company.type.key.name)
+        }
+        assertThat((mutableContact.relations.last().label as Label.Custom).label)
+            .contains((companies.last().type as CustomValue).customValue)
     }
 
     @Test

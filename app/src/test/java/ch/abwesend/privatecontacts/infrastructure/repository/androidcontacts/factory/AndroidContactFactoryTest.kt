@@ -13,16 +13,15 @@ import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.Addr
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactGroup
-import com.alexstyl.contactstore.Contact
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.mockkStatic
 import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.koin.core.module.Module
 import java.util.Locale
 
 @ExperimentalCoroutinesApi
@@ -33,11 +32,24 @@ class AndroidContactFactoryTest : TestBase() {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
+    @MockK
+    private lateinit var contactDataFactory: AndroidContactDataFactory
+
+    private lateinit var underTest: AndroidContactFactory
+
     override fun setup() {
         super.setup()
+        underTest = AndroidContactFactory()
         every { telephoneService.telephoneDefaultCountryIso } returns Locale.getDefault().country.lowercase()
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
+    }
+
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.single { addressFormattingService }
+        module.single { telephoneService }
+        module.single { contactDataFactory }
     }
 
     @Test
@@ -46,7 +58,7 @@ class AndroidContactFactoryTest : TestBase() {
         val displayName = "Darth Vader"
         val androidContact = someAndroidContact(contactId = contactId, displayName = displayName)
 
-        val result = androidContact.toContactBase(rethrowExceptions = true)
+        val result = underTest.toContactBase(contact = androidContact, rethrowExceptions = true)
 
         assertThat(result).isNotNull
         assertThat(result!!.id).isInstanceOf(IContactIdExternal::class.java)
@@ -68,13 +80,11 @@ class AndroidContactFactoryTest : TestBase() {
             someAndroidContactGroup(title = "Group 2"),
             someAndroidContactGroup(title = "Group 3"),
         )
-        mockkStatic(Contact::getContactData)
-        every { androidContact.getContactData(any(), any()) } returns emptyList()
+        every { contactDataFactory.getContactData(any()) } returns emptyList()
 
-        val result = androidContact.toContact(
+        val result = underTest.toContact(
+            contact = androidContact,
             groups = contactGroups,
-            telephoneService = telephoneService,
-            addressFormattingService = addressFormattingService,
             rethrowExceptions = true
         )
 
@@ -87,7 +97,7 @@ class AndroidContactFactoryTest : TestBase() {
         assertThat(result.notes).isEqualTo(androidContact.note?.raw)
         assertThat(result.contactGroups.map { it.id.name }).isEqualTo(contactGroups.map { it.title })
         assertThat(result.contactGroups.map { it.notes }).isEqualTo(contactGroups.map { it.note })
-        verify { androidContact.getContactData(any(), any()) }
+        verify { contactDataFactory.getContactData(androidContact) }
     }
 
     @Test
@@ -100,13 +110,11 @@ class AndroidContactFactoryTest : TestBase() {
             nickName = "Black Lion",
             note = "likes silver",
         )
-        mockkStatic(Contact::getContactData)
-        every { androidContact.getContactData(any(), any()) } returns emptyList()
+        every { contactDataFactory.getContactData(any()) } returns emptyList()
 
-        val result = androidContact.toContact(
+        val result = underTest.toContact(
+            contact = androidContact,
             groups = emptyList(),
-            telephoneService = telephoneService,
-            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         )
 
