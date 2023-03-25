@@ -57,7 +57,7 @@ class AndroidContactDataFactory {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removePhoneNumberDuplicates()
+        }.let { removePhoneNumberDuplicates(it) }
 
     private fun Contact.getEmailAddresses(): List<EmailAddress> {
         return mails.mapIndexed { index, email ->
@@ -180,8 +180,9 @@ class AndroidContactDataFactory {
             }
 
     @VisibleForTesting
-    internal fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> = removeDuplicates()
-        .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
+    internal fun removePhoneNumberDuplicates(phoneNumbers: List<PhoneNumber>): List<PhoneNumber> =
+        phoneNumbers.removeDuplicates()
+            .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
 
     @VisibleForTesting
     internal fun isPseudoRelationForCompany(relation: LabeledValue<Relation>): Boolean {
@@ -189,8 +190,7 @@ class AndroidContactDataFactory {
         return label is Label.Custom && companyMappingService.matchesCompanyCustomRelationshipPattern(label.label)
     }
 
-    @VisibleForTesting
-    internal fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
+    private fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
         removeDuplicatesBy { it.displayValue }
             .removeDuplicatesBy { it.value }
 
