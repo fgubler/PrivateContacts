@@ -178,7 +178,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         )
         coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
         coEvery { loadService.resolveContact(any(), any()) } returns originalContact
-        coEvery { loadService.getContactGroups(any()) } returns emptyList()
+        coEvery { loadService.getAllContactGroups() } returns emptyList()
         coJustRun { saveRepository.updateContact(any()) }
         coJustRun { saveRepository.createContactGroups(any()) }
 
