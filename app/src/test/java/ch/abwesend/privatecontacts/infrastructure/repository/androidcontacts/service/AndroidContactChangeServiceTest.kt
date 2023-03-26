@@ -67,7 +67,7 @@ class AndroidContactChangeServiceTest : TestBase() {
 
     override fun setup() {
         super.setup()
-        every { companyMappingService.mapToPseudoRelationshipLabel(any()) } answers {
+        every { companyMappingService.encodeToPseudoRelationshipLabel(any()) } answers {
             val type: ContactDataType = firstArg()
             val key = type.key
             if (type is CustomValue) "${key.name}-${type.customValue}"

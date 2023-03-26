@@ -142,7 +142,7 @@ class AndroidContactChangeService {
             newContactData = companies,
             mutableDataOnContact = relations,
             labelMapper = { contactDataType, _, _ ->
-                val label = companyMappingService.mapToPseudoRelationshipLabel(contactDataType)
+                val label = companyMappingService.encodeToPseudoRelationshipLabel(contactDataType)
                 Label.Custom(label = label)
             },
             valueMapper = { newAddress -> ContactStoreRelation(name = newAddress.value) },

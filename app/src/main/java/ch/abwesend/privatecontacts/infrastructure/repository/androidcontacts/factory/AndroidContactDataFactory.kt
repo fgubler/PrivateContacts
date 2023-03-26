@@ -159,7 +159,7 @@ class AndroidContactDataFactory {
             .mapIndexed { index, company ->
                 val contactDataId = company.toContactDataId()
                 val label = company.label as? Label.Custom
-                val type = label?.let { companyMappingService.mapPseudoRelationshipLabelToContactDataType(it.label) }
+                val type = label?.let { companyMappingService.decodeFromPseudoRelationshipLabel(it.label) }
                     ?: ContactDataType.Business
 
                 Company(
