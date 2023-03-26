@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.testutil.androidcontacts.toLabeledValue
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.EventDate
+import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.Label
@@ -85,6 +86,7 @@ fun someAndroidContactMutable(
     organisation: String = "",
     thumbnailUri: Uri = someUri("some thumbnail uri"),
     imageData: ImageData = ImageData(ByteArray(0)),
+    groups: List<GroupMembership> = emptyList(),
 ): IAndroidContactMutable {
     val factory = getAnywhere<IAndroidContactMutableFactory>()
     val contact = spyk(factory.create())
@@ -130,6 +132,7 @@ fun someAndroidContactMutable(
                 .toLabeledValue(label = Label.DateBirthday, id = index)
         }
     )
+    contact.groups.addAll(groups)
     contact.imageData = imageData
     contact.organization = organisation
 

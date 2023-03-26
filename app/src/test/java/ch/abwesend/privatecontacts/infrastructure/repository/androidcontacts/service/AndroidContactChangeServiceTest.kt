@@ -8,7 +8,9 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
@@ -21,6 +23,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
@@ -29,8 +32,10 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutab
 import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataIdExternal
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import ch.abwesend.privatecontacts.testutil.mockUriParse
+import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.Label
 import io.mockk.every
@@ -139,7 +144,7 @@ class AndroidContactChangeServiceTest : TestBase() {
 
     @Test
     fun `should leave unchanged image as-is`() {
-        val image = someContactImage(fullImage = ByteArray(size = 42), modelStatus = ModelStatus.UNCHANGED)
+        val image = someContactImage(fullImage = ByteArray(size = 42), modelStatus = UNCHANGED)
         val changedContact = someContactEditable(
             image = image
         )
@@ -152,7 +157,7 @@ class AndroidContactChangeServiceTest : TestBase() {
 
     @Test
     fun `should remove deleted image`() {
-        val image = someContactImage(fullImage = ByteArray(size = 42), modelStatus = ModelStatus.DELETED)
+        val image = someContactImage(fullImage = ByteArray(size = 42), modelStatus = DELETED)
         val changedContact = someContactEditable(
             image = image
         )
@@ -264,7 +269,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.UNCHANGED)
+            contactData = prepareContactDataForInternalContact(data = data, modelStatus = UNCHANGED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -282,7 +287,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = data)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.DELETED)
+            contactData = prepareContactDataForInternalContact(data = data, modelStatus = DELETED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -300,7 +305,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = ModelStatus.DELETED)
+            contactData = prepareContactDataForInternalContact(data = data, modelStatus = DELETED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -311,6 +316,138 @@ class AndroidContactChangeServiceTest : TestBase() {
         assertThat(mutableContact.webAddresses).isEmpty()
         assertThat(mutableContact.relations).isEmpty()
         assertThat(mutableContact.events).isEmpty()
+    }
+
+    @Test
+    fun `should not change contact-groups if nothing was changed`() {
+        val mutableContact = someAndroidContactMutable()
+        val changedContact = someContactEditable(
+            contactGroups = listOf(someContactGroup(modelStatus = UNCHANGED))
+        )
+        val allGroups = listOf(someContactGroup())
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = allGroups,
+        )
+
+        assertThat(mutableContact.groups).isEmpty()
+    }
+
+    @Test
+    fun `should delete contact-groups`() {
+        val groupNoToDelete = 666L
+        val existingGroups = listOf(
+            GroupMembership(111L),
+            GroupMembership(groupNoToDelete),
+        )
+        val newGroups = listOf(
+            someContactGroup(groupNo = groupNoToDelete, modelStatus = DELETED),
+            someContactGroup(groupNo = 222L, modelStatus = UNCHANGED),
+        )
+        val mutableContact = someAndroidContactMutable(groups = existingGroups)
+        val changedContact = someContactEditable(contactGroups = newGroups)
+        val allGroups = newGroups + existingGroups.map { someContactGroup(groupNo = it.groupId) }
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = allGroups,
+        )
+
+        assertThat(mutableContact.groups).hasSize(1)
+        assertThat(mutableContact.groups.first()).isEqualTo(existingGroups.first())
+    }
+
+    @Test
+    fun `should not do anything if group has status changed but is already on the contact by groupNo`() {
+        val groupNo = 666L
+        val existingGroups = listOf(GroupMembership(groupNo))
+        val newGroups = listOf(someContactGroup(groupNo = groupNo, modelStatus = CHANGED))
+        val mutableContact = someAndroidContactMutable(groups = existingGroups)
+        val changedContact = someContactEditable(contactGroups = newGroups)
+        val allGroups = newGroups + existingGroups.map { someContactGroup(groupNo = it.groupId) }
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = allGroups,
+        )
+
+        assertThat(mutableContact.groups).hasSize(1)
+        assertThat(mutableContact.groups.first()).isEqualTo(existingGroups.first())
+    }
+
+    @Test
+    fun `should not do anything if group has status changed but is already on the contact by name`() {
+        val groupName = "Jedi"
+        val existingGroupNo = 111L
+        val existingGroups = listOf(GroupMembership(existingGroupNo))
+        val newGroups = listOf(someContactGroup(name = groupName, groupNo = null, modelStatus = CHANGED))
+        val mutableContact = someAndroidContactMutable(groups = existingGroups)
+        val changedContact = someContactEditable(contactGroups = newGroups)
+        val allGroups = listOf(someContactGroup(name = groupName, groupNo = existingGroupNo))
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = allGroups,
+        )
+
+        assertThat(mutableContact.groups).hasSize(1)
+        assertThat(mutableContact.groups.first()).isEqualTo(existingGroups.first())
+    }
+
+    @Test
+    fun `should not add group if it is not present in the list of all groups`() {
+        val newGroups = listOf(
+            someContactGroup(name = "A", groupNo = 111L, modelStatus = CHANGED),
+            someContactGroup(name = "B", groupNo = 222L, modelStatus = NEW),
+            someContactGroup(name = "C", groupNo = null, modelStatus = NEW),
+        )
+        val mutableContact = someAndroidContactMutable(groups = emptyList())
+        val changedContact = someContactEditable(contactGroups = newGroups)
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = emptyList(),
+        )
+
+        assertThat(mutableContact.groups.size).isEqualTo(0)
+    }
+
+    @Test
+    fun `should add new or changed group if not already on contact`() {
+        val newGroups = listOf(
+            someContactGroup(name = "A", groupNo = 111L, modelStatus = CHANGED),
+            someContactGroup(name = "B", groupNo = null, modelStatus = CHANGED), // will be matched by name
+            someContactGroup(name = "C", groupNo = 222L, modelStatus = NEW),
+            someContactGroup(name = "D", groupNo = null, modelStatus = NEW), // will be matched by name
+        )
+        val mutableContact = someAndroidContactMutable(groups = emptyList())
+        val changedContact = someContactEditable(contactGroups = newGroups)
+        val allGroups = newGroups.mapIndexed { index, group ->
+            if (group.id.groupNo == null) {
+                val newId = ContactGroupId(name = group.id.name, groupNo = index * 1000L)
+                group.copy(id = newId)
+            } else group
+        }
+
+        underTest.updateContactGroups(
+            changedContact = changedContact,
+            mutableContact = mutableContact,
+            allContactGroups = allGroups,
+        )
+
+        assertThat(mutableContact.groups).hasSameSizeAs(newGroups)
+        assertThat(mutableContact.groups[0].groupId).isEqualTo(newGroups[0].id.groupNo)
+        assertThat(mutableContact.groups[2].groupId).isEqualTo(newGroups[2].id.groupNo)
+        assertThat(mutableContact.groups[1].groupId).isNotEqualTo(newGroups[1].id.groupNo)
+        assertThat(mutableContact.groups[3].groupId).isNotEqualTo(newGroups[3].id.groupNo)
+        assertThat(mutableContact.groups[1].groupId).isEqualTo(allGroups[1].id.groupNo)
+        assertThat(mutableContact.groups[3].groupId).isEqualTo(allGroups[3].id.groupNo)
     }
 
     private fun prepareContactDataForInternalContact(
