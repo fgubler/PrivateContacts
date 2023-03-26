@@ -9,10 +9,10 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -68,7 +68,7 @@ class AndroidContactChangeService {
         val newImage = changedContact.image
 
         when (newImage.modelStatus) {
-            ModelStatus.UNCHANGED -> Unit
+            UNCHANGED -> Unit
             DELETED -> mutableContact.imageData = null
             CHANGED, NEW -> {
                 // thumbnailUri seemingly cannot be changed
@@ -87,7 +87,6 @@ class AndroidContactChangeService {
         mutableContact.updateCompanies(changedContact.contactDataSet)
     }
 
-    // TODO add unit-tests
     // TODO test manually for actually updating, not just creating (as soon as the UI can do that)
     /**
      * Adds / updates the contact-groups.
@@ -100,7 +99,7 @@ class AndroidContactChangeService {
         allContactGroups: List<ContactGroup>
     ) {
         val newGroups = changedContact.contactGroups
-        if (newGroups.none { it.modelStatus != ModelStatus.UNCHANGED }) {
+        if (newGroups.none { it.modelStatus != UNCHANGED }) {
             logger.debug("No contact-groups to change")
             return
         }
@@ -108,6 +107,7 @@ class AndroidContactChangeService {
         logger.debug("Some contact-groups were changed, added or deleted")
 
         val allGroupsByName = allContactGroups.associateBy { it.id.name }
+        val allGroupNos = allContactGroups.mapNotNull { it.id.groupNo }.toSet()
         val oldContactGroupNos = mutableContact.groups.map { it.groupId }.toSet()
         val contactGroupsToChange = newGroups.filterForChanged()
         val contactGroupsToDelete = newGroups.filter { it.modelStatus == DELETED }
@@ -123,7 +123,9 @@ class AndroidContactChangeService {
             if (oldContactGroupNos.contains(groupNo)) {
                 logger.debugLocally("Group ${newGroup.id} already on contact: no need to add it")
             } else {
-                groupNo?.let { mutableContact.groups.add(GroupMembership(it)) }
+                groupNo
+                    ?.takeIf { allGroupNos.contains(it) } // only allow "valid" groupsNos
+                    ?.let { mutableContact.groups.add(GroupMembership(it)) }
                     ?: logger.debugLocally("Failed to add group '${newGroup.id.name}': not found")
             }
         }
@@ -233,7 +235,7 @@ class AndroidContactChangeService {
         valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataCategory = newContactData.firstOrNull()?.javaClass?.simpleName ?: "[Unknown]"
-        if (newContactData.none { it.modelStatus != ModelStatus.UNCHANGED }) {
+        if (newContactData.none { it.modelStatus != UNCHANGED }) {
             logger.debug("No contact-data of category $contactDataCategory to change")
             return
         }

@@ -96,7 +96,8 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
         return try {
             val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
-            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
+            // don't know the correct account for sure => load all groups
+            val existingGroups = contactLoadService.getAllContactGroups() // including the new ones
             val contactToChange = contactMutableFactory.toAndroidContactMutable(originalContactRaw)
 
             contactChangeService.updateChangedBaseData(

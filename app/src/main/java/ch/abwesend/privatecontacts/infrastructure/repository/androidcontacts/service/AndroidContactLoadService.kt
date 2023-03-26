@@ -67,6 +67,9 @@ class AndroidContactLoadService : IAndroidContactLoadService {
         return existenceByContactId
     }
 
+    suspend fun getAllContactGroups(): List<ContactGroup> =
+        contactLoadRepository.loadAllContactGroups().map { it.toContactGroup() }
+
     suspend fun getContactGroups(filterForAccount: ContactAccount): List<ContactGroup> =
         contactLoadRepository.loadAllContactGroups()
             .filter { it.account.toContactAccount() == filterForAccount }
