@@ -26,6 +26,7 @@
     <string name="cancel">Cancel</string>
     <string name="remove">Remove</string>
     <string name="ok">OK</string>
+    <string name="close">Close</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="search">Search</string>
@@ -39,6 +40,8 @@
     <string name="success">Success</string>
     <string name="failure">Failure</string>
     <string name="copied_to_clipboard">Copied to clipboard</string>
+    <string name="try_again">Try again</string>
+    <string name="refresh">Refresh</string>
 
     <string name="error">Error</string>
     <string name="errors">Errors</string>
@@ -47,6 +50,7 @@
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
     <string name="unable_to_save_contact">The contact could not be saved</string>
+    <string name="unable_to_resolve_existing_contact">The existing contact could not be resolved</string>
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
     <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
@@ -80,6 +84,7 @@
     <string name="type_relationship_relative">Relative</string>
     <string name="type_relationship_work">Work</string>
     <string name="type_relationship_friend">Friend</string>
+    <string name="no_custom_label">No label</string>
 
     <string name="create_contact">Create Contact</string>
 
@@ -125,9 +130,10 @@
 
     <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
 
-    <string name="saving_data_error">Something went wrong:\n\n%1$s \n\nThe data could not be saved.</string>
+    <string name="saving_data_error">Something went wrong:\n\n%1$s \n\nTherefore, the data could not be saved.</string>
     <string name="data_validation_errors">Validation errors</string>
     <string name="contact_validation_error_name_empty">Either the first name or the last name needs to be set.</string>
+    <string name="saving_data_error_change_to_new_contact">The existing contact could not be resolved. Therefore it could not be changed. Would you like to create it as a new contact instead?</string>
 
     <string name="discard_changes_title">Discard Changes</string>
     <string name="discard_changes_text">Are you sure you would like to discard all unsaved changes?</string>
@@ -140,6 +146,7 @@
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
     <string name="delete_contact_progress">Contact is being deleted</string>
     <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
+    <string name="create_as_new_contact">Create as new</string>
 
     <string name="delete_contacts">Delete Contacts</string>
     <string name="delete_contacts_title">Delete Contacts</string>

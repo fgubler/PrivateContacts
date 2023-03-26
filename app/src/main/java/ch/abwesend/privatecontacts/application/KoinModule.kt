@@ -38,12 +38,15 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactAccountService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -79,12 +82,16 @@ internal val koinModule = module {
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
     single<AccountService> { AndroidAccountService(androidContext()) }
+
     single<IAndroidContactLoadService> { AndroidContactLoadService() }
     single { AndroidContactLoadService() }
     single<IAndroidContactSaveService> { AndroidContactSaveService() }
     single<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
     single { AndroidContactChangeService() }
     single { AndroidContactAccountService() }
+    single { AndroidContactCompanyMappingService() }
+    single { AndroidContactFactory() }
+    single { AndroidContactDataFactory() }
 
     single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity

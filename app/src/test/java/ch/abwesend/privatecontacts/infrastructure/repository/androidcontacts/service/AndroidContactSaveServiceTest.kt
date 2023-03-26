@@ -13,12 +13,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContact
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
@@ -74,6 +76,12 @@ class AndroidContactSaveServiceTest : TestBase() {
     @SpyK
     private var mutableContactFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
 
+    @SpyK
+    private var contactFactory: AndroidContactFactory = AndroidContactFactory()
+
+    @SpyK
+    private var contactDataFactory: AndroidContactDataFactory = AndroidContactDataFactory()
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactSaveService
 
@@ -86,6 +94,8 @@ class AndroidContactSaveServiceTest : TestBase() {
         module.single { telephoneService }
         module.single { addressFormattingService }
         module.single { mutableContactFactory }
+        module.single { contactFactory }
+        module.single { contactDataFactory }
     }
 
     override fun setup() {
@@ -168,7 +178,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         )
         coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
         coEvery { loadService.resolveContact(any(), any()) } returns originalContact
-        coEvery { loadService.getContactGroups(any()) } returns emptyList()
+        coEvery { loadService.getAllContactGroups() } returns emptyList()
         coJustRun { saveRepository.updateContact(any()) }
         coJustRun { saveRepository.createContactGroups(any()) }
 
@@ -187,14 +197,49 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.nickname).isEqualTo(androidContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(androidContact.note?.raw)
         // contact-data
-        val capturedContactTransformed = capturedContact.toContact(
+        val capturedContactTransformed = contactFactory.toContact(
+            contact = capturedContact,
             groups = emptyList(),
-            telephoneService = telephoneService,
-            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         )
         assertThat(capturedContactTransformed).isNotNull
         assertContactDataEquals(changedContact, capturedContactTransformed!!)
+    }
+
+    @Test
+    fun `should return error if existing contact cannot be found`() {
+        val contactId = someExternalContactId()
+        val changedContact = someContactEditable(
+            id = contactId,
+            contactData = someListOfContactData(ModelStatus.NEW)
+        )
+        coEvery { loadRepository.resolveContactRaw(any()) } throws IllegalArgumentException("Test")
+
+        val result = runBlocking { underTest.updateContact(contactId, changedContact) }
+
+        assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
+        val failure = result as ContactSaveResult.Failure
+        assertThat(failure.errors).hasSize(1)
+        assertThat(failure.errors).contains(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+    }
+
+    @Test
+    fun `should return error if existing contact cannot be resolved`() {
+        val contactId = someExternalContactId()
+        val changedContact = someContactEditable(
+            id = contactId,
+            contactData = someListOfContactData(ModelStatus.NEW)
+        )
+        val androidContact = someAndroidContactMutable(contactId = contactId.contactNo)
+        coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
+        coEvery { loadService.resolveContact(any(), any()) } throws IllegalStateException("Test")
+
+        val result = runBlocking { underTest.updateContact(contactId, changedContact) }
+
+        assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
+        val failure = result as ContactSaveResult.Failure
+        assertThat(failure.errors).hasSize(1)
+        assertThat(failure.errors).contains(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
     }
 
     @Test
@@ -244,10 +289,9 @@ class AndroidContactSaveServiceTest : TestBase() {
         assertThat(capturedContact.lastName).isEqualTo(newContact.lastName)
         assertThat(capturedContact.nickname).isEqualTo(newContact.nickname)
         assertThat(capturedContact.note?.raw).isEqualTo(newContact.notes)
-        val capturedContactTransformed = capturedContact.toContact(
+        val capturedContactTransformed = contactFactory.toContact(
+            contact = capturedContact,
             groups = emptyList(),
-            telephoneService = telephoneService,
-            addressFormattingService = addressFormattingService,
             rethrowExceptions = true,
         )
         assertThat(capturedContactTransformed).isNotNull

@@ -9,16 +9,15 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
@@ -27,12 +26,13 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
-import ch.abwesend.privatecontacts.domain.model.filterForChanged
-import ch.abwesend.privatecontacts.domain.model.isChanged
+import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
+import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.EventDate as ContactStoreEventDate
@@ -43,6 +43,8 @@ import com.alexstyl.contactstore.Relation as ContactStoreRelation
 import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
+    private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
+
     fun updateChangedBaseData(
         originalContact: IContact?,
         changedContact: IContact,
@@ -66,7 +68,7 @@ class AndroidContactChangeService {
         val newImage = changedContact.image
 
         when (newImage.modelStatus) {
-            ModelStatus.UNCHANGED -> Unit
+            UNCHANGED -> Unit
             DELETED -> mutableContact.imageData = null
             CHANGED, NEW -> {
                 // thumbnailUri seemingly cannot be changed
@@ -82,10 +84,9 @@ class AndroidContactChangeService {
         mutableContact.updateWebsites(changedContact.contactDataSet)
         mutableContact.updateRelationships(changedContact.contactDataSet)
         mutableContact.updateEventDates(changedContact.contactDataSet)
-        mutableContact.updateCompany(changedContact.contactDataSet)
+        mutableContact.updateCompanies(changedContact.contactDataSet)
     }
 
-    // TODO add unit-tests
     // TODO test manually for actually updating, not just creating (as soon as the UI can do that)
     /**
      * Adds / updates the contact-groups.
@@ -98,7 +99,7 @@ class AndroidContactChangeService {
         allContactGroups: List<ContactGroup>
     ) {
         val newGroups = changedContact.contactGroups
-        if (newGroups.none { it.modelStatus != ModelStatus.UNCHANGED }) {
+        if (newGroups.none { it.modelStatus != UNCHANGED }) {
             logger.debug("No contact-groups to change")
             return
         }
@@ -106,8 +107,9 @@ class AndroidContactChangeService {
         logger.debug("Some contact-groups were changed, added or deleted")
 
         val allGroupsByName = allContactGroups.associateBy { it.id.name }
+        val allGroupNos = allContactGroups.mapNotNull { it.id.groupNo }.toSet()
         val oldContactGroupNos = mutableContact.groups.map { it.groupId }.toSet()
-        val contactGroupsToChange = newGroups.filterForChanged()
+        val contactGroupsToChange = newGroups.filterShouldUpsert()
         val contactGroupsToDelete = newGroups.filter { it.modelStatus == DELETED }
 
         contactGroupsToDelete.forEach { group ->
@@ -121,7 +123,9 @@ class AndroidContactChangeService {
             if (oldContactGroupNos.contains(groupNo)) {
                 logger.debugLocally("Group ${newGroup.id} already on contact: no need to add it")
             } else {
-                groupNo?.let { mutableContact.groups.add(GroupMembership(it)) }
+                groupNo
+                    ?.takeIf { allGroupNos.contains(it) } // only allow "valid" groupsNos
+                    ?.let { mutableContact.groups.add(GroupMembership(it)) }
                     ?: logger.debugLocally("Failed to add group '${newGroup.id.name}': not found")
             }
         }
@@ -130,15 +134,21 @@ class AndroidContactChangeService {
     /**
      * Android only has a "Company" / "Organization" field which is (probably)
      * supposed to mark that the entire contact is a company. It is a bit of a mess...
+     * => therefore we use a pseudo-relationship to store it.
      */
-    private fun IAndroidContactMutable.updateCompany(contactData: List<ContactData>) {
-        val hasHigherPriority: (ContactDataType) -> Boolean = { type -> type == Main || type == Business }
-        val companies = contactData.filterIsInstance<Company>().sortedBy { it.sortOrder }
-        val mainCompany = companies.firstOrNull { hasHigherPriority(it.type) && it.modelStatus.isChanged }
-            ?: companies.firstOrNull { hasHigherPriority(it.type) }
-            ?: companies.firstOrNull { it.modelStatus.isChanged }
+    private fun IAndroidContactMutable.updateCompanies(contactData: List<ContactData>) {
+        val companies = contactData.filterIsInstance<Company>()
+        logger.debug("Updating ${companies.size} companies as pseudo-relationships on contact $contactId")
 
-        mainCompany?.takeIf { it.modelStatus.isChanged }?.let { organization = it.value }
+        updateContactDataOfType(
+            newContactData = companies,
+            mutableDataOnContact = relations,
+            labelMapper = { contactDataType, _, _ ->
+                val label = companyMappingService.encodeToPseudoRelationshipLabel(contactDataType)
+                Label.Custom(label = label)
+            },
+            valueMapper = { newAddress -> ContactStoreRelation(name = newAddress.value) },
+        )
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
@@ -221,10 +231,11 @@ class AndroidContactChangeService {
     private fun <TInternal : ContactData, TExternal : Any> updateContactDataOfType(
         newContactData: List<TInternal>,
         mutableDataOnContact: MutableList<LabeledValue<TExternal>>,
-        mapper: (TInternal) -> TExternal?,
+        labelMapper: LabelMapper? = null,
+        valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataCategory = newContactData.firstOrNull()?.javaClass?.simpleName ?: "[Unknown]"
-        if (newContactData.none { it.modelStatus != ModelStatus.UNCHANGED }) {
+        if (newContactData.none { it.modelStatus != UNCHANGED }) {
             logger.debug("No contact-data of category $contactDataCategory to change")
             return
         }
@@ -232,13 +243,13 @@ class AndroidContactChangeService {
         logger.debug("Some contact-data of category $contactDataCategory was changed, added or deleted")
 
         val oldContactDataByNo = mutableDataOnContact.associateBy { it.id }
-        val contactDataToChange = newContactData.filterForChanged()
+        val contactDataToChange = newContactData.filterShouldUpsert()
         val contactDataToDelete = newContactData.filter { it.modelStatus == DELETED }
 
         contactDataToDelete.forEach { dataSet -> mutableDataOnContact.deleteContactData(dataSet, oldContactDataByNo) }
 
         contactDataToChange.forEach { newDataSet ->
-            mutableDataOnContact.upsertContactData(newDataSet, oldContactDataByNo, mapper)
+            mutableDataOnContact.upsertContactData(newDataSet, oldContactDataByNo, labelMapper, valueMapper)
         }
     }
 
@@ -254,13 +265,15 @@ class AndroidContactChangeService {
     private fun <TInternal : ContactData, TExternal : Any> MutableList<LabeledValue<TExternal>>.upsertContactData(
         contactData: TInternal,
         oldContactDataByNo: Map<Long?, LabeledValue<TExternal>>,
-        mapper: (TInternal) -> TExternal?,
+        labelMapper: LabelMapper? = null,
+        valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataId = contactData.idExternal
         val correspondingOldData = oldContactDataByNo[contactDataId?.contactDataNo]
-        val newLabel = contactData.type.toLabel(contactData.category, correspondingOldData?.label)
+        val newLabel = labelMapper?.invoke(contactData.type, contactData.category, correspondingOldData?.label)
+            ?: contactData.type.toLabel(contactData.category, correspondingOldData?.label)
 
-        val mappedValue = mapper(contactData)
+        val mappedValue = valueMapper(contactData)
 
         mappedValue?.let {
             val transformedNewData = LabeledValue(value = it, label = newLabel)
@@ -278,3 +291,5 @@ class AndroidContactChangeService {
         get() = (id as? IContactDataIdExternal)
             .also { if (it == null) logger.warning("Phone number should have an external ID: $id") }
 }
+
+private typealias LabelMapper = (type: ContactDataType, category: ContactDataCategory, oldLabel: Label?) -> Label

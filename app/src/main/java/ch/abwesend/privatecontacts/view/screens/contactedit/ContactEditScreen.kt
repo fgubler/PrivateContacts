@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
@@ -48,6 +50,7 @@ import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.ExpandCompressIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -121,9 +124,15 @@ object ContactEditScreen {
                 DiscardConfirmationDialog(screenContext, showDiscardConfirmationDialog) {
                     showDiscardConfirmationDialog = false
                 }
-                SavingErrorDialog(savingErrors) {
-                    savingErrors = emptyList()
-                }
+                SavingErrorDialog(
+                    errors = savingErrors,
+                    onTryAgain = { onSave(viewModel, contact) },
+                    onChangeToNewContact = {
+                        contact.isNew = true
+                        viewModel.changeContact(contact)
+                    },
+                    onClose = { savingErrors = emptyList() },
+                )
                 ValidationErrorDialog(validationErrors) {
                     validationErrors = emptyList()
                 }
@@ -247,9 +256,14 @@ object ContactEditScreen {
     }
 
     @Composable
-    private fun SavingErrorDialog(errors: List<ContactChangeError>, onClose: () -> Unit) {
+    private fun SavingErrorDialog(
+        errors: List<ContactChangeError>,
+        onClose: () -> Unit,
+        onTryAgain: () -> Unit,
+        onChangeToNewContact: () -> Unit,
+    ) {
         if (errors.isNotEmpty()) {
-            OkDialog(title = R.string.error, onClose = onClose) {
+            OkDialog(title = R.string.error, onClose = onClose, okButtonLabel = R.string.close) {
                 val description = if (errors.size == 1) {
                     val errorText = stringResource(id = errors.first().label)
                     stringResource(R.string.saving_data_error, errorText)
@@ -258,8 +272,49 @@ object ContactEditScreen {
                     val errorText = partialTexts.joinToString(separator = Constants.doubleLinebreak)
                     stringResource(R.string.saving_data_error, errorText)
                 }
-                Text(text = description)
+
+                Column {
+                    Text(text = description)
+
+                    if (errors.contains(UNABLE_TO_RESOLVE_EXISTING_CONTACT)) {
+                        UnableToResolveExistingContactExplanation(
+                            onClose = onClose,
+                            onTryAgain = onTryAgain,
+                            onChangeToNewContact = onChangeToNewContact,
+                        )
+                    }
+                }
             }
+        }
+    }
+
+    @Composable
+    private fun UnableToResolveExistingContactExplanation(
+        onClose: () -> Unit,
+        onTryAgain: () -> Unit,
+        onChangeToNewContact: () -> Unit,
+    ) {
+        Spacer(modifier = Modifier.height(10.dp))
+        Divider()
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(text = stringResource(id = R.string.saving_data_error_change_to_new_contact))
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+            SecondaryButton(
+                modifier = Modifier.padding(end = 20.dp),
+                onClick = {
+                    onTryAgain()
+                    onClose()
+                },
+                content = { Text(text = stringResource(id = R.string.try_again)) }
+            )
+            SecondaryButton(
+                onClick = {
+                    onChangeToNewContact()
+                    onClose()
+                },
+                content = { Text(text = stringResource(id = R.string.create_as_new_contact)) }
+            )
         }
     }
 

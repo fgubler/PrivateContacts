@@ -9,6 +9,8 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
@@ -19,6 +21,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -40,6 +43,12 @@ class AndroidContactLoadServiceTest : TestBase() {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
+    @SpyK
+    private var contactFactory: AndroidContactFactory = AndroidContactFactory()
+
+    @SpyK
+    private var contactDataFactory: AndroidContactDataFactory = AndroidContactDataFactory()
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactLoadService
 
@@ -48,6 +57,8 @@ class AndroidContactLoadServiceTest : TestBase() {
         module.single { contactLoadRepository }
         module.single { telephoneService }
         module.single { addressFormattingService }
+        module.single { contactFactory }
+        module.single { contactDataFactory }
     }
 
     override fun setup() {

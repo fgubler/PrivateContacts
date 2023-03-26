@@ -6,9 +6,10 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
-import ch.abwesend.privatecontacts.domain.model.filterForChanged
+import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
@@ -79,11 +80,24 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     }
 
     override suspend fun updateContact(contactId: IContactIdExternal, contact: IContact): ContactSaveResult {
-        val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
-        val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
+        val originalContactRaw = try {
+            contactLoadRepository.resolveContactRaw(contactId)
+        } catch (e: IllegalArgumentException) {
+            logger.error("Failed to load contact $contactId for updating it", e)
+            return ContactSaveResult.Failure(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+        }
+
+        val originalContact = try {
+            contactLoadService.resolveContact(contactId, originalContactRaw)
+        } catch (e: IllegalStateException) {
+            logger.error("Failed to resolve contact $contactId for updating it", e)
+            return ContactSaveResult.Failure(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+        }
+
         return try {
             val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
-            val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones
+            // don't know the correct account for sure => load all groups
+            val existingGroups = contactLoadService.getAllContactGroups() // including the new ones
             val contactToChange = contactMutableFactory.toAndroidContactMutable(originalContactRaw)
 
             contactChangeService.updateChangedBaseData(
@@ -109,7 +123,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     }
 
     private suspend fun createMissingContactGroupsOnUpdate(contact: IContact): ContactSaveResult {
-        val changedGroups = contact.contactGroups.filterForChanged()
+        val changedGroups = contact.contactGroups.filterShouldUpsert()
         return if (changedGroups.isEmpty()) {
             logger.debug("No contact-groups were changed: nothing to create")
             ContactSaveResult.Success
@@ -154,7 +168,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         groups: List<ContactGroup>,
         existingGroups: List<ContactGroup>
     ): List<ContactGroup> {
-        val changedGroups = groups.filterForChanged()
+        val changedGroups = groups.filterShouldUpsert()
 
         val matchingGroupsById = changedGroups.filter { changedGroup ->
             existingGroups.any { existingGroup -> existingGroup.id.groupNo == changedGroup.id.groupNo }
