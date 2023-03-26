@@ -9,6 +9,7 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterForChanged
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
@@ -79,8 +80,20 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     }
 
     override suspend fun updateContact(contactId: IContactIdExternal, contact: IContact): ContactSaveResult {
-        val originalContactRaw = contactLoadRepository.resolveContactRaw(contactId)
-        val originalContact = contactLoadService.resolveContact(contactId, originalContactRaw)
+        val originalContactRaw = try {
+            contactLoadRepository.resolveContactRaw(contactId)
+        } catch (e: IllegalArgumentException) {
+            logger.error("Failed to load contact $contactId for updating it", e)
+            return ContactSaveResult.Failure(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+        }
+
+        val originalContact = try {
+            contactLoadService.resolveContact(contactId, originalContactRaw)
+        } catch (e: IllegalStateException) {
+            logger.error("Failed to resolve contact $contactId for updating it", e)
+            return ContactSaveResult.Failure(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+        }
+
         return try {
             val contactGroupResult = createMissingContactGroupsOnUpdate(contact)
             val existingGroups = contactLoadService.getContactGroups(contact.saveInAccount) // including the new ones

@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
@@ -203,6 +204,42 @@ class AndroidContactSaveServiceTest : TestBase() {
         )
         assertThat(capturedContactTransformed).isNotNull
         assertContactDataEquals(changedContact, capturedContactTransformed!!)
+    }
+
+    @Test
+    fun `should return error if existing contact cannot be found`() {
+        val contactId = someExternalContactId()
+        val changedContact = someContactEditable(
+            id = contactId,
+            contactData = someListOfContactData(ModelStatus.NEW)
+        )
+        coEvery { loadRepository.resolveContactRaw(any()) } throws IllegalArgumentException("Test")
+
+        val result = runBlocking { underTest.updateContact(contactId, changedContact) }
+
+        assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
+        val failure = result as ContactSaveResult.Failure
+        assertThat(failure.errors).hasSize(1)
+        assertThat(failure.errors).contains(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
+    }
+
+    @Test
+    fun `should return error if existing contact cannot be resolved`() {
+        val contactId = someExternalContactId()
+        val changedContact = someContactEditable(
+            id = contactId,
+            contactData = someListOfContactData(ModelStatus.NEW)
+        )
+        val androidContact = someAndroidContactMutable(contactId = contactId.contactNo)
+        coEvery { loadRepository.resolveContactRaw(any()) } returns androidContact
+        coEvery { loadService.resolveContact(any(), any()) } throws IllegalStateException("Test")
+
+        val result = runBlocking { underTest.updateContact(contactId, changedContact) }
+
+        assertThat(result).isInstanceOf(ContactSaveResult.Failure::class.java)
+        val failure = result as ContactSaveResult.Failure
+        assertThat(failure.errors).hasSize(1)
+        assertThat(failure.errors).contains(UNABLE_TO_RESOLVE_EXISTING_CONTACT)
     }
 
     @Test
