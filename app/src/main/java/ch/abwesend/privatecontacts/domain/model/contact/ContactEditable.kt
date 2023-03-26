@@ -18,6 +18,7 @@ interface IContactEditable : IContact, IContactBaseWithAccountInformation {
     override var type: ContactType
     override var notes: String
     override var image: ContactImage
+    override var isNew: Boolean
     override val contactDataSet: MutableList<ContactData>
     override val contactGroups: MutableList<ContactGroup>
 
@@ -36,7 +37,7 @@ data class ContactEditable(
     override val contactDataSet: MutableList<ContactData>,
     override val contactGroups: MutableList<ContactGroup>,
     override var saveInAccount: ContactAccount,
-    override val isNew: Boolean = false,
+    override var isNew: Boolean = false,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()
