@@ -92,7 +92,7 @@ sealed class ContactDataType {
     }
 
     /** The "Custom" which is then created based on [customValue] */
-    class CustomValue(val customValue: String) : ContactDataType() {
+    data class CustomValue(val customValue: String) : ContactDataType() {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.type_custom
         override fun getTitle(stringProvider: StringProvider): String =
