@@ -5,7 +5,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
-import ch.abwesend.privatecontacts.domain.model.filterForChanged
+import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
@@ -46,7 +46,7 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
         logger.debug("Creating missing contact groups")
         val uniqueGroups = contactGroups
-            .filterForChanged()
+            .filterShouldUpsert()
             .distinctBy { it.id }
             .map { it.toEntity() }
         upsertAll(uniqueGroups)

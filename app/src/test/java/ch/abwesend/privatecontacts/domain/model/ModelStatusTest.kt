@@ -31,7 +31,7 @@ class ModelStatusTest : TestBase() {
             TestWithModelStatus(modelStatus = UNCHANGED),
         )
 
-        val results = statuses.map { it.modelStatus.isChanged }
+        val results = statuses.map { it.modelStatus.shouldUpsert }
 
         assertThat(results[0]).isTrue
         assertThat(results[1]).isTrue
@@ -48,7 +48,7 @@ class ModelStatusTest : TestBase() {
             TestWithModelStatus(modelStatus = UNCHANGED),
         )
 
-        val results = statuses.filterForChanged()
+        val results = statuses.filterShouldUpsert()
 
         assertThat(results).hasSize(2)
         assertThat(results[0]).isEqualTo(statuses[0])

@@ -26,7 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
-import ch.abwesend.privatecontacts.domain.model.filterForChanged
+import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
@@ -109,7 +109,7 @@ class AndroidContactChangeService {
         val allGroupsByName = allContactGroups.associateBy { it.id.name }
         val allGroupNos = allContactGroups.mapNotNull { it.id.groupNo }.toSet()
         val oldContactGroupNos = mutableContact.groups.map { it.groupId }.toSet()
-        val contactGroupsToChange = newGroups.filterForChanged()
+        val contactGroupsToChange = newGroups.filterShouldUpsert()
         val contactGroupsToDelete = newGroups.filter { it.modelStatus == DELETED }
 
         contactGroupsToDelete.forEach { group ->
@@ -243,7 +243,7 @@ class AndroidContactChangeService {
         logger.debug("Some contact-data of category $contactDataCategory was changed, added or deleted")
 
         val oldContactDataByNo = mutableDataOnContact.associateBy { it.id }
-        val contactDataToChange = newContactData.filterForChanged()
+        val contactDataToChange = newContactData.filterShouldUpsert()
         val contactDataToDelete = newContactData.filter { it.modelStatus == DELETED }
 
         contactDataToDelete.forEach { dataSet -> mutableDataOnContact.deleteContactData(dataSet, oldContactDataByNo) }

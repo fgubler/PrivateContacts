@@ -54,11 +54,9 @@ interface WithModelStatus {
     val modelStatus: ModelStatus
 }
 
-/** only considers positive changes (i.e. which should be stored in the database) */
-fun <T : WithModelStatus> Collection<T>.filterForChanged(): List<T> {
-    return filter { it.modelStatus.isChanged }
+fun <T : WithModelStatus> Collection<T>.filterShouldUpsert(): List<T> {
+    return filter { it.modelStatus.shouldUpsert }
 }
 
-/** only considers positive changes (i.e. which should be stored in the database) */
-val ModelStatus.isChanged: Boolean
+val ModelStatus.shouldUpsert: Boolean
     get() = this == ModelStatus.NEW || this == ModelStatus.CHANGED
