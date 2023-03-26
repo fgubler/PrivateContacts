@@ -9,7 +9,9 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -182,6 +184,14 @@ object ContactDetailScreen {
     ) {
         val hasWritePermission = remember { viewModel.hasContactWritePermission }
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+            DropdownMenuItem(
+                onClick = {
+                    viewModel.reloadContact(contact)
+                    onCloseMenu()
+                },
+                content = { Text(stringResource(id = R.string.refresh)) }
+            )
+            Divider()
             ContactType.values().forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,

@@ -95,7 +95,9 @@ sealed class ContactDataType {
     class CustomValue(val customValue: String) : ContactDataType() {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.type_custom
-        override fun getTitle(stringProvider: StringProvider): String = customValue
+        override fun getTitle(stringProvider: StringProvider): String =
+            customValue.ifEmpty { stringProvider(R.string.no_custom_label) }
+
         override val priority: Int = 410
     }
 
