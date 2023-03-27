@@ -6,8 +6,10 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Personal
@@ -19,9 +21,19 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactMutable
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
+import com.alexstyl.contactstore.Label
+import com.alexstyl.contactstore.LabeledValue
+import com.alexstyl.contactstore.Relation
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
@@ -35,11 +47,16 @@ import java.time.LocalDate
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class AndroidContactDataMapperTest : TestBase() {
+    private val contactMutableFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
+
     @MockK
     private lateinit var telephoneService: TelephoneService
 
     @MockK
     private lateinit var addressFormattingService: IAddressFormattingService
+
+    @MockK
+    private lateinit var companyMappingService: AndroidContactCompanyMappingService
 
     private lateinit var underTest: AndroidContactDataMapper
 
@@ -47,6 +64,8 @@ class AndroidContactDataMapperTest : TestBase() {
         super.setupKoinModule(module)
         module.single { telephoneService }
         module.single { addressFormattingService }
+        module.single { companyMappingService }
+        module.single { contactMutableFactory }
     }
 
     override fun setup() {
@@ -104,7 +123,7 @@ class AndroidContactDataMapperTest : TestBase() {
         result.forEachIndexed { index, contactData ->
             assertThat(contactData).isInstanceOf(Website::class.java)
             assertThat((contactData as Website).value).isEqualTo(websites[index])
-            assertThat(contactData.type).isEqualTo(ContactDataType.Main)
+            assertThat(contactData.type).isEqualTo(Main)
         }
     }
 
@@ -136,6 +155,39 @@ class AndroidContactDataMapperTest : TestBase() {
             assertThat((contactData as Relationship).value).isEqualTo(sisters[index])
             assertThat(contactData.type).isEqualTo(ContactDataType.RelationshipSister)
         }
+    }
+
+    @Test
+    fun `should get companies from pseudo-relationships`() {
+        val relationships = listOf("Apple", "Amazon", "Vincent", "Laura")
+        val androidContact = someAndroidContactMutable()
+        androidContact.relations.addAll(
+            relationships.map { LabeledValue(value = Relation(it), label = Label.Custom(it)) }
+        )
+        coEvery { companyMappingService.matchesCompanyCustomRelationshipPattern(any()) } answers {
+            val label: String = firstArg()
+            label.startsWith("A")
+        }
+        coEvery { companyMappingService.decodeFromPseudoRelationshipLabel(any()) } answers {
+            val label: String = firstArg()
+            if (label.startsWith("Am")) Main else Business
+        }
+
+        val results = underTest.getContactData(androidContact)
+
+        relationships.forEach {
+            coVerify { companyMappingService.matchesCompanyCustomRelationshipPattern(it) }
+        }
+        val companies = results.filterIsInstance<Company>()
+        companies.forEach {
+            coVerify { companyMappingService.decodeFromPseudoRelationshipLabel(it.value) }
+        }
+        confirmVerified(companyMappingService)
+        assertThat(companies).hasSize(2)
+        assertThat(companies[0].type).isEqualTo(Business)
+        assertThat(companies[0].value).isEqualTo(relationships[0])
+        assertThat(companies[1].type).isEqualTo(Main)
+        assertThat(companies[1].value).isEqualTo(relationships[1])
     }
 
     @Test
