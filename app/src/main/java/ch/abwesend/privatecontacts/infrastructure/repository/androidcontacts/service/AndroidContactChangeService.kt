@@ -28,7 +28,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toLabel
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData

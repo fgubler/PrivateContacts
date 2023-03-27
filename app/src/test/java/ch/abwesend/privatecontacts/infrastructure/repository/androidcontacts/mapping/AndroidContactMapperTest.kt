@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
@@ -26,20 +26,20 @@ import java.util.Locale
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class AndroidContactFactoryTest : TestBase() {
+class AndroidContactMapperTest : TestBase() {
     private val addressFormattingService: IAddressFormattingService = AddressFormattingService()
 
     @MockK
     private lateinit var telephoneService: TelephoneService
 
     @MockK
-    private lateinit var contactDataFactory: AndroidContactDataFactory
+    private lateinit var contactDataFactory: AndroidContactDataMapper
 
-    private lateinit var underTest: AndroidContactFactory
+    private lateinit var underTest: AndroidContactMapper
 
     override fun setup() {
         super.setup()
-        underTest = AndroidContactFactory()
+        underTest = AndroidContactMapper()
         every { telephoneService.telephoneDefaultCountryIso } returns Locale.getDefault().country.lowercase()
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }

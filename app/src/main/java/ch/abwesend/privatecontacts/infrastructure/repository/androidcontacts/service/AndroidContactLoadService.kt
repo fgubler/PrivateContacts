@@ -19,9 +19,9 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactAccount
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toContactGroup
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toContactAccount
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactPredicate
@@ -35,7 +35,7 @@ import kotlin.system.measureTimeMillis
  */
 class AndroidContactLoadService : IAndroidContactLoadService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
-    private val contactFactory: AndroidContactFactory by injectAnywhere()
+    private val contactFactory: AndroidContactMapper by injectAnywhere()
 
     override fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {

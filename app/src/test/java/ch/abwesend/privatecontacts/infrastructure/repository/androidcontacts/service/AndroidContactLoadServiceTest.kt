@@ -9,8 +9,8 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
@@ -44,10 +44,10 @@ class AndroidContactLoadServiceTest : TestBase() {
     private lateinit var telephoneService: TelephoneService
 
     @SpyK
-    private var contactFactory: AndroidContactFactory = AndroidContactFactory()
+    private var contactFactory: AndroidContactMapper = AndroidContactMapper()
 
     @SpyK
-    private var contactDataFactory: AndroidContactDataFactory = AndroidContactDataFactory()
+    private var contactDataFactory: AndroidContactDataMapper = AndroidContactDataMapper()
 
     @InjectMockKs
     private lateinit var underTest: AndroidContactLoadService

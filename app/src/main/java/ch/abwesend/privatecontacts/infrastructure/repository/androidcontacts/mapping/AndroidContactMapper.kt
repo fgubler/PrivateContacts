@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
@@ -12,8 +12,8 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 
-class AndroidContactFactory {
-    private val contactDataFactory: AndroidContactDataFactory by injectAnywhere()
+class AndroidContactMapper {
+    private val contactDataFactory: AndroidContactDataMapper by injectAnywhere()
 
     fun toContactBase(contact: Contact, rethrowExceptions: Boolean): IContactBase? =
         try {

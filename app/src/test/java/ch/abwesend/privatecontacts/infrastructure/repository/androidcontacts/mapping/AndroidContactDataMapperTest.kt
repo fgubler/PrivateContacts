@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
@@ -34,14 +34,14 @@ import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class AndroidContactDataFactoryTest : TestBase() {
+class AndroidContactDataMapperTest : TestBase() {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
     @MockK
     private lateinit var addressFormattingService: IAddressFormattingService
 
-    private lateinit var underTest: AndroidContactDataFactory
+    private lateinit var underTest: AndroidContactDataMapper
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
@@ -51,7 +51,7 @@ class AndroidContactDataFactoryTest : TestBase() {
 
     override fun setup() {
         super.setup()
-        underTest = AndroidContactDataFactory()
+        underTest = AndroidContactDataMapper()
 
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
         every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }

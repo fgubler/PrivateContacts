@@ -18,10 +18,10 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccount
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toInternetAccount
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
@@ -77,10 +77,10 @@ class AndroidContactSaveServiceTest : TestBase() {
     private var mutableContactFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
 
     @SpyK
-    private var contactFactory: AndroidContactFactory = AndroidContactFactory()
+    private var contactFactory: AndroidContactMapper = AndroidContactMapper()
 
     @SpyK
-    private var contactDataFactory: AndroidContactDataFactory = AndroidContactDataFactory()
+    private var contactDataFactory: AndroidContactDataMapper = AndroidContactDataMapper()
 
     @InjectMockKs
     private lateinit var underTest: AndroidContactSaveService

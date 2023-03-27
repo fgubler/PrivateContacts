@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -26,7 +26,7 @@ import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.Relation
 
-class AndroidContactDataFactory {
+class AndroidContactDataMapper {
     private val telephoneService: TelephoneService by injectAnywhere()
     private val addressFormattingService: IAddressFormattingService by injectAnywhere()
     private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
