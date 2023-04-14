@@ -108,7 +108,7 @@ public final class FormController {
         Util.checkNotNull(address.getPostalCountry(), "null country not allowed");
 
         // Gets the key for deepest available node.
-        Queue<String> subkeys = new LinkedList<String>();
+        Queue<String> subkeys = new LinkedList<>();
 
         for (AddressField field : ADDRESS_HIERARCHY) {
             String value = address.getFieldValue(field);

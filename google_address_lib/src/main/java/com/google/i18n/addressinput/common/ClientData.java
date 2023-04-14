@@ -141,7 +141,7 @@ public final class ClientData implements DataSource {
         StringBuilder countries = new StringBuilder();
 
         for (String countryCode : RegionDataConstants.getCountryFormatMap().keySet()) {
-            countries.append(countryCode + "~");
+            countries.append(countryCode).append("~");
             String json = RegionDataConstants.getCountryFormatMap().get(countryCode);
             JsoMap jso = null;
             try {
