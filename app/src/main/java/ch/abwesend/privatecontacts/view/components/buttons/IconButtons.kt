@@ -48,6 +48,7 @@ fun SearchIconButton(enabled: Boolean = true, onClick: () -> Unit) {
 fun RefreshIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { RefreshIcon() }
 }
+
 @Composable
 fun InfoIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { InfoIcon() }
