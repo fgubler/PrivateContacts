@@ -15,6 +15,14 @@ plugins {
     id "com.google.firebase.crashlytics"
 }
 
+ktlint {
+    disabledRules = [
+            "trailing-comma-on-declaration-site",
+            "trailing-comma-on-call-site",
+            "multiline-if-else"
+    ]
+}
+
 android {
     compileSdk 33
 
