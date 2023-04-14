@@ -62,6 +62,7 @@ fun ChangeContactTypeErrorDialog(
 ) {
     if (validationErrors.isNotEmpty() || errors.isNotEmpty()) {
         OkDialog(title = R.string.error, onClose = onClose) {
+
             val mainText = when {
                 numberOfAttemptedChanges == 1 -> stringResource(id = R.string.type_change_error)
                 numberOfSuccessfulChanges > 0 -> {

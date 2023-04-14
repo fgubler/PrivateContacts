@@ -18,7 +18,6 @@ object AppTypeConverters {
     fun serializeUuid(uuid: UUID?): String? {
         return uuid?.toString()
     }
-
     @TypeConverter
     fun deserializeUuid(value: String?): UUID? {
         return value?.let { UUID.fromString(it) }
@@ -29,7 +28,6 @@ object AppTypeConverters {
     fun serializeContactType(type: ContactType?): String? {
         return type?.name
     }
-
     @TypeConverter
     fun deserializeContactType(value: String?): ContactType? {
         return value?.let { ContactType.valueOf(it) }
@@ -40,7 +38,6 @@ object AppTypeConverters {
     fun serializeContactDataCategory(category: ContactDataCategory?): String? {
         return category?.name
     }
-
     @TypeConverter
     fun deserializeContactDataCategory(value: String?): ContactDataCategory? {
         return value?.let { ContactDataCategory.valueOf(it) }
@@ -51,7 +48,6 @@ object AppTypeConverters {
     fun serializeContactDataType(type: ContactDataType.Key?): String? {
         return type?.name
     }
-
     @TypeConverter
     fun deserializeContactDataType(value: String?): ContactDataType.Key? {
         return value?.let { ContactDataType.Key.valueOf(it) }

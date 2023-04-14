@@ -87,10 +87,8 @@ abstract class TestBase : KoinTest {
 
     /** executed before each test */
     protected open fun setup() {}
-
     /** executed after each test */
     protected open fun tearDown() {}
-
     /** add additional injections to be mocked in koin */
     protected open fun setupKoinModule(module: Module) {}
 }

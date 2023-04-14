@@ -18,9 +18,7 @@ import java.util.UUID
 
 @Entity
 data class ContactEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "id")
-    val rawId: UUID,
+    @PrimaryKey @ColumnInfo(name = "id") val rawId: UUID,
     val externalContactNo: Long?,
     val firstName: String,
     val lastName: String,

@@ -5,10 +5,8 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 interface StringBasedContactData : BaseGenericContactData<String> {
     /** Raw value */
     override val value: String
-
     /** Formatted for display */
     val formattedValue: String get() = value
-
     /** Formatted for automatic matching */
     val valueForMatching: String get() = value
 
