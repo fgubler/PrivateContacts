@@ -19,7 +19,8 @@ ktlint {
     disabledRules = [
             "trailing-comma-on-declaration-site",
             "trailing-comma-on-call-site",
-            "multiline-if-else"
+            "multiline-if-else",
+            "annotation"
     ]
 }
 
