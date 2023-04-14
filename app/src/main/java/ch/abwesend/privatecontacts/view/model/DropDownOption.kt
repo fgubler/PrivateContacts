@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 
 interface DropDownOption<out T> {
     val value: T
+
     @Composable
     fun getLabel(): String
 }

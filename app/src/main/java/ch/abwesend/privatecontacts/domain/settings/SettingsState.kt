@@ -15,8 +15,10 @@ interface ISettingsState {
     val appTheme: AppTheme
     val orderByFirstName: Boolean
     val showContactTypeInList: Boolean
+
     /** show extra save and cancel buttons at the bottom of the edit-screen */
     val showExtraButtonsInEditScreen: Boolean
+
     /** show the top-bar at the bottom */
     val invertTopAndBottomBars: Boolean
 
@@ -29,11 +31,13 @@ interface ISettingsState {
     // Incoming Call Detection
     /** Whether call-detection should be attempted */
     val observeIncomingCalls: Boolean
+
     /**
      * Whether the user should be asked for the necessary permissions on startup.
      * If this is true and [observeIncomingCalls] is false, the user will still be asked.
      */
     val requestIncomingCallPermissions: Boolean
+
     /**
      * Whether to show the notification for incoming calls on the lock-screen.
      * Depends on [observeIncomingCalls]
