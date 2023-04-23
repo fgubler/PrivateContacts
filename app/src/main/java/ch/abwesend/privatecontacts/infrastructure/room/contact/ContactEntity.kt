@@ -24,10 +24,8 @@ data class ContactEntity(
     val firstName: String,
     val lastName: String,
     val nickname: String,
-    @ColumnInfo(defaultValue = "") // TODO can I remove this later?
     val organizationName: String,
     val type: ContactType,
-    @ColumnInfo(defaultValue = ContactCategory.nameOfPersonValue) // TODO can I remove this later?
     val category: ContactCategory,
     val notes: String,
     var fullTextSearch: String, // column optimized for full-text search
