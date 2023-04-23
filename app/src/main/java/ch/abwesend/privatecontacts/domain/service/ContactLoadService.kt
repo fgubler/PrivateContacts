@@ -98,7 +98,6 @@ class ContactLoadService {
             }.toMap()
         }
 
-    // TODO add unit tests
     suspend fun resolveContactsWithAccountInformation(
         baseContacts: Collection<IContactBaseWithAccountInformation>
     ): Map<ContactId, IContact?> {
