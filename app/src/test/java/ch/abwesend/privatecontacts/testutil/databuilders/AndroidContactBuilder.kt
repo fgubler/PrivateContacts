@@ -152,7 +152,7 @@ fun someAndroidContactGroup(
     title: String = "SomeGroup",
     notes: String = "Just some random group",
     groupId: Long = 123,
-    account: InternetAccount = someInternetAccount(),
+    account: InternetAccount? = someInternetAccount(),
 ): ContactGroup {
     val mock = mockk<ContactGroup>()
 
