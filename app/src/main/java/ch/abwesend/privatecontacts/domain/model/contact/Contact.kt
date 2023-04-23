@@ -17,9 +17,11 @@ interface IContactBase {
 }
 
 interface IContact : IContactBase {
+    val category: ContactCategory
     val firstName: String
     val lastName: String
     val nickname: String
+    val organizationName: String
     val notes: String
     val contactDataSet: List<ContactData>
     val contactGroups: List<ContactGroup>

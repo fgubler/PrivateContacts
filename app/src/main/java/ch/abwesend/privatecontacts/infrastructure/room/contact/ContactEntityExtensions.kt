@@ -22,9 +22,11 @@ fun IContact.toEntity(contactId: IContactIdInternal): ContactEntity {
         rawId = contactId.uuid,
         externalContactNo = externalContactNo,
         type = type,
+        category = category,
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,
+        organizationName = organizationName,
         notes = notes,
         fullTextSearch = fullTextSearchColumn,
     )
@@ -35,5 +37,7 @@ private fun IContact.computeFullTextSearchColumn(): String {
     return searchService.computeFullTextSearchColumn(this)
 }
 
-fun ContactEntity.toContactBase(): ContactBase =
-    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName, nickname))
+fun ContactEntity.toContactBase(): ContactBase {
+    val displayName = getFullName(category, firstName, lastName, nickname, organizationName)
+    return ContactBase(id = id, type = type, displayName = displayName)
+}

@@ -10,9 +10,24 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 
 fun IContact.getFullName(
     firstNameFirst: Boolean = Settings.current.orderByFirstName
-): String = getFullName(firstName, lastName, nickname, firstNameFirst)
+): String = getFullName(category, firstName, lastName, nickname, organizationName, firstNameFirst)
 
 fun getFullName(
+    category: ContactCategory,
+    firstName: String,
+    lastName: String,
+    nickname: String,
+    organizationName: String,
+    firstNameFirst: Boolean = Settings.current.orderByFirstName,
+): String = when (category) {
+    ContactCategory.PERSON -> getFullPersonName(firstName, lastName, nickname, firstNameFirst)
+        .ifEmpty { organizationName } // just as fallback...
+    ContactCategory.ORGANIZATION ->
+        organizationName
+            .ifEmpty { getFullPersonName(firstName, lastName, nickname, firstNameFirst) }
+}
+
+private fun getFullPersonName(
     firstName: String,
     lastName: String,
     nickname: String,
@@ -33,7 +48,9 @@ fun IContact.toContactEditable(): ContactEditable =
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,
+        organizationName = organizationName,
         type = type,
+        category = category,
         notes = notes,
         image = image,
         contactDataSet = contactDataSet.toMutableList(),
@@ -45,7 +62,7 @@ fun IContact.toContactBase(): ContactBase =
     ContactBase(
         id = id,
         type = type,
-        displayName = getFullName(firstName, lastName, nickname),
+        displayName = getFullName(category, firstName, lastName, nickname, organizationName),
     )
 
 val IContactBase.isExternal: Boolean

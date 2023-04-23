@@ -30,6 +30,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     showAndroidContacts = getValue(showAndroidContactsEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
     defaultContactType = tryGetEnumValue(defaultContactTypeEntry),
+    defaultContactCategory = tryGetEnumValue(defaultContactCategoryEntry),
     defaultExternalContactAccount = buildDefaultContactAccount(),
     currentVersion = getValue(currentVersionEntry),
 )

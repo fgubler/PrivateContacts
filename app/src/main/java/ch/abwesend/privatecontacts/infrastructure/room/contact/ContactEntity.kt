@@ -10,6 +10,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdCombined
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -23,7 +24,11 @@ data class ContactEntity(
     val firstName: String,
     val lastName: String,
     val nickname: String,
+    @ColumnInfo(defaultValue = "") // TODO can I remove this later?
+    val organizationName: String,
     val type: ContactType,
+    @ColumnInfo(defaultValue = ContactCategory.nameOfPersonValue) // TODO can I remove this later?
+    val category: ContactCategory,
     val notes: String,
     var fullTextSearch: String, // column optimized for full-text search
 ) {

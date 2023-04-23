@@ -3,6 +3,8 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ma
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory.ORGANIZATION
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory.PERSON
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -35,12 +37,15 @@ class AndroidContactMapper {
     ): IContact? = with(contact) {
         try {
             val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
+            val category = if (organization.isEmpty()) PERSON else ORGANIZATION
             ContactEditable(
                 id = ContactIdAndroid(contactNo = contactId),
                 type = ContactType.PUBLIC,
+                category = category,
                 firstName = "$firstName$middleNamePart",
                 lastName = lastName,
                 nickname = nickname,
+                organizationName = organization,
                 notes = note?.raw.orEmpty(),
                 image = getImage(),
                 contactDataSet = contactDataFactory.getContactData(contact).toMutableList(),

@@ -13,6 +13,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
@@ -97,6 +98,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var defaultContactType: ContactType
         get() = currentSettings.defaultContactType
         set(value) = dataStore.setEnumValue(defaultContactTypeEntry, value)
+
+    override var defaultContactCategory: ContactCategory
+        get() = currentSettings.defaultContactCategory
+        set(value) = dataStore.setEnumValue(defaultContactCategoryEntry, value)
 
     override var defaultExternalContactAccount: ContactAccount
         get() = currentSettings.defaultExternalContactAccount

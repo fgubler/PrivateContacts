@@ -31,7 +31,9 @@ data class ContactEditable(
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,
+    override val organizationName: String,
     override var type: ContactType,
+    override val category: ContactCategory,
     override var notes: String,
     override var image: ContactImage,
     override val contactDataSet: MutableList<ContactData>,
@@ -51,12 +53,15 @@ data class ContactEditable(
         fun createNew(): ContactEditable {
             val id = ContactIdInternal.randomId()
             val type = Settings.current.defaultContactType
+            val category = Settings.current.defaultContactCategory
             return ContactEditable(
                 id = id,
                 firstName = "",
                 lastName = "",
                 nickname = "",
+                organizationName = "",
                 type = type,
+                category = category,
                 notes = "",
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(),

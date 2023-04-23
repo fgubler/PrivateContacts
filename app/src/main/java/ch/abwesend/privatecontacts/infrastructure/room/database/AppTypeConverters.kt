@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.room.database
 
 import androidx.room.TypeConverter
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
@@ -33,6 +34,17 @@ object AppTypeConverters {
     @TypeConverter
     fun deserializeContactType(value: String?): ContactType? {
         return value?.let { ContactType.valueOf(it) }
+    }
+
+    // ContactCategory
+    @TypeConverter
+    fun serializeContactCategory(category: ContactCategory?): String? {
+        return category?.name
+    }
+
+    @TypeConverter
+    fun deserializeContactCategory(value: String?): ContactCategory? {
+        return value?.let { ContactCategory.valueOf(it) }
     }
 
     // ContactDataCategory

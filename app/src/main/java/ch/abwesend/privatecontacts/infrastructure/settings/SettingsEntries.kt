@@ -65,6 +65,10 @@ internal val defaultContactTypeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("defaultContactType"),
     defaultValue = defaultSettings.defaultContactType
 )
+internal val defaultContactCategoryEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("defaultContactCategory"),
+    defaultValue = defaultSettings.defaultContactCategory
+)
 internal val defaultExternalContactAccountTypeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("defaultExternalContactAccountType"),
     defaultValue = defaultSettings.defaultExternalContactAccount.type

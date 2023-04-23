@@ -11,6 +11,8 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory.ORGANIZATION
+import ch.abwesend.privatecontacts.domain.model.contact.ContactCategory.PERSON
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
@@ -58,7 +60,9 @@ class DatabaseInitializer {
                 firstName = "Darth",
                 lastName = "Vader",
                 nickname = "Darthy",
+                organizationName = "",
                 type = SECRET,
+                category = PERSON,
                 notes = "Evil but not very good at it",
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(),
@@ -70,7 +74,9 @@ class DatabaseInitializer {
                 firstName = "Luke",
                 lastName = "Skywalker",
                 nickname = "Lucky Luke",
+                organizationName = "",
                 type = SECRET,
+                category = PERSON,
                 notes = "Lost his hand",
                 image = ContactImage(
                     thumbnailUri = "Pseudo Thumbnail",
@@ -162,7 +168,9 @@ class DatabaseInitializer {
                 firstName = "Obi-Wan",
                 lastName = "Kenobi",
                 nickname = "Obi",
+                organizationName = "",
                 type = SECRET,
+                category = PERSON,
                 notes = "Efficient way of suicide",
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(
@@ -191,7 +199,9 @@ class DatabaseInitializer {
                 firstName = "Yoda",
                 lastName = "",
                 nickname = "Yo-Da",
+                organizationName = "",
                 type = SECRET,
+                category = PERSON,
                 notes = "Small and green",
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(
@@ -220,6 +230,20 @@ class DatabaseInitializer {
                         sortOrder = 2,
                     ),
                 ),
+                contactGroups = mutableListOf(),
+                saveInAccount = ContactAccount.None,
+            ),
+            ContactEditable(
+                id = ContactIdInternal.randomId(),
+                firstName = "",
+                lastName = "",
+                nickname = "",
+                organizationName = "Jedi Inc.",
+                type = SECRET,
+                category = ORGANIZATION,
+                notes = "They have a tendency to fail spectacularly.",
+                image = ContactImage.empty,
+                contactDataSet = mutableListOf(),
                 contactGroups = mutableListOf(),
                 saveInAccount = ContactAccount.None,
             ),
