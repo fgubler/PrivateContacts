@@ -48,8 +48,7 @@ data class ContactEditable(
         copy(isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
 
     companion object {
-        fun createNew(): ContactEditable {
-            val id = ContactIdInternal.randomId()
+        fun createNew(id: ContactId = ContactIdInternal.randomId()): ContactEditable {
             val type = Settings.current.defaultContactType
             return ContactEditable(
                 id = id,
