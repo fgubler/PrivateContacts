@@ -1,9 +1,7 @@
 package ch.abwesend.privatecontacts.view.screens.importexport
 
-import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,16 +15,19 @@ import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 import ch.abwesend.privatecontacts.view.model.screencontext.IImportExportScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
@@ -53,11 +54,17 @@ object ImportExportScreen {
 
     @Composable
     private fun ImportCategory(viewModel: ImportExportViewModel) {
-        val context = LocalContext.current
+        var fileSelectionErrorPath: String? by remember { mutableStateOf(null) }
 
         Category(title = R.string.import_title) {
             VcfFilePicker(viewModel.importFile.value) { uri ->
-                onFileSelected(context, viewModel, uri)
+                onFileSelected(viewModel, uri) { path ->
+                    fileSelectionErrorPath = path
+                }
+            }
+
+            fileSelectionErrorPath?.let {
+                FileSelectionFailedDialog(filePath = it) { fileSelectionErrorPath = null }
             }
         }
     }
@@ -94,25 +101,31 @@ object ImportExportScreen {
         launcher.launch(VCF_MIME_TYPES)
     }
 
-    private fun onFileSelected(context: Context, viewModel: ImportExportViewModel, uri: Uri?) {
+    private fun onFileSelected(
+        viewModel: ImportExportViewModel,
+        uri: Uri?,
+        onError: (path: String) -> Unit
+    ) {
         logger.debugLocally("Selected uri '$uri'")
-        if (uri == null) {
+        val uriPath = uri?.path
+        if (uri == null || uriPath == null) {
             logger.debug("No file selected") // user pressed "cancel"
             return
         }
-
         val selectedFile = viewModel.getSanitizedFileOrNull(uri)
+
         if (selectedFile == null) {
-            onFileSelectionFailed(context, uri.path) // TODO change to a proper dialog
+            onError(uriPath)
         } else {
             viewModel.setImportFile(selectedFile)
         }
     }
 
-    private fun onFileSelectionFailed(context: Context, filePath: String?) {
+    @Composable
+    private fun FileSelectionFailedDialog(filePath: String, onClose: () -> Unit) {
         logger.warning("Failed to get file from URI")
-        val text = context.getString(R.string.failed_to_select_file, filePath.orEmpty())
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+        val text = stringResource(id = R.string.failed_to_select_file, filePath)
+        ErrorDialog(errorMessage = text, onClose = onClose)
     }
 
     @Composable
