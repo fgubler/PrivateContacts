@@ -131,6 +131,8 @@ dependencies {
     implementation "com.alexstyl:contactstore:${contactStoreVersion}"
     implementation "com.alexstyl:contactstore-coroutines:${contactStoreVersion}"
 
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.12.0'
+
     // ===== Testing =====
     // Unit Tests
     testImplementation "junit:junit:4.13.2"
