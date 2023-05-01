@@ -12,6 +12,7 @@
     <string name="screen_settings">Settings</string>
     <string name="screen_about_the_app">About</string>
     <string name="screen_introduction">Introduction</string>
+    <string name="screen_import_export">Import / Export</string>
     <string name="screen_contact_details">Contact Details</string>
     <string name="screen_contact_edit">Edit Contact</string>
     <string name="screen_contact_edit_create">Create Contact</string>
@@ -262,5 +263,9 @@
     <string name="app_internal">Within this app</string>
     <string name="local_phone_contacts">Local phone contacts</string>
 
+    <string name="import_title">Import</string>
+    <string name="select_file_to_import">Select .vcf file to import</string>
+    <string name="export_title">Export</string>
+    <string name="failed_to_select_file">Failed to select file "%1$s"</string>
 
 </resources>

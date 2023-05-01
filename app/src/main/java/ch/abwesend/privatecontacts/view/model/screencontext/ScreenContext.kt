@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ImportExportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 
 data class ScreenContext(
@@ -24,6 +25,7 @@ data class ScreenContext(
     override val contactDetailViewModel: ContactDetailViewModel,
     override val contactEditViewModel: ContactEditViewModel,
     override val settingsViewModel: SettingsViewModel,
+    override val importExportViewModel: ImportExportViewModel,
     override val settings: ISettingsState,
 ) : IScreenContext {
     /** from [IScreenContextBase] */
