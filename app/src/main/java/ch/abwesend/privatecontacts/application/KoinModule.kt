@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
+import ch.abwesend.privatecontacts.domain.service.FilePickerSanitizingService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
@@ -79,6 +80,7 @@ internal val koinModule = module {
     single { EasterEggService() }
     single { DatabaseService() }
     single { ContactTypeChangeService() }
+    single { FilePickerSanitizingService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
     single<AccountService> { AndroidAccountService(androidContext()) }
