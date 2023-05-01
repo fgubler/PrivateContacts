@@ -267,5 +267,7 @@
     <string name="select_file_to_import">Select .vcf file to import</string>
     <string name="export_title">Export</string>
     <string name="failed_to_select_file">Failed to select file "%1$s"</string>
+    <string name="import_as_private_contacts">Import as private contacts</string>
+    <string name="import_as_public_contacts">Import as public contacts</string>
 
 </resources>

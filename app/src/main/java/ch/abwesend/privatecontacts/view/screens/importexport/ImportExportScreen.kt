@@ -9,8 +9,11 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -22,11 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 import ch.abwesend.privatecontacts.view.model.screencontext.IImportExportScreenContext
@@ -63,9 +70,13 @@ object ImportExportScreen {
                 }
             }
 
-            fileSelectionErrorPath?.let {
-                FileSelectionFailedDialog(filePath = it) { fileSelectionErrorPath = null }
-            }
+            Spacer(modifier = Modifier.height(10.dp))
+
+            ImportButtons(viewModel)
+        }
+
+        fileSelectionErrorPath?.let {
+            FileSelectionFailedDialog(filePath = it) { fileSelectionErrorPath = null }
         }
     }
 
@@ -126,6 +137,37 @@ object ImportExportScreen {
         logger.warning("Failed to get file from URI")
         val text = stringResource(id = R.string.failed_to_select_file, filePath)
         ErrorDialog(errorMessage = text, onClose = onClose)
+    }
+
+    @Composable
+    private fun ImportButtons(viewModel: ImportExportViewModel) {
+        val importFile = viewModel.importFile.value
+
+        Row {
+            SecondaryButton(
+                enabled = importFile != null,
+                modifier = Modifier.weight(1f),
+                onClick = { viewModel.importContacts(targetType = SECRET) },
+            ) {
+                Text(
+                    text = stringResource(id = R.string.import_as_private_contacts),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            SecondaryButton(
+                enabled = importFile != null,
+                modifier = Modifier.weight(1f),
+                onClick = { viewModel.importContacts(targetType = PUBLIC) },
+            ) {
+                Text(
+                    text = stringResource(id = R.string.import_as_public_contacts),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 
     @Composable
