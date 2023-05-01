@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
+import ch.abwesend.privatecontacts.domain.repository.IFileReadRepository
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -23,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FilePickerSanitizingService
+import ch.abwesend.privatecontacts.domain.service.FileReadService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
@@ -39,6 +41,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.FileReadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
@@ -86,6 +89,7 @@ internal val koinModule = module {
     single { DatabaseService() }
     single { ContactTypeChangeService() }
     single { FilePickerSanitizingService() }
+    single { FileReadService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
     single<AccountService> { AndroidAccountService(androidContext()) }
@@ -122,6 +126,7 @@ internal val koinModule = module {
     single { CallNotificationRepository() }
     single { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
+    single<IFileReadRepository> { FileReadRepository(androidContext()) }
 
     // Factories
     single<ILoggerFactory> { LoggerFactory() }
