@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -66,7 +68,7 @@ object ImportCategory {
     private fun VcfFilePicker(selectedFile: File?, onFileSelected: (Uri?) -> Unit) {
         val rootDirectory = remember { Environment.getExternalStorageDirectory().absolutePath }
         val launcher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.OpenDocument(),
+            contract = OpenDocumentContract(),
             onResult = onFileSelected,
         )
 
@@ -149,6 +151,15 @@ object ImportCategory {
                     textAlign = TextAlign.Center
                 )
             }
+        }
+    }
+}
+
+// TODO fix and move to its own file or delete
+class OpenDocumentContract : ActivityResultContracts.OpenDocument() {
+    override fun createIntent(context: Context, input: Array<String>): Intent {
+        return super.createIntent(context, input).apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 }
