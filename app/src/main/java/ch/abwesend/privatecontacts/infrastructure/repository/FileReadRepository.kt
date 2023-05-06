@@ -12,6 +12,7 @@ import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.result.Result
 import ch.abwesend.privatecontacts.domain.repository.FileReadResult
 import ch.abwesend.privatecontacts.domain.repository.IFileReadRepository
@@ -44,7 +45,7 @@ class FileReadRepository(private val context: Context) : IFileReadRepository {
                 }.orEmpty()
 
                 logger.debug("Read ${lines.size} lines from file")
-                Result.Success(value = lines)
+                Result.Success(value = FileContent(lines))
             } catch (e: Exception) {
                 logger.warning("Failed to read file content", e)
                 Result.Error(error = e)

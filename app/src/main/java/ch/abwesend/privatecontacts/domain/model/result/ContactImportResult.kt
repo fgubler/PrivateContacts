@@ -7,6 +7,6 @@
 package ch.abwesend.privatecontacts.domain.model.result
 
 sealed interface ContactImportResult {
-    data class FileImportFailed(val exception: Exception) : ContactImportResult
+    data class VcfParsingFailed(val exception: Exception) : ContactImportResult
     data class Success(val numberOfContacts: Int) : ContactImportResult
 }
