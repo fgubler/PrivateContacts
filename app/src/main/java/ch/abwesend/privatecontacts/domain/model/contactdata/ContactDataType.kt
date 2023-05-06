@@ -113,7 +113,6 @@ sealed class ContactDataType {
         override val priority: Int = 802
     }
 
-    /** Do not use: only for backwards-compatibility */
     object RelationshipSibling : ContactDataType() {
         override val key: Key = RELATIONSHIP_SIBLING
         override val titleRes: Int = R.string.type_relationship_sibling
