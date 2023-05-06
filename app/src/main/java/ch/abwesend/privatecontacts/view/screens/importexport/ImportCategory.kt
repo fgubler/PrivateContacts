@@ -6,12 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -34,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.OpenDocumentContract
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.getFilePathForDisplay
 import ch.abwesend.privatecontacts.view.viewmodel.ImportExportViewModel
 
@@ -102,15 +100,6 @@ object ImportCategory {
                 text = stringResource(id = labelRes),
                 textAlign = TextAlign.Center
             )
-        }
-    }
-}
-
-// TODO fix and move to its own file or delete
-class OpenDocumentContract : ActivityResultContracts.OpenDocument() {
-    override fun createIntent(context: Context, input: Array<String>): Intent {
-        return super.createIntent(context, input).apply {
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     }
 }
