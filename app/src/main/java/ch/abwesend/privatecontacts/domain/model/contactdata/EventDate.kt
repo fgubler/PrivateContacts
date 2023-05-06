@@ -94,9 +94,12 @@ data class EventDate(
             null
         }
 
-        fun createDate(day: Int, month: Int, year: Int?): LocalDate? = try {
-            val yearOrDummy: Int = year ?: DUMMY_YEAR_INT
-            LocalDate.of(yearOrDummy, month, day)
+        fun createDate(day: Int?, month: Int?, year: Int?): LocalDate? = try {
+            LocalDate.of(
+                /* year = */ year ?: DUMMY_YEAR_INT,
+                /* month = */ month ?: 0,
+                /* dayOfMonth = */ day ?: 0,
+            )
         } catch (e: DateTimeException) {
             logger.error("Failed to create date from day = $day, month = $month, year = $year", e)
             null
