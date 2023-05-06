@@ -6,7 +6,10 @@
 
 package ch.abwesend.privatecontacts.domain.model.result
 
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
+
 sealed interface ContactImportResult {
-    data class VcfParsingFailed(val exception: Exception) : ContactImportResult
-    data class Success(val numberOfContacts: Int) : ContactImportResult
+    object FileReadingFailed : ContactImportResult
+    object VcfParsingFailed : ContactImportResult
+    data class Success(val successfulContacts: List<IContact>, val numberOfFailedContacts: Int) : ContactImportResult
 }

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping
 
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -13,6 +14,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
+import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.Result
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.toContactData
@@ -23,30 +26,34 @@ import ezvcard.VCard
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
 
-    fun mapToContact(vCard: VCard, targetType: ContactType): IContact {
-        val uuid = vCard.uid?.toUuidOrNull()
-        val contactId = uuid?.let { ContactIdInternal(uuid = it) } ?: ContactIdInternal.randomId()
-        val contact = ContactEditable.createNew(id = contactId)
-        contact.type = targetType
+    fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContact, Unit> =
+        try {
+            val uuid = vCard.uid?.toUuidOrNull()
+            val contactId = uuid?.let { ContactIdInternal(uuid = it) } ?: ContactIdInternal.randomId()
+            val contact = ContactEditable.createNew(id = contactId)
+            contact.type = targetType
 
-        contact.firstName = vCard.structuredName?.given ?: vCard.formattedName?.value.orEmpty()
-        contact.lastName = vCard.structuredName?.family.orEmpty()
+            contact.firstName = vCard.structuredName?.given ?: vCard.formattedName?.value.orEmpty()
+            contact.lastName = vCard.structuredName?.family.orEmpty()
 
-        val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
-        contact.nickname = nicknames.filterNotNull().joinToString(", ")
+            val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
+            contact.nickname = nicknames.filterNotNull().joinToString(", ")
 
-        val contactData = getContactData(vCard)
-        contact.contactDataSet.addAll(contactData)
+            val contactData = getContactData(vCard)
+            contact.contactDataSet.addAll(contactData)
 
-        // TODO test with a dataset which actually has categories
-        val groups = vCard.categoriesList.orEmpty().mapNotNull { it.toContactGroup() }
-        contact.contactGroups.addAll(groups)
+            // TODO test with a dataset which actually has categories
+            val groups = vCard.categoriesList.orEmpty().mapNotNull { it.toContactGroup() }
+            contact.contactGroups.addAll(groups)
 
-        val contactCategory = vCard.kind // TODO use once this becomes a thing
-        // TODO figure out how to handle the name of companies/organizations
+            val contactCategory = vCard.kind // TODO use once this becomes a thing
+            // TODO figure out how to handle the name of companies/organizations
 
-        return contact
-    }
+            Result.Success(contact)
+        } catch (e: Exception) {
+            logger.warning("Failed to map contact '${vCard.uid}'")
+            Result.Error(Unit)
+        }
 
     private fun getContactData(vCard: VCard): List<ContactData> {
         val phoneNumbers = vCard.telephoneNumbers.orEmpty()

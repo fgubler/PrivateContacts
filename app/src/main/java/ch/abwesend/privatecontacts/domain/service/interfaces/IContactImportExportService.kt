@@ -14,5 +14,5 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactImportResult
 
 interface IContactImportExportService {
     suspend fun exportContacts(contacts: List<IContact>): ContactExportResult
-    suspend fun importContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult
+    suspend fun loadContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult
 }

@@ -37,15 +37,19 @@ class VCardImportExportService : IContactImportExportService {
         }
     }
 
-    override suspend fun importContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult {
+    override suspend fun loadContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult {
         val vCards = try {
             repository.importVCards(fileContent)
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
-            return ContactImportResult.VcfParsingFailed(exception = e)
+            return ContactImportResult.VcfParsingFailed
         }
 
         val contacts = vCards.map { fromVCardMapper.mapToContact(it, targetType) }
-        return ContactImportResult.Success(numberOfContacts = contacts.size)
+        val successfulContacts = contacts.mapNotNull { it.getValueOrNull() }
+        return ContactImportResult.Success(
+            successfulContacts = successfulContacts,
+            numberOfFailedContacts = contacts.size - successfulContacts.size,
+        )
     }
 }
