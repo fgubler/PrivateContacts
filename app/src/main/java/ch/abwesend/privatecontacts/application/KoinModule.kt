@@ -55,6 +55,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.service.VCardImportExportService
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -109,6 +110,7 @@ internal val koinModule = module {
     single<IContactImportExportService> { VCardImportExportService() }
     single { ContactToVCardMapper() }
     single { VCardToContactMapper() }
+    single { ToPhysicalAddressMapper() }
 
     // Repositories
     single { AndroidContactLoadRepository() }

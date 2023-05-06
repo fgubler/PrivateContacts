@@ -45,8 +45,7 @@ class VCardImportExportService : IContactImportExportService {
             return ContactImportResult.VcfParsingFailed(exception = e)
         }
 
-        val contacts = vCards.map { fromVCardMapper.mapToContact(it) }
-
+        val contacts = vCards.map { fromVCardMapper.mapToContact(it, targetType) }
         return ContactImportResult.Success(numberOfContacts = contacts.size)
     }
 }
