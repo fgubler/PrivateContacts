@@ -14,5 +14,5 @@ import java.io.File
 
 interface IContactImportExportService {
     suspend fun exportContacts(contacts: List<IContact>, targetFile: File): ContactExportResult
-    suspend fun importContacts(sourceFile: File, targetType: ContactType): ContactImportResult
+    suspend fun importContacts(fileContent: List<String>, targetType: ContactType): ContactImportResult
 }

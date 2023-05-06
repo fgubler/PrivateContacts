@@ -37,9 +37,9 @@ class VCardImportExportService : IContactImportExportService {
         }
     }
 
-    override suspend fun importContacts(sourceFile: File, targetType: ContactType): ContactImportResult {
+    override suspend fun importContacts(fileContent: List<String>, targetType: ContactType): ContactImportResult {
         val vCards = try {
-            repository.importVCards(sourceFile)
+            repository.importVCards(fileContent)
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
             // TODO fix data access permission problem

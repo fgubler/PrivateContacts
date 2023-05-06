@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ezvcard.Ezvcard
 import ezvcard.VCard
@@ -25,9 +26,9 @@ class VCardRepository {
         Ezvcard.write(vCards).go(path)
     }
 
-    suspend fun importVCards(sourceFile: File): List<VCard> = withContext(dispatchers.io) {
-        val path = Path(sourceFile.absolutePath)
-        Ezvcard.parse(path).all().orEmpty().filterNotNull().also {
+    suspend fun importVCards(fileContent: List<String>): List<VCard> = withContext(dispatchers.io) {
+        val content = fileContent.joinToString(separator = Constants.linebreak)
+        Ezvcard.parse(content).all().orEmpty().filterNotNull().also {
             logger.debug("Loaded ${it.size} vcards from file")
         }
     }
