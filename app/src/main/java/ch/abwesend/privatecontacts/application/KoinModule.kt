@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
+import ch.abwesend.privatecontacts.domain.service.ContactImportExportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -28,7 +29,7 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportService
+import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
@@ -56,8 +57,8 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardImportExportRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.service.VCardImportExportService
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
@@ -107,7 +108,7 @@ internal val koinModule = module {
     single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
 
-    single<IContactImportExportService> { VCardImportExportService() }
+    single { ContactImportExportService() }
     single { ContactToVCardMapper() }
     single { VCardToContactMapper() }
     single { ToPhysicalAddressMapper() }
@@ -116,6 +117,7 @@ internal val koinModule = module {
     single { AndroidContactLoadRepository() }
     single { AndroidContactSaveRepository() }
     single { VCardRepository() }
+    single<IContactImportExportRepository> { VCardImportExportRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single<IAddressFormattingService> { AddressFormattingService() }

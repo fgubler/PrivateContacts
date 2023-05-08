@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactImportResult
 
-interface IContactImportExportService {
+interface IContactImportExportRepository {
     suspend fun exportContacts(contacts: List<IContact>): ContactExportResult
     suspend fun loadContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult
 }

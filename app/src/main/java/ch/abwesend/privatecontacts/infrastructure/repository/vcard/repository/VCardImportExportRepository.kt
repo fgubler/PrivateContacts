@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.vcard.service
+package ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -12,15 +12,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactImportResult
-import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportService
+import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
 import ezvcard.VCard
 
 // TODO add unit tests
-class VCardImportExportService : IContactImportExportService {
+class VCardImportExportRepository : IContactImportExportRepository {
     private val repository: VCardRepository by injectAnywhere()
     private val toVCardMapper: ContactToVCardMapper by injectAnywhere()
     private val fromVCardMapper: VCardToContactMapper by injectAnywhere()
