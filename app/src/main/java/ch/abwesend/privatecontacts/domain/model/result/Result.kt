@@ -8,27 +8,36 @@ package ch.abwesend.privatecontacts.domain.model.result
 
 sealed interface Result<TValue, TError> {
     fun getValueOrNull(): TValue?
-    fun <T> mapValue(mapper: (TValue) -> T): Result<T, TError>
-    suspend fun <T> mapValueSuspending(mapper: suspend (TValue) -> T): Result<T, TError>
+    suspend fun <T> mapValue(mapper: suspend (TValue) -> T): Result<T, TError>
+    suspend fun <T> mapError(mapper: suspend (TError) -> T): Result<TValue, T>
+    suspend fun <T> mapValueToBinaryResult(
+        mapper: suspend (TValue) -> BinaryResult<T, TError>
+    ): BinaryResult<T, TError>
 
     data class Success<TValue, TError>(val value: TValue) : BinaryResult<TValue, TError> {
         override fun getValueOrNull(): TValue? = value
+        override suspend fun <T> mapError(mapper: suspend (TError) -> T): Result<TValue, T> = Success(value)
 
-        override fun <T> mapValue(mapper: (TValue) -> T): Result<T, TError> {
+        override suspend fun <T> mapValue(mapper: suspend (TValue) -> T): Result<T, TError> {
             val newValue = mapper(value)
             return Success(newValue)
         }
 
-        override suspend fun <T> mapValueSuspending(mapper: suspend (TValue) -> T): Result<T, TError> {
-            val newValue = mapper(value)
-            return Success(newValue)
-        }
+        override suspend fun <T> mapValueToBinaryResult(
+            mapper: suspend (TValue) -> BinaryResult<T, TError>
+        ): BinaryResult<T, TError> = mapper(value)
     }
 
     data class Error<TValue, TError>(val error: TError) : BinaryResult<TValue, TError> {
         override fun getValueOrNull(): TValue? = null
-        override fun <T> mapValue(mapper: (TValue) -> T): Result<T, TError> = Error(error)
-        override suspend fun <T> mapValueSuspending(mapper: suspend (TValue) -> T): Result<T, TError> = Error(error)
+        override suspend fun <T> mapValue(mapper: suspend (TValue) -> T): Result<T, TError> = Error(error)
+        override suspend fun <T> mapError(mapper: suspend (TError) -> T): Result<TValue, T> {
+            val newError = mapper(error)
+            return Error(newError)
+        }
+        override suspend fun <T> mapValueToBinaryResult(
+            mapper: suspend (TValue) -> BinaryResult<T, TError>
+        ): BinaryResult<T, TError> = Error(error)
     }
 }
 
