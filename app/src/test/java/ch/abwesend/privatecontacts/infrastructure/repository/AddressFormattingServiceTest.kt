@@ -417,8 +417,8 @@ class AddressFormattingServiceTest : TestBase() {
             "Bahnhofstrasse 123",
         )
         val expectedStreets = listOf(
-            "123 Bahnhofstrasse,\nZürich",
-            "123 Bahnhofstrasse, \n Zürich",
+            "123 Bahnhofstrasse,${Constants.linebreak}Zürich",
+            "123 Bahnhofstrasse, ${Constants.linebreak} Zürich",
             "123 Bahnhofstrasse,Zürich",
             "123 Bahnhofstrasse, Zürich",
             "123 Bahnhof",
@@ -440,9 +440,8 @@ class AddressFormattingServiceTest : TestBase() {
 
         assertThat(results).hasSameSizeAs(streets)
         results.indices.forEach { index ->
-            // to avoid problems with the tests running on different operating systems
-            val result = results[index].replace("\n", "").replace("\r", "").replace(" ", "")
-            val expected = expectedStreets[index].replace("\n", "").replace("\r", "").replace(" ", "")
+            val result = results[index].replace(" ", "")
+            val expected = expectedStreets[index].replace(" ", "")
             assertThat(result).isEqualTo(expected)
         }
     }
