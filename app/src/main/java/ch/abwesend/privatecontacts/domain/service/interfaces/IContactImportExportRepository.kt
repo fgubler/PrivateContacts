@@ -8,11 +8,15 @@ package ch.abwesend.privatecontacts.domain.service.interfaces
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
-import ch.abwesend.privatecontacts.domain.model.result.ContactImportResult
 
 interface IContactImportExportRepository {
     suspend fun exportContacts(contacts: List<IContact>): ContactExportResult
-    suspend fun loadContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult
+    suspend fun parseContacts(fileContent: FileContent, targetType: ContactType): ContactParseResult
 }
+
+typealias ContactParseResult = BinaryResult<ContactParsedData, ContactParseError>

@@ -9,9 +9,12 @@ package ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactParseError.VCF_PARSING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
-import ch.abwesend.privatecontacts.domain.model.result.ContactImportResult
+import ch.abwesend.privatecontacts.domain.model.result.Result
+import ch.abwesend.privatecontacts.domain.service.interfaces.ContactParseResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
@@ -36,19 +39,20 @@ class VCardImportExportRepository : IContactImportExportRepository {
         }
     }
 
-    override suspend fun loadContacts(fileContent: FileContent, targetType: ContactType): ContactImportResult {
+    override suspend fun parseContacts(fileContent: FileContent, targetType: ContactType): ContactParseResult {
         val vCards = try {
             repository.importVCards(fileContent)
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
-            return ContactImportResult.VcfParsingFailed
+            return Result.Error(VCF_PARSING_FAILED)
         }
 
         val contacts = vCards.map { fromVCardMapper.mapToContact(it, targetType) }
         val successfulContacts = contacts.mapNotNull { it.getValueOrNull() }
-        return ContactImportResult.Success(
+        val result = ContactParsedData(
             successfulContacts = successfulContacts,
             numberOfFailedContacts = contacts.size - successfulContacts.size,
         )
+        return Result.Success(result)
     }
 }
