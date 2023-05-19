@@ -121,7 +121,6 @@ class ContactTypeChangeService {
 
         newContact.type = strategy.correspondingContactType
         newContact.updateModelStatus()
-        strategy.changeContactDataIds(newContact)
 
         return saveChangedContactAndDeleteOld(newContact, oldContact, strategy)
     }
