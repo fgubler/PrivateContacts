@@ -174,6 +174,7 @@ data class ContactDataContainer(
     val websites: List<String>,
     val relationships: List<String>,
     val eventDates: List<LocalDate>,
+    val companies: List<String>,
 ) {
     companion object {
         fun createEmpty(): ContactDataContainer =
@@ -184,6 +185,7 @@ data class ContactDataContainer(
                 websites = emptyList(),
                 relationships = emptyList(),
                 eventDates = emptyList(),
+                companies = emptyList(),
             )
     }
 }

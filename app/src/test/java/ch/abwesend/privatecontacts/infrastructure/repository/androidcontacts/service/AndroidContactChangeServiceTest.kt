@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.DELETED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
@@ -200,7 +201,8 @@ class AndroidContactChangeServiceTest : TestBase() {
         assertThat(mutableContact.mails.map { it.value.raw }).isNotEmpty.isEqualTo(newData.emailAddresses)
         assertThat(mutableContact.postalAddresses.map { it.value.street }).isNotEmpty.isEqualTo(newData.physicalAddresses)
         assertThat(mutableContact.webAddresses.map { it.value.raw.toString() }).isNotEmpty.isEqualTo(newData.websites)
-        assertThat(mutableContact.relations.map { it.value.name }).isNotEmpty.isEqualTo(newData.relationships)
+        assertThat(mutableContact.relations.map { it.value.name }).isNotEmpty
+            .isEqualTo(newData.relationships + newData.companies) // companies are saved as pseudo-relationships
         assertThat(
             mutableContact.events.map { event ->
                 event.value.let { LocalDate.of(it.year!!, it.month, it.dayOfMonth) }
@@ -225,7 +227,8 @@ class AndroidContactChangeServiceTest : TestBase() {
         assertThat(mutableContact.mails.map { it.value.raw }).isNotEmpty.isEqualTo(newData.emailAddresses)
         assertThat(mutableContact.postalAddresses.map { it.value.street }).isNotEmpty.isEqualTo(newData.physicalAddresses)
         assertThat(mutableContact.webAddresses.map { it.value.raw.toString() }).isNotEmpty.isEqualTo(newData.websites)
-        assertThat(mutableContact.relations.map { it.value.name }).isNotEmpty.isEqualTo(newData.relationships)
+        assertThat(mutableContact.relations.map { it.value.name }).isNotEmpty
+            .isEqualTo(newData.relationships + newData.companies) // companies are saved as pseudo-relationships
         assertThat(
             mutableContact.events.map { event ->
                 event.value.let { LocalDate.of(it.year!!, it.month, it.dayOfMonth) }
@@ -452,7 +455,7 @@ class AndroidContactChangeServiceTest : TestBase() {
 
     private fun prepareContactDataForInternalContact(
         data: ContactDataContainer,
-        modelStatus: ModelStatus
+        modelStatus: ModelStatus,
     ): List<ContactData> =
         listOf(
             data.phoneNumbers.mapIndexed { index, elem ->
@@ -473,6 +476,10 @@ class AndroidContactChangeServiceTest : TestBase() {
             },
             data.relationships.mapIndexed { index, elem ->
                 Relationship.createEmpty(index)
+                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+            },
+            data.companies.mapIndexed { index, elem ->
+                Company.createEmpty(index)
                     .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
             },
             data.eventDates.mapIndexed { index, elem ->
@@ -496,5 +503,7 @@ class AndroidContactChangeServiceTest : TestBase() {
                 .map { if (variant) "${it}9" else it },
             eventDates = listOf(LocalDate.now(), LocalDate.now().minusDays(1))
                 .map { if (variant) it.minusYears(1) else it },
+            companies = listOf("Jedi Inc.", "Sith Inc.")
+                .map { if (variant) "${it}9" else it },
         )
 }

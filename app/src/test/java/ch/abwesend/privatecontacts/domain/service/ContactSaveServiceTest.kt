@@ -9,6 +9,8 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
@@ -24,6 +26,8 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableGene
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -131,6 +135,48 @@ class ContactSaveServiceTest : TestBase() {
         assertThat(slot.isCaptured).isTrue
         val savedContactId = slot.captured
         assertThat(savedContactId).isInstanceOf(IContactIdInternal::class.java)
+    }
+
+    @Test
+    fun `should change contact-data-IDs to EXTERNAL for type PUBLIC`() {
+        val originalContactData = someListOfContactData(internalIds = true)
+        val contactId = someInternalContactId()
+        val contact = someContactEditableGeneric(
+            id = contactId,
+            isNew = false,
+            type = PUBLIC,
+            contactData = originalContactData,
+        )
+        coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
+        coEvery { androidContactSaveService.createContact(any()) } returns ContactSaveResult.Success
+
+        val result = runBlocking { underTest.saveContact(contact) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        val newContactData = contact.contactDataSet // the mutable contact-object was changed in the meantime
+        assertThat(originalContactData.all { it.id is IContactDataIdInternal }).isTrue // check test-setup
+        assertThat(newContactData.all { it.id is IContactDataIdExternal }).isTrue
+    }
+
+    @Test
+    fun `should change contact-data-IDs to INTERNAL for type PRIVATE`() {
+        val originalContactData = someListOfContactData(internalIds = false)
+        val contactId = someExternalContactId()
+        val contact = someContactEditableGeneric(
+            id = contactId,
+            isNew = false,
+            type = SECRET,
+            contactData = originalContactData,
+        )
+        coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
+        coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
+
+        val result = runBlocking { underTest.saveContact(contact) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        val newContactData = contact.contactDataSet // the mutable contact-object was changed in the meantime
+        assertThat(originalContactData.all { it.id is IContactDataIdExternal }).isTrue // check test-setup
+        assertThat(newContactData.all { it.id is IContactDataIdInternal }).isTrue
     }
 
     @ParameterizedTest

@@ -187,6 +187,7 @@ fun someListOfContactData(
         somePhysicalAddress(modelStatus = modelStatus, id = someContactDataId(internalIds)),
         someEventDate(modelStatus = modelStatus, id = someContactDataId(internalIds)),
         someRelationship(modelStatus = modelStatus, id = someContactDataId(internalIds)),
+        someCompany(modelStatus = modelStatus, id = someContactDataId(internalIds)),
         // no websites: they don't work in unit-tests
     )
 
