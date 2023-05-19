@@ -6,6 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain.model.importexport
 
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 
-data class ContactParsedData(val successfulContacts: List<IContact>, val numberOfFailedContacts: Int)
+data class ContactParsedData(val successfulContacts: List<IContactEditable>, val numberOfFailedContacts: Int)

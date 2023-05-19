@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
@@ -26,7 +26,7 @@ import ezvcard.VCard
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
 
-    fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContact, Unit> =
+    fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContactEditable, Unit> =
         try {
             val uuid = vCard.uid?.toUuidOrNull()
             val contactId = uuid?.let { ContactIdInternal(uuid = it) } ?: ContactIdInternal.randomId()

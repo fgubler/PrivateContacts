@@ -16,6 +16,11 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
 
 interface IContactImportExportRepository {
     suspend fun exportContacts(contacts: List<IContact>): ContactExportResult
+
+    /**
+     * the contacts are created as internal contacts
+     * i.e. with internal IDs for the contacts and their data
+     */
     suspend fun parseContacts(fileContent: FileContent, targetType: ContactType): ContactParseResult
 }
 
