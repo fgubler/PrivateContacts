@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
@@ -24,6 +25,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.model.contactdata.createExternalDummyContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -49,9 +51,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.koin.core.module.Module
 import java.time.LocalDate
+import java.util.stream.Stream
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
@@ -185,13 +190,20 @@ class AndroidContactChangeServiceTest : TestBase() {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = [true, false])
-    fun `should add new contact data (or update if it already exists)`(dataAlreadyExists: Boolean) {
+    @MethodSource("getCombinationsForDataExistsAndExternalIds")
+    fun `should add new contact data (or update if it already exists)`(
+        dataAlreadyExists: Boolean,
+        externalDataIds: Boolean,
+    ) {
         val oldData = if (dataAlreadyExists) createContactBaseData() else ContactDataContainer.createEmpty()
         val newData = createContactBaseData(variant = true)
         val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = NEW)
+            contactData = prepareContactDataForInternalContact(
+                data = newData,
+                useExternalContactDataIds = externalDataIds,
+                modelStatus = NEW,
+            )
         )
         mockUriParse()
 
@@ -211,13 +223,20 @@ class AndroidContactChangeServiceTest : TestBase() {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = [true, false])
-    fun `should update changed contact data (or insert it if it does not yet exist)`(dataAlreadyExists: Boolean) {
+    @MethodSource("getCombinationsForDataExistsAndExternalIds")
+    fun `should update changed contact data (or insert it if it does not yet exist)`(
+        dataAlreadyExists: Boolean,
+        externalDataIds: Boolean,
+    ) {
         val oldData = if (dataAlreadyExists) createContactBaseData() else ContactDataContainer.createEmpty()
         val newData = createContactBaseData(variant = true)
         val mutableContact = someAndroidContactMutable(contactData = oldData)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = newData, modelStatus = CHANGED)
+            contactData = prepareContactDataForInternalContact(
+                data = newData,
+                useExternalContactDataIds = externalDataIds,
+                modelStatus = CHANGED
+            )
         )
         mockUriParse()
 
@@ -272,7 +291,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = UNCHANGED)
+            contactData = prepareContactDataForInternalContact(data = data, useExternalContactDataIds = true, modelStatus = UNCHANGED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -290,7 +309,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = data)
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = DELETED)
+            contactData = prepareContactDataForInternalContact(data = data, useExternalContactDataIds = true, modelStatus = DELETED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -308,7 +327,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
         val changedContact = someContactEditable(
-            contactData = prepareContactDataForInternalContact(data = data, modelStatus = DELETED)
+            contactData = prepareContactDataForInternalContact(data = data, useExternalContactDataIds = true, modelStatus = DELETED)
         )
 
         underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
@@ -455,38 +474,45 @@ class AndroidContactChangeServiceTest : TestBase() {
 
     private fun prepareContactDataForInternalContact(
         data: ContactDataContainer,
+        useExternalContactDataIds: Boolean,
         modelStatus: ModelStatus,
-    ): List<ContactData> =
-        listOf(
+    ): List<ContactData> {
+        val createId: (Int) -> ContactDataId = { index ->
+            if (useExternalContactDataIds) someContactDataIdExternal(index)
+            else createExternalDummyContactDataId()
+        }
+
+        return listOf(
             data.phoneNumbers.mapIndexed { index, elem ->
                 PhoneNumber.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.emailAddresses.mapIndexed { index, elem ->
                 EmailAddress.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.physicalAddresses.mapIndexed { index, elem ->
                 PhysicalAddress.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.websites.mapIndexed { index, elem ->
                 Website.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.relationships.mapIndexed { index, elem ->
                 Relationship.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.companies.mapIndexed { index, elem ->
                 Company.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
             data.eventDates.mapIndexed { index, elem ->
                 EventDate.createEmpty(index)
-                    .copy(id = someContactDataIdExternal(index), value = elem, modelStatus = modelStatus)
+                    .copy(id = createId(index), value = elem, modelStatus = modelStatus)
             },
         ).flatten()
+    }
 
     /** [variant] just to add the option of having slightly different data */
     private fun createContactBaseData(variant: Boolean = false): ContactDataContainer =
@@ -506,4 +532,14 @@ class AndroidContactChangeServiceTest : TestBase() {
             companies = listOf("Jedi Inc.", "Sith Inc.")
                 .map { if (variant) "${it}9" else it },
         )
+
+    companion object {
+        @JvmStatic
+        private fun getCombinationsForDataExistsAndExternalIds(): Stream<Arguments> = listOf(
+            Arguments.of(true, true),
+            // the combination true-false does not make sense: if the data exists, it has an external ID
+            Arguments.of(false, true),
+            Arguments.of(false, false),
+        ).stream()
+    }
 }
