@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.service.ContactImportExportService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -28,16 +29,16 @@ class ImportExportViewModel : ViewModel() {
         _importFileUri.value = uri
     }
 
-    fun importContacts(targetType: ContactType) {
+    fun importContacts(targetType: ContactType, targetAccount: ContactAccount) {
         val sourceFile = importFileUri.value
         if (sourceFile == null) {
             logger.warning("Trying to import file but no file is selected")
             return
         }
-        logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType")
+        logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType in account ${targetAccount.type}")
 
         viewModelScope.launch {
-            importExportService.importContacts(sourceFile, targetType)
+            importExportService.importContacts(sourceFile, targetType, targetAccount)
         }
     }
 }

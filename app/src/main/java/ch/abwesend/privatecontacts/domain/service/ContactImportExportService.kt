@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import android.net.Uri
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportResult
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactParseError.FILE_READING_FAILED
@@ -19,7 +20,11 @@ class ContactImportExportService {
     private val fileReadService: FileReadService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
 
-    suspend fun importContacts(sourceFile: Uri, targetType: ContactType): ContactImportResult {
+    suspend fun importContacts(
+        sourceFile: Uri,
+        targetType: ContactType,
+        targetAccount: ContactAccount
+    ): ContactImportResult {
         val fileContentResult = fileReadService.readFileContent(sourceFile)
         val contactsToImport = fileContentResult
             .mapError { FILE_READING_FAILED }
@@ -28,6 +33,15 @@ class ContactImportExportService {
             }
 
         val importedContacts = contactsToImport.mapValue { parsedContacts ->
+            val changedContacts = parsedContacts.successfulContacts.forEach { contact ->
+                when (contact.type) {
+                    ContactType.SECRET -> contact.saveInAccount = targetAccount
+                    ContactType.PUBLIC -> {
+                        contact.saveInAccount = targetAccount
+                        contact.type = targetType
+                    }
+                }
+            }
             // TODO create contacts
         }
 
