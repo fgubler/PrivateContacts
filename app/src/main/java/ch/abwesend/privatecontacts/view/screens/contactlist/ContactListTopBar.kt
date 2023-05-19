@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.ImeAction
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -185,9 +186,17 @@ private fun ChangeContactTypeMenuItem(
 ) {
     if (contacts.any { it.type != targetType }) {
         val config = ContactTypeChangeMenuConfig.fromTargetType(targetType)
-        ChangeContactTypeMenuItem(contacts = contacts, config = config, enabled = enabled) { changeContacts ->
+        val contactsWithAccountInformation = remember(contacts) {
+            contacts.map { it.withAccountInformation() }
+        }.toSet()
+
+        ChangeContactTypeMenuItem(
+            contacts = contactsWithAccountInformation,
+            config = config,
+            enabled = enabled,
+        ) { changeContacts ->
             if (changeContacts) {
-                viewModel.changeContactType(contacts, targetType)
+                viewModel.changeContactType(contactsWithAccountInformation, targetType)
             }
             onCloseMenu()
         }

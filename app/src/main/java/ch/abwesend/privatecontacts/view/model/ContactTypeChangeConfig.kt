@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
@@ -86,6 +87,7 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
             changeSaveButtonState(false)
             contacts.forEach { it.saveInAccount = newValue }
             changeSaveButtonState(true)
+            logger.debug("Changed account to '${newValue.type}' (default = '${defaultAccount.type}')")
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = "More options will be added in the future...", fontStyle = FontStyle.Italic)

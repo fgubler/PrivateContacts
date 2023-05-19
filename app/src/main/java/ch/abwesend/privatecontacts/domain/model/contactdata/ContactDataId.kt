@@ -32,7 +32,7 @@ value class ContactDataIdAndroid(override val contactDataNo: Long) : IContactDat
  * The contactDataNo on android contacts is nullable:
  * we still want a unique identifier within the app
  */
-data class ContactDataIdAndroidWithoutNo(val uuid: UUID = UUID.randomUUID()) : IContactDataIdExternal {
+data class ContactDataIdAndroidWithoutNo(val uuid: UUID) : IContactDataIdExternal {
     override val contactDataNo: Long?
         get() = null
 }
@@ -45,4 +45,5 @@ data class ContactDataIdAndroidWithoutNo(val uuid: UUID = UUID.randomUUID()) : I
  * but the user might change that while editing the contact, so we change as late as possible.
  */
 fun createContactDataId(): ContactDataId = ContactDataIdInternal.randomId()
-fun createExternalDummyContactDataId(): ContactDataId = ContactDataIdAndroidWithoutNo()
+fun createExternalDummyContactDataId(): IContactDataIdExternal =
+    ContactDataIdAndroidWithoutNo(uuid = UUID.randomUUID())

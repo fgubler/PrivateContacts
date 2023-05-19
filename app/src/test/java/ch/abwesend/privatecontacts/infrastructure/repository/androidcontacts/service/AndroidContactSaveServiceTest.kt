@@ -82,6 +82,9 @@ class AndroidContactSaveServiceTest : TestBase() {
     @SpyK
     private var contactDataFactory: AndroidContactDataMapper = AndroidContactDataMapper()
 
+    @SpyK
+    private var companyMappingService: AndroidContactCompanyMappingService = AndroidContactCompanyMappingService()
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactSaveService
 
@@ -96,6 +99,7 @@ class AndroidContactSaveServiceTest : TestBase() {
         module.single { mutableContactFactory }
         module.single { contactFactory }
         module.single { contactDataFactory }
+        module.single { companyMappingService }
     }
 
     override fun setup() {

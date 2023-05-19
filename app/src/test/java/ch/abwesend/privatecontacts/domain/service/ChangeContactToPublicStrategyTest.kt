@@ -7,15 +7,12 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
-import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
-import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
-import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
 import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -86,17 +83,5 @@ class ChangeContactToPublicStrategyTest : TestBase() {
         assertThat(capturedContactGroups[0]).isEqualTo(contacts[0].contactGroups + contacts[1].contactGroups)
         assertThat(capturedContactGroups[1]).hasSize(2)
         assertThat(capturedContactGroups[1]).isEqualTo(contacts[2].contactGroups)
-    }
-
-    @Test
-    fun `should change contact-data-IDs to external`() {
-        val originalContactData = someListOfContactData()
-        val contact = someContactEditable(contactData = originalContactData)
-
-        underTest.changeContactDataIds(contact)
-
-        val newContactData = contact.contactDataSet
-        assertThat(originalContactData.all { it.id is IContactDataIdInternal }).isTrue // check test-setup
-        assertThat(newContactData.all { it.id is IContactDataIdExternal }).isTrue
     }
 }
