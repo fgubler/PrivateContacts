@@ -6,13 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactedit
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -22,7 +18,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
@@ -34,12 +29,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Sentences
 import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Words
@@ -52,12 +45,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
-import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
-import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
-import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
-import ch.abwesend.privatecontacts.view.model.ResDropDownOption
+import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Companies
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
@@ -236,35 +226,14 @@ object ContactEditScreenContent {
 
     @Composable
     private fun ContactTypeField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
-        var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
-
-        val selectedOption = with(contact.type) {
-            ResDropDownOption(labelRes = label, value = this)
-        }
-        val options = ContactType.values().map {
-            ResDropDownOption(labelRes = it.label, value = it)
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.weight(1.0f)) {
-                DropDownField(
-                    labelRes = R.string.type,
-                    selectedOption = selectedOption,
-                    options = options,
-                    isScrolling = { parent.isScrolling },
-                ) { newValue ->
-                    val oldValue = contact.type
-                    contact.type = newValue
-                    adaptSaveInAccount(contact, oldValue, newValue)
-                    onChanged(contact)
-                }
-            }
-
-            InfoIconButton { showTypeInfoDialog = true }
-        }
-
-        if (showTypeInfoDialog) {
-            ContactTypeExplanationDialog { showTypeInfoDialog = false }
+        ContactTypeField(
+            selectedType = contact.type,
+            isScrolling = { parent.isScrolling },
+        ) { newValue ->
+            val oldValue = contact.type
+            contact.type = newValue
+            adaptSaveInAccount(contact, oldValue, newValue)
+            onChanged(contact)
         }
     }
 
@@ -286,34 +255,6 @@ object ContactEditScreenContent {
                 }
             }
         }
-
-    @Composable
-    private fun ContactTypeExplanationDialog(onClose: () -> Unit) {
-        OkDialog(
-            title = R.string.visibility,
-            onClose = onClose,
-        ) {
-            Column {
-                ContactTypeExplanationChapter(
-                    titleRes = R.string.secret_contact,
-                    textRes = R.string.secret_contact_explanation,
-                )
-                Spacer(modifier = Modifier.height(10.dp))
-                ContactTypeExplanationChapter(
-                    titleRes = R.string.public_contact,
-                    textRes = R.string.public_contact_explanation,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun ContactTypeExplanationChapter(@StringRes titleRes: Int, @StringRes textRes: Int) {
-        Column {
-            Text(text = stringResource(id = titleRes), fontWeight = FontWeight.Bold)
-            Text(text = stringResource(id = textRes))
-        }
-    }
 
     @Composable
     private fun ContactDataTypeCustomValueDialog(
