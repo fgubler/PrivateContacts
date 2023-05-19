@@ -269,7 +269,10 @@ class AndroidContactChangeService {
         valueMapper: (TInternal) -> TExternal?,
     ) {
         val contactDataId = contactData.idExternal
-        val correspondingOldData = oldContactDataByNo[contactDataId?.contactDataNo]
+        val correspondingOldData = contactDataId?.contactDataNo?.let {
+            // make sure a new company does not override a new relationship (both having "no = null")
+            oldContactDataByNo[it]
+        }
         val newLabel = labelMapper?.invoke(contactData.type, contactData.category, correspondingOldData?.label)
             ?: contactData.type.toLabel(contactData.category, correspondingOldData?.label)
 
@@ -289,7 +292,7 @@ class AndroidContactChangeService {
 
     private val ContactData.idExternal: IContactDataIdExternal?
         get() = (id as? IContactDataIdExternal)
-            .also { if (it == null) logger.warning("Phone number should have an external ID: $id") }
+            .also { if (it == null) logger.warning("Contact data should have an external ID: $id") }
 }
 
 private typealias LabelMapper = (type: ContactDataType, category: ContactDataCategory, oldLabel: Label?) -> Label
