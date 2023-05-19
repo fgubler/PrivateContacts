@@ -11,11 +11,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
 @Composable
 fun ChangeContactTypeMenuItem(
-    contacts: Set<IContactBase>,
+    contacts: Set<IContactBaseWithAccountInformation>,
     config: ContactTypeChangeMenuConfig,
     enabled: Boolean,
     onCloseMenu: (changeContactType: Boolean) -> Unit,

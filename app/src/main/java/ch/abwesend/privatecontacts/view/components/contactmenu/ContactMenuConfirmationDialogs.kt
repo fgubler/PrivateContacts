@@ -11,13 +11,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 
 @Composable
 fun ChangeContactTypeConfirmationDialog(
-    contacts: Set<IContactBase>,
+    contacts: Set<IContactBaseWithAccountInformation>,
     visible: Boolean,
     config: ContactTypeChangeMenuConfig,
     hideDialog: (changeContactType: Boolean) -> Unit,
@@ -25,9 +25,6 @@ fun ChangeContactTypeConfirmationDialog(
     if (visible) {
         @StringRes val titleRes = if (contacts.size == 1) config.confirmationDialogTitleSingularRes
         else config.confirmationDialogTitlePluralRes
-        val contactsWithAccountInformation = remember(contacts) {
-            contacts.map { it.withAccountInformation() }
-        }
         var saveButtonEnabled by remember { mutableStateOf(true) }
 
         YesNoDialog(
@@ -35,7 +32,7 @@ fun ChangeContactTypeConfirmationDialog(
             text = {
                 Column {
                     Text(text = stringResource(id = config.confirmationDialogTextRes))
-                    config.ConfirmationDialogAdditionalContent(contacts = contactsWithAccountInformation) { enabled ->
+                    config.ConfirmationDialogAdditionalContent(contacts = contacts) { enabled ->
                         saveButtonEnabled = enabled
                     }
                 }
