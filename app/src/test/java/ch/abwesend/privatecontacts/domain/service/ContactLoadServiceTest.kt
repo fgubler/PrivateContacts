@@ -6,19 +6,24 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.mockk
@@ -43,6 +48,7 @@ class ContactLoadServiceTest : TestBase() {
     @MockK
     private lateinit var easterEggService: EasterEggService
 
+    @SpyK
     @InjectMockKs
     private lateinit var underTest: ContactLoadService
 
@@ -194,5 +200,26 @@ class ContactLoadServiceTest : TestBase() {
         assertThat(result).hasSize(2)
         assertThat(result[internalId]).isNull()
         assertThat(result[externalId]).isEqualTo(externalContact)
+    }
+
+    @Test
+    fun `should keep account information when resolving contacts`() {
+        val contacts = listOf(
+            someContactBase().withAccountInformation().also { it.saveInAccount = someOnlineAccount("alpha") },
+            someContactBase().withAccountInformation().also { it.saveInAccount = someOnlineAccount("beta") },
+            someContactBase().withAccountInformation().also { it.saveInAccount = someOnlineAccount("gamma") },
+            someContactBase().withAccountInformation().also { it.saveInAccount = someOnlineAccount("delta") },
+        )
+        coEvery { underTest.resolveContacts(any()) } answers {
+            val ids: Collection<ContactId> = firstArg()
+            ids.map { someContactEditable(id = it) }.associateBy { it.id }
+        }
+        val expectedAccountsByContactId = contacts.associate { it.id to it.saveInAccount }
+
+        val result = runBlocking { underTest.resolveContactsWithAccountInformation(contacts) }
+
+        assertThat(result).hasSameSizeAs(contacts)
+        val accountsByContactId = result.mapValues { (_, contact) -> contact?.saveInAccount }
+        assertThat(accountsByContactId).isEqualTo(expectedAccountsByContactId)
     }
 }

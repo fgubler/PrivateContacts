@@ -152,7 +152,7 @@ fun someAndroidContactGroup(
     title: String = "SomeGroup",
     notes: String = "Just some random group",
     groupId: Long = 123,
-    account: InternetAccount = someInternetAccount(),
+    account: InternetAccount? = someInternetAccount(),
 ): ContactGroup {
     val mock = mockk<ContactGroup>()
 
@@ -174,6 +174,7 @@ data class ContactDataContainer(
     val websites: List<String>,
     val relationships: List<String>,
     val eventDates: List<LocalDate>,
+    val companies: List<String>,
 ) {
     companion object {
         fun createEmpty(): ContactDataContainer =
@@ -184,6 +185,7 @@ data class ContactDataContainer(
                 websites = emptyList(),
                 relationships = emptyList(),
                 eventDates = emptyList(),
+                companies = emptyList(),
             )
     }
 }

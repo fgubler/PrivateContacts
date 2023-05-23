@@ -17,10 +17,10 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.toContactBase
-import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
@@ -43,14 +43,13 @@ class ContactTypeChangeService {
 
     // TODO add proper batch-processing (e.g. for the deletion of the old contacts)
     suspend fun changeContactType(
-        contacts: Collection<IContactBase>,
+        contacts: Collection<IContactBaseWithAccountInformation>,
         newType: ContactType
     ): ContactBatchChangeResult = withContext(dispatchers.default) {
         val strategy = ContactTypeChangeStrategy.fromContactType(newType)
 
         val baseContacts = contacts
             .filter { it.type != newType }
-            .map { it.withAccountInformation() }
         val numberOfContacts = baseContacts.size
 
         val fullContactsByContactId = loadService.resolveContactsWithAccountInformation(baseContacts)
@@ -121,7 +120,6 @@ class ContactTypeChangeService {
 
         newContact.type = strategy.correspondingContactType
         newContact.updateModelStatus()
-        strategy.changeContactDataIds(newContact)
 
         return saveChangedContactAndDeleteOld(newContact, oldContact, strategy)
     }

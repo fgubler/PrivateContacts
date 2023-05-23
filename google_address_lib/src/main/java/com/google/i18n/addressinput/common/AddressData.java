@@ -196,16 +196,16 @@ public final class AddressData {
                 + "POSTAL_COUNTRY=" + postalCountry + "; "
                 + "LANGUAGE=" + languageCode + "; ");
         for (String line : addressLines) {
-            output.append(line + "; ");
+            output.append(line).append("; ");
         }
-        output.append("ADMIN_AREA=" + administrativeArea + "; "
-                + "LOCALITY=" + locality + "; "
-                + "DEPENDENT_LOCALITY=" + dependentLocality + "; "
-                + "POSTAL_CODE=" + postalCode + "; "
-                + "SORTING_CODE=" + sortingCode + "; "
-                + "ORGANIZATION=" + organization + "; "
-                + "RECIPIENT=" + recipient
-                + ")");
+        output
+                .append("ADMIN_AREA=").append(administrativeArea).append("; ")
+                .append("LOCALITY=").append(locality).append("; ")
+                .append("DEPENDENT_LOCALITY=").append(dependentLocality).append("; ")
+                .append("POSTAL_CODE=").append(postalCode).append("; ")
+                .append("SORTING_CODE=").append(sortingCode).append("; ")
+                .append("ORGANIZATION=").append(organization).append("; ")
+                .append("RECIPIENT=").append(recipient).append(")");
         return output.toString();
     }
 

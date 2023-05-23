@@ -6,16 +6,19 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactDataFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
+import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someInternetAccount
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -44,10 +47,10 @@ class AndroidContactLoadServiceTest : TestBase() {
     private lateinit var telephoneService: TelephoneService
 
     @SpyK
-    private var contactFactory: AndroidContactFactory = AndroidContactFactory()
+    private var contactFactory: AndroidContactMapper = AndroidContactMapper()
 
     @SpyK
-    private var contactDataFactory: AndroidContactDataFactory = AndroidContactDataFactory()
+    private var contactDataFactory: AndroidContactDataMapper = AndroidContactDataMapper()
 
     @InjectMockKs
     private lateinit var underTest: AndroidContactLoadService
@@ -123,5 +126,33 @@ class AndroidContactLoadServiceTest : TestBase() {
 
         coVerify { contactLoadRepository.loadContactsSnapshot(predicate = null) }
         assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `should load contact groups`() {
+        coEvery { contactLoadRepository.loadAllContactGroups() } returns emptyList()
+
+        runBlocking { underTest.getAllContactGroups() }
+
+        coVerify { contactLoadRepository.loadAllContactGroups() }
+    }
+
+    @Test
+    fun `should filter contact groups by account`() {
+        val account = ContactAccount.OnlineAccount(username = "Tywin", accountProvider = "Lannister")
+        val internetAccount = someInternetAccount(name = account.username, type = account.accountProvider)
+        val expectedContactGroup = someAndroidContactGroup(title = "the right account", account = internetAccount)
+        val contactGroups = listOf(
+            expectedContactGroup,
+            someAndroidContactGroup(title = "some other account", account = someInternetAccount("other")),
+            someAndroidContactGroup(title = "no account", account = null),
+        )
+        coEvery { contactLoadRepository.loadAllContactGroups() } returns contactGroups
+
+        val result = runBlocking { underTest.getContactGroups(account) }
+
+        assertThat(result).hasSize(1)
+        assertThat(result.first().id.name).isEqualTo(expectedContactGroup.title)
+        assertThat(result.first().notes).isEqualTo(expectedContactGroup.note)
     }
 }

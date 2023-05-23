@@ -33,6 +33,7 @@ fun <T> DropDownField(
         onValueChanged = onValueChanged
     )
 }
+
 /**
  * [isScrolling] work-around for a bug: ignore clicks while scrolling.
  */

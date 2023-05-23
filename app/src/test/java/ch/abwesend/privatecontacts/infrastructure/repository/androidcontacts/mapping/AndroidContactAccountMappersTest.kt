@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class AndroidContactAccountFactoryTest : TestBase() {
+class AndroidContactAccountMappersTest : TestBase() {
     @Test
     fun `should convert no-account to null`() {
         val account = ContactAccount.None

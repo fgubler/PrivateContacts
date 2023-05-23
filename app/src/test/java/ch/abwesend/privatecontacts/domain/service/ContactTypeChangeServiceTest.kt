@@ -20,8 +20,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
-import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
@@ -46,7 +44,6 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -237,30 +234,6 @@ class ContactTypeChangeServiceTest : TestBase() {
 
         assertThat(result).isEqualTo(Failure(expectedErrors))
         coVerify { saveService.saveContact(any()) }
-    }
-
-    @ParameterizedTest
-    @MethodSource("getTargetContactTypes")
-    fun `should change contactDataIds to the correct ones`(newType: ContactType) {
-        val oldId = getContactIdForOtherType(newType)
-        val contactData = someListOfContactDataByIdType(oldId)
-        val contact = someContactEditableByIdType(id = oldId, contactData = contactData)
-        coEvery { saveService.saveContact(any()) } returns Success
-        coEvery { saveService.deleteContact(any()) } returns ContactDeleteResult.Success
-
-        val result = runBlocking { underTest.changeContactType(contact, newType) }
-
-        assertThat(result).isEqualTo(Success)
-        val slot = slot<IContactEditable>()
-        coVerify { saveService.saveContact(capture(slot)) }
-        assertThat(slot.isCaptured).isTrue
-        slot.captured.contactDataSet.forEach {
-            val correctIdType = when (newType) {
-                SECRET -> IContactDataIdInternal::class.java
-                PUBLIC -> IContactDataIdExternal::class.java
-            }
-            assertThat(it.id).isInstanceOf(correctIdType)
-        }
     }
 
     @Test

@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -7,7 +7,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactDa
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroidWithoutNo
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
@@ -16,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.model.contactdata.createExternalDummyContactDataId
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -26,7 +26,7 @@ import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
 import com.alexstyl.contactstore.Relation
 
-class AndroidContactDataFactory {
+class AndroidContactDataMapper {
     private val telephoneService: TelephoneService by injectAnywhere()
     private val addressFormattingService: IAddressFormattingService by injectAnywhere()
     private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
@@ -175,7 +175,7 @@ class AndroidContactDataFactory {
 
     private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =
         id?.let { contactDataNo -> ContactDataIdAndroid(contactDataNo = contactDataNo) }
-            ?: ContactDataIdAndroidWithoutNo().also {
+            ?: createExternalDummyContactDataId().also {
                 logger.debug("No ID found for contact data of type ${label.simpleClassName}.")
             }
 

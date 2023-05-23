@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory
+package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.ValueSource
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactDataTypeToLabelConversionTest : TestBase() {
+class ContactDataTypeToLabelMappersTest : TestBase() {
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun `converting a label there and back should avoid errors in normal cases`(compareToOriginal: Boolean) {

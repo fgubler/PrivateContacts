@@ -9,11 +9,12 @@ package ch.abwesend.privatecontacts.domain.service
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -45,7 +46,7 @@ class ContactSaveService {
         }
     }
 
-    private suspend fun saveContactInternally(contact: IContact): ContactSaveResult {
+    private suspend fun saveContactInternally(contact: IContactEditable): ContactSaveResult {
         val oldContactId = contact.id
         val newContactId = when (oldContactId) {
             is IContactIdInternal -> oldContactId
@@ -53,13 +54,18 @@ class ContactSaveService {
         }
         val contactIdChanged = newContactId != oldContactId
 
+        if (contactIdChanged) {
+            contact.changeContactDataIdsToInternal()
+        }
+
         return if (contactIdChanged || contact.isNew) contactRepository.createContact(newContactId, contact)
         else contactRepository.updateContact(newContactId, contact)
     }
 
-    private suspend fun saveContactExternally(contact: IContact): ContactSaveResult {
+    private suspend fun saveContactExternally(contact: IContactEditable): ContactSaveResult {
         return when (val contactId = contact.id) {
             is IContactIdInternal -> {
+                contact.changeContactDataIdsToExternal()
                 // changing the contact from internal to external is treated as creating a new one
                 androidContactService.createContact(contact)
             }
@@ -69,6 +75,22 @@ class ContactSaveService {
             }
         }
     }
+
+    private fun IContactEditable.changeContactDataIdsToInternal() =
+        contactDataSet.replaceAll { contactData ->
+            when (contactData.id) {
+                is IContactDataIdInternal -> contactData
+                is IContactDataIdExternal -> contactData.changeToInternalId()
+            }
+        }
+
+    private fun IContactEditable.changeContactDataIdsToExternal() =
+        contactDataSet.replaceAll { contactData ->
+            when (contactData.id) {
+                is IContactDataIdInternal -> contactData.changeToExternalId()
+                is IContactDataIdExternal -> contactData
+            }
+        }
 
     suspend fun deleteContact(contact: IContactBase): ContactDeleteResult {
         val batchResult = deleteContacts(setOf(contact.id))

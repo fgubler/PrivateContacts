@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactFactory
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.map
  * Beware: Every public method must check for the permission
  */
 class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
-    private val contactFactory: AndroidContactFactory by injectAnywhere()
+    private val contactFactory: AndroidContactMapper by injectAnywhere()
 
     suspend fun resolveContactRaw(contactId: IContactIdExternal): Contact {
         logger.debug("Resolving contact for id $contactId")

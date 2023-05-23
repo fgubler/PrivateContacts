@@ -25,6 +25,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -230,7 +231,7 @@ class ContactListViewModel : ViewModel() {
         }
     }
 
-    fun changeContactType(contacts: Collection<IContactBase>, newType: ContactType) {
+    fun changeContactType(contacts: Collection<IContactBaseWithAccountInformation>, newType: ContactType) {
         viewModelScope.launch {
             val result = _typeChangeResult.withLoadingState {
                 typeChangeService.changeContactType(contacts, newType)

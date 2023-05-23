@@ -8,12 +8,10 @@ package ch.abwesend.privatecontacts.view.components.inputs
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
@@ -23,9 +21,9 @@ import ch.abwesend.privatecontacts.view.model.DynamicStringDropDownOption
 /** Dropdown to select from the available accounts on the device into which contacts can be saved */
 @ExperimentalMaterialApi
 @Composable
-fun AccountSelectionDropDownField(defaultAccount: ContactAccount, onValueChanged: (ContactAccount) -> Unit) =
+fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChanged: (ContactAccount) -> Unit) =
     AccountSelectionDropDownField(
-        defaultAccount = defaultAccount,
+        selectedAccount = selectedAccount,
         onValueChanged = onValueChanged,
     ) { options, selectedOption, onOptionSelected ->
         DropDownField(
@@ -39,20 +37,19 @@ fun AccountSelectionDropDownField(defaultAccount: ContactAccount, onValueChanged
 @ExperimentalMaterialApi
 @Composable
 fun AccountSelectionDropDownField(
-    defaultAccount: ContactAccount,
+    selectedAccount: ContactAccount,
     onValueChanged: (ContactAccount) -> Unit,
     dropDownFieldProvider: DropDownFieldProvider,
 ) {
     val options = remember { getAccountOptions() }
-    var selectedOption: DropDownOption<ContactAccount> by remember {
-        val option = options.firstOrNull { it.value == defaultAccount } ?: options.first()
-        mutableStateOf(option)
-    }
+    val selectedOption: DropDownOption<ContactAccount> = options
+        .firstOrNull { it.value == selectedAccount }
+        ?: options.first().also {
+            selectedAccount.logger.info("Selected option not found: changing to ${it.value.type}")
+            onValueChanged(it.value)
+        }
 
-    dropDownFieldProvider(options, selectedOption) { newValue ->
-        options.firstOrNull { it.value == newValue }?.let { selectedOption = it }
-        onValueChanged(newValue)
-    }
+    dropDownFieldProvider(options, selectedOption, onValueChanged)
 }
 
 private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {

@@ -17,8 +17,8 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeR
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toInternetAccountOrNull
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.toNewAndroidContactGroup
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toInternetAccountOrNull
+import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toNewAndroidContactGroup
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository

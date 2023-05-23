@@ -8,14 +8,12 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 sealed interface ContactTypeChangeStrategy {
     suspend fun createContactGroups(contacts: List<IContact>)
-    fun changeContactDataIds(contact: IContactEditable)
     val correspondingContactType: ContactType
     val deleteOldContactAfterCreatingNew: Boolean
 
@@ -39,10 +37,6 @@ object ChangeContactToSecretStrategy : ContactTypeChangeStrategy {
         contactGroupRepository.createMissingContactGroups(contactGroups)
         // if it fails, it will later be created individually: is slower but still works
     }
-
-    override fun changeContactDataIds(contact: IContactEditable) {
-        contact.contactDataSet.replaceAll { contactData -> contactData.changeToInternalId() }
-    }
 }
 
 object ChangeContactToPublicStrategy : ContactTypeChangeStrategy {
@@ -62,9 +56,5 @@ object ChangeContactToPublicStrategy : ContactTypeChangeStrategy {
             contactSaveService.createMissingContactGroups(account, correspondingContacts)
             // if it fails, it will later be created individually: is slower but still works
         }
-    }
-
-    override fun changeContactDataIds(contact: IContactEditable) {
-        contact.contactDataSet.replaceAll { contactData -> contactData.changeToExternalId() }
     }
 }
