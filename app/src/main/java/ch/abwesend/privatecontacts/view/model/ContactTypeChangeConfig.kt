@@ -12,6 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
@@ -81,13 +85,19 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
         changeSaveButtonState: (enabled: Boolean) -> Unit,
     ) {
         Spacer(modifier = Modifier.height(30.dp))
-        val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
-        contacts.forEach { it.saveInAccount = defaultAccount } // needed if the user just clicks "ok"
-        AccountSelectionDropDownField(defaultAccount) { newValue ->
+        var selectedAccount: ContactAccount by remember {
+            val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
+            logger.debug("The default account type is '${defaultAccount.type}'")
+            contacts.forEach { it.saveInAccount = defaultAccount } // needed if the user just clicks "ok"
+            mutableStateOf(defaultAccount)
+        }
+
+        AccountSelectionDropDownField(selectedAccount) { newValue ->
             changeSaveButtonState(false)
             contacts.forEach { it.saveInAccount = newValue }
+            selectedAccount = newValue
             changeSaveButtonState(true)
-            logger.debug("Changed account to '${newValue.type}' (default = '${defaultAccount.type}')")
+            logger.debug("Changed account to '${newValue.type}'")
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = "More options will be added in the future...", fontStyle = FontStyle.Italic)
