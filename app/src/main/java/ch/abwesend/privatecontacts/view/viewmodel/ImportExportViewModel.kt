@@ -25,20 +25,40 @@ class ImportExportViewModel : ViewModel() {
     private val _importFileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val importFileUri: MutableState<Uri?> = _importFileUri
 
+    private val _exportFileUri: MutableState<Uri?> = mutableStateOf(value = null)
+    val exportFileUri: MutableState<Uri?> = _exportFileUri
+
     fun setImportFile(uri: Uri?) {
         _importFileUri.value = uri
+    }
+
+    fun setExportFile(uri: Uri?) {
+        _exportFileUri.value = uri
     }
 
     fun importContacts(targetType: ContactType, targetAccount: ContactAccount) {
         val sourceFile = importFileUri.value
         if (sourceFile == null) {
-            logger.warning("Trying to import file but no file is selected")
+            logger.warning("Trying to import vcf file but no file is selected")
             return
         }
         logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType in account ${targetAccount.type}")
 
         viewModelScope.launch {
             importExportService.importContacts(sourceFile, targetType, targetAccount)
+        }
+    }
+
+    fun exportContacts(sourceType: ContactType) {
+        val sourceFile = exportFileUri.value
+        if (sourceFile == null) {
+            logger.warning("Trying to export to vcf file but no file is selected")
+            return
+        }
+        logger.debugLocally("Exporting to vcf file from $sourceType")
+
+        viewModelScope.launch {
+            // TODO implement
         }
     }
 }

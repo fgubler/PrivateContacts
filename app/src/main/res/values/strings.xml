@@ -34,6 +34,8 @@
     <string name="info">Info</string>
     <string name="back">Back</string>
     <string name="edit">Edit</string>
+    <string name="done">Done</string>
+    <string name="important">Important</string>
     <string name="more_actions">More actions</string>
     <string name="expand">Expand</string>
     <string name="compress">Compress</string>
@@ -264,9 +266,17 @@
     <string name="local_phone_contacts">Local phone contacts</string>
 
     <string name="import_title">Import</string>
-    <string name="select_file_to_import">Select .vcf file to import</string>
-    <string name="export_title">Export</string>
-    <string name="failed_to_select_file">Failed to select file "%1$s"</string>
     <string name="import_contacts">Import contacts</string>
+    <string name="select_file_to_import">Select .vcf file to import</string>
+    <string name="import_contacts_as">Import contacts as</string>
+
+    <string name="export_title">Export</string>
+    <string name="export_contacts">Export contacts</string>
+    <string name="select_file_to_export_to">Select .vcf file to export to</string>
+    <string name="contact_type_to_export">Export contacts of type</string>
+    <string name="export_file_selected">Export file selected</string>
+
+    <string name="failed_to_select_file">Failed to select file "%1$s"</string>
+    <string name="new_something">New</string>
 
 </resources>
