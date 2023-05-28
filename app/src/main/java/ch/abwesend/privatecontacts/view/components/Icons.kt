@@ -13,15 +13,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Expand
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 
@@ -80,6 +83,24 @@ fun EditIcon() {
     Icon(
         imageVector = Icons.Default.Edit,
         contentDescription = stringResource(id = R.string.edit)
+    )
+}
+
+@Composable
+fun DoneIcon(tint: Color = Color.Green) {
+    Icon(
+        imageVector = Icons.Default.Done,
+        contentDescription = stringResource(id = R.string.done),
+        tint = tint,
+    )
+}
+
+@Composable
+fun ExclamationIcon(tint: Color = Color.Red) {
+    Icon(
+        imageVector = Icons.Default.PriorityHigh,
+        contentDescription = stringResource(id = R.string.important),
+        tint = tint,
     )
 }
 
