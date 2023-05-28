@@ -20,7 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
@@ -102,17 +102,17 @@ class ContactSaveService {
         }
     }
 
-    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactBatchChangeResult {
+    suspend fun deleteContacts(contactIds: Set<ContactId>): ContactIdBatchChangeResult {
         val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>()
         val externalContactIds = contactIds.filterIsInstance<IContactIdExternal>()
 
         val internalResult = if (internalContactIds.isNotEmpty()) {
             contactRepository.deleteContacts(internalContactIds)
-        } else ContactBatchChangeResult.empty()
+        } else ContactIdBatchChangeResult.empty()
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
             androidContactService.deleteContacts(externalContactIds)
-        } else ContactBatchChangeResult.empty()
+        } else ContactIdBatchChangeResult.empty()
 
         return internalResult.combine(externalResult)
     }

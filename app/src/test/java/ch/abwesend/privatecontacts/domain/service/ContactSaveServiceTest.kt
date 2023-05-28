@@ -17,7 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Validat
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -263,10 +263,10 @@ class ContactSaveServiceTest : TestBase() {
         val contactId = if (isExternal) externalContactId else internalContactId
         val contact = someContactEditable(id = contactId)
         coEvery { contactRepository.deleteContacts(any()) } answers {
-            ContactBatchChangeResult.success(firstArg())
+            ContactIdBatchChangeResult.success(firstArg())
         }
         coEvery { androidContactSaveService.deleteContacts(any()) } answers {
-            ContactBatchChangeResult.success(firstArg())
+            ContactIdBatchChangeResult.success(firstArg())
         }
 
         val resultSingle = runBlocking { underTest.deleteContact(contact) }

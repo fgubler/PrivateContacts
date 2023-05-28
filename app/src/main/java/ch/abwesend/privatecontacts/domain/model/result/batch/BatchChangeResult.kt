@@ -42,6 +42,6 @@ data class BatchChangeResult<T, TError>(
     }
 }
 
-typealias ContactBatchChangeResult = BatchChangeResult<ContactId, ContactBatchChangeErrors>
+typealias ContactIdBatchChangeResult = BatchChangeResult<ContactId, ContactBatchChangeErrors>
 typealias BatchChangeResultWithErrors<T, TError, TValidationError> =
     BatchChangeResult<T, BatchChangeErrors<TError, TValidationError>>

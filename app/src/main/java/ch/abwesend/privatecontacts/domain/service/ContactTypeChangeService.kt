@@ -30,7 +30,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.ValidationFailure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.errorsOrEmpty
 import ch.abwesend.privatecontacts.domain.model.result.validationErrorsOrEmpty
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -45,7 +45,7 @@ class ContactTypeChangeService {
     suspend fun changeContactType(
         contacts: Collection<IContactBaseWithAccountInformation>,
         newType: ContactType
-    ): ContactBatchChangeResult = withContext(dispatchers.default) {
+    ): ContactIdBatchChangeResult = withContext(dispatchers.default) {
         val strategy = ContactTypeChangeStrategy.fromContactType(newType)
 
         val baseContacts = contacts
@@ -82,7 +82,7 @@ class ContactTypeChangeService {
 
         logger.debug("Changed contact-type: ${successfulContacts.size} successful, ${failedContacts.size} failed.")
 
-        ContactBatchChangeResult(
+        ContactIdBatchChangeResult(
             successfulChanges = successfulContacts.toList(),
             failedChanges = failedContacts,
         )

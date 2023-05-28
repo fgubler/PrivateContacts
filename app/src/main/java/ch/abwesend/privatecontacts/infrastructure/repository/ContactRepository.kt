@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOW
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.PAGING_DEPRECATION
@@ -194,7 +194,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }
 
-    override suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactBatchChangeResult {
+    override suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult {
         val deletedContacts: List<ContactId> = bulkOperation(contactIds) { database, chunkedContactIds ->
             try {
                 database.contactDao().delete(contactIds = chunkedContactIds.map { it.uuid })
@@ -220,6 +220,6 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             logger.warning("Failed to delete ${notDeletedContacts.size} of ${contactIds.size} contacts")
         }
 
-        return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
+        return ContactIdBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 }
