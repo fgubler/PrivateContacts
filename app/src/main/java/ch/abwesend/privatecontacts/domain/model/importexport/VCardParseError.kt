@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.model.importexport
 
-enum class ContactParseError {
+enum class VCardParseError {
     FILE_READING_FAILED,
     VCF_PARSING_FAILED,
 }

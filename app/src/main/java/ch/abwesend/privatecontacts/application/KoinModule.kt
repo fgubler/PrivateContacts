@@ -29,7 +29,7 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
@@ -117,7 +117,7 @@ internal val koinModule = module {
     single { AndroidContactLoadRepository() }
     single { AndroidContactSaveRepository() }
     single { VCardRepository() }
-    single<IContactImportExportRepository> { VCardImportExportRepository() }
+    single<IVCardImportExportRepository> { VCardImportExportRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single<IAddressFormattingService> { AddressFormattingService() }

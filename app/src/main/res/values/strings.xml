@@ -269,6 +269,7 @@
     <string name="import_contacts">Import contacts</string>
     <string name="select_file_to_import">Select .vcf file to import</string>
     <string name="import_contacts_as">Import contacts as</string>
+    <string name="import_contacts_progress">Contacts are being imported</string>
 
     <string name="export_title">Export</string>
     <string name="export_contacts">Export contacts</string>

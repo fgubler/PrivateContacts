@@ -9,20 +9,20 @@ package ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
-import ch.abwesend.privatecontacts.domain.model.importexport.ContactParseError.VCF_PARSING_FAILED
-import ch.abwesend.privatecontacts.domain.model.importexport.ContactParsedData
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
 import ch.abwesend.privatecontacts.domain.model.result.Result
 import ch.abwesend.privatecontacts.domain.service.interfaces.ContactParseResult
-import ch.abwesend.privatecontacts.domain.service.interfaces.IContactImportExportRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ezvcard.VCard
 
 // TODO add unit tests
-class VCardImportExportRepository : IContactImportExportRepository {
+class VCardImportExportRepository : IVCardImportExportRepository {
     private val repository: VCardRepository by injectAnywhere()
     private val toVCardMapper: ContactToVCardMapper by injectAnywhere()
     private val fromVCardMapper: VCardToContactMapper by injectAnywhere()
@@ -49,7 +49,7 @@ class VCardImportExportRepository : IContactImportExportRepository {
 
         val contacts = vCards.map { fromVCardMapper.mapToContact(it, targetType) }
         val successfulContacts = contacts.mapNotNull { it.getValueOrNull() }
-        val result = ContactParsedData(
+        val result = ParsedData(
             successfulContacts = successfulContacts,
             numberOfFailedContacts = contacts.size - successfulContacts.size,
         )
