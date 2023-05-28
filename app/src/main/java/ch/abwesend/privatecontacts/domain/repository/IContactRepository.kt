@@ -37,4 +37,6 @@ interface IContactRepository {
     suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult
+
+    suspend fun filterForExisting(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal>
 }

@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -221,5 +222,17 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }
 
         return ContactIdBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
+    }
+
+    override suspend fun filterForExisting(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal> {
+        val bulkResult = bulkOperation(contactIds) { database, chunkedContactIds ->
+            val uuids = chunkedContactIds.map { it.uuid }.toSet()
+            database.contactDao().filterForExisting(uuids)
+        }
+
+        return bulkResult
+            .flatten()
+            .map { ContactIdInternal(it) }
+            .toSet()
     }
 }
