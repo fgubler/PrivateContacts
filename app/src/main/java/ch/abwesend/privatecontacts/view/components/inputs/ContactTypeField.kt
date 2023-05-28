@@ -32,7 +32,13 @@ import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 
 @ExperimentalMaterialApi
 @Composable
-fun ContactTypeField(selectedType: ContactType, isScrolling: () -> Boolean, onValueChanged: (ContactType) -> Unit) {
+fun ContactTypeField(
+    selectedType: ContactType,
+    isScrolling: () -> Boolean,
+    @StringRes labelRes: Int = R.string.type,
+    showInfoButton: Boolean = true,
+    onValueChanged: (ContactType) -> Unit,
+) {
     var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
 
     val selectedOption = ResDropDownOption(labelRes = selectedType.label, value = selectedType)
@@ -43,7 +49,7 @@ fun ContactTypeField(selectedType: ContactType, isScrolling: () -> Boolean, onVa
     Row(verticalAlignment = Alignment.CenterVertically) {
         Surface(modifier = Modifier.weight(1.0f)) {
             DropDownField(
-                labelRes = R.string.type,
+                labelRes = labelRes,
                 selectedOption = selectedOption,
                 options = options,
                 isScrolling = isScrolling,
@@ -51,7 +57,9 @@ fun ContactTypeField(selectedType: ContactType, isScrolling: () -> Boolean, onVa
             )
         }
 
-        InfoIconButton { showTypeInfoDialog = true }
+        if (showInfoButton) {
+            InfoIconButton { showTypeInfoDialog = true }
+        }
     }
 
     if (showTypeInfoDialog) {
