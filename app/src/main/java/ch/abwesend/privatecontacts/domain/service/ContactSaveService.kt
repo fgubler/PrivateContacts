@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -31,6 +33,30 @@ class ContactSaveService {
     private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
     private val androidContactService: IAndroidContactSaveService by injectAnywhere()
+
+    // TODO use proper bulk-processing
+    suspend fun saveContacts(contacts: List<IContactEditable>): Map<IContactEditable, ContactSaveResult> {
+        logger.debug("Save ${contacts.size} contacts")
+
+        val partialResults = contacts.mapAsyncChunked(chunkSize = 10) { contact ->
+            contact to saveContact(contact)
+        }.toMap()
+
+        logSaveResult(partialResults.values)
+        return partialResults
+    }
+
+    private fun logSaveResult(results: Collection<ContactSaveResult>) {
+        val successfulContacts = results.filterIsInstance<ContactSaveResult.Success>().size
+        val invalidContacts = results.filterIsInstance<ValidationFailure>().size
+        val failedContacts = results.filterIsInstance<ContactSaveResult.Failure>().size
+
+        val logMessage = "Finished saving ${results.size} - " +
+            "successful: $successfulContacts, " +
+            "invalid: $invalidContacts, " +
+            "failed: $failedContacts"
+        logger.debug(logMessage)
+    }
 
     suspend fun saveContact(contact: IContactEditable): ContactSaveResult {
         val validationResult = validationService.validateContact(contact)
