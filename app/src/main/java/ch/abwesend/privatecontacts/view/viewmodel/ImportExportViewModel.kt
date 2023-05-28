@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.viewmodel
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,15 +26,36 @@ class ImportExportViewModel : ViewModel() {
     private val _importFileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val importFileUri: MutableState<Uri?> = _importFileUri
 
+    private val _importTargetType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    val importTargetType: State<ContactType> = _importTargetType
+
+    private val _importTargetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
+    val importTargetAccount: State<ContactAccount?> = _importTargetAccount
+
     private val _exportFileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val exportFileUri: MutableState<Uri?> = _exportFileUri
+
+    private val _exportSourceType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    val exportSourceType: State<ContactType> = _exportSourceType
 
     fun setImportFile(uri: Uri?) {
         _importFileUri.value = uri
     }
 
+    fun setImportTargetType(contactType: ContactType) {
+        _importTargetType.value = contactType
+    }
+
+    fun setImportTargetAccount(contactAccount: ContactAccount) {
+        _importTargetAccount.value = contactAccount
+    }
+
     fun setExportFile(uri: Uri?) {
         _exportFileUri.value = uri
+    }
+
+    fun setExportSourceType(contactType: ContactType) {
+        _exportSourceType.value = contactType
     }
 
     fun importContacts(targetType: ContactType, targetAccount: ContactAccount) {

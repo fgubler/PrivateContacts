@@ -12,17 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
@@ -45,9 +40,9 @@ object ImportCategoryComponent {
     fun ImportCategory(viewModel: ImportExportViewModel) {
         val filePath = viewModel.importFileUri.value.getFilePathForDisplay()
 
-        var targetType: ContactType by remember { mutableStateOf(SECRET) }
+        val targetType = viewModel.importTargetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
-        var selectedAccount: ContactAccount by remember(targetType) { mutableStateOf(defaultAccount) }
+        val selectedAccount = viewModel.importTargetAccount.value ?: defaultAccount
 
         ImportExportCategory(title = R.string.import_title) {
             VcfFilePicker(filePath) { uri ->
@@ -61,14 +56,14 @@ object ImportCategoryComponent {
                 labelRes = R.string.import_contacts_as,
                 selectedType = targetType,
                 isScrolling = { parent.isScrolling }
-            ) { newType -> targetType = newType }
+            ) { newType -> viewModel.setImportTargetType(newType) }
 
             when (targetType) {
                 SECRET -> Unit
                 PUBLIC -> {
                     Spacer(modifier = Modifier.height(5.dp))
                     AccountSelectionDropDownField(defaultAccount = defaultAccount) { newValue ->
-                        selectedAccount = newValue
+                        viewModel.setImportTargetAccount(newValue)
                     }
                 }
             }
@@ -98,7 +93,7 @@ object ImportCategoryComponent {
     }
 
     @Composable
-    private fun ProgressDialog(selectedFilePath: String) {
+    private fun ProgressDialog() {
         SimpleProgressDialog(title = R.string.import_contacts_progress, allowRunningInBackground = false)
     }
 }

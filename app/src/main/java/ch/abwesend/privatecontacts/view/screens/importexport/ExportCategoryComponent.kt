@@ -12,17 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.CreateFileFilePicker
@@ -44,7 +39,7 @@ object ExportCategoryComponent {
         // TODO find a way to access the "future" name of the file to be created
         val dummyDisplayFilePath = filePath?.let { stringResource(id = R.string.export_file_selected) }.orEmpty()
 
-        var sourceType: ContactType by remember { mutableStateOf(SECRET) }
+        val sourceType = viewModel.exportSourceType.value
 
         ImportExportCategory(title = R.string.export_title) {
             ContactTypeField(
@@ -53,7 +48,7 @@ object ExportCategoryComponent {
                 showInfoButton = false,
                 isScrolling = { parent.isScrolling },
             ) { newType ->
-                sourceType = newType
+                viewModel.setExportSourceType(newType)
                 viewModel.setExportFile(uri = null) // the file-name depends on the contact-type
             }
 
