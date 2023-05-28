@@ -28,7 +28,7 @@ import ch.abwesend.privatecontacts.view.components.inputs.OpenFileFilePicker
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.getFilePathForDisplay
-import ch.abwesend.privatecontacts.view.viewmodel.ImportExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ImportViewModel
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
@@ -37,17 +37,17 @@ object ImportCategoryComponent {
     private val parent = ImportExportScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun ImportCategory(viewModel: ImportExportViewModel) {
-        val filePath = viewModel.importFileUri.value.getFilePathForDisplay()
+    fun ImportCategory(viewModel: ImportViewModel) {
+        val filePath = viewModel.fileUri.value.getFilePathForDisplay()
 
-        val targetType = viewModel.importTargetType.value
+        val targetType = viewModel.targetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
-        val selectedAccount = viewModel.importTargetAccount.value ?: defaultAccount
+        val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
 
         ImportExportCategory(title = R.string.import_title) {
             VcfFilePicker(filePath) { uri ->
                 // in the case of "cancel", leave the old value
-                uri?.let { viewModel.setImportFile(it) }
+                uri?.let { viewModel.selectFile(it) }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -56,14 +56,14 @@ object ImportCategoryComponent {
                 labelRes = R.string.import_contacts_as,
                 selectedType = targetType,
                 isScrolling = { parent.isScrolling }
-            ) { newType -> viewModel.setImportTargetType(newType) }
+            ) { newType -> viewModel.selectTargetType(newType) }
 
             when (targetType) {
                 SECRET -> Unit
                 PUBLIC -> {
                     Spacer(modifier = Modifier.height(5.dp))
                     AccountSelectionDropDownField(defaultAccount = defaultAccount) { newValue ->
-                        viewModel.setImportTargetAccount(newValue)
+                        viewModel.selectTargetAccount(newValue)
                     }
                 }
             }
@@ -71,7 +71,7 @@ object ImportCategoryComponent {
             Spacer(modifier = Modifier.height(10.dp))
 
             SecondaryButton(
-                enabled = viewModel.importFileUri.value != null,
+                enabled = viewModel.fileUri.value != null,
                 onClick = { viewModel.importContacts(targetType, selectedAccount) },
             ) {
                 Text(

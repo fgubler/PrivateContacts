@@ -13,7 +13,8 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ImportExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 
 /**
@@ -51,7 +52,8 @@ interface ISettingsScreenContext : IScreenContextBase {
 }
 
 interface IImportExportScreenContext : IScreenContextBase {
-    val importExportViewModel: ImportExportViewModel
+    val exportViewModel: ExportViewModel
+    val importViewModel: ImportViewModel
 }
 
 interface IScreenContext :

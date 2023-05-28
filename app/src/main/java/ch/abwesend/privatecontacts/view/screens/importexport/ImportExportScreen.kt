@@ -24,14 +24,13 @@ object ImportExportScreen {
 
     @Composable
     fun Screen(screenContext: IImportExportScreenContext) {
-        val viewModel = screenContext.importExportViewModel
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
 
         BaseScreen(screenContext = screenContext, selectedScreen = ImportExport) { padding ->
             Column(modifier = Modifier.padding(padding).verticalScroll(scrollState)) {
-                ImportCategory(viewModel = viewModel)
-                ExportCategory(viewModel = viewModel)
+                ImportCategory(viewModel = screenContext.importViewModel)
+                ExportCategory(viewModel = screenContext.exportViewModel)
             }
         }
     }
