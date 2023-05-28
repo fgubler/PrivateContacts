@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
+import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.OpenFileFilePicker
@@ -94,5 +95,10 @@ object ImportCategoryComponent {
             selectedFilePath = selectedFilePath,
             onFileSelected = onFileSelected,
         )
+    }
+
+    @Composable
+    private fun ProgressDialog(selectedFilePath: String) {
+        SimpleProgressDialog(title = R.string.import_contacts_progress, allowRunningInBackground = false)
     }
 }
