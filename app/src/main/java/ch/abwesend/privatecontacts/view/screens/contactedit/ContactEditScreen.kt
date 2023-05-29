@@ -26,7 +26,6 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,6 +58,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
+import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlin.contracts.ExperimentalContracts
 
@@ -80,16 +80,14 @@ object ContactEditScreen {
         var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
 
-        LaunchedEffect(Unit) {
-            viewModel.saveResult.collect { result ->
-                showDiscardConfirmationDialog = false
-                onSaveResult(
-                    result = result,
-                    onSuccess = { screenContext.returnToContactDetailScreen() },
-                    setSavingErrors = { savingErrors = it },
-                    setValidationErrors = { validationErrors = it },
-                )
-            }
+        viewModel.saveResult.collectWithEffect { result ->
+            showDiscardConfirmationDialog = false
+            onSaveResult(
+                result = result,
+                onSuccess = { screenContext.returnToContactDetailScreen() },
+                setSavingErrors = { savingErrors = it },
+                setValidationErrors = { validationErrors = it },
+            )
         }
 
         selectedContact?.let { contact ->
