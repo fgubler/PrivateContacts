@@ -24,17 +24,17 @@ import ch.abwesend.privatecontacts.view.components.inputs.CreateFileFilePicker
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
-import ch.abwesend.privatecontacts.view.viewmodel.ExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
 import java.time.LocalDate
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ExportCategoryComponent {
-    private val parent = ImportExportScreen // TODO remove once google issue 212091796 is fixed
+    private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun ExportCategory(viewModel: ExportViewModel) {
+    fun ExportCategory(viewModel: ContactExportViewModel) {
         val filePath = viewModel.fileUri.value
         // TODO find a way to access the "future" name of the file to be created
         val dummyDisplayFilePath = filePath?.let { stringResource(id = R.string.export_file_selected) }.orEmpty()

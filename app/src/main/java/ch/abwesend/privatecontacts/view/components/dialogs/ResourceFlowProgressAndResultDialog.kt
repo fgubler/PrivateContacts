@@ -28,7 +28,7 @@ fun <T> ResourceFlowProgressAndResultDialog(
     ProgressDialog: @Composable () -> Unit = {
         SimpleProgressDialog(title = R.string.please_wait, allowRunningInBackground = false)
     },
-    ResultDialog: @Composable (T) -> Unit,
+    ResultDialog: @Composable (result: T, onCLose: () -> Unit) -> Unit,
 ) {
     val resource = flow.collectAsState(initial = InactiveResource()).value
     flow.logger.debug("Received resource of type ${resource.javaClass.simpleName}")
@@ -37,6 +37,6 @@ fun <T> ResourceFlowProgressAndResultDialog(
         is ErrorResource -> ErrorDialog()
         is InactiveResource -> { /* nothing to do */ }
         is LoadingResource -> ProgressDialog()
-        is ReadyResource -> ResultDialog(resource.value)
+        is ReadyResource -> ResultDialog(resource.value, onCloseDialog)
     }
 }

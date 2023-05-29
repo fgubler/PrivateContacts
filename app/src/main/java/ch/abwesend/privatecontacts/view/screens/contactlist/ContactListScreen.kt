@@ -48,9 +48,9 @@ import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeLoadingDialog
-import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactsUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.GenericUnknownErrorDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactListScreenContext
@@ -218,7 +218,7 @@ object ContactListScreen {
 
         val errorDialogCloseCallback: () -> Unit = { viewModel.resetDeletionResult() }
         when (deletionResource) {
-            is ErrorResource -> ChangeContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
+            is ErrorResource -> GenericUnknownErrorDialog(onClose = errorDialogCloseCallback)
             is InactiveResource -> { /* nothing to do */ }
             is LoadingResource -> DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1)
             is ReadyResource -> {
@@ -239,7 +239,7 @@ object ContactListScreen {
 
         val errorDialogCloseCallback: () -> Unit = { viewModel.resetTypeChangeResult() }
         when (typeChangeResource) {
-            is ErrorResource -> ChangeContactsUnknownErrorDialog(onClose = errorDialogCloseCallback)
+            is ErrorResource -> GenericUnknownErrorDialog(onClose = errorDialogCloseCallback)
             is InactiveResource -> { /* nothing to do */ }
             is LoadingResource -> ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1)
             is ReadyResource -> {

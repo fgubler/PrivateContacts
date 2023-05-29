@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import ch.abwesend.privatecontacts.view.model.screencontext.IImportExportScreenContext
+import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.importexport.ExportCategoryComponent.ExportCategory
@@ -19,11 +19,11 @@ import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
 @ExperimentalContracts
-object ImportExportScreen {
+object ContactImportExportScreen {
     var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun Screen(screenContext: IImportExportScreenContext) {
+    fun Screen(screenContext: IContactImportExportScreenContext) {
         val scrollState = rememberScrollState()
         isScrolling = scrollState.isScrollInProgress
 

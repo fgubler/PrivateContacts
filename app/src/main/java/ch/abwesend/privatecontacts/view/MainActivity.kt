@@ -61,9 +61,9 @@ import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ExportViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
@@ -84,8 +84,8 @@ class MainActivity : ComponentActivity() {
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
-    private val exportViewModel: ExportViewModel by viewModels()
-    private val importViewModel: ImportViewModel by viewModels()
+    private val exportViewModel: ContactExportViewModel by viewModels()
+    private val importViewModel: ContactImportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

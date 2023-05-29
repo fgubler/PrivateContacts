@@ -60,6 +60,7 @@
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
     <string name="feature_not_yet_implemented">Sorry, this feature is not yet implemented.</string>
+    <string name="please_wait">Please wait</string>
 
     <string name="do_not_show_again">Do not show again</string>
     <string name="thank_you">Thank you</string>
@@ -270,6 +271,15 @@
     <string name="select_file_to_import">Select .vcf file to import</string>
     <string name="import_contacts_as">Import contacts as</string>
     <string name="import_contacts_progress">Contacts are being imported</string>
+    <string name="import_complete_title">Import complete</string>
+    <string name="import_failed_title">Import failed</string>
+    <string name="file_reading_failed">Failed to read file</string>
+    <string name="vcf_parsing_failed">Failed to VCF in file</string>
+    <string name="newly_imported_contacts">Newly imported contacts:</string>
+    <string name="ignored_existing_contacts">Ignored contacts:</string>
+    <string name="vcf_parsing_errors">VCF errors:</string>
+    <string name="import_errors">Import errors:</string>
+    <string name="import_validation_errors">Import validation errors:</string>
 
     <string name="export_title">Export</string>
     <string name="export_contacts">Export contacts</string>

@@ -19,7 +19,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactImportExportService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
-class ExportViewModel : ViewModel() {
+class ContactExportViewModel : ViewModel() {
     private val importExportService: ContactImportExportService by injectAnywhere()
 
     private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)

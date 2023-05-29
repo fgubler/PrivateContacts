@@ -6,7 +6,10 @@
 
 package ch.abwesend.privatecontacts.domain.model.importexport
 
-enum class VCardParseError {
-    FILE_READING_FAILED,
-    VCF_PARSING_FAILED,
+import androidx.annotation.StringRes
+import ch.abwesend.privatecontacts.R
+
+enum class VCardParseError(@StringRes val label: Int) {
+    FILE_READING_FAILED(R.string.file_reading_failed),
+    VCF_PARSING_FAILED(R.string.vcf_parsing_failed),
 }
