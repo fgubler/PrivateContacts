@@ -11,8 +11,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
-import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
 interface IVCardImportExportRepository {
     suspend fun exportContacts(contacts: List<IContact>): ContactExportResult

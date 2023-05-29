@@ -14,8 +14,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
-import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
-import ch.abwesend.privatecontacts.domain.model.result.Result
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.toContactData
@@ -49,10 +50,10 @@ class VCardToContactMapper {
             val contactCategory = vCard.kind // TODO use once this becomes a thing
             // TODO figure out how to handle the name of companies/organizations
 
-            Result.Success(contact)
+            SuccessResult(contact)
         } catch (e: Exception) {
             logger.warning("Failed to map contact '${vCard.uid}'")
-            Result.Error(Unit)
+            ErrorResult(Unit)
         }
 
     private fun getContactData(vCard: VCard): List<ContactData> {

@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.domain.repository
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
-import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
 interface IFileAccessRepository {
     suspend fun readFileContent(fileUri: Uri, requestPermission: Boolean = true): FileReadResult

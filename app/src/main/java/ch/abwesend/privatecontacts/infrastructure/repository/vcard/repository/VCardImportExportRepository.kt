@@ -13,7 +13,8 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartia
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactExportResult
-import ch.abwesend.privatecontacts.domain.model.result.Result
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.ContactParseResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -44,7 +45,7 @@ class VCardImportExportRepository : IVCardImportExportRepository {
             repository.importVCards(fileContent)
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
-            return Result.Error(VCF_PARSING_FAILED)
+            return ErrorResult(VCF_PARSING_FAILED)
         }
 
         val contacts = vCards.map { fromVCardMapper.mapToContact(it, targetType) }
@@ -53,6 +54,6 @@ class VCardImportExportRepository : IVCardImportExportRepository {
             successfulContacts = successfulContacts,
             numberOfFailedContacts = contacts.size - successfulContacts.size,
         )
-        return Result.Success(result)
+        return SuccessResult(result)
     }
 }

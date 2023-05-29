@@ -28,8 +28,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
-import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
-import ch.abwesend.privatecontacts.domain.model.result.Result
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressAndResultDialog
@@ -124,8 +125,8 @@ object ImportCategoryComponent {
     @Composable
     private fun ResultDialog(importResult: BinaryResult<ContactImportData, VCardParseError>, onClose: () -> Unit) {
         when (importResult) {
-            is Result.Error -> ErrorResultDialog(error = importResult.error, onClose = onClose)
-            is Result.Success -> SuccessResultDialog(data = importResult.value, onClose = onClose)
+            is ErrorResult -> ErrorResultDialog(error = importResult.error, onClose = onClose)
+            is SuccessResult -> SuccessResultDialog(data = importResult.value, onClose = onClose)
         }
     }
 

@@ -17,9 +17,9 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.FILE_READING_FAILED
-import ch.abwesend.privatecontacts.domain.model.result.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.filterValuesNotNull
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere

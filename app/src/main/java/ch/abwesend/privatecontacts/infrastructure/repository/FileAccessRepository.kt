@@ -14,7 +14,8 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
-import ch.abwesend.privatecontacts.domain.model.result.Result
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.FileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileWriteResult
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
@@ -50,10 +51,10 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 val fileContent = FileContent(content)
 
                 logger.debug("Read ${fileContent.numberOfLines} lines from file")
-                Result.Success(value = fileContent)
+                SuccessResult(value = fileContent)
             } catch (e: Exception) {
                 logger.warning("Failed to read file content", e)
-                Result.Error(error = e)
+                ErrorResult(error = e)
             }
         }
 
@@ -78,10 +79,10 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 }
 
                 logger.debug("Wrote ${fileContent.numberOfLines} lines to file")
-                Result.Success(value = Unit)
+                SuccessResult(value = Unit)
             } catch (e: Exception) {
                 logger.warning("Failed to write to file", e)
-                Result.Error(error = e)
+                ErrorResult(error = e)
             }
         }
 }
