@@ -97,6 +97,7 @@ class ContactImportExportService {
         when (targetType) {
             ContactType.PUBLIC -> emptySet()
             ContactType.SECRET -> {
+                // TODO fix: currently, we create new UUIDs on import, so this will never return anything
                 val contactIds = contacts.map { it.id }.filterIsInstance<IContactIdInternal>()
                 contactLoadService.filterForExistingContacts(contactIds)
             }
