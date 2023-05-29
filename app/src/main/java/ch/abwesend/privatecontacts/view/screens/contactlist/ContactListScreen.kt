@@ -50,7 +50,7 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactType
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
-import ch.abwesend.privatecontacts.view.components.dialogs.GenericUnknownErrorDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressAndResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactListScreenContext
@@ -214,46 +214,39 @@ object ContactListScreen {
 
     @Composable
     private fun DeletionResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
-        val deletionResource = viewModel.deleteResult.collectAsState(initial = InactiveResource()).value
-
-        val errorDialogCloseCallback: () -> Unit = { viewModel.resetDeletionResult() }
-        when (deletionResource) {
-            is ErrorResource -> GenericUnknownErrorDialog(onClose = errorDialogCloseCallback)
-            is InactiveResource -> { /* nothing to do */ }
-            is LoadingResource -> DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1)
-            is ReadyResource -> {
-                val numberOfFailed = deletionResource.value.failedChanges.size
-                val totalNumber = numberOfFailed + deletionResource.value.successfulChanges.size
+        ResourceFlowProgressAndResultDialog(
+            flow = viewModel.deleteResult,
+            onCloseDialog = { viewModel.resetDeletionResult() },
+            ProgressDialog = { DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1) },
+            ResultDialog = { result, onClose ->
+                val numberOfFailed = result.failedChanges.size
+                val totalNumber = numberOfFailed + result.successfulChanges.size
                 DeleteContactsResultDialog(
                     numberOfErrors = numberOfFailed,
                     numberOfAttemptedChanges = totalNumber,
-                    onClose = errorDialogCloseCallback,
+                    onClose = onClose,
                 )
             }
-        }
+        )
     }
 
     @Composable
     private fun TypeChangeResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
-        val typeChangeResource = viewModel.typeChangeResult.collectAsState(initial = InactiveResource()).value
-
-        val errorDialogCloseCallback: () -> Unit = { viewModel.resetTypeChangeResult() }
-        when (typeChangeResource) {
-            is ErrorResource -> GenericUnknownErrorDialog(onClose = errorDialogCloseCallback)
-            is InactiveResource -> { /* nothing to do */ }
-            is LoadingResource -> ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1)
-            is ReadyResource -> {
-                val result = typeChangeResource.value
+        ResourceFlowProgressAndResultDialog(
+            flow = viewModel.typeChangeResult,
+            onCloseDialog = { viewModel.resetTypeChangeResult() },
+            ProgressDialog = { ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1) },
+            ResultDialog = { result, onClose ->
                 val flattenedErrors = result.flattenedErrors()
                 ChangeContactTypeErrorDialog(
                     validationErrors = flattenedErrors.validationErrors,
                     errors = flattenedErrors.errors,
                     numberOfAttemptedChanges = result.numberOfAttemptedChanges,
                     numberOfSuccessfulChanges = result.successfulChanges.size,
-                    onClose = errorDialogCloseCallback,
+                    onClose = onClose,
                 )
             }
-        }
+        )
     }
 
     @Composable
