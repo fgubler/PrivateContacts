@@ -242,7 +242,7 @@ object SettingsScreen {
     @Composable
     private fun DefaultContactAccountField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         AccountSelectionDropDownField(
-            defaultAccount = currentSettings.defaultExternalContactAccount,
+            selectedAccount = currentSettings.defaultExternalContactAccount,
             onValueChanged = { settingsRepository.defaultExternalContactAccount = it }
         ) { options, selectedOption, onOptionSelected ->
             SettingsDropDown(

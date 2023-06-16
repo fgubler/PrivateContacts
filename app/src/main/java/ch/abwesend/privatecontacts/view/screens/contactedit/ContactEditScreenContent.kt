@@ -249,7 +249,7 @@ object ContactEditScreenContent {
         when (contact.type) {
             ContactType.SECRET -> Unit
             ContactType.PUBLIC -> {
-                AccountSelectionDropDownField(defaultAccount = contact.saveInAccount) { newValue ->
+                AccountSelectionDropDownField(selectedAccount = contact.saveInAccount) { newValue ->
                     contact.saveInAccount = newValue
                     onChanged(contact)
                 }
