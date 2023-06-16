@@ -10,9 +10,7 @@ import android.net.Uri
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
@@ -29,7 +27,6 @@ class ContactImportExportService {
     private val importExportService: IVCardImportExportRepository by injectAnywhere()
     private val fileReadService: FileReadService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
-    private val contactLoadService: ContactLoadService by injectAnywhere()
 
     suspend fun importContacts(
         sourceFile: Uri,
@@ -47,7 +44,7 @@ class ContactImportExportService {
             val contactsToSave = parsedContacts.successfulContacts
             postProcessContacts(contactsToSave, targetType, targetAccount)
 
-            val savedData = saveImportedContacts(contactsToSave, targetType)
+            val savedData = saveImportedContacts(contactsToSave)
 
             ContactImportData(
                 newImportedContacts = savedData.newImportedContacts,
@@ -70,8 +67,8 @@ class ContactImportExportService {
         }
     }
 
-    private suspend fun saveImportedContacts(contacts: List<IContactEditable>, targetType: ContactType): SavedData {
-        val existingContactIds = loadExistingContactIds(contacts, targetType)
+    private suspend fun saveImportedContacts(contacts: List<IContactEditable>): SavedData {
+        val existingContactIds: List<ContactId> = emptyList() // TODO implement a merging strategy
         val ignoredExistingContacts = contacts.filter { existingContactIds.contains(it.id) }
         val newContacts = contacts.filterNot { existingContactIds.contains(it.id) }
         val saveResults = contactSaveService.saveContacts(newContacts)
@@ -89,17 +86,4 @@ class ContactImportExportService {
             existingIgnoredContacts = ignoredExistingContacts,
         )
     }
-
-    /**
-     * The contact-IDs in VCF are based on UUIDs, so external contacts cannot be matched.
-     */
-    private suspend fun loadExistingContactIds(contacts: List<IContact>, targetType: ContactType): Set<ContactId> =
-        when (targetType) {
-            ContactType.PUBLIC -> emptySet()
-            ContactType.SECRET -> {
-                // TODO fix: currently, we create new UUIDs on import, so this will never return anything
-                val contactIds = contacts.map { it.id }.filterIsInstance<IContactIdInternal>()
-                contactLoadService.filterForExistingContacts(contactIds)
-            }
-        }
 }
