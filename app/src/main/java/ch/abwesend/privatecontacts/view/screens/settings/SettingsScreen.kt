@@ -194,7 +194,7 @@ object SettingsScreen {
     private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         SettingsCategory(
             titleRes = R.string.settings_category_contacts,
-            infoPopupText = R.string.settings_info_dialog_android_contacts,
+            infoPopupText = R.string.settings_info_dialog_android_contacts_permission,
             hideInfoPopup = currentSettings.showAndroidContacts,
         ) {
             SettingsCheckbox(
