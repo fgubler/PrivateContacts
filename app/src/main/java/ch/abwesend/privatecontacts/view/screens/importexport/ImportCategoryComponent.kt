@@ -47,6 +47,7 @@ import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.OpenFileFilePicker
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.getFilePathForDisplay
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
@@ -212,34 +213,75 @@ object ImportCategoryComponent {
 
     @Composable
     private fun SuccessResultDialog(data: ContactImportData, onClose: () -> Unit) {
+        var showOverview: Boolean by remember { mutableStateOf(true) }
+        val hasErrorDetails = data.importFailures.isNotEmpty() || data.importValidationFailures.isNotEmpty()
+
+        if (showOverview) {
+            ImportExportSuccessDialog(
+                title = R.string.import_complete_title,
+                secondButtonText = R.string.import_show_error_details,
+                secondButtonVisible = hasErrorDetails,
+                onSecondButton = { showOverview = false },
+                onClose = onClose
+            ) { SuccessResultOverview(importData = data) }
+        } else {
+            ImportExportSuccessDialog(
+                title = R.string.import_error_details_title,
+                secondButtonText = R.string.import_show_result_overview,
+                secondButtonVisible = true,
+                onSecondButton = { showOverview = true },
+                onClose = onClose
+            ) { SuccessResultErrorDetails(importData = data) }
+        }
+    }
+
+    @Composable
+    private fun SuccessResultOverview(importData: ContactImportData) {
         val scrollState = rememberScrollState()
-        OkDialog(title = R.string.import_complete_title, onClose = onClose) {
-            Column(modifier = Modifier.verticalScroll(scrollState)) {
-                Row {
-                    Text(text = stringResource(id = R.string.newly_imported_contacts), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = data.newImportedContacts.size.toString())
-                }
-                Row {
-                    Text(text = stringResource(id = R.string.ignored_existing_contacts), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = data.existingIgnoredContacts.size.toString())
-                }
-                Row {
-                    Text(text = stringResource(id = R.string.vcf_parsing_errors), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = data.numberOfParsingFailures.toString())
-                }
-                Row {
-                    Text(text = stringResource(id = R.string.import_validation_errors), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = data.importValidationFailures.size.toString())
-                }
-                Row {
-                    Text(text = stringResource(id = R.string.import_errors), fontWeight = FontWeight.Bold)
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(text = data.importFailures.size.toString())
-                }
+
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Row {
+                Text(text = stringResource(id = R.string.newly_imported_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = importData.newImportedContacts.size.toString())
+            }
+            Row {
+                Text(text = stringResource(id = R.string.ignored_existing_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = importData.existingIgnoredContacts.size.toString())
+            }
+            Row {
+                Text(text = stringResource(id = R.string.vcf_parsing_errors), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = importData.numberOfParsingFailures.toString())
+            }
+            Row {
+                Text(text = stringResource(id = R.string.import_validation_errors), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = importData.importValidationFailures.size.toString())
+            }
+            Row {
+                Text(text = stringResource(id = R.string.import_errors), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = importData.importFailures.size.toString())
+            }
+        }
+    }
+
+    @Composable
+    private fun SuccessResultErrorDetails(importData: ContactImportData) {
+        val scrollState = rememberScrollState()
+        val failedContactNames = remember(importData) {
+            val contacts = (importData.importFailures.keys + importData.importValidationFailures.keys)
+                .distinctBy { it.id }
+            contacts.map { it.displayName }
+        }
+
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(text = stringResource(id = R.string.import_failed_contacts))
+            failedContactNames.forEach {
+                Text(text = " - $it")
             }
         }
     }

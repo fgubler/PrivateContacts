@@ -283,6 +283,10 @@
     <string name="vcf_parsing_errors">VCF errors:</string>
     <string name="import_errors">Import errors:</string>
     <string name="import_validation_errors">Import validation errors:</string>
+    <string name="import_error_details_title">Error Details</string>
+    <string name="import_show_error_details">Show error details</string>
+    <string name="import_show_result_overview">Show result overview</string>
+    <string name="import_failed_contacts">Contacts which could not be imported</string>
 
     <string name="export_title">Export</string>
     <string name="export_contacts">Export contacts</string>
