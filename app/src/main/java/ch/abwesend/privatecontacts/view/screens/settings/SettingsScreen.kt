@@ -192,8 +192,6 @@ object SettingsScreen {
 
     @Composable
     private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        var requestPermissions: Boolean by remember { mutableStateOf(false) }
-
         SettingsCategory(
             titleRes = R.string.settings_category_contacts,
             infoPopupText = R.string.settings_info_dialog_android_contacts,
@@ -203,14 +201,18 @@ object SettingsScreen {
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
                 value = currentSettings.showAndroidContacts,
-            ) {
-                settingsRepository.showAndroidContacts = it
-                if (it) { requestPermissions = true }
-            }
+            ) { newValue -> onShowAndroidContactsChanged(settingsRepository, newValue) }
         }
+    }
 
-        if (requestPermissions) {
-            contactPermissionHelper.requestAndroidContactPermissions { requestPermissions = false }
+    private fun onShowAndroidContactsChanged(settingsRepository: SettingsRepository, newValue: Boolean) {
+        if (newValue) {
+            contactPermissionHelper.requestAndroidContactPermissions { result ->
+                logger.debug("Android contact permissions: $result")
+                settingsRepository.showAndroidContacts = result.usable
+            }
+        } else {
+            settingsRepository.showAndroidContacts = false
         }
     }
 
