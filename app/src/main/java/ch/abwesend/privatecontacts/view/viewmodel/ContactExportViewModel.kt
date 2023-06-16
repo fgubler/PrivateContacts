@@ -15,13 +15,9 @@ import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.service.ContactImportExportService
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class ContactExportViewModel : ViewModel() {
-    private val importExportService: ContactImportExportService by injectAnywhere()
-
     private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val fileUri: MutableState<Uri?> = _fileUri
 

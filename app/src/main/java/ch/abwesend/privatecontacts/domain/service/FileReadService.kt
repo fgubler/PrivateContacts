@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class FileReadService {
-    val repository: IFileAccessRepository by injectAnywhere()
+    private val repository: IFileAccessRepository by injectAnywhere()
 
     suspend fun readFileContent(fileUri: Uri): FileReadResult =
         repository.readFileContent(fileUri)

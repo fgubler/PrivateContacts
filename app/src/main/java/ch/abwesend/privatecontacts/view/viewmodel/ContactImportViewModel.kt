@@ -23,12 +23,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
-import ch.abwesend.privatecontacts.domain.service.ContactImportExportService
+import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class ContactImportViewModel : ViewModel() {
-    private val importExportService: ContactImportExportService by injectAnywhere()
+    private val importService: ContactImportService by injectAnywhere()
 
     private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val fileUri: MutableState<Uri?> = _fileUri
@@ -72,7 +72,7 @@ class ContactImportViewModel : ViewModel() {
 
         viewModelScope.launch {
             _importResult.withLoadingState {
-                val result = importExportService.importContacts(sourceFile, targetType, targetAccount)
+                val result = importService.importContacts(sourceFile, targetType, targetAccount)
                 logger.debug("Importing vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }

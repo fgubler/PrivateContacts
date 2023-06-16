@@ -22,9 +22,8 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportR
 import ch.abwesend.privatecontacts.domain.util.filterValuesNotNull
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
-// TODO add unit tests
-class ContactImportExportService {
-    private val importExportService: IVCardImportExportRepository by injectAnywhere()
+class ContactImportService {
+    private val importExportRepository: IVCardImportExportRepository by injectAnywhere()
     private val fileReadService: FileReadService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
 
@@ -37,7 +36,7 @@ class ContactImportExportService {
         val contactsToImport = fileContentResult
             .mapError { FILE_READING_FAILED }
             .mapValueToBinaryResult { fileContent ->
-                importExportService.parseContacts(fileContent, targetType)
+                importExportRepository.parseContacts(fileContent, targetType)
             }
 
         return contactsToImport.mapValue { parsedContacts ->
@@ -68,7 +67,7 @@ class ContactImportExportService {
     }
 
     private suspend fun saveImportedContacts(contacts: List<IContactEditable>): SavedData {
-        val existingContactIds: List<ContactId> = emptyList() // TODO implement a merging strategy
+        val existingContactIds: List<ContactId> = emptyList() // TODO implement a merging strategy (and add test)
         val ignoredExistingContacts = contacts.filter { existingContactIds.contains(it.id) }
         val newContacts = contacts.filterNot { existingContactIds.contains(it.id) }
         val saveResults = contactSaveService.saveContacts(newContacts)
