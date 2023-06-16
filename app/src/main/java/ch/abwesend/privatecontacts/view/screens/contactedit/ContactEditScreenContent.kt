@@ -56,6 +56,7 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDa
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Websites
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
+import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
@@ -245,16 +246,14 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun AccountSelectionField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) =
-        when (contact.type) {
-            ContactType.SECRET -> Unit
-            ContactType.PUBLIC -> {
-                AccountSelectionDropDownField(selectedAccount = contact.saveInAccount) { newValue ->
-                    contact.saveInAccount = newValue
-                    onChanged(contact)
-                }
+    private fun AccountSelectionField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
+        if (contact.type.accountSelectionRequired) {
+            AccountSelectionDropDownField(selectedAccount = contact.saveInAccount) { newValue ->
+                contact.saveInAccount = newValue
+                onChanged(contact)
             }
         }
+    }
 
     @Composable
     private fun ContactDataTypeCustomValueDialog(
