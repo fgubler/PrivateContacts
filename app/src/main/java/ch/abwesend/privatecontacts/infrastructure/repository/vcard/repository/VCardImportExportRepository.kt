@@ -22,7 +22,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.Conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ezvcard.VCard
 
-// TODO add unit tests
 class VCardImportExportRepository : IVCardImportExportRepository {
     private val repository: VCardRepository by injectAnywhere()
     private val toVCardMapper: ContactToVCardMapper by injectAnywhere()
