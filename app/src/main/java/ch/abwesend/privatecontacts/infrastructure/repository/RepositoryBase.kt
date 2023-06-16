@@ -30,7 +30,7 @@ abstract class RepositoryBase {
         data: Collection<T>,
         operation: suspend (AppDatabase, Collection<T>) -> S
     ): List<S> = withDatabase { database ->
-        data.chunked(MAX_BULK_OPERATION_SIZE).mapAsync { operation(database, data) }
+        data.chunked(MAX_BULK_OPERATION_SIZE).mapAsync { chunk -> operation(database, chunk) }
     }
 
     protected suspend fun <T, S> bulkLoadingOperation(
