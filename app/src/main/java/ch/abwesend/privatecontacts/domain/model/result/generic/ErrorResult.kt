@@ -8,6 +8,8 @@ package ch.abwesend.privatecontacts.domain.model.result.generic
 
 data class ErrorResult<TValue, TError>(val error: TError) : BinaryResult<TValue, TError> {
     override fun getValueOrNull(): TValue? = null
+    override fun getErrorOrNull(): TError = error
+
     override suspend fun <T> mapValue(mapper: suspend (TValue) -> T): BinaryResult<T, TError> = ErrorResult(error)
     override suspend fun <T> mapError(mapper: suspend (TError) -> T): BinaryResult<TValue, T> {
         val newError = mapper(error)

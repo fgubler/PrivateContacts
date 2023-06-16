@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.model.result.generic
 
 sealed interface Result<TValue, TError> {
     fun getValueOrNull(): TValue?
+    fun getErrorOrNull(): TError?
     suspend fun <T> mapValue(mapper: suspend (TValue) -> T): Result<T, TError>
     suspend fun <T> mapError(mapper: suspend (TError) -> T): Result<TValue, T>
     suspend fun <T> mapValueToBinaryResult(
