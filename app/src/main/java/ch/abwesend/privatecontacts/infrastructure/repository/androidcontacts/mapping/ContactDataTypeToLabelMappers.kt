@@ -2,14 +2,21 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ma
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.ADDRESS
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.WEBSITE
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import com.alexstyl.contactstore.Label
 
-fun ContactDataType.toLabel(category: ContactDataCategory, originalLabel: Label?): Label {
+fun ContactDataType.toLabel(
+    category: ContactDataCategory,
+    originalLabel: Label?,
+    stringProvider: StringProvider,
+): Label {
     // try avoiding translation-losses in the labels
     return if (originalLabel?.toContactDataType() == this) originalLabel
-    else toLabel(category)
+    else toLabel(category, stringProvider)
 }
 
 /**
@@ -49,12 +56,19 @@ fun Label.toContactDataType(): ContactDataType =
 /**
  * Beware: when changing this method, you also need to change [toContactDataType]
  */
-private fun ContactDataType.toLabel(category: ContactDataCategory): Label =
+private fun ContactDataType.toLabel(category: ContactDataCategory, stringProvider: StringProvider): Label =
     when (this) {
         ContactDataType.Anniversary -> Label.DateAnniversary
         ContactDataType.Birthday -> Label.DateBirthday
         ContactDataType.Business -> {
-            if (category == ContactDataCategory.ADDRESS) Label.LocationWork else Label.PhoneNumberCompanyMain
+            when (category) {
+                ADDRESS -> Label.LocationWork
+                PHONE_NUMBER -> Label.PhoneNumberCompanyMain
+                else -> {
+                    val text = ContactDataType.Business.getTitle(stringProvider)
+                    Label.Custom(text)
+                }
+            }
         }
         ContactDataType.Custom -> Label.Custom("custom").also {
             logger.warning("This should never have happened: cannot have data-type 'Custom'")
