@@ -49,13 +49,10 @@ data class ContactEditable(
         copy(isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
 
     companion object {
-        fun createNew(
-            id: ContactId = ContactIdInternal.randomId(),
-            importId: ContactImportId? = null,
-        ): ContactEditable {
+        fun createNew(importId: ContactImportId? = null): ContactEditable {
             val type = Settings.current.defaultContactType
             return ContactEditable(
-                id = id,
+                id = ContactIdInternal.randomId(),
                 firstName = "",
                 lastName = "",
                 nickname = "",
