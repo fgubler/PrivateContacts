@@ -47,11 +47,19 @@ fun List<ContactDataType>.getByPriority(): ContactDataType =
  */
 private fun VCardParameter.toDefaultContactDataType(): ContactDataType = typeValueToContactDataType(value)
 
-private fun typeValueToContactDataType(typeValue: String?): ContactDataType = when (typeValue) {
-    TelephoneType.HOME.value -> ContactDataType.Personal
-    TelephoneType.WORK.value -> ContactDataType.Business
-    null, "" -> ContactDataType.Other
-    else -> ContactDataType.CustomValue(customValue = typeValue.customCapitalize())
+private fun typeValueToContactDataType(typeValue: String?): ContactDataType {
+    val valueSanitized = typeValue
+        .orEmpty()
+        .trim()
+        .lowercase()
+
+    return when (valueSanitized) {
+        TelephoneType.HOME.value.lowercase() -> ContactDataType.Personal
+        TelephoneType.WORK.value.lowercase() -> ContactDataType.Business
+        TelephoneType.PREF.value.lowercase() -> ContactDataType.Main
+        "" -> ContactDataType.Other
+        else -> ContactDataType.CustomValue(customValue = typeValue.customCapitalize())
+    }
 }
 
 private fun String?.customCapitalize(): String = this?.replaceFirstChar {
