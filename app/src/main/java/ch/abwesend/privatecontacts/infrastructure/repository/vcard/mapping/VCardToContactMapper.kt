@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.ContactImportId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -29,9 +29,9 @@ class VCardToContactMapper {
 
     fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContactEditable, Unit> =
         try {
-            val uuid = vCard.uid?.toUuidOrNull()
-            val contactId = uuid?.let { ContactIdInternal(uuid = it) } ?: ContactIdInternal.randomId()
-            val contact = ContactEditable.createNew(id = contactId)
+            val vCardUuid = vCard.uid?.toUuidOrNull()
+            val contactImportId = vCardUuid?.let { ContactImportId(it) }
+            val contact = ContactEditable.createNew(importId = contactImportId)
             contact.type = targetType
 
             contact.firstName = vCard.structuredName?.given ?: vCard.formattedName?.value.orEmpty()

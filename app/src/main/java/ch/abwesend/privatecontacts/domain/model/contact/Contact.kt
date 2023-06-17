@@ -28,6 +28,9 @@ interface IContact : IContactBase {
 
     /** only relevant for new, external contacts */
     val saveInAccount: ContactAccount
+
+    /** only set for contacts which have been imported (e.g. from VCF) */
+    val importId: ContactImportId?
 }
 
 data class ContactBase(
