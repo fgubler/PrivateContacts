@@ -33,6 +33,8 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportR
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
@@ -140,6 +142,7 @@ internal val koinModule = module {
 
     single { ApplicationScope() }
     factory { GenericRouter(get()) }
+    factory<StringProvider> { ResourcesBasedStringProvider(androidContext().resources) }
 
     // Database
     single { DatabaseInitializer() }
