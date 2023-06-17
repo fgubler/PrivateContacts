@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -35,44 +36,52 @@ object ExportCategoryComponent {
 
     @Composable
     fun ExportCategory(viewModel: ContactExportViewModel) {
+        ImportExportCategory(title = R.string.export_title) {
+            if (false) { // TODO implement logic and reinsert
+                ExportCategoryContent(viewModel = viewModel)
+            } else {
+                Text(text = "Coming soon...", fontStyle = FontStyle.Italic)
+            }
+        }
+    }
+
+    @Composable
+    private fun ExportCategoryContent(viewModel: ContactExportViewModel) {
         val filePath = viewModel.fileUri.value
         // TODO find a way to access the "future" name of the file to be created
         val dummyDisplayFilePath = filePath?.let { stringResource(id = R.string.export_file_selected) }.orEmpty()
-
         val sourceType = viewModel.sourceType.value
 
-        ImportExportCategory(title = R.string.export_title) {
-            ContactTypeField(
-                labelRes = R.string.contact_type_to_export,
-                selectedType = sourceType,
-                showInfoButton = false,
-                isScrolling = { parent.isScrolling },
-            ) { newType ->
-                viewModel.selectSourceType(newType)
-                viewModel.selectFile(uri = null) // the file-name depends on the contact-type
-            }
+        ContactTypeField(
+            labelRes = R.string.contact_type_to_export,
+            selectedType = sourceType,
+            showInfoButton = false,
+            isScrolling = { parent.isScrolling },
+        ) { newType ->
+            viewModel.selectSourceType(newType)
+            viewModel.selectFile(uri = null) // the file-name depends on the contact-type
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            VcfFilePicker(
-                displayFilePath = dummyDisplayFilePath,
-                defaultFileName = createDefaultFileName(sourceType)
-            ) { uri ->
-                // in the case of "cancel", leave the old value
-                uri?.let { viewModel.selectFile(it) }
-            }
+        VcfFilePicker(
+            displayFilePath = dummyDisplayFilePath,
+            defaultFileName = createDefaultFileName(sourceType)
+        ) { uri ->
+            // in the case of "cancel", leave the old value
+            uri?.let { viewModel.selectFile(it) }
+        }
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            SecondaryButton(
-                enabled = filePath != null,
-                onClick = { viewModel.exportContacts(sourceType) },
-            ) {
-                Text(
-                    text = stringResource(id = R.string.export_contacts),
-                    textAlign = TextAlign.Center
-                )
-            }
+        SecondaryButton(
+            enabled = filePath != null,
+            onClick = { viewModel.exportContacts(sourceType) },
+        ) {
+            Text(
+                text = stringResource(id = R.string.export_contacts),
+                textAlign = TextAlign.Center
+            )
         }
     }
 
