@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -56,6 +57,7 @@ abstract class TestBase : KoinTest {
                 single { loggerFactory }
                 single<IDispatchers> { TestDispatchers }
                 single<SettingsRepository> { testSettings }
+                single<StringProvider> { TestStringProvider() }
                 setupKoinModule(this)
             }
         )

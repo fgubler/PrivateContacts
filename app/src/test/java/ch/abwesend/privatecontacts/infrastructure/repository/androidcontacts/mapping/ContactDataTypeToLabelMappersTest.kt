@@ -7,7 +7,9 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.TestStringProvider
 import com.alexstyl.contactstore.Label
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +21,8 @@ import org.junit.jupiter.params.provider.ValueSource
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class ContactDataTypeToLabelMappersTest : TestBase() {
+    private val stringProvider: StringProvider = TestStringProvider()
+
     @ParameterizedTest
     @ValueSource(booleans = [true, false])
     fun `converting a label there and back should avoid errors in normal cases`(compareToOriginal: Boolean) {
@@ -61,7 +65,7 @@ class ContactDataTypeToLabelMappersTest : TestBase() {
             Triple(label, label.toContactDataType(), category)
         }
         val resultingLabels = contactDataTypes.map { (label, type, category) ->
-            type.toLabel(category, originalLabel = label.takeIf { compareToOriginal })
+            type.toLabel(category, originalLabel = label.takeIf { compareToOriginal }, stringProvider)
         }
 
         Assertions.assertThat(resultingLabels).hasSameSizeAs(labels)
@@ -90,7 +94,11 @@ class ContactDataTypeToLabelMappersTest : TestBase() {
             labelData to labelData.originalLabel.toContactDataType()
         }
         val resultingLabels = contactDataTypes.map { (labelData, type) ->
-            type.toLabel(labelData.category, originalLabel = labelData.originalLabel.takeIf { labelUnchanged })
+            type.toLabel(
+                category = labelData.category,
+                originalLabel = labelData.originalLabel.takeIf { labelUnchanged },
+                stringProvider = stringProvider
+            )
         }
 
         Assertions.assertThat(resultingLabels).hasSameSizeAs(labels)
@@ -130,7 +138,11 @@ class ContactDataTypeToLabelMappersTest : TestBase() {
             labelData to labelData.originalLabel.toContactDataType()
         }
         val resultingLabels = contactDataTypes.map { (labelData, type) ->
-            type.toLabel(labelData.category, originalLabel = labelData.originalLabel.takeIf { labelUnchanged })
+            type.toLabel(
+                category = labelData.category,
+                originalLabel = labelData.originalLabel.takeIf { labelUnchanged },
+                stringProvider = stringProvider,
+            )
         }
 
         Assertions.assertThat(resultingLabels).hasSameSizeAs(labels)
