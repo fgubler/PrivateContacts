@@ -10,10 +10,14 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ezvcard.property.Uid
 import java.util.UUID
 
-// TODO add unit tests
 private const val UID_PREFIX = "urn:uuid:"
 fun UUID.toUid(): Uid = Uid(UID_PREFIX + toString())
-fun Uid.toUuidOrNull(): UUID? = runCatching { UUID.fromString(value) }.getOrElse {
-    logger.warning("Invalid UID '${this.value}': cannot parse to UUID", it)
-    null
+fun Uid.toUuidOrNull(): UUID? {
+    val uidValue = value.orEmpty().replaceFirst(oldValue = UID_PREFIX, newValue = "")
+    val uuid = runCatching { UUID.fromString(uidValue) }
+
+    return uuid.getOrElse {
+        logger.warning("Invalid UID '$uidValue': cannot parse to UUID", it)
+        null
+    }
 }
