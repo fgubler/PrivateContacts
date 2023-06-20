@@ -38,6 +38,7 @@ data class ContactEditable(
     override val contactGroups: MutableList<ContactGroup>,
     override var saveInAccount: ContactAccount,
     override var isNew: Boolean = false,
+    override val importId: ContactImportId? = null,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()
@@ -48,11 +49,10 @@ data class ContactEditable(
         copy(isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
 
     companion object {
-        fun createNew(): ContactEditable {
-            val id = ContactIdInternal.randomId()
+        fun createNew(importId: ContactImportId? = null): ContactEditable {
             val type = Settings.current.defaultContactType
             return ContactEditable(
-                id = id,
+                id = ContactIdInternal.randomId(),
                 firstName = "",
                 lastName = "",
                 nickname = "",
@@ -63,6 +63,7 @@ data class ContactEditable(
                 contactGroups = mutableListOf(),
                 saveInAccount = ContactAccount.currentDefaultForContactType(type),
                 isNew = true,
+                importId = importId,
             )
         }
     }

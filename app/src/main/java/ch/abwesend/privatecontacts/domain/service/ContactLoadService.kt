@@ -112,4 +112,7 @@ class ContactLoadService {
             }
         }
     }
+
+    suspend fun filterForExistingContacts(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal> =
+        contactRepository.filterForExisting(contactIds)
 }

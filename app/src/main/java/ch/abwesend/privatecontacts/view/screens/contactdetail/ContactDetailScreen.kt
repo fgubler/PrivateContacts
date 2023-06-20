@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,6 +51,7 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
@@ -101,12 +101,10 @@ object ContactDetailScreen {
             deletionErrors = emptyList()
         }
 
-        LaunchedEffect(Unit) {
-            viewModel.deleteResult.collect { result ->
-                when (result) {
-                    is ContactDeleteResult.Success -> onSuccess()
-                    is ContactDeleteResult.Failure -> deletionErrors = result.errors
-                }
+        viewModel.deleteResult.collectWithEffect { result ->
+            when (result) {
+                is ContactDeleteResult.Success -> onSuccess()
+                is ContactDeleteResult.Failure -> deletionErrors = result.errors
             }
         }
     }
@@ -127,13 +125,11 @@ object ContactDetailScreen {
             errors = emptyList()
         }
 
-        LaunchedEffect(Unit) {
-            viewModel.typeChangeResult.collect { result ->
-                when (result) {
-                    is ContactSaveResult.Success -> onSuccess()
-                    is ContactSaveResult.ValidationFailure -> validationErrors = result.validationErrors
-                    is ContactSaveResult.Failure -> errors = result.errors
-                }
+        viewModel.typeChangeResult.collectWithEffect { result ->
+            when (result) {
+                is ContactSaveResult.Success -> onSuccess()
+                is ContactSaveResult.ValidationFailure -> validationErrors = result.validationErrors
+                is ContactSaveResult.Failure -> errors = result.errors
             }
         }
     }

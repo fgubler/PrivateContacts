@@ -15,6 +15,8 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
+import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
+import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -22,13 +24,17 @@ import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
+import ch.abwesend.privatecontacts.domain.service.FileReadService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
+import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
@@ -37,6 +43,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.FileAccessRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
@@ -49,6 +56,11 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardImportExportRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseDeletionHelper
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseFactory
@@ -79,6 +91,7 @@ internal val koinModule = module {
     single { EasterEggService() }
     single { DatabaseService() }
     single { ContactTypeChangeService() }
+    single { FileReadService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
     single<AccountService> { AndroidAccountService(androidContext()) }
@@ -97,9 +110,16 @@ internal val koinModule = module {
     single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
     single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
 
+    single { ContactImportService() }
+    single { ContactToVCardMapper() }
+    single { VCardToContactMapper() }
+    single { ToPhysicalAddressMapper() }
+
     // Repositories
     single { AndroidContactLoadRepository() }
     single { AndroidContactSaveRepository() }
+    single { VCardRepository() }
+    single<IVCardImportExportRepository> { VCardImportExportRepository() }
     single<IContactRepository> { ContactRepository() }
     single<IDatabaseRepository> { DatabaseRepository() }
     single<IAddressFormattingService> { AddressFormattingService() }
@@ -110,6 +130,7 @@ internal val koinModule = module {
     single { CallNotificationRepository() }
     single { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
+    single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
 
     // Factories
     single<ILoggerFactory> { LoggerFactory() }
@@ -121,6 +142,7 @@ internal val koinModule = module {
 
     single { ApplicationScope() }
     factory { GenericRouter(get()) }
+    factory<StringProvider> { ResourcesBasedStringProvider(androidContext().resources) }
 
     // Database
     single { DatabaseInitializer() }

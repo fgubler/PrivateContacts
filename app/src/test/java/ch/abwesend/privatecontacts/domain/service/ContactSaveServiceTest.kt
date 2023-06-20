@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.IContactDataIdInternal
@@ -17,7 +18,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Validat
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -25,6 +26,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableGeneric
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
+import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someListOfContactData
@@ -33,6 +35,7 @@ import io.mockk.coVerify
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import io.mockk.impl.annotations.SpyK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
@@ -61,11 +64,11 @@ class ContactSaveServiceTest : TestBase() {
     @MockK
     private lateinit var sanitizingService: ContactSanitizingService
 
-    private lateinit var underTest: ContactSaveService
+    @SpyK
+    private var underTest: ContactSaveService = ContactSaveService()
 
     override fun setup() {
         super.setup()
-        underTest = ContactSaveService()
         every { sanitizingService.sanitizeContact(any()) } just runs
     }
 
@@ -75,6 +78,37 @@ class ContactSaveServiceTest : TestBase() {
         module.single { androidContactSaveService }
         module.single { validationService }
         module.single { sanitizingService }
+    }
+
+    // TODO replace this test when proper batch-processing is introduced
+    @Test
+    fun `saveContacts should call saveContact`() {
+        val contacts = listOf(
+            someContactEditable(isNew = true),
+            someContactEditable(isNew = true),
+            someExternalContactEditable(isNew = true)
+        )
+        coEvery { validationService.validateContact(any()) } returns ContactValidationResult.Success
+        coEvery { contactRepository.createContact(any(), any()) } returns ContactSaveResult.Success
+        coEvery { androidContactSaveService.createContact(any()) } returns ContactSaveResult.Success
+
+        val results = runBlocking { underTest.saveContacts(contacts) }
+
+        coVerify(exactly = contacts.size) { underTest.saveContact(any()) }
+        assertThat(results).hasSize(3)
+        contacts.forEach { contact ->
+            val result = results[contact]
+            coVerify { validationService.validateContact(contact) }
+            (contact.id as? IContactIdInternal)?.let { internalId ->
+                coVerify { contactRepository.createContact(internalId, contact) }
+            }
+            (contact.id as? IContactIdExternal)?.let { _ ->
+                coVerify { androidContactSaveService.createContact(contact) }
+            }
+            assertThat(result).isEqualTo(ContactSaveResult.Success)
+        }
+        confirmVerified(contactRepository)
+        confirmVerified(androidContactSaveService)
     }
 
     @Test
@@ -263,10 +297,10 @@ class ContactSaveServiceTest : TestBase() {
         val contactId = if (isExternal) externalContactId else internalContactId
         val contact = someContactEditable(id = contactId)
         coEvery { contactRepository.deleteContacts(any()) } answers {
-            ContactBatchChangeResult.success(firstArg())
+            ContactIdBatchChangeResult.success(firstArg())
         }
         coEvery { androidContactSaveService.deleteContacts(any()) } answers {
-            ContactBatchChangeResult.success(firstArg())
+            ContactIdBatchChangeResult.success(firstArg())
         }
 
         val resultSingle = runBlocking { underTest.deleteContact(contact) }

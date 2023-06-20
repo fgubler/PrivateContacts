@@ -30,9 +30,12 @@ private const val INFRASTRUCTURE_CONTACT_STORE_PACKAGE =
     "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.androidcontacts.."
 private const val INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE =
     "$INFRASTRUCTURE_PACKAGE_PARTIAL.service.addressformatting.."
+private const val INFRASTRUCTURE_VCARD_PACKAGE =
+    "$INFRASTRUCTURE_PACKAGE_PARTIAL.repository.vcard.."
 
 private const val EXT_KOIN_PACKAGE = "org.koin.core.component.."
 private const val EXT_CONTACT_STORE_PACKAGE = "com.alexstyl.contactstore.."
+private const val EXT_EZ_VCARD_PACKAGE = "ezvcard"
 private const val EXT_ADDRESS_LIBRARY_PACKAGE = "com.google.i18n.addressinput.."
 
 // layers
@@ -90,6 +93,18 @@ class ArchitectureTest {
         .that().resideOutsideOfPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
         .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
         .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_CONTACT_STORE_PACKAGE)
+
+    @ArchTest
+    val `only vcard package may access ez-vcard library`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_VCARD_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(EXT_EZ_VCARD_PACKAGE)
+
+    @ArchTest
+    val `only vcard package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_VCARD_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_VCARD_PACKAGE)
 
     @ArchTest
     val `only addressformatting package may access Google address library`: ArchRule = noClasses()

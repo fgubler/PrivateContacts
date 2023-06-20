@@ -359,6 +359,93 @@ class AddressFormattingServiceTest : TestBase() {
         assertThat(cleanedResult).isEqualTo(expectedAddress)
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun `should fix the formatting of the street for German locale`(isGermanLocale: Boolean) {
+        if (isGermanLocale) Locale.setDefault(Locale.GERMANY)
+        else Locale.setDefault(Locale.US)
+
+        val streets = listOf(
+            "123 Bahnhofstrasse",
+            "123 Bahnhof-strasse",
+            "123 Bahnhofstraße",
+            "123 Bahnhofstr",
+            "123 Bahnhofstr.",
+            "Bahnhofstr. 123",
+        )
+        val expectedGermanAddresses = listOf(
+            "Bahnhofstrasse 123",
+            "Bahnhof-strasse 123",
+            "Bahnhofstraße 123",
+            "Bahnhofstr 123",
+            "Bahnhofstr. 123",
+            "Bahnhofstr. 123",
+        )
+        val expectedAmericanAddresses = streets
+
+        val results = streets.map { street ->
+            underTest.formatAddress(
+                street = street,
+                neighborhood = "",
+                postalCode = "",
+                city = "",
+                region = "",
+                country = "",
+                useFallbackForEmptyAddress = false,
+            )
+        }
+
+        assertThat(results).hasSameSizeAs(streets)
+        results.indices.forEach { index ->
+            if (isGermanLocale) {
+                assertThat(results[index]).isEqualTo(expectedGermanAddresses[index])
+            } else {
+                assertThat(results[index]).isEqualTo(expectedAmericanAddresses[index])
+            }
+        }
+    }
+
+    @Test
+    fun `should leave the formatting of the street unchanged if it does not have exactly the expected format`() {
+        val streets = listOf(
+            "123 Bahnhofstrasse${Constants.linebreak}Zürich",
+            "123 Bahnhofstrasse ${Constants.linebreak} Zürich",
+            "123 Bahnhofstrasse,Zürich",
+            "123 Bahnhofstrasse, Zürich",
+            "123 Bahnhof",
+            "123 Bahnhofstr. in Zürich",
+            "Bahnhofstrasse 123",
+        )
+        val expectedStreets = listOf(
+            "123 Bahnhofstrasse,${Constants.linebreak}Zürich",
+            "123 Bahnhofstrasse, ${Constants.linebreak} Zürich",
+            "123 Bahnhofstrasse,Zürich",
+            "123 Bahnhofstrasse, Zürich",
+            "123 Bahnhof",
+            "123 Bahnhofstr. in Zürich",
+            "Bahnhofstrasse 123",
+        )
+
+        val results = streets.map { street ->
+            underTest.formatAddress(
+                street = street,
+                neighborhood = "",
+                postalCode = "",
+                city = "",
+                region = "",
+                country = "",
+                useFallbackForEmptyAddress = false,
+            )
+        }
+
+        assertThat(results).hasSameSizeAs(streets)
+        results.indices.forEach { index ->
+            val result = results[index].replace(" ", "")
+            val expected = expectedStreets[index].replace(" ", "")
+            assertThat(result).isEqualTo(expected)
+        }
+    }
+
     private fun throwInvalidCountry(country: String): Nothing =
         throw IllegalArgumentException("Invalid countryCode '$country'")
 }

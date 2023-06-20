@@ -24,13 +24,6 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 
 @Composable
-fun ChangeContactsUnknownErrorDialog(onClose: () -> Unit) {
-    OkDialog(title = R.string.error, onClose = onClose) {
-        Text(text = stringResource(id = R.string.generic_unknown_error))
-    }
-}
-
-@Composable
 fun DeleteContactsResultDialog(
     numberOfErrors: Int,
     numberOfAttemptedChanges: Int,

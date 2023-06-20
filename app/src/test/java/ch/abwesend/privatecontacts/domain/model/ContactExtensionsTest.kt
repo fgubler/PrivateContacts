@@ -124,5 +124,6 @@ class ContactExtensionsTest : TestBase() {
         val result = ContactEditable.createNew()
 
         assertThat(result.isNew).isTrue
+        assertThat(result.importId).isNull()
     }
 }

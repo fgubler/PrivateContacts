@@ -8,11 +8,13 @@ package ch.abwesend.privatecontacts.infrastructure.service.addressformatting
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.util.Constants
+import ch.abwesend.privatecontacts.domain.util.Constants.linebreak
 import com.google.i18n.addressinput.common.AddressData
 import com.google.i18n.addressinput.common.FormOptions
 import com.google.i18n.addressinput.common.FormatInterpreter
 import java.util.Locale
+
+private val streetSuffixes = listOf("strasse", "straße", "str", "str.")
 
 /**
  * See https://stackoverflow.com/questions/11269172/address-formatting-based-on-locale-in-android
@@ -39,9 +41,10 @@ class AddressFormattingService : IAddressFormattingService {
         val validCountry = isValidCountryCode(country)
         val countryCode = if (validCountry) country else currentLocale.country
         val languageCode = if (validCountry) null else currentLocale.language
+        val reformattedStreet = reformatStreetForGerman(street = street, locale = currentLocale)
 
         val addressFragments = getFormattedAddressFragments(
-            street = street,
+            street = reformattedStreet,
             neighborhood = neighborhood,
             postalCode = postalCode,
             city = city,
@@ -64,9 +67,32 @@ class AddressFormattingService : IAddressFormattingService {
         return addressFragments
             .filterNot { it.isEmpty() }
             .map { it.trimEnd(',') }
-            .joinToString(separator = ",${Constants.linebreak}")
+            .joinToString(separator = ",$linebreak")
             .trim()
     }
+
+    /**
+     * In English we write "123 someroad" whereas in German we write "someroad 123".
+     * The contact-library always opts for the English formatting.
+     * For the case that the street really does only contain the street, change the ordering for German.
+     */
+    private fun reformatStreetForGerman(street: String, locale: Locale): String =
+        if (locale.language == Locale.GERMAN.language) {
+            logger.debug("checking for reformatting for street in German")
+            val words = street.split(" ")
+
+            if (!street.contains(linebreak) && !street.contains(",") && words.size == 2) { // street-name & number
+                val first = words[0]
+                val second = words[1]
+                val isNumberFirst = first.toIntOrNull() != null
+                val isStreetSecond = streetSuffixes.any { second.endsWith(it, ignoreCase = true) }
+
+                if (isNumberFirst && isStreetSecond) {
+                    logger.debug("changing ordering of street-name and street-number")
+                    "$second $first"
+                } else street
+            } else street
+        } else street
 
     private fun getFormattedAddressFragments(
         street: String,

@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 const val PAGING_DEPRECATION = "No longer using paging because it would not work well together with android-contacts"
@@ -36,5 +36,7 @@ interface IContactRepository {
     suspend fun resolveContact(contactId: IContactIdInternal): IContact
     suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
-    suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactBatchChangeResult
+    suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult
+
+    suspend fun filterForExisting(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal>
 }

@@ -26,7 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
@@ -106,12 +106,12 @@ class ContactListViewModel : ViewModel() {
     val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
     /** implemented as a resource to show a loading-indicator during deletion */
-    private val _deleteResult = mutableResourceStateFlow<ContactBatchChangeResult>()
-    val deleteResult: ResourceFlow<ContactBatchChangeResult> = _deleteResult
+    private val _deleteResult = mutableResourceStateFlow<ContactIdBatchChangeResult>()
+    val deleteResult: ResourceFlow<ContactIdBatchChangeResult> = _deleteResult
 
     /** implemented as a resource to show a loading-indicator during type-change */
-    private val _typeChangeResult = mutableResourceStateFlow<ContactBatchChangeResult>()
-    val typeChangeResult: ResourceFlow<ContactBatchChangeResult> = _typeChangeResult
+    private val _typeChangeResult = mutableResourceStateFlow<ContactIdBatchChangeResult>()
+    val typeChangeResult: ResourceFlow<ContactIdBatchChangeResult> = _typeChangeResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)

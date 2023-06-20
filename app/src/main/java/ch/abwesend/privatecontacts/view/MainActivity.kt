@@ -61,6 +61,8 @@ import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
@@ -82,6 +84,8 @@ class MainActivity : ComponentActivity() {
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by viewModels()
+    private val exportViewModel: ContactExportViewModel by viewModels()
+    private val importViewModel: ContactImportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -174,6 +178,8 @@ class MainActivity : ComponentActivity() {
             contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,
             settingsViewModel = settingsViewModel,
+            exportViewModel = exportViewModel,
+            importViewModel = importViewModel,
         )
     }
 }

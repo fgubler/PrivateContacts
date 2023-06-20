@@ -27,6 +27,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
+import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
@@ -44,6 +45,7 @@ import com.alexstyl.contactstore.WebAddress as ContactStoreWebAddress
 
 class AndroidContactChangeService {
     private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
+    private val stringProvider: StringProvider by injectAnywhere()
 
     fun updateChangedBaseData(
         originalContact: IContact?,
@@ -274,7 +276,7 @@ class AndroidContactChangeService {
             oldContactDataByNo[it]
         }
         val newLabel = labelMapper?.invoke(contactData.type, contactData.category, correspondingOldData?.label)
-            ?: contactData.type.toLabel(contactData.category, correspondingOldData?.label)
+            ?: contactData.type.toLabel(contactData.category, correspondingOldData?.label, stringProvider)
 
         val mappedValue = valueMapper(contactData)
 

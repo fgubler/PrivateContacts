@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
-import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
@@ -31,7 +31,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     private val contactAccountService: AndroidContactAccountService by injectAnywhere()
     private val contactMutableFactory: IAndroidContactMutableFactory by injectAnywhere()
 
-    override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactBatchChangeResult {
+    override suspend fun deleteContacts(contactIds: Collection<IContactIdExternal>): ContactIdBatchChangeResult {
         val toDelete = contactIds.toSet()
         return try {
             contactSaveRepository.deleteContacts(toDelete)
@@ -42,7 +42,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
     }
 
-    private suspend fun checkForSuccessfulDeletion(contactIds: Set<IContactIdExternal>): ContactBatchChangeResult {
+    private suspend fun checkForSuccessfulDeletion(contactIds: Set<IContactIdExternal>): ContactIdBatchChangeResult {
         val existenceByContactId = contactLoadService.doContactsExist(contactIds)
         val deletedContacts = existenceByContactId.filter { !it.value }.keys.toList()
         val notDeletedContacts: Map<ContactId, ContactBatchChangeErrors> = existenceByContactId
@@ -54,10 +54,10 @@ class AndroidContactSaveService : IAndroidContactSaveService {
                 )
             }
 
-        return ContactBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
+        return ContactIdBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 
-    private suspend fun checkForPartialDeletionSuccess(contactIds: Set<IContactIdExternal>): ContactBatchChangeResult {
+    private suspend fun checkForPartialDeletionSuccess(contactIds: Set<IContactIdExternal>): ContactIdBatchChangeResult {
         val deletedContacts: Set<ContactId> = try {
             val doContactsExist = contactLoadService.doContactsExist(contactIds)
             doContactsExist.filter { !it.value }.keys
@@ -73,7 +73,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
                     validationErrors = emptyList(),
                 )
             }
-        return ContactBatchChangeResult(
+        return ContactIdBatchChangeResult(
             successfulChanges = deletedContacts.toList(),
             failedChanges = notDeletedContacts,
         )

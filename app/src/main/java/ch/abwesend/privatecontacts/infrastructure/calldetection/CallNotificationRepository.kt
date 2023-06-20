@@ -21,21 +21,34 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
+private const val NOTIFICATION_CLOSE_TIMEOUT_MS = 30000L
 
 class CallNotificationRepository {
     private val permissionService: PermissionService by injectAnywhere()
     private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
-        // cancelAll may be expensive: do not call if clearly unnecessary
-        if (potentiallyActiveNotifications.isNotEmpty()) {
-            context.notificationManager.cancelAll()
-            potentiallyActiveNotifications = mutableSetOf()
+        applicationScope.launch {
+            logger.debug("will cancel notifications in $NOTIFICATION_CLOSE_TIMEOUT_MS ms")
+            delay(NOTIFICATION_CLOSE_TIMEOUT_MS)
+            logger.debug("cancel notifications now")
+            try {
+                // cancelAll may be expensive: do not call if clearly unnecessary
+                if (potentiallyActiveNotifications.isNotEmpty()) {
+                    context.notificationManager.cancelAll()
+                    potentiallyActiveNotifications = mutableSetOf()
+                }
+            } catch (e: Exception) {
+                logger.warning("Failed to cancel notifications", e)
+            }
         }
     }
 
