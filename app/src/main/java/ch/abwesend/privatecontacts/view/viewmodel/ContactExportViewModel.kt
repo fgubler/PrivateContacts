@@ -18,23 +18,15 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import kotlinx.coroutines.launch
 
 class ContactExportViewModel : ViewModel() {
-    private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
-    val fileUri: MutableState<Uri?> = _fileUri
-
     private val _sourceType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
     val sourceType: State<ContactType> = _sourceType
-
-    fun selectFile(uri: Uri?) {
-        _fileUri.value = uri
-    }
 
     fun selectSourceType(contactType: ContactType) {
         _sourceType.value = contactType
     }
 
-    fun exportContacts(sourceType: ContactType) {
-        val sourceFile = fileUri.value
-        if (sourceFile == null) {
+    fun exportContacts(targetFile: Uri?, sourceType: ContactType) {
+        if (targetFile == null) {
             logger.warning("Trying to export to vcf file but no file is selected")
             return
         }
