@@ -19,8 +19,9 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher
+import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
 import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
@@ -58,20 +59,26 @@ object ExportCategoryComponent {
     @Composable
     private fun ExportButton(viewModel: ContactExportViewModel, sourceType: ContactType) {
         val defaultFileName = createDefaultFileName(sourceType = sourceType)
-        val launcher = CreateFileFilePickerLauncher.rememberLauncher(
+        val exportAction = rememberActionWithContactPermission()
+
+        val launcher = rememberCreateFileLauncher(
             mimeType = VCF_MAIN_MIME_TYPE,
             defaultFilename = defaultFileName,
             onFileSelected = { targetFile -> viewModel.exportContacts(targetFile, sourceType) },
         )
 
+        exportAction.VisibleComponent()
+
         SecondaryButton(
-            onClick = { launcher.launch() },
+            onClick = {
+                exportAction.executeAction(sourceType.androidPermissionRequired) { launcher.launch() }
+            },
             content = {
                 Text(
                     text = stringResource(id = R.string.export_contacts),
                     textAlign = TextAlign.Center
                 )
-            }
+            },
         )
     }
 

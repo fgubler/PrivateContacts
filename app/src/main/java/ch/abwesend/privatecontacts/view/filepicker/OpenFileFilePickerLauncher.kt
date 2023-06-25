@@ -25,7 +25,7 @@ class OpenFileFilePickerLauncher private constructor(
 
     companion object {
         @Composable
-        fun rememberLauncher(
+        fun rememberOpenFileLauncher(
             mimeTypes: Array<String>,
             onFileSelected: (Uri?) -> Unit,
         ): OpenFileFilePickerLauncher {

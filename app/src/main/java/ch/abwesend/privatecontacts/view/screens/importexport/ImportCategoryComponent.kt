@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
-import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -24,12 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
@@ -37,17 +33,16 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressAndResultDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher
-import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
@@ -56,8 +51,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ImportCategoryComponent {
-    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
-
     private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
@@ -101,20 +94,17 @@ object ImportCategoryComponent {
         targetType: ContactType,
         selectedAccount: ContactAccount,
     ) {
-        var showPermissionDeniedDialog: Boolean by remember { mutableStateOf(false) }
+        val importAction = rememberActionWithContactPermission()
 
-        val launcher = OpenFileFilePickerLauncher.rememberLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
-            importContacts(
-                viewModel = viewModel,
-                sourceFile = sourceFile,
-                targetType = targetType,
-                selectedAccount = selectedAccount,
-                onPermissionDenied = { showPermissionDeniedDialog = true }
-            )
+        val launcher = rememberOpenFileLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
+            viewModel.importContacts(sourceFile, targetType, selectedAccount)
         }
 
+        importAction.VisibleComponent()
         SecondaryButton(
-            onClick = { launcher.launch() },
+            onClick = {
+                importAction.executeAction(targetType.androidPermissionRequired) { launcher.launch() }
+            },
             content = {
                 Text(
                     text = stringResource(id = R.string.import_contacts),
@@ -122,31 +112,6 @@ object ImportCategoryComponent {
                 )
             }
         )
-
-        if (showPermissionDeniedDialog) {
-            PermissionDeniedDialog { showPermissionDeniedDialog = false }
-        }
-    }
-
-    private fun importContacts(
-        viewModel: ContactImportViewModel,
-        sourceFile: Uri?,
-        targetType: ContactType,
-        selectedAccount: ContactAccount,
-        onPermissionDenied: () -> Unit,
-    ) {
-        if (targetType.androidPermissionRequired) {
-            contactPermissionHelper.requestAndroidContactPermissions { result ->
-                logger.debug("Android contact permissions: $result")
-                if (result.usable) {
-                    viewModel.importContacts(sourceFile, targetType, selectedAccount)
-                } else {
-                    onPermissionDenied()
-                }
-            }
-        } else {
-            viewModel.importContacts(sourceFile, targetType, selectedAccount)
-        }
     }
 
     @Composable
@@ -157,25 +122,6 @@ object ImportCategoryComponent {
             ProgressDialog = { ProgressDialog() },
             ResultDialog = { result, onClose -> ResultDialog(result, onClose) },
         )
-    }
-
-    @Composable
-    private fun PermissionDeniedDialog(closeDialog: () -> Unit) {
-        OkDialog(
-            title = R.string.import_export_permission_required_title,
-            onClose = closeDialog
-        ) {
-            Column {
-                Text(text = stringResource(id = R.string.import_export_permission_required_explanation))
-                Spacer(modifier = Modifier.height(10.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = stringResource(id = R.string.settings_info_dialog_android_contacts_permission),
-                    fontStyle = FontStyle.Italic,
-                )
-            }
-        }
     }
 
     @Composable

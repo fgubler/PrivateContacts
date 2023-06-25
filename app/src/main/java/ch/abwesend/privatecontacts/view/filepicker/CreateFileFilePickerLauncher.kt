@@ -25,7 +25,7 @@ class CreateFileFilePickerLauncher private constructor(
 
     companion object {
         @Composable
-        fun rememberLauncher(
+        fun rememberCreateFileLauncher(
             mimeType: String,
             defaultFilename: String,
             onFileSelected: (Uri?) -> Unit,
