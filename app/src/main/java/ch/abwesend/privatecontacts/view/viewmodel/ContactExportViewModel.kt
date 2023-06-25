@@ -33,7 +33,6 @@ class ContactExportViewModel : ViewModel() {
     private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
-    // TODO extract to common logic
     /** implemented as a resource to show a loading-indicator during export */
     private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
     val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult

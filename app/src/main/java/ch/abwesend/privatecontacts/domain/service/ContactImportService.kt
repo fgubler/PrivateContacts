@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import android.net.Uri
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -21,8 +22,10 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.filterValuesNotNull
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.withContext
 
 class ContactImportService {
+    private val dispatchers: IDispatchers by injectAnywhere()
     private val importExportRepository: IVCardImportExportRepository by injectAnywhere()
     private val fileReadService: FileReadService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
@@ -31,7 +34,7 @@ class ContactImportService {
         sourceFile: Uri,
         targetType: ContactType,
         targetAccount: ContactAccount
-    ): BinaryResult<ContactImportData, VCardParseError> {
+    ): BinaryResult<ContactImportData, VCardParseError> = withContext(dispatchers.default) {
         val fileContentResult = fileReadService.readFileContent(sourceFile)
         val contactsToImport = fileContentResult
             .mapError { FILE_READING_FAILED }
@@ -39,7 +42,7 @@ class ContactImportService {
                 importExportRepository.parseContacts(fileContent, targetType)
             }
 
-        return contactsToImport.mapValue { parsedContacts ->
+        contactsToImport.mapValue { parsedContacts ->
             val contactsToSave = parsedContacts.successfulContacts
             postProcessContacts(contactsToSave, targetType, targetAccount)
 

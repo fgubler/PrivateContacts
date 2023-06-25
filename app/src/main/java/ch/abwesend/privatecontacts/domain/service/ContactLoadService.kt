@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
@@ -34,8 +35,17 @@ class ContactLoadService {
 
     private val dispatchers: IDispatchers by injectAnywhere()
 
+    suspend fun loadFullContactsByType(type: ContactType): List<IContact> =
+        when (type) {
+            ContactType.SECRET -> contactRepository.loadAllContactsFull()
+            ContactType.PUBLIC -> androidContactRepository.loadAllContactsFull()
+        }
+
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
         contactRepository.loadContactsAsFlow(All)
+
+    private fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
+        androidContactRepository.loadContactsAsFlow(All)
 
     suspend fun searchSecretContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
@@ -63,9 +73,6 @@ class ContactLoadService {
         combineContacts(secretContacts, androidContacts)
     }
 
-    private fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
-        androidContactRepository.loadContactsAsFlow(All)
-
     private fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
         return if (query.isEmpty()) loadAndroidContacts()
@@ -85,6 +92,7 @@ class ContactLoadService {
             is IContactIdExternal -> androidContactRepository.resolveContact(contactId)
         }
 
+    // TODO use proper bulk-processing
     suspend fun resolveContacts(contactIds: Collection<ContactId>): Map<ContactId, IContact?> =
         withContext(dispatchers.default) {
             contactIds.mapAsyncChunked { contactId ->
