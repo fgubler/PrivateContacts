@@ -29,7 +29,7 @@ import ch.abwesend.privatecontacts.view.components.inputs.helper.OpenFileContrac
  * The path and file-name is not shown nicely, so it probably makes more sense to
  * just let the user select the file and immediately use it.
  */
-@Deprecated("don't show the selected file in a field")
+@Deprecated(message = "Do not use", replaceWith = ReplaceWith("OpenFileFilePickerLauncher"))
 @Composable
 fun OpenFileFilePicker(
     @StringRes labelRes: Int,

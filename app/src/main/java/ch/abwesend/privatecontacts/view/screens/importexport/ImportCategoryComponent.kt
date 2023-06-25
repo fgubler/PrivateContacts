@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.view.screens.importexport
 
 import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +44,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.components.inputs.helper.OpenFileContract
+import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
@@ -104,21 +103,18 @@ object ImportCategoryComponent {
     ) {
         var showPermissionDeniedDialog: Boolean by remember { mutableStateOf(false) }
 
-        val launcher = rememberLauncherForActivityResult(
-            contract = OpenFileContract(),
-            onResult = { sourceFile ->
-                importContacts(
-                    viewModel = viewModel,
-                    sourceFile = sourceFile,
-                    targetType = targetType,
-                    selectedAccount = selectedAccount,
-                    onPermissionDenied = { showPermissionDeniedDialog = true }
-                )
-            },
-        )
+        val launcher = OpenFileFilePickerLauncher.rememberLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
+            importContacts(
+                viewModel = viewModel,
+                sourceFile = sourceFile,
+                targetType = targetType,
+                selectedAccount = selectedAccount,
+                onPermissionDenied = { showPermissionDeniedDialog = true }
+            )
+        }
 
         SecondaryButton(
-            onClick = { launcher.launch(VCF_MIME_TYPES) },
+            onClick = { launcher.launch() },
             content = {
                 Text(
                     text = stringResource(id = R.string.import_contacts),
