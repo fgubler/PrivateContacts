@@ -24,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
@@ -33,7 +34,7 @@ class ContactImportViewModel : ViewModel() {
     private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
     val fileUri: MutableState<Uri?> = _fileUri
 
-    private val _targetType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    private val _targetType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val targetType: State<ContactType> = _targetType
 
     private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)

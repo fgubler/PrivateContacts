@@ -15,10 +15,11 @@ import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import kotlinx.coroutines.launch
 
 class ContactExportViewModel : ViewModel() {
-    private val _sourceType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
     fun selectSourceType(contactType: ContactType) {
