@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.importexport
 
 import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,12 +45,11 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.components.inputs.OpenFileFilePicker
+import ch.abwesend.privatecontacts.view.components.inputs.helper.OpenFileContract
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.getFilePathForDisplay
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import kotlin.contracts.ExperimentalContracts
@@ -63,38 +63,17 @@ object ImportCategoryComponent {
 
     @Composable
     fun ImportCategory(viewModel: ContactImportViewModel) {
-        val filePath = viewModel.fileUri.value.getFilePathForDisplay()
-
         val targetType = viewModel.targetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
         val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
 
         ImportExportCategory(title = R.string.import_title) {
-            VcfFilePicker(filePath) { uri ->
-                // in the case of "cancel", leave the old value
-                uri?.let { viewModel.selectFile(it) }
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
             TargetTypeFields(viewModel, targetType, selectedAccount)
-
             Spacer(modifier = Modifier.height(10.dp))
-
             ImportButton(viewModel, targetType, selectedAccount)
         }
 
         ProgressAndResultHandler(viewModel = viewModel)
-    }
-
-    @Composable
-    private fun VcfFilePicker(selectedFilePath: String, onFileSelected: (Uri?) -> Unit) {
-        OpenFileFilePicker(
-            labelRes = R.string.select_file_to_import,
-            mimeTypes = VCF_MIME_TYPES,
-            selectedFilePath = selectedFilePath,
-            onFileSelected = onFileSelected,
-        )
     }
 
     @Composable
@@ -125,19 +104,28 @@ object ImportCategoryComponent {
     ) {
         var showPermissionDeniedDialog: Boolean by remember { mutableStateOf(false) }
 
-        SecondaryButton(
-            enabled = viewModel.fileUri.value != null,
-            onClick = {
-                importContacts(viewModel, targetType, selectedAccount) {
-                    showPermissionDeniedDialog = true
-                }
+        val launcher = rememberLauncherForActivityResult(
+            contract = OpenFileContract(),
+            onResult = { sourceFile ->
+                importContacts(
+                    viewModel = viewModel,
+                    sourceFile = sourceFile,
+                    targetType = targetType,
+                    selectedAccount = selectedAccount,
+                    onPermissionDenied = { showPermissionDeniedDialog = true }
+                )
             },
-        ) {
-            Text(
-                text = stringResource(id = R.string.import_contacts),
-                textAlign = TextAlign.Center
-            )
-        }
+        )
+
+        SecondaryButton(
+            onClick = { launcher.launch(VCF_MIME_TYPES) },
+            content = {
+                Text(
+                    text = stringResource(id = R.string.import_contacts),
+                    textAlign = TextAlign.Center
+                )
+            }
+        )
 
         if (showPermissionDeniedDialog) {
             PermissionDeniedDialog { showPermissionDeniedDialog = false }
@@ -146,6 +134,7 @@ object ImportCategoryComponent {
 
     private fun importContacts(
         viewModel: ContactImportViewModel,
+        sourceFile: Uri?,
         targetType: ContactType,
         selectedAccount: ContactAccount,
         onPermissionDenied: () -> Unit,
@@ -154,13 +143,13 @@ object ImportCategoryComponent {
             contactPermissionHelper.requestAndroidContactPermissions { result ->
                 logger.debug("Android contact permissions: $result")
                 if (result.usable) {
-                    viewModel.importContacts(targetType, selectedAccount)
+                    viewModel.importContacts(sourceFile, targetType, selectedAccount)
                 } else {
                     onPermissionDenied()
                 }
             }
         } else {
-            viewModel.importContacts(targetType, selectedAccount)
+            viewModel.importContacts(sourceFile, targetType, selectedAccount)
         }
     }
 
