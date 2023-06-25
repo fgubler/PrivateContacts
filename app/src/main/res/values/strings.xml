@@ -277,7 +277,7 @@
     <string name="import_complete_title">Import complete</string>
     <string name="import_failed_title">Import failed</string>
     <string name="file_reading_failed">Failed to read file</string>
-    <string name="vcf_parsing_failed">Failed to VCF in file</string>
+    <string name="vcf_parsing_failed">Failed to read VCF in file</string>
     <string name="newly_imported_contacts">Newly imported contacts:</string>
     <string name="ignored_existing_contacts">Ignored contacts:</string>
     <string name="vcf_parsing_errors">VCF errors:</string>
@@ -293,6 +293,11 @@
     <string name="select_file_to_export_to">Select .vcf file to export to</string>
     <string name="contact_type_to_export">Export contacts of type</string>
     <string name="export_file_selected">Export file selected</string>
+    <string name="file_writing_failed">Failed to write file</string>
+    <string name="export_failed_title">Export failed</string>
+    <string name="vcf_serialization_failed">Failed to write contacts to VCF</string>
+    <string name="export_contacts_progress">Contacts are being exported</string>
+    <string name="export_complete_title">Export complete</string>
 
     <string name="failed_to_select_file">Failed to select file "%1$s"</string>
     <string name="new_something">New</string>

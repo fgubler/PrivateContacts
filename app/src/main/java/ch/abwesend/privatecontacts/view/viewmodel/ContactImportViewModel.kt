@@ -66,7 +66,7 @@ class ContactImportViewModel : ViewModel() {
         viewModelScope.launch {
             _importResult.withLoadingState {
                 val result = importService.importContacts(sourceFile, targetType, targetAccount)
-                logger.debug("Importing vcf file: result of type ${result.javaClass.simpleName}")
+                logger.debug("Imported vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }
         }
