@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
@@ -20,7 +19,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.components.inputs.helper.CreateFileContract
+import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
@@ -58,14 +57,15 @@ object ExportCategoryComponent {
 
     @Composable
     private fun ExportButton(viewModel: ContactExportViewModel, sourceType: ContactType) {
-        val launcher = rememberLauncherForActivityResult(
-            contract = CreateFileContract(VCF_MAIN_MIME_TYPE),
-            onResult = { targetFile -> viewModel.exportContacts(targetFile, sourceType) },
-        )
         val defaultFileName = createDefaultFileName(sourceType = sourceType)
+        val launcher = CreateFileFilePickerLauncher.rememberLauncher(
+            mimeType = VCF_MAIN_MIME_TYPE,
+            defaultFilename = defaultFileName,
+            onFileSelected = { targetFile -> viewModel.exportContacts(targetFile, sourceType) },
+        )
 
         SecondaryButton(
-            onClick = { launcher.launch(defaultFileName) },
+            onClick = { launcher.launch() },
             content = {
                 Text(
                     text = stringResource(id = R.string.export_contacts),

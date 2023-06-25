@@ -11,29 +11,30 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import ch.abwesend.privatecontacts.view.components.inputs.helper.OpenFileContract
+import ch.abwesend.privatecontacts.view.components.inputs.helper.CreateFileContract
 
-private typealias OpenFileBaseLauncher = ManagedActivityResultLauncher<Array<String>, Uri?>
+private typealias CreateFileBaseLauncher = ManagedActivityResultLauncher<String, Uri?>
 
-class OpenFileFilePickerLauncher private constructor(
-    private val launcher: OpenFileBaseLauncher,
-    private val mimeTypes: Array<String>,
+class CreateFileFilePickerLauncher private constructor(
+    private val launcher: CreateFileBaseLauncher,
+    private val defaultFilename: String,
 ) {
     fun launch() {
-        launcher.launch(mimeTypes)
+        launcher.launch(defaultFilename)
     }
 
     companion object {
         @Composable
         fun rememberLauncher(
-            mimeTypes: Array<String>,
+            mimeType: String,
+            defaultFilename: String,
             onFileSelected: (Uri?) -> Unit,
-        ): OpenFileFilePickerLauncher {
+        ): CreateFileFilePickerLauncher {
             val launcher = rememberLauncherForActivityResult(
-                contract = OpenFileContract(),
+                contract = CreateFileContract(mimeType),
                 onResult = onFileSelected,
             )
-            return remember(mimeTypes) { OpenFileFilePickerLauncher(launcher, mimeTypes) }
+            return remember(mimeType) { CreateFileFilePickerLauncher(launcher, defaultFilename) }
         }
     }
 }
