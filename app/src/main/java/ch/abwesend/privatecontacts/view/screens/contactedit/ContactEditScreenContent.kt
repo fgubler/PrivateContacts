@@ -75,7 +75,6 @@ object ContactEditScreenContent {
     fun ContactEditContent(
         viewModel: ContactEditViewModel,
         contact: IContactEditable,
-        showAllFields: Boolean,
         modifier: Modifier = Modifier,
     ) {
         val onChanged = { newContact: IContactEditable ->
@@ -120,37 +119,31 @@ object ContactEditScreenContent {
 
             PhoneNumbers(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             EmailAddresses(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             PhysicalAddresses(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Relationships(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Websites(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Companies(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )

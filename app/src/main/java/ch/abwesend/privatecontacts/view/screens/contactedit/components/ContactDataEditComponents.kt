@@ -33,7 +33,6 @@ object ContactDataEditComponents {
     @Composable
     fun PhoneNumbers(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -43,7 +42,6 @@ object ContactDataEditComponents {
             fieldLabel = PhoneNumber.labelSingular,
             icon = PhoneNumber.icon,
             valueFieldConfig = TextFieldConfig(KeyboardType.Phone),
-            showIfEmpty = showIfEmpty,
             factory = { PhoneNumber.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -53,7 +51,6 @@ object ContactDataEditComponents {
     @Composable
     fun EmailAddresses(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -63,7 +60,6 @@ object ContactDataEditComponents {
             fieldLabel = EmailAddress.labelSingular,
             icon = EmailAddress.icon,
             valueFieldConfig = TextFieldConfig(KeyboardType.Email),
-            showIfEmpty = showIfEmpty,
             factory = { EmailAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -73,7 +69,6 @@ object ContactDataEditComponents {
     @Composable
     fun PhysicalAddresses(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -83,7 +78,6 @@ object ContactDataEditComponents {
             fieldLabel = PhysicalAddress.labelSingular,
             icon = PhysicalAddress.icon,
             valueFieldConfig = TextFieldConfig(minHeight = 80.dp, maxLines = 5),
-            showIfEmpty = showIfEmpty,
             factory = { PhysicalAddress.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -93,7 +87,6 @@ object ContactDataEditComponents {
     @Composable
     fun Relationships(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -102,7 +95,6 @@ object ContactDataEditComponents {
             categoryTitle = Relationship.labelPlural,
             fieldLabel = Relationship.labelSingular,
             icon = Relationship.icon,
-            showIfEmpty = showIfEmpty,
             factory = { Relationship.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -112,7 +104,6 @@ object ContactDataEditComponents {
     @Composable
     fun Websites(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -122,7 +113,6 @@ object ContactDataEditComponents {
             fieldLabel = Website.labelSingular,
             icon = Website.icon,
             valueFieldConfig = TextFieldConfig(KeyboardType.Uri),
-            showIfEmpty = showIfEmpty,
             factory = { Website.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
@@ -132,7 +122,6 @@ object ContactDataEditComponents {
     @Composable
     fun Companies(
         contact: IContactEditable,
-        showIfEmpty: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
     ) {
@@ -141,7 +130,6 @@ object ContactDataEditComponents {
             categoryTitle = Company.labelPlural,
             fieldLabel = Company.labelSingular,
             icon = Company.icon,
-            showIfEmpty = showIfEmpty,
             factory = { Company.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged

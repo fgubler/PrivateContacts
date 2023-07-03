@@ -37,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
@@ -71,7 +70,6 @@ object ContactDataEditCommonComponents {
         @StringRes categoryTitle: Int,
         @StringRes fieldLabel: Int,
         icon: ImageVector,
-        showIfEmpty: Boolean,
         valueFieldConfig: TextFieldConfig = TextFieldConfig(),
         initiallyExpanded: Boolean = false,
         showForExternalContacts: Boolean = true,
@@ -93,33 +91,24 @@ object ContactDataEditCommonComponents {
         val dataEntriesToDisplay = remember(contact) {
             contact.contactDataForDisplay(factory = factory)
         }
-        val somethingToShow = remember(dataEntriesToDisplay) {
-            dataEntriesToDisplay.any { !it.isEmpty }.also { showCategory ->
-                if (!showCategory) {
-                    logger.debug("Hiding category '${T::class.java.simpleName}'")
-                }
-            }
-        }
 
-        if (showIfEmpty || somethingToShow) {
-            ContactCategory(
-                categoryTitle = categoryTitle,
-                icon = icon,
-                initiallyExpanded = initiallyExpanded,
-            ) {
-                Column {
-                    dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
-                        StringBasedContactDataEntry(
-                            contactData = contactData,
-                            label = fieldLabel,
-                            valueFieldConfig = valueFieldConfig,
-                            isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
-                            waitForCustomType = waitForCustomType,
-                            onChanged = onEntryChanged,
-                        )
-                        if (displayIndex < dataEntriesToDisplay.size - 1) {
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
+        ContactCategory(
+            categoryTitle = categoryTitle,
+            icon = icon,
+            initiallyExpanded = initiallyExpanded,
+        ) {
+            Column {
+                dataEntriesToDisplay.forEachIndexed { displayIndex, contactData ->
+                    StringBasedContactDataEntry(
+                        contactData = contactData,
+                        label = fieldLabel,
+                        valueFieldConfig = valueFieldConfig,
+                        isLastElement = (displayIndex == dataEntriesToDisplay.size - 1),
+                        waitForCustomType = waitForCustomType,
+                        onChanged = onEntryChanged,
+                    )
+                    if (displayIndex < dataEntriesToDisplay.size - 1) {
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
             }
