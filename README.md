@@ -27,6 +27,11 @@ Additional features
 - Encryption and password protection
 - Suggestions are always welcome...
 
+## Technical Restrictions
+- What we would like to do is provide contacts to e.g. the official phone-app while withholding them from e.g. WhatsApp. Unfortunately, Android does not allow this: we cannot provide a contact to some apps but not to others.
+  - Either a contact is in the public contact-database where every app with the necessary permission can read it;
+  - or it is secret and no app (other) can read it.
+
 ## Screenshots
 
 |Start Screen|Contact Details|Contact Edit 1|Contact Edit 2|
