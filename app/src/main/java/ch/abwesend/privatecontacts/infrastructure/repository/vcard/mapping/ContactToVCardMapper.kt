@@ -7,8 +7,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toCategories
 import ezvcard.VCard
-import ezvcard.property.Categories
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
 import ezvcard.property.Note
@@ -43,9 +43,7 @@ class ContactToVCardMapper {
             vCard.addContactData(contact)
 
             // TODO test with a dataset which actually has categories
-            val groupNames = contact.contactGroups.map { it.id.name }
-            val categories = Categories()
-            categories.values.addAll(groupNames)
+            val categories = contact.contactGroups.toCategories()
             vCard.addCategories(categories)
 
             vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
