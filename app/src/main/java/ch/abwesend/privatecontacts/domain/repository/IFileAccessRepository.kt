@@ -12,7 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
 interface IFileAccessRepository {
     suspend fun readFileContent(fileUri: Uri, requestPermission: Boolean = true): FileReadResult
-    suspend fun writeFile(file: Uri, fileContent: FileContent, requestPermission: Boolean = true): FileWriteResult
+    suspend fun writeFile(fileContent: FileContent, file: Uri, requestPermission: Boolean = true): FileWriteResult
 }
 
 typealias FileReadResult = BinaryResult<FileContent, Exception>

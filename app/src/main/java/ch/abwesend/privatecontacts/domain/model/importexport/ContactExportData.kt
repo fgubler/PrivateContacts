@@ -8,7 +8,10 @@ package ch.abwesend.privatecontacts.domain.model.importexport
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 
-data class ContactExportData(val successfullyExportedContacts: List<IContact>)
+data class ContactExportData(
+    val successfulContacts: List<IContact>,
+    val failedContacts: List<IContact>,
+)
 
 sealed interface ContactExportPartialData {
     data class CreatedVCards(

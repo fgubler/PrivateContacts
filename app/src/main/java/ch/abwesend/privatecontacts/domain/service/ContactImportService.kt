@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
 class ContactImportService {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val importExportRepository: IVCardImportExportRepository by injectAnywhere()
-    private val fileReadService: FileReadService by injectAnywhere()
+    private val fileReadService: FileReadWriteService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
 
     suspend fun importContacts(
