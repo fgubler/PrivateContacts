@@ -12,11 +12,18 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Personal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
@@ -25,6 +32,7 @@ import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
+import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,12 +95,12 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     @Test
     fun `should map phone-numbers`() {
         val phoneNumbers = listOf(
-            somePhoneNumber(value = "123", sortOrder = 0, type = ContactDataType.Mobile),
-            somePhoneNumber(value = "345", sortOrder = 2, type = ContactDataType.Personal),
-            somePhoneNumber(value = "234", sortOrder = 1, type = ContactDataType.Business),
-            somePhoneNumber(value = "456", sortOrder = 3, type = ContactDataType.Other),
-            somePhoneNumber(value = "789", sortOrder = 5, type = ContactDataType.CustomValue("Test")),
-            somePhoneNumber(value = "567", sortOrder = 4, type = ContactDataType.Main),
+            somePhoneNumber(value = "123", sortOrder = 0, type = Mobile),
+            somePhoneNumber(value = "345", sortOrder = 2, type = Personal),
+            somePhoneNumber(value = "234", sortOrder = 1, type = Business),
+            somePhoneNumber(value = "456", sortOrder = 3, type = Other),
+            somePhoneNumber(value = "789", sortOrder = 5, type = CustomValue("Test")),
+            somePhoneNumber(value = "567", sortOrder = 4, type = Main),
         )
         val originalContact = someContactEditable(contactData = phoneNumbers)
 
@@ -125,11 +133,11 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     @Test
     fun `should map email-addresses`() {
         val emailAddresses = listOf(
-            someEmailAddress(value = "c@d.e", sortOrder = 1, type = ContactDataType.Personal),
-            someEmailAddress(value = "b@c.d", sortOrder = 0, type = ContactDataType.Business),
-            someEmailAddress(value = "d@e.f", sortOrder = 2, type = ContactDataType.Other),
-            someEmailAddress(value = "f@g.h", sortOrder = 4, type = ContactDataType.CustomValue("Test")),
-            someEmailAddress(value = "e@f.g", sortOrder = 3, type = ContactDataType.Main),
+            someEmailAddress(value = "c@d.e", sortOrder = 1, type = Personal),
+            someEmailAddress(value = "b@c.d", sortOrder = 0, type = Business),
+            someEmailAddress(value = "d@e.f", sortOrder = 2, type = Other),
+            someEmailAddress(value = "f@g.h", sortOrder = 4, type = CustomValue("Test")),
+            someEmailAddress(value = "e@f.g", sortOrder = 3, type = Main),
         )
         val originalContact = someContactEditable(contactData = emailAddresses)
 
@@ -156,6 +164,47 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultEmailAddress.value).isEqualTo(originalEmailAddress.value)
             assertThat(resultEmailAddress.modelStatus).isEqualTo(ModelStatus.NEW)
             assertThat(resultEmailAddress.type).isEqualTo(originalEmailAddress.type)
+        }
+    }
+
+    @Test
+    fun `should map physical addresses`() {
+        val linebreak = Constants.linebreak
+        val longAddress = "123 some long street, $linebreak some town, $linebreak some state, $linebreak USA"
+        val addresses = listOf(
+            somePhysicalAddress(value = "alphastrasse 155, 8000 Zürich", sortOrder = 1, type = Personal),
+            somePhysicalAddress(value = "123 broadway $linebreak NYC $linebreak NY", sortOrder = 0, type = Business),
+            somePhysicalAddress(value = longAddress, sortOrder = 2, type = Other),
+            somePhysicalAddress(value = "customStreet 1", sortOrder = 4, type = CustomValue("Test")),
+            somePhysicalAddress(value = "mainstreet 4", sortOrder = 3, type = Main),
+        )
+        val originalContact = someContactEditable(contactData = addresses)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(addresses)
+        val resultAddresses = resultContact.contactDataSet
+        val sortedOriginalAddresses = addresses.sortedBy { it.sortOrder }
+        resultAddresses.indices.forEach { index ->
+            val resultAddress = resultAddresses[index]
+            val originalAddress = sortedOriginalAddresses[index]
+            logger.debug("testing address $originalAddress")
+            assertThat(resultAddress).isInstanceOf(PhysicalAddress::class.java)
+            assertThat(resultAddress.category).isEqualTo(ContactDataCategory.ADDRESS)
+            assertThat(resultAddress.sortOrder).isEqualTo(originalAddress.sortOrder)
+            val resultValue = (resultAddress.value as String).replace(",", "").replace(" ", "")
+            val originalValue = originalAddress.value.replace(",", " ").replace(" ", "")
+            assertThat(resultValue).isEqualTo(originalValue)
+            assertThat(resultAddress.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultAddress.type).isEqualTo(originalAddress.type)
         }
     }
 }

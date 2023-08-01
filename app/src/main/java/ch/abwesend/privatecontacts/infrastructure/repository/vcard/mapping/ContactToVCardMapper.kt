@@ -6,10 +6,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toCategories
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardEmailAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardPhoneNumber
 import ezvcard.VCard
@@ -66,15 +68,18 @@ class ContactToVCardMapper {
         val vCardEmailAddresses = emailAddresses.sortedBy { it.sortOrder }.map { it.toVCardEmailAddress() }
         emails.addAll(vCardEmailAddresses)
 
+        val physicalAddresses = contact.contactDataSet.filterIsInstance<PhysicalAddress>()
+        val vCardPhysicalAddresses = physicalAddresses.sortedBy { it.sortOrder }.map { it.toVCardAddress() }
+        addresses.addAll(vCardPhysicalAddresses)
+
         // TODO implement
+
+        // TODO export companies with some fancy mapping
     }
 }
 
 /*
-mutableContact.updateEmailAddresses(changedContact.contactDataSet)
-mutableContact.updatePhysicalAddresses(changedContact.contactDataSet)
 mutableContact.updateWebsites(changedContact.contactDataSet)
 mutableContact.updateRelationships(changedContact.contactDataSet)
 mutableContact.updateEventDates(changedContact.contactDataSet)
-mutableContact.updateCompanies(changedContact.contactDataSet)
  */
