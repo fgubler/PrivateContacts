@@ -7,6 +7,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
@@ -15,6 +16,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardEmailAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardPhoneNumber
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardRelationship
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardUrl
 import ezvcard.VCard
 import ezvcard.property.Kind
@@ -78,6 +80,10 @@ class ContactToVCardMapper {
         val vCardWebsites = websites.sortedBy { it.sortOrder }.map { it.toVCardUrl() }
         urls.addAll(vCardWebsites)
 
+        val relationships = contact.contactDataSet.filterIsInstance<Relationship>()
+        val vCardRelationships = relationships.sortedBy { it.sortOrder }.map { it.toVCardRelationship() }
+        relations.addAll(vCardRelationships)
+
         // TODO implement
 
         // TODO export companies with some fancy mapping
@@ -85,7 +91,6 @@ class ContactToVCardMapper {
 }
 
 /*
-mutableContact.updateWebsites(changedContact.contactDataSet)
 mutableContact.updateRelationships(changedContact.contactDataSet)
 mutableContact.updateEventDates(changedContact.contactDataSet)
  */

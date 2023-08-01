@@ -18,9 +18,18 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Mobile
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Personal
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipBrother
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipChild
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFriend
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipParent
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipPartner
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipRelative
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSister
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipWork
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
@@ -34,6 +43,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.someRelationship
 import ch.abwesend.privatecontacts.testutil.databuilders.someWebsite
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
@@ -244,6 +254,58 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultWebsite.value).isEqualTo(originalWebsite.value)
             assertThat(resultWebsite.modelStatus).isEqualTo(ModelStatus.NEW)
             assertThat(resultWebsite.type).isEqualTo(originalWebsite.type)
+        }
+    }
+
+    /*
+     RelationshipParent,
+            RelationshipFriend,
+            RelationshipPartner,
+            RelationshipRelative,
+            RelationshipWork,
+            Custom,
+            Other,
+     */
+
+    @Test
+    fun `should map relationships`() {
+        val relationships = listOf(
+            someRelationship(value = "Dorothee", sortOrder = 1, type = RelationshipChild),
+            someRelationship(value = "Karen", sortOrder = 0, type = RelationshipSister),
+            someRelationship(value = "Sebastian", sortOrder = 3, type = RelationshipBrother),
+            someRelationship(value = "Anne", sortOrder = 5, type = RelationshipFriend),
+            someRelationship(value = "Kathrin", sortOrder = 6, type = RelationshipPartner),
+            someRelationship(value = "Tom", sortOrder = 8, type = RelationshipRelative),
+            someRelationship(value = "Marc", sortOrder = 7, type = RelationshipParent),
+            someRelationship(value = "Tobias", sortOrder = 9, type = RelationshipWork),
+            someRelationship(value = "Alex", sortOrder = 2, type = Other),
+            someRelationship(value = "Pascal", sortOrder = 4, type = CustomValue("Test")),
+        )
+        val originalContact = someContactEditable(contactData = relationships)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(relationships)
+        val resultRelationships = resultContact.contactDataSet
+        val sortedOriginalRelationships = relationships.sortedBy { it.sortOrder }
+        resultRelationships.indices.forEach { index ->
+            val resultRelationship = resultRelationships[index]
+            val originalRelationship = sortedOriginalRelationships[index]
+            logger.debug("testing relationship $originalRelationship")
+            assertThat(resultRelationship).isInstanceOf(Relationship::class.java)
+            assertThat(resultRelationship.category).isEqualTo(ContactDataCategory.RELATIONSHIP)
+            assertThat(resultRelationship.sortOrder).isEqualTo(originalRelationship.sortOrder)
+            assertThat(resultRelationship.value).isEqualTo(originalRelationship.value)
+            assertThat(resultRelationship.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultRelationship.type).isEqualTo(originalRelationship.type)
         }
     }
 }
