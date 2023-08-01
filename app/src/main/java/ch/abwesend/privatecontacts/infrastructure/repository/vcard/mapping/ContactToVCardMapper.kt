@@ -4,10 +4,12 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toCategories
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardPhoneNumber
 import ezvcard.VCard
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
@@ -54,6 +56,23 @@ class ContactToVCardMapper {
         }
 
     private fun VCard.addContactData(contact: IContact) {
+        val phoneNumbers = contact.contactDataSet.filterIsInstance<PhoneNumber>()
+        val vCardPhoneNumbers = phoneNumbers.sortedBy { it.sortOrder }.map { it.toVCardPhoneNumber() }
+        telephoneNumbers.addAll(vCardPhoneNumbers)
+
+//        val emailAddresses = contact.contactDataSet.filterIsInstance<EmailAddress>()
+//        val vCardEmailAddresses = emailAddresses.sortedBy { it.sortOrder }.map { it.toVCardPhoneNumber() }
+//        telephoneNumbers.addAll(vCardEmailAddresses)
+
         // TODO implement
     }
 }
+
+/*
+mutableContact.updateEmailAddresses(changedContact.contactDataSet)
+mutableContact.updatePhysicalAddresses(changedContact.contactDataSet)
+mutableContact.updateWebsites(changedContact.contactDataSet)
+mutableContact.updateRelationships(changedContact.contactDataSet)
+mutableContact.updateEventDates(changedContact.contactDataSet)
+mutableContact.updateCompanies(changedContact.contactDataSet)
+ */
