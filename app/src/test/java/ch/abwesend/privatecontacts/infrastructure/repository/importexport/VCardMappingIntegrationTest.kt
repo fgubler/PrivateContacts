@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Pers
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.util.Constants
@@ -33,6 +34,7 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.someWebsite
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -205,6 +207,43 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultValue).isEqualTo(originalValue)
             assertThat(resultAddress.modelStatus).isEqualTo(ModelStatus.NEW)
             assertThat(resultAddress.type).isEqualTo(originalAddress.type)
+        }
+    }
+
+    @Test
+    fun `should map websites`() {
+        val websites = listOf(
+            someWebsite(value = "www.google.ch", sortOrder = 1, type = Personal),
+            someWebsite(value = "www.android.com", sortOrder = 0, type = Business),
+            someWebsite(value = "http://mail.google.com", sortOrder = 2, type = Other),
+            someWebsite(value = "https://calendar.google.com", sortOrder = 4, type = CustomValue("Test")),
+            someWebsite(value = "ftp://alpha.beta.org", sortOrder = 3, type = Main),
+        )
+        val originalContact = someContactEditable(contactData = websites)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(websites)
+        val resultWebsites = resultContact.contactDataSet
+        val sortedOriginalWebsites = websites.sortedBy { it.sortOrder }
+        resultWebsites.indices.forEach { index ->
+            val resultWebsite = resultWebsites[index]
+            val originalWebsite = sortedOriginalWebsites[index]
+            logger.debug("testing website $originalWebsite")
+            assertThat(resultWebsite).isInstanceOf(Website::class.java)
+            assertThat(resultWebsite.category).isEqualTo(ContactDataCategory.WEBSITE)
+            assertThat(resultWebsite.sortOrder).isEqualTo(originalWebsite.sortOrder)
+            assertThat(resultWebsite.value).isEqualTo(originalWebsite.value)
+            assertThat(resultWebsite.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultWebsite.type).isEqualTo(originalWebsite.type)
         }
     }
 }

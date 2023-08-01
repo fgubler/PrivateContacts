@@ -127,8 +127,7 @@ fun someEventDate(
     sortOrder = sortOrder,
 )
 
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("URLs don't work in Unit-Tests, so the Websites are lost...")
+/** beware Android URLs don't work in Unit-Tests, so this does not do any good for Android-Contact tests */
 fun someWebsite(
     id: ContactDataId = someContactDataId(),
     value: String = "www.private-contacts.com",

@@ -7,6 +7,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -14,6 +15,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardEmailAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardPhoneNumber
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardUrl
 import ezvcard.VCard
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
@@ -71,6 +73,10 @@ class ContactToVCardMapper {
         val physicalAddresses = contact.contactDataSet.filterIsInstance<PhysicalAddress>()
         val vCardPhysicalAddresses = physicalAddresses.sortedBy { it.sortOrder }.map { it.toVCardAddress() }
         addresses.addAll(vCardPhysicalAddresses)
+
+        val websites = contact.contactDataSet.filterIsInstance<Website>()
+        val vCardWebsites = websites.sortedBy { it.sortOrder }.map { it.toVCardUrl() }
+        urls.addAll(vCardWebsites)
 
         // TODO implement
 
