@@ -11,7 +11,9 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
 import ezvcard.property.Categories
 
-fun Categories.toContactGroup(): ContactGroup? = group?.let {
-    val id = ContactGroupId(name = it, groupNo = null)
-    ContactGroup(id = id, notes = "", modelStatus = NEW)
+fun Categories.toContactGroup(): List<ContactGroup> = values.orEmpty().mapNotNull { value ->
+    value?.let { groupName ->
+        val id = ContactGroupId(name = groupName, groupNo = null)
+        ContactGroup(id = id, notes = "", modelStatus = NEW)
+    }
 }
