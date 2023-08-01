@@ -11,10 +11,11 @@ import ezvcard.VCard
 import ezvcard.property.Categories
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
+import ezvcard.property.Note
 import ezvcard.property.StructuredName
 import java.util.UUID
 
-// TODO add unit tests
+// TODO add unit tests & integration tests
 class ContactToVCardMapper {
     fun mapToVCard(contact: IContact): BinaryResult<VCard, IContact> =
         try {
@@ -35,6 +36,9 @@ class ContactToVCardMapper {
             val nickname = Nickname()
             nickname.values.add(contact.nickname)
             vCard.addNickname(nickname)
+
+            val note = Note(contact.notes)
+            vCard.addNote(note)
 
             vCard.addContactData(contact)
 

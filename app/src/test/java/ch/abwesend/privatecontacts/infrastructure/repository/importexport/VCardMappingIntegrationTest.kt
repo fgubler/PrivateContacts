@@ -46,10 +46,14 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     }
 
     @Test
-    fun `should map the UUID and names`() {
+    fun `should map the UUID, names and notes`() {
         val uuid = UUID.randomUUID()
         val type = ContactType.SECRET
-        val originalContact = someContactEditable(id = ContactIdInternal(uuid), type = type)
+        val originalContact = someContactEditable(
+            id = ContactIdInternal(uuid),
+            type = type,
+            notes = "This is a note"
+        )
 
         val vCardResult = toVCardMapper.mapToVCard(originalContact)
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
@@ -66,5 +70,6 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         assertThat(resultContact.firstName).isEqualTo(originalContact.firstName)
         assertThat(resultContact.lastName).isEqualTo(originalContact.lastName)
         assertThat(resultContact.nickname).isEqualTo(originalContact.nickname)
+        assertThat(resultContact.notes).isEqualTo(originalContact.notes)
     }
 }

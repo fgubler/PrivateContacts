@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birt
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.toContactData
@@ -39,6 +40,8 @@ class VCardToContactMapper {
 
             val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
             contact.nickname = nicknames.filterNotNull().joinToString(", ")
+
+            contact.notes = vCard.notes.orEmpty().mapNotNull { it.value }.joinToString(Constants.linebreak)
 
             val contactData = getContactData(vCard)
             contact.contactDataSet.addAll(contactData)
