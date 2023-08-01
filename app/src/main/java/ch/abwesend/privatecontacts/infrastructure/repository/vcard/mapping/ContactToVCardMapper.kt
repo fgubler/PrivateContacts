@@ -29,7 +29,6 @@ import ezvcard.property.Note
 import ezvcard.property.StructuredName
 import java.util.UUID
 
-// TODO add unit tests & integration tests
 class ContactToVCardMapper {
     fun mapToVCard(contact: IContact): BinaryResult<VCard, IContact> =
         try {
@@ -56,7 +55,6 @@ class ContactToVCardMapper {
 
             vCard.addContactData(contact)
 
-            // TODO test with a dataset which actually has categories
             val categories = contact.contactGroups.toCategories()
             vCard.addCategories(categories)
 
@@ -89,7 +87,8 @@ class ContactToVCardMapper {
         relations.addAll(vCardRelationships)
 
         addEventDates(contact)
-        addCompanies(contact)
+
+        // mapping Companies to relationship does not do any good: relationships are not properly exported anyway...
     }
 
     private fun VCard.addEventDates(contact: IContact) {
@@ -97,12 +96,9 @@ class ContactToVCardMapper {
         val birthdayEvents = eventDates.filter { it.type == ContactDataType.Birthday }
         val vCardBirthdays = birthdayEvents.sortedBy { it.sortOrder }.map { it.toVCardBirthday() }
         birthdays.addAll(vCardBirthdays)
+
         val anniversaryEvents = eventDates.filter { it.type == ContactDataType.Anniversary }
         val vCardAnniversaries = anniversaryEvents.sortedBy { it.sortOrder }.map { it.toVCardAnniversary() }
         anniversaries.addAll(vCardAnniversaries)
-    }
-
-    private fun VCard.addCompanies(contact: IContact) {
-        // TODO export companies with some fancy mapping
     }
 }

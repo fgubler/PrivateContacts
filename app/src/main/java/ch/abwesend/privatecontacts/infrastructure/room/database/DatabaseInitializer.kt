@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
+import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactdata.createContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroupId
@@ -219,6 +220,14 @@ class DatabaseInitializer {
                         modelStatus = ModelStatus.CHANGED,
                         sortOrder = 2,
                     ),
+                    Website(
+                        id = createContactDataId(),
+                        value = "https://www.jedi.org",
+                        type = ContactDataType.Business,
+                        isMain = true,
+                        modelStatus = ModelStatus.CHANGED,
+                        sortOrder = 1,
+                    )
                 ),
                 contactGroups = mutableListOf(),
                 saveInAccount = ContactAccount.None,

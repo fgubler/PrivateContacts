@@ -14,10 +14,16 @@ import ezvcard.Ezvcard
 import ezvcard.VCard
 import kotlinx.coroutines.withContext
 
-// TODO consider using fallbacks with different formats
 class VCardRepository {
     val dispatchers: IDispatchers by injectAnywhere()
 
+    /**
+     * Beware: "Ezvcard.write(vCards)" for some reason loses or kicks out some properties
+     *  - all relationships
+     *  - anniversaries
+     *
+     * Interestingly, those properties are present in the VCard object but get lost during serialization
+     */
     suspend fun exportVCards(vCards: List<VCard>): FileContent = withContext(dispatchers.io) {
         val content = Ezvcard.write(vCards).go()
         FileContent(content)

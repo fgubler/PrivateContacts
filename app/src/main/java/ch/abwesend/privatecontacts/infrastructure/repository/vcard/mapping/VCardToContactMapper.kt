@@ -24,7 +24,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
 import ezvcard.VCard
 
-// TODO add unit tests
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
 
@@ -46,7 +45,6 @@ class VCardToContactMapper {
             val contactData = getContactData(vCard)
             contact.contactDataSet.addAll(contactData)
 
-            // TODO test with a dataset which actually has categories
             val groups = vCard.categoriesList.orEmpty().flatMap { it.toContactGroups() }
             contact.contactGroups.addAll(groups)
 
@@ -75,7 +73,7 @@ class VCardToContactMapper {
         val anniversaries = vCard.anniversaries.orEmpty()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Anniversary, index) }
 
-        // TODO get companies with some fancy mapping
+        // parsing companies from custom-relationships is useless: VCF somehow drops all relationships
 
         val allData = phoneNumbers + emails + addresses + websites + relationships + birthDays + anniversaries
         return allData.distinct()
