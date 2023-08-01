@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactData
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroup
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
 import ezvcard.VCard
 
 // TODO add unit tests
@@ -47,7 +47,7 @@ class VCardToContactMapper {
             contact.contactDataSet.addAll(contactData)
 
             // TODO test with a dataset which actually has categories
-            val groups = vCard.categoriesList.orEmpty().mapNotNull { it.toContactGroup() }
+            val groups = vCard.categoriesList.orEmpty().flatMap { it.toContactGroups() }
             contact.contactGroups.addAll(groups)
 
             val contactCategory = vCard.kind // TODO use once this becomes a thing
