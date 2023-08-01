@@ -1,24 +1,57 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping
 
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ezvcard.VCard
+import ezvcard.property.Categories
+import ezvcard.property.Kind
+import ezvcard.property.Nickname
+import ezvcard.property.StructuredName
 import java.util.UUID
 
 // TODO add unit tests
 class ContactToVCardMapper {
-    fun mapToVCard(contact: IContact): VCard {
-        val vCard = VCard()
+    fun mapToVCard(contact: IContact): BinaryResult<VCard, IContact> =
+        try {
+            val vCard = VCard()
 
-        val uuid = when (val contactId = contact.id) {
-            is IContactIdInternal -> contactId.uuid
-            is IContactIdExternal -> UUID.randomUUID()
+            val uuid = when (val contactId = contact.id) {
+                is IContactIdInternal -> contactId.uuid
+                is IContactIdExternal -> UUID.randomUUID()
+            }
+
+            vCard.uid = uuid.toUid()
+
+            val structuredName = StructuredName()
+            structuredName.given = contact.firstName
+            structuredName.family = contact.lastName
+            vCard.structuredName = structuredName
+
+            val nickname = Nickname()
+            nickname.values.add(contact.nickname)
+            vCard.addNickname(nickname)
+
+            vCard.addContactData(contact)
+
+            // TODO test with a dataset which actually has categories
+            val groupNames = contact.contactGroups.map { it.id.name }
+            val categories = Categories()
+            categories.values.addAll(groupNames)
+            vCard.addCategories(categories)
+
+            vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
+            SuccessResult(vCard)
+        } catch (e: Exception) {
+            logger.warning("Failed to map contact '${contact.id}'")
+            ErrorResult(contact)
         }
 
-        vCard.uid = uuid.toUid()
-
+    private fun VCard.addContactData(contact: IContact) {
         // TODO implement
-        return vCard
     }
 }
