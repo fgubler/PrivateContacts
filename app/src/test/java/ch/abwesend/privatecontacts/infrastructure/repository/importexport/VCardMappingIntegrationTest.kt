@@ -12,6 +12,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Business
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.CustomValue
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
@@ -27,6 +29,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Rela
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSister
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipWork
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
+import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
@@ -41,6 +44,7 @@ import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.Addr
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
+import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.someRelationship
@@ -52,6 +56,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
+import java.time.LocalDate
 import java.util.UUID
 
 /**
@@ -257,16 +262,6 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         }
     }
 
-    /*
-     RelationshipParent,
-            RelationshipFriend,
-            RelationshipPartner,
-            RelationshipRelative,
-            RelationshipWork,
-            Custom,
-            Other,
-     */
-
     @Test
     fun `should map relationships`() {
         val relationships = listOf(
@@ -308,4 +303,47 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultRelationship.type).isEqualTo(originalRelationship.type)
         }
     }
+
+    /**
+     * Beware:
+     *  - Sort-Order is lost between Anniversary and Birthday
+     */
+    @Test
+    fun `should map event dates`() {
+        val dateWithoutYear = EventDate.createDate(day = 5, month = 1, year = null)!!
+        val eventDates = listOf(
+            someEventDate(value = LocalDate.now(), sortOrder = 1, type = Anniversary),
+            someEventDate(value = LocalDate.now().minusDays(2), sortOrder = 2, type = Anniversary),
+            someEventDate(value = dateWithoutYear, sortOrder = 0, type = Birthday),
+            someEventDate(value = dateWithoutYear.minusDays(3), sortOrder = 3, type = Birthday),
+        )
+        val originalContact = someContactEditable(contactData = eventDates)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(eventDates)
+        val resultEventDates = resultContact.contactDataSet
+        val sortedOriginalEventDates = eventDates.sortedBy { it.sortOrder }
+        resultEventDates.forEach { resultEventDate ->
+            // cannot really guarantee that the sort-order is being kept
+            val originalEventDate = sortedOriginalEventDates.firstOrNull { it.value == resultEventDate.value }
+            logger.debug("testing event-date $resultEventDate")
+            assertThat(resultEventDate).isInstanceOf(EventDate::class.java)
+            assertThat(resultEventDate.category).isEqualTo(ContactDataCategory.EVENT_DATE)
+            assertThat(originalEventDate).isNotNull
+            assertThat(resultEventDate.value).isEqualTo(originalEventDate!!.value)
+            assertThat(resultEventDate.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultEventDate.type).isEqualTo(originalEventDate.type)
+        }
+    }
+
+    // TODO add test for companies
 }

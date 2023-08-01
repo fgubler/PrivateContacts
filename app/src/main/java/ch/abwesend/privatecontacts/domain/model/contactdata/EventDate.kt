@@ -43,6 +43,8 @@ data class EventDate(
 
     override val isEmpty: Boolean = value == null
 
+    val isYearSet: Boolean = value != null && value.year != DUMMY_YEAR_INT
+
     override val displayValue: String by lazy {
         value?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)).orEmpty()
             .replace(oldValue = DUMMY_YEAR_STRING, newValue = "")
@@ -97,8 +99,8 @@ data class EventDate(
         fun createDate(day: Int?, month: Int?, year: Int?): LocalDate? = try {
             LocalDate.of(
                 /* year = */ year ?: DUMMY_YEAR_INT,
-                /* month = */ month ?: 0,
-                /* dayOfMonth = */ day ?: 0,
+                /* month = */ month ?: 1,
+                /* dayOfMonth = */ day ?: 1,
             )
         } catch (e: DateTimeException) {
             logger.error("Failed to create date from day = $day, month = $month, year = $year", e)
