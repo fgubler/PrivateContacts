@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository.importexport
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
@@ -66,6 +67,8 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         val resultContact = contactResult.getValueOrNull()
         assertThat(resultContact).isNotNull
         assertThat(resultContact!!.importId?.value).isEqualTo(uuid)
+        assertThat(resultContact.id).isInstanceOf(IContactIdInternal::class.java)
+        assertThat((resultContact.id as IContactIdInternal).uuid).isNotEqualTo(uuid) // should choose a new UUID
         assertThat(resultContact.type).isEqualTo(type)
         assertThat(resultContact.firstName).isEqualTo(originalContact.firstName)
         assertThat(resultContact.lastName).isEqualTo(originalContact.lastName)
