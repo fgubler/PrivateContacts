@@ -25,7 +25,7 @@ fun EmailType.toContactDataType(): ContactDataType = toDefaultContactDataType()
 
 fun AddressType.toContactDataType(): ContactDataType = toDefaultContactDataType()
 
-fun Url.toContactDataType(): ContactDataType = typeValueToContactDataType(value)
+fun Url.toContactDataType(): ContactDataType = typeValueToContactDataType(type)
 
 fun RelatedType.toContactDataType(): ContactDataType = when (this) {
     RelatedType.CHILD -> ContactDataType.RelationshipChild
