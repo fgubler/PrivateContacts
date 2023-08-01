@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.getContactDataTypeByCustomVCardString
 import ezvcard.parameter.AddressType
 import ezvcard.parameter.EmailType
 import ezvcard.parameter.RelatedType
@@ -58,7 +59,11 @@ private fun typeValueToContactDataType(typeValue: String?): ContactDataType {
         TelephoneType.WORK.value.lowercase() -> ContactDataType.Business
         TelephoneType.PREF.value.lowercase() -> ContactDataType.Main
         "" -> ContactDataType.Other
-        else -> ContactDataType.CustomValue(customValue = typeValue.customCapitalize())
+        else -> {
+            val customValue = typeValue.customCapitalize()
+            val contactDataType = getContactDataTypeByCustomVCardString(valueSanitized)
+            contactDataType ?: ContactDataType.CustomValue(customValue = customValue)
+        }
     }
 }
 
