@@ -23,6 +23,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -84,7 +85,7 @@ object ExportCategoryComponent {
         val sourceType = viewModel.sourceType.value
         val vCardVersion = viewModel.vCardVersion.value
 
-        val defaultFileName = createDefaultFileName(sourceType = sourceType)
+        val defaultFileName = createDefaultFileName(sourceType = sourceType, vCardVersion)
         val exportAction = rememberActionWithContactPermission()
 
         val launcher = rememberCreateFileLauncher(
@@ -109,11 +110,12 @@ object ExportCategoryComponent {
     }
 
     @Composable
-    private fun createDefaultFileName(sourceType: ContactType): String {
+    private fun createDefaultFileName(sourceType: ContactType, vCardVersion: VCardVersion): String {
         val datePrefix = LocalDate.now().toString()
+        val versionInfix = vCardVersion.name
         val typePostfix = stringResource(id = sourceType.label)
         val extension = VCF_FILE_EXTENSION
-        return "${datePrefix}_$typePostfix.$extension"
+        return "${datePrefix}_${versionInfix}_$typePostfix.$extension"
     }
 
     @Composable

@@ -34,7 +34,9 @@ class CreateFileFilePickerLauncher private constructor(
                 contract = CreateFileContract(mimeType),
                 onResult = onFileSelected,
             )
-            return remember(mimeType) { CreateFileFilePickerLauncher(launcher, defaultFilename) }
+            return remember(mimeType, defaultFilename) {
+                CreateFileFilePickerLauncher(launcher, defaultFilename)
+            }
         }
     }
 }
