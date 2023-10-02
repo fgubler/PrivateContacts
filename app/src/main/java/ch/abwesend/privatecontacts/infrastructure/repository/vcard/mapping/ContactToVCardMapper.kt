@@ -88,7 +88,7 @@ class ContactToVCardMapper {
 
         addEventDates(contact)
 
-        // mapping Companies to relationship does not do any good: relationships are not properly exported anyway...
+        // TODO add mapping for companies to relationships: supported in VCF V4
     }
 
     private fun VCard.addEventDates(contact: IContact) {

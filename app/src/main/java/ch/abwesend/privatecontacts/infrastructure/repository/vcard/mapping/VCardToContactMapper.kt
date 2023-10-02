@@ -73,7 +73,7 @@ class VCardToContactMapper {
         val anniversaries = vCard.anniversaries.orEmpty()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Anniversary, index) }
 
-        // parsing companies from custom-relationships is useless: VCF somehow drops all relationships
+        // TODO add parsing for companies from custom-relationships (relevant for V4)
 
         val allData = phoneNumbers + emails + addresses + websites + relationships + birthDays + anniversaries
         return allData.distinct()
