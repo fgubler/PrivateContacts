@@ -109,13 +109,19 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override fun overrideSettingsWith(settings: ISettingsState) {
         appTheme = settings.appTheme
         orderByFirstName = settings.orderByFirstName
+        showContactTypeInList = settings.showContactTypeInList
+        showExtraButtonsInEditScreen = settings.showExtraButtonsInEditScreen
+        invertTopAndBottomBars = settings.invertTopAndBottomBars
         showIncomingCallsOnLockScreen = settings.showIncomingCallsOnLockScreen
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         showAndroidContacts = settings.showAndroidContacts
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
+        // currentVersion is not changed
         defaultContactType = settings.defaultContactType
+        defaultExternalContactAccount = settings.defaultExternalContactAccount
+
         // TODO add new properties here
     }
 }
