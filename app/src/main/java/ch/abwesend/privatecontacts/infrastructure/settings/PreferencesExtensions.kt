@@ -31,6 +31,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),
     defaultContactType = tryGetEnumValue(defaultContactTypeEntry),
     defaultExternalContactAccount = buildDefaultContactAccount(),
+    defaultVCardVersion = tryGetEnumValue(defaultVCardVersionEntry),
     currentVersion = getValue(currentVersionEntry),
 )
 

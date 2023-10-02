@@ -222,6 +222,8 @@ object SettingsScreen {
             DefaultContactTypeField(settingsRepository, currentSettings)
             Divider()
             DefaultContactAccountField(settingsRepository, currentSettings)
+            Divider()
+            DefaultVCardVersionField(settingsRepository, currentSettings)
         }
     }
 
@@ -253,6 +255,11 @@ object SettingsScreen {
                 onValueChanged = onOptionSelected
             )
         }
+    }
+
+    @Composable
+    private fun DefaultVCardVersionField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        // TODO implement with the settings-dropdown...
     }
 
     @Composable

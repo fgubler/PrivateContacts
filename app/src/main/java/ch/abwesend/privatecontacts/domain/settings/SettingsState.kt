@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.domain.settings
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 
 interface ISettingsState {
     // UX
@@ -27,6 +28,7 @@ interface ISettingsState {
     // Defaults
     val defaultContactType: ContactType
     val defaultExternalContactAccount: ContactAccount
+    val defaultVCardVersion: VCardVersion
 
     // Incoming Call Detection
     /** Whether call-detection should be attempted */
@@ -64,6 +66,7 @@ data class SettingsState(
 
     override val defaultContactType: ContactType,
     override val defaultExternalContactAccount: ContactAccount,
+    override val defaultVCardVersion: VCardVersion,
 
     override val requestIncomingCallPermissions: Boolean,
     override val observeIncomingCalls: Boolean,
@@ -87,8 +90,9 @@ data class SettingsState(
             observeIncomingCalls = true,
             showAndroidContacts = true,
             sendErrorsToCrashlytics = true,
-            defaultContactType = ContactType.SECRET,
+            defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
+            defaultVCardVersion = VCardVersion.default,
             currentVersion = BuildConfig.VERSION_CODE,
         )
     }

@@ -12,5 +12,9 @@ import ch.abwesend.privatecontacts.R
  */
 enum class VCardVersion(@StringRes val label: Int) {
     V3(R.string.vcard_v3_label),
-    V4(R.string.vcard_v4_label),
+    V4(R.string.vcard_v4_label);
+
+    companion object {
+        val default: VCardVersion = V3
+    }
 }

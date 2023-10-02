@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
@@ -31,6 +32,7 @@ data class TestSettings(
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
     override var currentVersion: Int = 0
     override var defaultExternalContactAccount: ContactAccount = currentSettings.defaultExternalContactAccount
+    override var defaultVCardVersion: VCardVersion = currentSettings.defaultVCardVersion
     override var showExtraButtonsInEditScreen: Boolean = currentSettings.showExtraButtonsInEditScreen
     override var invertTopAndBottomBars: Boolean = currentSettings.invertTopAndBottomBars
 

@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
@@ -105,6 +106,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
             dataStore.setValue(defaultExternalContactAccountUsernameEntry, value.usernameOrNull.orEmpty())
             dataStore.setValue(defaultExternalContactAccountProviderEntry, value.accountProviderOrNull.orEmpty())
         }
+
+    override var defaultVCardVersion: VCardVersion
+        get() = currentSettings.defaultVCardVersion
+        set(value) = dataStore.setEnumValue(defaultVCardVersionEntry, value)
 
     override fun overrideSettingsWith(settings: ISettingsState) {
         appTheme = settings.appTheme

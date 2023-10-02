@@ -6,42 +6,33 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
-import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressAndResultDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
+import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher
-import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
@@ -78,61 +69,14 @@ object ExportCategoryComponent {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        VCardVersionField(viewModel = viewModel)
+        VCardVersionField(
+            selectedVersion = viewModel.vCardVersion.value,
+            isScrolling = { parent.isScrolling },
+        ) { newVersion -> viewModel.selectVCardVersion(newVersion) }
 
         Spacer(modifier = Modifier.height(10.dp))
 
         ExportButton(viewModel)
-    }
-
-    @Composable
-    private fun VCardVersionField(viewModel: ContactExportViewModel) {
-        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
-        val selectedVersion = viewModel.vCardVersion.value
-
-        val selectedOption = ResDropDownOption(labelRes = selectedVersion.label, value = selectedVersion)
-        val options = VCardVersion.values().map {
-            ResDropDownOption(labelRes = it.label, value = it)
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.weight(1.0f)) {
-                DropDownField(
-                    labelRes = R.string.vcard_version_label,
-                    selectedOption = selectedOption,
-                    options = options,
-                    isScrolling = { parent.isScrolling },
-                    onValueChanged = { newVersion -> viewModel.selectVCardVersion(newVersion) }
-                )
-            }
-
-            InfoIconButton { showInfoDialog = true }
-        }
-
-        if (showInfoDialog) {
-            VCardVersionInfoDialog { showInfoDialog = false }
-        }
-    }
-
-    @Composable
-    private fun VCardVersionInfoDialog(onClose: () -> Unit) {
-        OkDialog(
-            title = R.string.vcard_versions_label,
-            okButtonLabel = R.string.close,
-            onClose = onClose,
-            content = {
-                Column {
-                    Text(text = stringResource(id = R.string.vcard_v3_label), fontWeight = FontWeight.Bold)
-                    Text(text = stringResource(id = R.string.vcard_v3_info_text))
-                    Text(text = stringResource(id = R.string.vcard_v3_info_text_relationships), modifier = Modifier.padding(start = 10.dp))
-                    Text(text = stringResource(id = R.string.vcard_v3_info_text_events), modifier = Modifier.padding(start = 10.dp))
-
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = stringResource(id = R.string.vcard_v4_label), fontWeight = FontWeight.Bold)
-                    Text(text = stringResource(id = R.string.vcard_v4_info_text))
-                }
-            },
-        )
     }
 
     @Composable
