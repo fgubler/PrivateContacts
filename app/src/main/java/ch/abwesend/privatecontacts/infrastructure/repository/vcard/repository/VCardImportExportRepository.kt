@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartia
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.ContactParseResult
@@ -29,13 +30,13 @@ class VCardImportExportRepository : IVCardImportExportRepository {
     private val toVCardMapper: ContactToVCardMapper by injectAnywhere()
     private val fromVCardMapper: VCardToContactMapper by injectAnywhere()
 
-    override suspend fun exportContacts(contacts: List<IContact>): VCardCreationResult {
+    override suspend fun exportContacts(contacts: List<IContact>, vCardVersion: VCardVersion): VCardCreationResult {
         val vCardResults = contacts.map { toVCardMapper.mapToVCard(it) }
         val successfulVCards: List<VCard> = vCardResults.mapNotNull { it.getValueOrNull() }
         val failedContacts: List<IContact> = vCardResults.mapNotNull { it.getErrorOrNull() }
 
         return try {
-            val fileContent = repository.exportVCards(successfulVCards)
+            val fileContent = repository.exportVCards(successfulVCards, vCardVersion)
             val partialResult = ContactExportPartialData.CreatedVCards(fileContent, failedContacts)
             SuccessResult(partialResult)
         } catch (e: Exception) {

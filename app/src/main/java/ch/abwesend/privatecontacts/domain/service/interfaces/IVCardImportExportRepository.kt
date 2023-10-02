@@ -13,10 +13,11 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartia
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
 interface IVCardImportExportRepository {
-    suspend fun exportContacts(contacts: List<IContact>): VCardCreationResult
+    suspend fun exportContacts(contacts: List<IContact>, vCardVersion: VCardVersion): VCardCreationResult
 
     /**
      * the contacts are created as internal contacts

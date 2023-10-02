@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -33,12 +34,19 @@ class ContactExportViewModel : ViewModel() {
     private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
+    private val _vCardVersion: MutableState<VCardVersion> = mutableStateOf(VCardVersion.V3) // TODO add setting for default
+    val vCardVersion: State<VCardVersion> = _vCardVersion
+
     /** implemented as a resource to show a loading-indicator during export */
     private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
     val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
 
     fun selectSourceType(contactType: ContactType) {
         _sourceType.value = contactType
+    }
+
+    fun selectVCardVersion(version: VCardVersion) {
+        _vCardVersion.value = version
     }
 
     fun resetExportResult() {
@@ -48,7 +56,7 @@ class ContactExportViewModel : ViewModel() {
         }
     }
 
-    fun exportContacts(targetFile: Uri?, sourceType: ContactType) {
+    fun exportContacts(targetFile: Uri?, sourceType: ContactType, vCardVersion: VCardVersion) {
         if (targetFile == null) {
             logger.warning("Trying to export to vcf file but no file is selected")
             return
@@ -57,7 +65,7 @@ class ContactExportViewModel : ViewModel() {
 
         viewModelScope.launch {
             _exportResult.withLoadingState {
-                val result = exportService.exportContacts(targetFile, sourceType)
+                val result = exportService.exportContacts(targetFile, sourceType, vCardVersion)
                 logger.debug("Exported vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }
