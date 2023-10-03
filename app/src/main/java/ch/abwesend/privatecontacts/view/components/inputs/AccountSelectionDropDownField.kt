@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
+import ch.abwesend.privatecontacts.view.components.inputs.helper.DropDownFieldProvider
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 import ch.abwesend.privatecontacts.view.model.DynamicStringDropDownOption
 
@@ -65,10 +66,3 @@ private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {
         )
     }
 }
-
-internal typealias DropDownFieldProvider =
-    @Composable (
-        options: List<DropDownOption<ContactAccount>>,
-        selectedOption: DropDownOption<ContactAccount>,
-        onOptionSelected: (ContactAccount) -> Unit
-    ) -> Unit
