@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
@@ -40,8 +41,10 @@ import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
+import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
@@ -76,6 +79,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { ToPhysicalAddressMapper() }
+        module.single { AndroidContactCompanyMappingService() }
         module.single<IAddressFormattingService> { AddressFormattingService() }
     }
 
@@ -301,6 +305,108 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultRelationship.value).isEqualTo(originalRelationship.value)
             assertThat(resultRelationship.modelStatus).isEqualTo(ModelStatus.NEW)
             assertThat(resultRelationship.type).isEqualTo(originalRelationship.type)
+        }
+    }
+
+    @Test
+    fun `should map companies`() {
+        val companies = listOf(
+            someCompany(value = "Google", sortOrder = 1, type = CustomValue("PhoneProvider")),
+            someCompany(value = "Apple", sortOrder = 0, type = Other),
+            someCompany(value = "Amazon", sortOrder = 2, type = CustomValue("Shopping")),
+            someCompany(value = "Ergon Informatik", sortOrder = 3, type = Main),
+        )
+        val originalContact = someContactEditable(contactData = companies)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(companies)
+        val resultCompanies = resultContact.contactDataSet
+        val sortedOriginalCompanies = companies.sortedBy { it.sortOrder }
+        resultCompanies.indices.forEach { index ->
+            val resultCompany = resultCompanies[index]
+            val originalCompany = sortedOriginalCompanies[index]
+            logger.debug("testing company $originalCompany")
+            assertThat(resultCompany).isInstanceOf(Company::class.java)
+            assertThat(resultCompany.category).isEqualTo(ContactDataCategory.COMPANY)
+            assertThat(resultCompany.sortOrder).isEqualTo(originalCompany.sortOrder)
+            assertThat(resultCompany.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultCompany.value).isEqualTo(originalCompany.value)
+
+            // for some reason, the type seems to be changed to all-lower-case in VCF...
+            val resultType = resultCompany.type
+            if (resultType is CustomValue) {
+                val originalType = originalCompany.type
+                assertThat(originalType).isInstanceOf(CustomValue::class.java)
+                val originalCustomValue = (originalCompany.type as CustomValue).customValue.lowercase()
+                assertThat(resultType.customValue.lowercase()).isEqualTo(originalCustomValue)
+            } else {
+                assertThat(resultCompany.type).isEqualTo(originalCompany.type)
+            }
+        }
+    }
+
+    /** to make sure there are no conflicts between these two types */
+    @Test
+    fun `should map relationships and companies together`() {
+        val relationships = listOf(
+            someRelationship(value = "Dorothee", sortOrder = 1, type = RelationshipChild),
+            someRelationship(value = "Sebastian", sortOrder = 0, type = RelationshipBrother),
+        )
+        val companies = listOf(
+            someCompany(value = "Google", sortOrder = 0, type = Other),
+            someCompany(value = "Ergon Informatik", sortOrder = 1, type = Main),
+        )
+        val originalContactData = companies + relationships
+        val originalContact = someContactEditable(contactData = originalContactData)
+
+        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+        val vCard = vCardResult.getValueOrNull()
+        assertThat(vCard).isNotNull
+
+        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+        assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+        val resultContact = contactResult.getValueOrNull()
+        assertThat(resultContact).isNotNull
+        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(originalContactData)
+        val resultContactData = resultContact.contactDataSet
+        val resultCompanies = resultContactData.filterIsInstance<Company>()
+        val resultRelationships = resultContactData.filterIsInstance<Relationship>()
+        val sortedOriginalRelationships = relationships.sortedBy { it.sortOrder }
+        val sortedOriginalCompanies = companies.sortedBy { it.sortOrder }
+
+        resultRelationships.indices.forEach { index ->
+            val resultRelationship = resultRelationships[index]
+            val originalRelationship = sortedOriginalRelationships[index]
+            logger.debug("testing relationship $originalRelationship")
+            assertThat(resultRelationship).isInstanceOf(Relationship::class.java)
+            assertThat(resultRelationship.category).isEqualTo(ContactDataCategory.RELATIONSHIP)
+            assertThat(resultRelationship.sortOrder).isEqualTo(originalRelationship.sortOrder)
+            assertThat(resultRelationship.value).isEqualTo(originalRelationship.value)
+            assertThat(resultRelationship.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultRelationship.type).isEqualTo(originalRelationship.type)
+        }
+
+        resultCompanies.indices.forEach { index ->
+            val resultCompany = resultCompanies[index]
+            val originalCompany = sortedOriginalCompanies[index]
+            logger.debug("testing company $originalCompany")
+            assertThat(resultCompany).isInstanceOf(Company::class.java)
+            assertThat(resultCompany.category).isEqualTo(ContactDataCategory.COMPANY)
+            assertThat(resultCompany.sortOrder).isEqualTo(originalCompany.sortOrder)
+            assertThat(resultCompany.modelStatus).isEqualTo(ModelStatus.NEW)
+            assertThat(resultCompany.value).isEqualTo(originalCompany.value)
+            assertThat(resultCompany.type).isEqualTo(originalCompany.type)
         }
     }
 

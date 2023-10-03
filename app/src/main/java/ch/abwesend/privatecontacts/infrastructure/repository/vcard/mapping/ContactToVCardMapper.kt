@@ -4,6 +4,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
@@ -14,14 +15,17 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toCategories
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAnniversary
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardBirthday
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardCompany
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardEmailAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardPhoneNumber
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardRelationship
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardUrl
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
@@ -30,6 +34,8 @@ import ezvcard.property.StructuredName
 import java.util.UUID
 
 class ContactToVCardMapper {
+    private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
+
     fun mapToVCard(contact: IContact): BinaryResult<VCard, IContact> =
         try {
             val vCard = VCard()
@@ -86,9 +92,11 @@ class ContactToVCardMapper {
         val vCardRelationships = relationships.sortedBy { it.sortOrder }.map { it.toVCardRelationship() }
         relations.addAll(vCardRelationships)
 
-        addEventDates(contact)
+        val companies = contact.contactDataSet.filterIsInstance<Company>()
+        val vCardCompanies = companies.sortedBy { it.sortOrder }.map { it.toVCardCompany(companyMappingService) }
+        relations.addAll(vCardCompanies)
 
-        // TODO add mapping for companies to relationships: supported in VCF V4
+        addEventDates(contact)
     }
 
     private fun VCard.addEventDates(contact: IContact) {

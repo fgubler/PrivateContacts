@@ -20,12 +20,18 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.firstTypeOrNull
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toCompany
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toRelationship
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
+import ezvcard.property.Related
 
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
+    private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
 
     fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContactEditable, Unit> =
         try {
@@ -59,23 +65,41 @@ class VCardToContactMapper {
 
     private fun getContactData(vCard: VCard): List<ContactData> {
         val phoneNumbers = vCard.telephoneNumbers.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
         val emails = vCard.emails.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
         val addresses = vCard.addresses.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> addressMapper.toContactData(elem, index) }
         val websites = vCard.urls.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+
         val relationships = vCard.relations.orEmpty()
-            .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+            .filterNotNull()
+            .filterNot { it.isPseudoRelationForCompany() }
+            .mapIndexedNotNull { index, elem -> elem.toRelationship(index) }
+        val companies = vCard.relations.orEmpty()
+            .filterNotNull()
+            .filter { it.isPseudoRelationForCompany() }
+            .mapIndexedNotNull { index, elem -> elem.toCompany(index, companyMappingService) }
+
         val birthDays = vCard.birthdays.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Birthday, index) }
         val anniversaries = vCard.anniversaries.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Anniversary, index) }
 
-        // TODO add parsing for companies from custom-relationships (relevant for V4)
-
-        val allData = phoneNumbers + emails + addresses + websites + relationships + birthDays + anniversaries
+        val allData = phoneNumbers + emails + addresses + websites +
+            relationships + companies + birthDays + anniversaries
         return allData.distinct()
+    }
+
+    private fun Related.isPseudoRelationForCompany(): Boolean {
+        val type = firstTypeOrNull
+        return type != null && companyMappingService.matchesCompanyCustomRelationshipPattern(type)
     }
 }
