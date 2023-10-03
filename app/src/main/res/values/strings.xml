@@ -314,4 +314,6 @@
     <string name="vcard_v3_info_text_events">- Events/Dates (e.g. \'anniversary\')</string>
     <string name="vcard_v4_info_text">supports all fields: no data will be lost in the export. However, not all contact apps are able to read it.</string>
 
+    <string name="exported_contacts">Exported contacts:</string>
+    <string name="failed_to_export_contacts">Failed contacts:</string>
 </resources>

@@ -6,8 +6,13 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -162,7 +168,7 @@ object ExportCategoryComponent {
                 secondButtonVisible = hasErrorDetails,
                 onSecondButton = { showOverview = false },
                 onClose = onClose
-            ) { Text("Export Successful") /* TODO implement */ }
+            ) { SuccessResultOverview(data = data) }
         } else {
             ImportExportSuccessDialog(
                 title = R.string.import_error_details_title,
@@ -171,6 +177,24 @@ object ExportCategoryComponent {
                 onSecondButton = { showOverview = true },
                 onClose = onClose
             ) { /* TODO implement*/ }
+        }
+    }
+
+    @Composable
+    private fun SuccessResultOverview(data: ContactExportData) {
+        val scrollState = rememberScrollState()
+
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Row {
+                Text(text = stringResource(id = R.string.export_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = data.successfulContacts.size.toString())
+            }
+            Row {
+                Text(text = stringResource(id = R.string.failed_to_export_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = data.failedContacts.size.toString())
+            }
         }
     }
 }
