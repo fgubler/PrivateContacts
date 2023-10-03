@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.inputs.helper.DropDownFieldProvider
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 
 @ExperimentalMaterialApi
@@ -30,6 +31,28 @@ fun VCardVersionField(
     selectedVersion: VCardVersion,
     isScrolling: () -> Boolean,
     onValueChanged: (VCardVersion) -> Unit,
+) {
+    VCardVersionField(
+        selectedVersion = selectedVersion,
+        onValueChanged = onValueChanged,
+        DropDownFieldProvider = { options, selectedOption, onOptionSelected ->
+            DropDownField(
+                labelRes = R.string.vcard_version_label,
+                selectedOption = selectedOption,
+                options = options,
+                isScrolling = isScrolling,
+                onValueChanged = { onOptionSelected(it) },
+            )
+        }
+    )
+}
+
+@ExperimentalMaterialApi
+@Composable
+fun VCardVersionField(
+    selectedVersion: VCardVersion,
+    onValueChanged: (VCardVersion) -> Unit,
+    DropDownFieldProvider: VCardVersionDropDownFieldProvider,
 ) {
     var showInfoDialog: Boolean by remember { mutableStateOf(false) }
 
@@ -40,13 +63,7 @@ fun VCardVersionField(
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Surface(modifier = Modifier.weight(1.0f)) {
-            DropDownField(
-                labelRes = R.string.vcard_version_label,
-                selectedOption = selectedOption,
-                options = options,
-                isScrolling = isScrolling,
-                onValueChanged = onValueChanged
-            )
+            DropDownFieldProvider(options, selectedOption, onValueChanged)
         }
 
         InfoIconButton { showInfoDialog = true }
@@ -77,3 +94,5 @@ private fun VCardVersionInfoDialog(onClose: () -> Unit) {
         },
     )
 }
+
+internal typealias VCardVersionDropDownFieldProvider = DropDownFieldProvider<VCardVersion>

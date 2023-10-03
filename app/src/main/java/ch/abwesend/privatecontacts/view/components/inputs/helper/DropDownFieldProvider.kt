@@ -1,12 +1,11 @@
 package ch.abwesend.privatecontacts.view.components.inputs.helper
 
 import androidx.compose.runtime.Composable
-import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
-internal typealias DropDownFieldProvider =
+internal typealias DropDownFieldProvider<T> =
     @Composable (
-        options: List<DropDownOption<ContactAccount>>,
-        selectedOption: DropDownOption<ContactAccount>,
-        onOptionSelected: (ContactAccount) -> Unit
+        options: List<DropDownOption<T>>,
+        selectedOption: DropDownOption<T>,
+        onOptionSelected: (T) -> Unit
     ) -> Unit

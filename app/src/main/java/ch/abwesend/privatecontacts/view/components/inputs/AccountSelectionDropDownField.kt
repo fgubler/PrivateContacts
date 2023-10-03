@@ -40,7 +40,7 @@ fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChange
 fun AccountSelectionDropDownField(
     selectedAccount: ContactAccount,
     onValueChanged: (ContactAccount) -> Unit,
-    dropDownFieldProvider: DropDownFieldProvider,
+    dropDownFieldProvider: ContactAccountDropDownFieldProvider,
 ) {
     val options = remember { getAccountOptions() }
     val selectedOption: DropDownOption<ContactAccount> = options
@@ -66,3 +66,5 @@ private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {
         )
     }
 }
+
+internal typealias ContactAccountDropDownFieldProvider = DropDownFieldProvider<ContactAccount>

@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
+import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.screencontext.ISettingsScreenContext
@@ -259,7 +260,18 @@ object SettingsScreen {
 
     @Composable
     private fun DefaultVCardVersionField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        // TODO implement with the settings-dropdown...
+        VCardVersionField(
+            selectedVersion = currentSettings.defaultVCardVersion,
+            onValueChanged = { settingsRepository.defaultVCardVersion = it },
+        ) { options, selectedOption, onOptionSelected ->
+            SettingsDropDown(
+                label = R.string.settings_entry_default_vcard_version,
+                description = R.string.settings_entry_default_vcard_version_description,
+                value = selectedOption.value,
+                options = options,
+                onValueChanged = onOptionSelected
+            )
+        }
     }
 
     @Composable
