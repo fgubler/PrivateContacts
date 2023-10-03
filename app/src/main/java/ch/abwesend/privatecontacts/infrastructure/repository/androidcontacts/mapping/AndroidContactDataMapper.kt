@@ -20,7 +20,7 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingS
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue

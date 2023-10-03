@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
+package ch.abwesend.privatecontacts.infrastructure.service
 
 import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -19,7 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 internal const val CUSTOM_RELATIONSHIP_TYPE_ORGANISATION = "Organisation:"
 
 /**
- * Service between the internal data-type "Company" and pseudo-relationships on Android.
+ * Service between the internal data-type "Company" and pseudo-relationships outside of this app.
  */
 class AndroidContactCompanyMappingService {
     fun matchesCompanyCustomRelationshipPattern(label: String): Boolean =

@@ -22,7 +22,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.androidcontacts.TestAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact

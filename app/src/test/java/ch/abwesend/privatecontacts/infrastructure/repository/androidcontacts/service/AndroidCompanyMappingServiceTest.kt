@@ -7,6 +7,8 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
+import ch.abwesend.privatecontacts.infrastructure.service.CUSTOM_RELATIONSHIP_TYPE_ORGANISATION
 import ch.abwesend.privatecontacts.testutil.TestBase
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension

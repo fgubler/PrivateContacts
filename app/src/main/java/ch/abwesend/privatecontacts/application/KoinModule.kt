@@ -54,7 +54,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.rep
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactAccountService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
@@ -69,6 +68,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseInitializer
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidAccountService
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidPermissionService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidTelephoneService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
