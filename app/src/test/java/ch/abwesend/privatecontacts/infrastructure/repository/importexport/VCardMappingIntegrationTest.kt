@@ -450,6 +450,4 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(resultEventDate.type).isEqualTo(originalEventDate.type)
         }
     }
-
-    // TODO add test for companies
 }

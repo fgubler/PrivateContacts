@@ -158,9 +158,8 @@ object ExportCategoryComponent {
     @Composable
     private fun SuccessResultDialog(data: ContactExportData, onClose: () -> Unit) {
         var showOverview: Boolean by remember { mutableStateOf(true) }
-        val hasErrorDetails = false // TODO implement
+        val hasErrorDetails = data.failedContacts.isNotEmpty()
 
-        // TODO implement
         if (showOverview) {
             ImportExportSuccessDialog(
                 title = R.string.export_complete_title,
@@ -176,7 +175,7 @@ object ExportCategoryComponent {
                 secondButtonVisible = true,
                 onSecondButton = { showOverview = true },
                 onClose = onClose
-            ) { /* TODO implement*/ }
+            ) { SuccessResultErrorDetails(exportData = data) }
         }
     }
 
@@ -185,16 +184,30 @@ object ExportCategoryComponent {
         val scrollState = rememberScrollState()
 
         Column(modifier = Modifier.verticalScroll(scrollState)) {
-            Row {
-                Text(text = stringResource(id = R.string.export_contacts), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(5.dp))
-                Text(text = data.successfulContacts.size.toString())
-            }
+            Text(text = stringResource(id = R.string.export_contacts))
             Row {
                 Text(text = stringResource(id = R.string.failed_to_export_contacts), fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(text = data.failedContacts.size.toString())
             }
+        }
+    }
+
+    @Composable
+    private fun SuccessResultErrorDetails(exportData: ContactExportData) {
+        val scrollState = rememberScrollState()
+        val failedContactNames = remember(exportData) {
+            exportData.failedContacts.map { it.displayName }.sorted()
+        }
+
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Row {
+                Text(text = stringResource(id = R.string.export_failed_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = exportData.failedContacts.size.toString())
+            }
+            failedContactNames.forEach { Text(text = " - $it") }
         }
     }
 }
