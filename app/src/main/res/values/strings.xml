@@ -301,6 +301,7 @@
     <string name="vcf_serialization_failed">Failed to write contacts to VCF</string>
     <string name="export_contacts_progress">Contacts are being exported</string>
     <string name="export_complete_title">Export complete</string>
+    <string name="export_failed_contacts">Contacts which could not be exported</string>
 
     <string name="failed_to_select_file">Failed to select file "%1$s"</string>
     <string name="new_something">New</string>

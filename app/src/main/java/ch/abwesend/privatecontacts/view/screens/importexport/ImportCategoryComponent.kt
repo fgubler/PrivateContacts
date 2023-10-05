@@ -205,15 +205,13 @@ object ImportCategoryComponent {
         val failedContactNames = remember(importData) {
             val contacts = (importData.importFailures.keys + importData.importValidationFailures.keys)
                 .distinctBy { it.id }
-            contacts.map { it.displayName }
+            contacts.map { it.displayName }.sorted()
         }
 
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = stringResource(id = R.string.import_failed_contacts))
-            failedContactNames.forEach {
-                Text(text = " - $it")
-            }
+            failedContactNames.forEach { Text(text = " - $it") }
         }
     }
 }

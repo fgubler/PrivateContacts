@@ -176,7 +176,7 @@ object ExportCategoryComponent {
                 secondButtonVisible = true,
                 onSecondButton = { showOverview = true },
                 onClose = onClose
-            ) { /* TODO implement*/ }
+            ) { SuccessResultErrorDetails(exportData = data) }
         }
     }
 
@@ -195,6 +195,24 @@ object ExportCategoryComponent {
                 Spacer(modifier = Modifier.width(5.dp))
                 Text(text = data.failedContacts.size.toString())
             }
+        }
+    }
+
+    @Composable
+    private fun SuccessResultErrorDetails(exportData: ContactExportData) {
+        val scrollState = rememberScrollState()
+        val failedContactNames = remember(exportData) {
+            exportData.failedContacts.map { it.displayName }.sorted()
+        }
+
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Spacer(modifier = Modifier.height(20.dp))
+            Row {
+                Text(text = stringResource(id = R.string.export_failed_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = exportData.failedContacts.size.toString())
+            }
+            failedContactNames.forEach { Text(text = " - $it") }
         }
     }
 }
