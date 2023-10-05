@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.testutil.databuilders
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData.CreatedVCards
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.toUid
@@ -36,3 +37,8 @@ fun someParsedData(
     numberOfErrors: Int = 0,
 ): ContactImportPartialData.ParsedData =
     ContactImportPartialData.ParsedData(successfulContacts, numberOfErrors)
+
+fun someCreatedVCards(
+    fileContent: FileContent = someFileContent(),
+    failedContacts: List<IContactEditable> = emptyList(),
+): CreatedVCards = CreatedVCards(fileContent, failedContacts)
