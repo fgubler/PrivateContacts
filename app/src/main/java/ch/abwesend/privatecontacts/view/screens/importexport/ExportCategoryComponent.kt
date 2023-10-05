@@ -184,7 +184,11 @@ object ExportCategoryComponent {
         val scrollState = rememberScrollState()
 
         Column(modifier = Modifier.verticalScroll(scrollState)) {
-            Text(text = stringResource(id = R.string.export_contacts))
+            Row {
+                Text(text = stringResource(id = R.string.exported_contacts), fontWeight = FontWeight.Bold)
+                Spacer(modifier = Modifier.width(5.dp))
+                Text(text = data.successfulContacts.size.toString())
+            }
             Row {
                 Text(text = stringResource(id = R.string.failed_to_export_contacts), fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(5.dp))
