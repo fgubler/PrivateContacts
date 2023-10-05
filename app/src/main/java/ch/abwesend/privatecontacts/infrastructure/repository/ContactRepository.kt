@@ -60,8 +60,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             resultFlow.toResourceFlow()
         }
 
-    // TODO use proper bulk-processing
-    // TODO add unit tests
+    // TODO use proper bulk-processing and then add unit tests
     override suspend fun loadAllContactsFull(): List<IContact> = withDatabase { database ->
         val entities = database.contactDao().getAll()
         val contactIds = entities.map { it.id }
