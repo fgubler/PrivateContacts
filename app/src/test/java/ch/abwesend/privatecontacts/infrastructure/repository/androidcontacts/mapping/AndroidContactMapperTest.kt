@@ -74,6 +74,7 @@ class AndroidContactMapperTest : TestBase() {
             lastName = "De Leon",
             nickName = "Black Lion",
             note = "likes silver",
+            organisation = "The Silver Saints"
         )
         val contactGroups = listOf(
             someAndroidContactGroup(title = "Group 1"),
@@ -98,6 +99,8 @@ class AndroidContactMapperTest : TestBase() {
         assertThat(result.contactGroups.map { it.id.name }).isEqualTo(contactGroups.map { it.title })
         assertThat(result.contactGroups.map { it.notes }).isEqualTo(contactGroups.map { it.note })
         verify { contactDataFactory.getContactData(androidContact) }
+        assertThat(result.contactDataSet).hasSize(1)
+        assertThat(result.contactDataSet.first().value).isEqualTo(androidContact.organization)
     }
 
     @Test

@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
@@ -46,7 +47,15 @@ class AndroidContactMapper {
                 contactDataSet = contactDataFactory.getContactData(contact).toMutableList(),
                 contactGroups = groups.toContactGroups().toMutableList(),
                 saveInAccount = ContactAccount.None,
-            )
+            ).also { contactEditable ->
+                // TODO consider removing this once proper company-support is added
+                val numberOfCompanies = contactEditable.contactDataSet.count { it is Company }
+                if (organization.isNotEmpty()) {
+                    val companyFromOrganisation = Company.createEmpty(sortOrder = numberOfCompanies)
+                        .copy(value = organization)
+                    contactEditable.contactDataSet.add(companyFromOrganisation)
+                }
+            }
         } catch (t: Throwable) {
             logger.warning("Failed to map android contact with id = $contactId", t)
             if (rethrowExceptions) throw t
