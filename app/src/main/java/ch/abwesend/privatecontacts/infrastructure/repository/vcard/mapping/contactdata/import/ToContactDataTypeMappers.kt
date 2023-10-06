@@ -48,7 +48,7 @@ fun List<ContactDataType>.getByPriority(): ContactDataType =
  */
 private fun VCardParameter.toDefaultContactDataType(): ContactDataType = typeValueToContactDataType(value)
 
-private fun typeValueToContactDataType(typeValue: String?): ContactDataType {
+fun typeValueToContactDataType(typeValue: String?): ContactDataType {
     val valueSanitized = typeValue
         .orEmpty()
         .trim()
