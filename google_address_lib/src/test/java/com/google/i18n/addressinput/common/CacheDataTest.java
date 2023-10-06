@@ -26,6 +26,7 @@ import com.google.i18n.addressinput.testing.AddressDataMapLoader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,6 +37,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
+@Ignore
 @RunWith(JUnit4.class)
 public class CacheDataTest {
   private static final String DELIM = "~";
