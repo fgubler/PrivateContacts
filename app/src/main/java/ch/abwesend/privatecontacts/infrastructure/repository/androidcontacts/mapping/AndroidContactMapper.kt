@@ -51,8 +51,9 @@ class AndroidContactMapper {
                 // TODO consider removing this once proper company-support is added
                 val numberOfCompanies = contactEditable.contactDataSet.count { it is Company }
                 if (organization.isNotEmpty()) {
+                    val companyName = if (jobTitle.isBlank()) organization else "$organization ($jobTitle)"
                     val companyFromOrganisation = Company.createEmpty(sortOrder = numberOfCompanies)
-                        .copy(value = organization)
+                        .copy(value = companyName)
                     contactEditable.contactDataSet.add(companyFromOrganisation)
                 }
             }
