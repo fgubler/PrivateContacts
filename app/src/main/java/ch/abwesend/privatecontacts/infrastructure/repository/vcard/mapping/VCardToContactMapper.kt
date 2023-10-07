@@ -85,9 +85,14 @@ class VCardToContactMapper {
             .filterNotNull()
             .filter { it.isPseudoRelationForCompany() }
             .mapIndexedNotNull { index, elem -> elem.toCompany(index, companyMappingService) }
+        var numberOfCompanies = companies.size
         val organizations = vCard.organizations // companies from organizations
             .filterNotNull()
-            .mapIndexedNotNull { index, organization -> organization.toCompany(index + companies.size) }
+            .mapNotNull { organization ->
+                organization.toCompany(numberOfCompanies).also {
+                    numberOfCompanies += if (it == null) 0 else 1
+                }
+            }
 
         val birthDays = vCard.birthdays.orEmpty()
             .filterNotNull()

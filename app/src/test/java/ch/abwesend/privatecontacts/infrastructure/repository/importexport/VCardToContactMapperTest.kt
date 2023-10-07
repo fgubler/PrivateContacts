@@ -47,23 +47,24 @@ class VCardToContactMapperTest : RepositoryTestBase() {
         val vCard = someVCard()
         val organizationNames = listOf(
             listOf("Company A"),
-            listOf("Company B", "Company C"),
+            listOf("Company B", "Department C"),
             emptyList(),
-            listOf("Company D", "Company E", "Company F"),
+            listOf("Company D", "Department E", "Team F"), // these are hierarchical
         )
-        val companyNamesFlat = organizationNames.flatten()
-        val numberOfCompanies = companyNamesFlat.size
+        val nonEmptyOrganizationNames = organizationNames.filter { it.isNotEmpty() }
+        val numberOfOrganizations = nonEmptyOrganizationNames.size
         val organizations = organizationNames.map { names -> someStructuredOrganization(names) }
         vCard.organizations.addAll(organizations)
+        val expectedCompanyNames = nonEmptyOrganizationNames.map { names -> names.joinToString(" - ") }
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
 
         assertThat(result).isInstanceOf(SuccessResult::class.java)
         val resultContact = result.getValueOrNull()!!
-        assertThat(resultContact.contactDataSet).hasSize(numberOfCompanies)
+        assertThat(resultContact.contactDataSet).hasSize(numberOfOrganizations)
         val companies = resultContact.contactDataSet.filterIsInstance<Company>()
-        assertThat(companies).hasSize(numberOfCompanies)
-        assertThat(companies.map { it.value }).containsExactlyElementsOf(companyNamesFlat)
-        assertThat(companies.map { it.sortOrder }).containsExactlyElementsOf(0 until numberOfCompanies)
+        assertThat(companies).hasSize(numberOfOrganizations)
+        assertThat(companies.map { it.value }).containsExactlyElementsOf(expectedCompanyNames)
+        assertThat(companies.map { it.sortOrder }).containsExactlyElementsOf(0 until numberOfOrganizations)
     }
 }
