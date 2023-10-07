@@ -23,13 +23,17 @@ fun Related.toCompany(sortOrder: Int, mappingService: AndroidContactCompanyMappi
         }
     }
 
-fun Organization.toCompany(sortOrder: Int): List<ContactData> =
-    values.orEmpty().mapIndexed { index, companyName ->
-        val contactDataType = getContactDataType()
-        Company.createEmpty(sortOrder = sortOrder + index)
-            .changeType(contactDataType)
-            .changeValue(companyName)
+fun Organization.toCompany(sortOrder: Int): ContactData? {
+    // the values describe multiple layers in the same organization (like company - department - team)
+    val organizationNames = values.orEmpty().filterNotNull()
+    return if (organizationNames.isEmpty()) null
+    else {
+        val fullName = organizationNames.joinToString(" - ")
+        Company.createEmpty(sortOrder)
+            .changeType(getContactDataType())
+            .changeValue(fullName)
     }
+}
 
 val Related.firstTypeOrNull: String?
     get() = types.orEmpty().firstOrNull()?.value
