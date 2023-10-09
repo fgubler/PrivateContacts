@@ -58,9 +58,8 @@ fun typeValueToContactDataType(typeValue: String?): ContactDataType {
         TelephoneType.HOME.value.lowercase() -> ContactDataType.Personal
         TelephoneType.WORK.value.lowercase() -> ContactDataType.Business
         TelephoneType.PREF.value.lowercase() -> ContactDataType.Main
-        "" -> ContactDataType.Other
         else -> {
-            val customValue = typeValue.customCapitalize()
+            val customValue = typeValue.customCapitalize() // the app has a fallback for empty-labels...
             val contactDataType = getContactDataTypeByCustomVCardString(valueSanitized)
             contactDataType ?: ContactDataType.CustomValue(customValue = customValue)
         }
