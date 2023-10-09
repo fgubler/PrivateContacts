@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EVENT_DATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
@@ -85,8 +86,8 @@ data class EventDate(
 
         private val defaultAllowedTypes = listOf(
             Birthday,
+            Anniversary,
             Custom,
-            Other,
         )
 
         fun deserializeDate(rawValue: String): LocalDate? = try {
