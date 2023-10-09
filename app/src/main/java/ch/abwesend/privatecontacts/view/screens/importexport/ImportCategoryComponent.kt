@@ -213,7 +213,7 @@ object ImportCategoryComponent {
             Text(text = stringResource(id = R.string.import_failed_contacts))
             val missingNameFallback = stringResource(id = R.string.no_contact_name_fallback)
             failedContactNames
-                .map { it.ifEmpty { missingNameFallback } }
+                .map { it.ifBlank { missingNameFallback } }
                 .forEach { Text(text = " - $it") }
         }
     }
