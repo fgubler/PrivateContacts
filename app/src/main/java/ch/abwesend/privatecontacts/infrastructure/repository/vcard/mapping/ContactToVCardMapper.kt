@@ -108,5 +108,11 @@ class ContactToVCardMapper {
         val anniversaryEvents = eventDates.filter { it.type == ContactDataType.Anniversary }
         val vCardAnniversaries = anniversaryEvents.sortedBy { it.sortOrder }.map { it.toVCardAnniversary() }
         anniversaries.addAll(vCardAnniversaries)
+
+        val allOtherEvents = eventDates.filter {
+            it.type != ContactDataType.Birthday && it.type != ContactDataType.Anniversary
+        }
+        val vCardOtherEvents = allOtherEvents.sortedBy { it.sortOrder }.map { it.toVCardAnniversary() }
+        anniversaries.addAll(vCardOtherEvents) // save them as anniversaries: it is the best we can do...
     }
 }
