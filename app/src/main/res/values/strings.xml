@@ -317,4 +317,5 @@
 
     <string name="exported_contacts">Exported contacts:</string>
     <string name="failed_to_export_contacts">Failed contacts:</string>
+    <string name="no_contact_name_fallback">[No contact name]</string>
 </resources>

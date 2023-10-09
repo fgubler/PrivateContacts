@@ -211,7 +211,10 @@ object ImportCategoryComponent {
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = stringResource(id = R.string.import_failed_contacts))
-            failedContactNames.forEach { Text(text = " - $it") }
+            val missingNameFallback = stringResource(id = R.string.no_contact_name_fallback)
+            failedContactNames
+                .map { it.ifEmpty { missingNameFallback } }
+                .forEach { Text(text = " - $it") }
         }
     }
 }
