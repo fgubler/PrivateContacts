@@ -19,8 +19,9 @@ fun getFullName(
     firstNameFirst: Boolean = Settings.current.orderByFirstName,
 ): String {
     val middlePart = if (nickname.isBlank()) " " else " \"$nickname\" "
-    return if (firstNameFirst) "$firstName$middlePart$lastName"
+    val fullName = if (firstNameFirst) "$firstName$middlePart$lastName"
     else "$lastName$middlePart$firstName"
+    return fullName.trim()
 }
 
 fun IContact.asEditable(): ContactEditable =
