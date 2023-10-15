@@ -38,6 +38,7 @@ class ContactSaveService {
     suspend fun saveContacts(contacts: List<IContactEditable>): Map<IContactEditable, ContactSaveResult> {
         logger.debug("Save ${contacts.size} contacts")
 
+        // TODO use bulk-processing on the contact-groups.
         val partialResults = contacts.mapAsyncChunked(chunkSize = 10) { contact ->
             contact to saveContact(contact)
         }.toMap()
