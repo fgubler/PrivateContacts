@@ -20,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
+import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
@@ -56,6 +57,9 @@ class ContactSaveServiceTest : TestBase() {
     private lateinit var contactRepository: IContactRepository
 
     @MockK
+    private lateinit var contactGroupRepository: IContactGroupRepository
+
+    @MockK
     private lateinit var androidContactSaveService: IAndroidContactSaveService
 
     @MockK
@@ -70,11 +74,13 @@ class ContactSaveServiceTest : TestBase() {
     override fun setup() {
         super.setup()
         every { sanitizingService.sanitizeContact(any()) } just runs
+        coEvery { contactGroupRepository.createMissingContactGroups(any()) } returns ContactSaveResult.Success
     }
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { contactRepository }
+        module.single { contactGroupRepository }
         module.single { androidContactSaveService }
         module.single { validationService }
         module.single { sanitizingService }
