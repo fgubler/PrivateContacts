@@ -36,7 +36,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
@@ -52,7 +54,9 @@ import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhysicalAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.someRelationship
 import ch.abwesend.privatecontacts.testutil.databuilders.someWebsite
+import io.mockk.coEvery
 import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
@@ -70,6 +74,9 @@ import java.util.UUID
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class VCardMappingIntegrationTest : RepositoryTestBase() {
+    @MockK
+    private lateinit var telephoneService: TelephoneService
+
     @InjectMockKs
     private lateinit var toVCardMapper: ContactToVCardMapper
 
@@ -80,7 +87,15 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         super.setupKoinModule(module)
         module.single { ToPhysicalAddressMapper() }
         module.single { AndroidContactCompanyMappingService() }
+        module.single { ContactSanitizingService() }
+        module.single { telephoneService }
         module.single<IAddressFormattingService> { AddressFormattingService() }
+    }
+
+    override fun setup() {
+        super.setup()
+        coEvery { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
+        coEvery { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
     }
 
     @Test

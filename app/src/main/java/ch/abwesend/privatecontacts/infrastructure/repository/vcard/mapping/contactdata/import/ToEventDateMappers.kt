@@ -6,13 +6,12 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ezvcard.property.DateOrTimeProperty
 import java.time.LocalDate
 
-fun DateOrTimeProperty.toContactData(type: ContactDataType, sortOrder: Int): ContactData? {
+fun DateOrTimeProperty.toContactData(type: ContactDataType, sortOrder: Int): EventDate? {
     val fullDate = date?.let {
         runCatching { LocalDate.from(it) }.getOrNull()
     }

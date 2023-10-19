@@ -6,12 +6,11 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ezvcard.property.Related
 
-fun Related.toRelationship(sortOrder: Int): ContactData? = text?.let { value ->
+fun Related.toRelationship(sortOrder: Int): Relationship? = text?.let { value ->
     Relationship.createEmpty(sortOrder)
         .changeType(getContactDataType())
         .changeValue(value)

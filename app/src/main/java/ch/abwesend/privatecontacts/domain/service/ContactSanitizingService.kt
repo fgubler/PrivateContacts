@@ -18,13 +18,17 @@ class ContactSanitizingService {
         contact.contactDataSet.indices.forEach { i ->
             val data = contact.contactDataSet[i]
             if (data is PhoneNumber) {
-                val formattedValue = telephoneService.formatPhoneNumberForDisplay(data.value)
-                val valueForMatching = telephoneService.formatPhoneNumberForMatching(data.value)
-                contact.contactDataSet[i] = data.copy(
-                    formattedValue = formattedValue,
-                    valueForMatching = valueForMatching
-                )
+                contact.contactDataSet[i] = sanitizePhoneNumber(data)
             }
         }
+    }
+
+    fun sanitizePhoneNumber(phoneNumber: PhoneNumber): PhoneNumber {
+        val formattedValue = telephoneService.formatPhoneNumberForDisplay(phoneNumber.value)
+        val valueForMatching = telephoneService.formatPhoneNumberForMatching(phoneNumber.value)
+        return phoneNumber.copy(
+            formattedValue = formattedValue,
+            valueForMatching = valueForMatching
+        )
     }
 }
