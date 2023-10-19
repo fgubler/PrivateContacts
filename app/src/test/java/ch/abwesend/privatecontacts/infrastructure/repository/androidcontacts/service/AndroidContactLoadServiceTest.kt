@@ -9,7 +9,6 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.se
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
@@ -43,9 +42,6 @@ class AndroidContactLoadServiceTest : TestBase() {
     @MockK
     private lateinit var addressFormattingService: IAddressFormattingService
 
-    @MockK
-    private lateinit var telephoneService: TelephoneService
-
     @SpyK
     private var contactFactory: AndroidContactMapper = AndroidContactMapper()
 
@@ -58,7 +54,6 @@ class AndroidContactLoadServiceTest : TestBase() {
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { contactLoadRepository }
-        module.single { telephoneService }
         module.single { addressFormattingService }
         module.single { contactFactory }
         module.single { contactDataFactory }

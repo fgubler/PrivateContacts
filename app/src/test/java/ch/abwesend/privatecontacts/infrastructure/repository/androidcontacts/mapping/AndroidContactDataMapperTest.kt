@@ -20,7 +20,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -49,9 +48,6 @@ class AndroidContactDataMapperTest : TestBase() {
     private val contactMutableFactory: IAndroidContactMutableFactory = TestAndroidContactMutableFactory()
 
     @MockK
-    private lateinit var telephoneService: TelephoneService
-
-    @MockK
     private lateinit var addressFormattingService: IAddressFormattingService
 
     @MockK
@@ -61,7 +57,6 @@ class AndroidContactDataMapperTest : TestBase() {
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
-        module.single { telephoneService }
         module.single { addressFormattingService }
         module.single { companyMappingService }
         module.single { contactMutableFactory }
@@ -71,8 +66,6 @@ class AndroidContactDataMapperTest : TestBase() {
         super.setup()
         underTest = AndroidContactDataMapper()
 
-        every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
-        every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
         every {
             addressFormattingService.formatAddress(any(), any(), any(), any(), any(), any())
         } answers {

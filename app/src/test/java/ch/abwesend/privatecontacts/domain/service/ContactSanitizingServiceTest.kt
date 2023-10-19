@@ -25,7 +25,7 @@ import org.koin.core.module.Module
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class ContactSanitizingServiceTest : TestBase() {
+class ContactSanitizingServiceTest : TestBase(mockTelephoneService = false) {
     @MockK
     private lateinit var telephoneService: TelephoneService
 
