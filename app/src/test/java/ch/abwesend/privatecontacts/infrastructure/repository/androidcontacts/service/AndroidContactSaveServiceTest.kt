@@ -17,7 +17,6 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
@@ -40,7 +39,6 @@ import com.alexstyl.contactstore.MutableContactGroup
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.SpyK
@@ -64,9 +62,6 @@ class AndroidContactSaveServiceTest : TestBase() {
 
     @MockK
     private lateinit var loadService: AndroidContactLoadService
-
-    @MockK
-    private lateinit var telephoneService: TelephoneService
 
     @SpyK
     private var addressFormattingService: IAddressFormattingService = AddressFormattingService()
@@ -95,18 +90,11 @@ class AndroidContactSaveServiceTest : TestBase() {
         module.single { saveRepository }
         module.single { loadService }
         module.single { changeService }
-        module.single { telephoneService }
         module.single { addressFormattingService }
         module.single { mutableContactFactory }
         module.single { contactFactory }
         module.single { contactDataFactory }
         module.single { companyMappingService }
-    }
-
-    override fun setup() {
-        super.setup()
-        every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
-        every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
     }
 
     @Test

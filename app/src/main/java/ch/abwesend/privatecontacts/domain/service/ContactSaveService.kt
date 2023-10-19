@@ -25,6 +25,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.F
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
+import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
@@ -32,13 +33,16 @@ class ContactSaveService {
     private val validationService: ContactValidationService by injectAnywhere()
     private val sanitizingService: ContactSanitizingService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
+    private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val androidContactService: IAndroidContactSaveService by injectAnywhere()
 
     // TODO use proper bulk-processing
     suspend fun saveContacts(contacts: List<IContactEditable>): Map<IContactEditable, ContactSaveResult> {
         logger.debug("Save ${contacts.size} contacts")
 
-        // TODO use bulk-processing on the contact-groups.
+        val contactGroups = contacts.flatMap { it.contactGroups }
+        contactGroupRepository.createMissingContactGroups(contactGroups)
+
         val partialResults = contacts.mapAsyncChunked(chunkSize = 10) { contact ->
             contact to saveContact(contact)
         }.toMap()

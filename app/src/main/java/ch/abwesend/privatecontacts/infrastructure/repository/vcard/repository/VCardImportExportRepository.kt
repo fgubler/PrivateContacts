@@ -36,9 +36,13 @@ class VCardImportExportRepository : IVCardImportExportRepository {
         val failedContacts: List<IContact> = vCardResults.mapNotNull { it.getErrorOrNull() }
 
         return try {
-            val fileContent = repository.exportVCards(successfulVCards, vCardVersion)
-            val partialResult = ContactExportPartialData.CreatedVCards(fileContent, failedContacts)
-            SuccessResult(partialResult)
+            if (successfulVCards.isEmpty()) {
+                ErrorResult(VCardCreateError.NO_CONTACTS_TO_EXPORT)
+            } else {
+                val fileContent = repository.exportVCards(successfulVCards, vCardVersion)
+                val partialResult = ContactExportPartialData.CreatedVCards(fileContent, failedContacts)
+                SuccessResult(partialResult)
+            }
         } catch (e: Exception) {
             logger.error("Failed to export vcf file", e)
             ErrorResult(VCardCreateError.VCF_SERIALIZATION_FAILED)

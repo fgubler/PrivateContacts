@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ma
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
-import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
@@ -22,15 +21,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
-import java.util.Locale
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
 class AndroidContactMapperTest : TestBase() {
     private val addressFormattingService: IAddressFormattingService = AddressFormattingService()
-
-    @MockK
-    private lateinit var telephoneService: TelephoneService
 
     @MockK
     private lateinit var contactDataFactory: AndroidContactDataMapper
@@ -40,15 +35,11 @@ class AndroidContactMapperTest : TestBase() {
     override fun setup() {
         super.setup()
         underTest = AndroidContactMapper()
-        every { telephoneService.telephoneDefaultCountryIso } returns Locale.getDefault().country.lowercase()
-        every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg() }
-        every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg() }
     }
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { addressFormattingService }
-        module.single { telephoneService }
         module.single { contactDataFactory }
     }
 

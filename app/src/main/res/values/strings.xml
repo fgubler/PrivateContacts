@@ -297,6 +297,7 @@
     <string name="contact_type_to_export">Export contacts of type</string>
     <string name="export_file_selected">Export file selected</string>
     <string name="file_writing_failed">Failed to write file</string>
+    <string name="no_contacts_to_export">No contacts could be exported</string>
     <string name="export_failed_title">Export failed</string>
     <string name="vcf_serialization_failed">Failed to write contacts to VCF</string>
     <string name="export_contacts_progress">Contacts are being exported</string>

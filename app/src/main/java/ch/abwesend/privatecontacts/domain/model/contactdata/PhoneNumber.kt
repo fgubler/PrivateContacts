@@ -40,6 +40,10 @@ data class PhoneNumber(
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
     override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
+    override fun changeSortOrder(newSortOrder: Int, updateStatus: Boolean): PhoneNumber {
+        val status = if (updateStatus) modelStatus.tryChangeTo(CHANGED) else modelStatus
+        return copy(sortOrder = newSortOrder, modelStatus = status)
+    }
 
     override fun delete(): PhoneNumber {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

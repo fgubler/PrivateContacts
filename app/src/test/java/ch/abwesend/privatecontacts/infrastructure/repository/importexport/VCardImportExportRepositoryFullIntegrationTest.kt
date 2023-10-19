@@ -35,6 +35,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
@@ -42,6 +43,8 @@ import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardImportExportRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
@@ -56,37 +59,42 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someWebsite
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.koin.core.module.Module
 import java.time.LocalDate
 import java.util.UUID
 
 /**
- * These tests are based on mapping a contact to a vcard and back.
+ * These tests are based on mapping a contact to a vcard and back, including serialization.
  * This is a lot more convenient than just testing one direction and also guarantees
  * that no "loss" occurs during the mappings.
  */
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-class VCardMappingIntegrationTest : RepositoryTestBase() {
+class VCardImportExportRepositoryFullIntegrationTest : RepositoryTestBase() {
     @InjectMockKs
-    private lateinit var toVCardMapper: ContactToVCardMapper
-
-    @InjectMockKs
-    private lateinit var fromVCardMapper: VCardToContactMapper
+    private lateinit var underTest: VCardImportExportRepository
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { ToPhysicalAddressMapper() }
         module.single { AndroidContactCompanyMappingService() }
         module.single { ContactSanitizingService() }
+        module.single { VCardToContactMapper() }
+        module.single { ContactToVCardMapper() }
+        module.single { VCardRepository() }
         module.single<IAddressFormattingService> { AddressFormattingService() }
     }
 
-    @Test
-    fun `should map the UUID, names and notes`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map the UUID, names and notes`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
         val uuid = UUID.randomUUID()
         val type = ContactType.SECRET
         val originalContact = someContactEditable(
@@ -95,17 +103,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             notes = "This is a note"
         )
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.importId?.value).isEqualTo(uuid)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.importId?.value).isEqualTo(uuid)
         assertThat(resultContact.id).isInstanceOf(IContactIdInternal::class.java)
         assertThat((resultContact.id as IContactIdInternal).uuid).isNotEqualTo(uuid) // should choose a new UUID
         assertThat(resultContact.type).isEqualTo(type)
@@ -115,8 +124,10 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         assertThat(resultContact.notes).isEqualTo(originalContact.notes)
     }
 
-    @Test
-    fun `should map phone-numbers`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map phone-numbers`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
         val phoneNumbers = listOf(
             somePhoneNumber(value = "123", sortOrder = 0, type = Mobile),
             somePhoneNumber(value = "345", sortOrder = 2, type = Personal),
@@ -127,17 +138,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = phoneNumbers)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(phoneNumbers)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(phoneNumbers)
         val resultPhoneNumbers = resultContact.contactDataSet
         val sortedOriginalPhoneNumbers = phoneNumbers.sortedBy { it.sortOrder }
         resultPhoneNumbers.indices.forEach { index ->
@@ -153,8 +165,10 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         }
     }
 
-    @Test
-    fun `should map email-addresses`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map email-addresses`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
         val emailAddresses = listOf(
             someEmailAddress(value = "c@d.e", sortOrder = 1, type = Personal),
             someEmailAddress(value = "b@c.d", sortOrder = 0, type = Business),
@@ -164,17 +178,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = emailAddresses)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(emailAddresses)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(emailAddresses)
         val resultEmailAddresses = resultContact.contactDataSet
         val sortedOriginalEmailAddresses = emailAddresses.sortedBy { it.sortOrder }
         resultEmailAddresses.indices.forEach { index ->
@@ -190,8 +205,10 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         }
     }
 
-    @Test
-    fun `should map physical addresses`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map physical addresses`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
         val linebreak = Constants.linebreak
         val longAddress = "123 some long street, $linebreak some town, $linebreak some state, $linebreak USA"
         val addresses = listOf(
@@ -203,17 +220,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = addresses)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(addresses)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(addresses)
         val resultAddresses = resultContact.contactDataSet
         val sortedOriginalAddresses = addresses.sortedBy { it.sortOrder }
         resultAddresses.indices.forEach { index ->
@@ -231,8 +249,10 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         }
     }
 
-    @Test
-    fun `should map websites`() {
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map websites`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
         val websites = listOf(
             someWebsite(value = "www.google.ch", sortOrder = 1, type = Personal),
             someWebsite(value = "www.android.com", sortOrder = 0, type = Business),
@@ -242,17 +262,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = websites)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(websites)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(websites)
         val resultWebsites = resultContact.contactDataSet
         val sortedOriginalWebsites = websites.sortedBy { it.sortOrder }
         resultWebsites.indices.forEach { index ->
@@ -270,6 +291,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
 
     @Test
     fun `should map relationships`() {
+        val vCardVersion = VCardVersion.V4 // V3 does not support relationships
         val relationships = listOf(
             someRelationship(value = "Dorothee", sortOrder = 1, type = RelationshipChild),
             someRelationship(value = "Karen", sortOrder = 0, type = RelationshipSister),
@@ -284,17 +306,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = relationships)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(relationships)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(relationships)
         val resultRelationships = resultContact.contactDataSet
         val sortedOriginalRelationships = relationships.sortedBy { it.sortOrder }
         resultRelationships.indices.forEach { index ->
@@ -312,6 +335,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
 
     @Test
     fun `should map companies`() {
+        val vCardVersion = VCardVersion.V4 // V3 does not support relationships or organizations
         val companies = listOf(
             someCompany(value = "Google", sortOrder = 1, type = CustomValue("PhoneProvider")),
             someCompany(value = "Apple", sortOrder = 0, type = Other),
@@ -320,17 +344,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = companies)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(companies)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(companies)
         val resultCompanies = resultContact.contactDataSet
         val sortedOriginalCompanies = companies.sortedBy { it.sortOrder }
         resultCompanies.indices.forEach { index ->
@@ -359,6 +384,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     /** to make sure there are no conflicts between these two types */
     @Test
     fun `should map relationships and companies together`() {
+        val vCardVersion = VCardVersion.V4 // V3 does not support relationships or organizations
         val relationships = listOf(
             someRelationship(value = "Dorothee", sortOrder = 1, type = RelationshipChild),
             someRelationship(value = "Sebastian", sortOrder = 0, type = RelationshipBrother),
@@ -370,17 +396,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         val originalContactData = companies + relationships
         val originalContact = someContactEditable(contactData = originalContactData)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(originalContactData)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(originalContactData)
         val resultContactData = resultContact.contactDataSet
         val resultCompanies = resultContactData.filterIsInstance<Company>()
         val resultRelationships = resultContactData.filterIsInstance<Relationship>()
@@ -418,6 +445,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
      */
     @Test
     fun `should map event dates`() {
+        val vCardVersion = VCardVersion.V4 // V3 does not support anniversaries
         val dateWithoutYear = EventDate.createDate(day = 5, month = 1, year = null)!!
         val eventDates = listOf(
             someEventDate(value = LocalDate.now(), sortOrder = 1, type = Anniversary),
@@ -427,17 +455,18 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         )
         val originalContact = someContactEditable(contactData = eventDates)
 
-        val vCardResult = toVCardMapper.mapToVCard(originalContact)
+        val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
-        val vCard = vCardResult.getValueOrNull()
-        assertThat(vCard).isNotNull
+        val vCardContent = vCardResult.getValueOrNull()?.fileContent
+        assertThat(vCardContent).isNotNull
 
-        val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
-
+        val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
-        val resultContact = contactResult.getValueOrNull()
-        assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.contactDataSet).hasSameSizeAs(eventDates)
+        val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+        assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+        val resultContact = resultContacts!!.first()
+
+        assertThat(resultContact.contactDataSet).hasSameSizeAs(eventDates)
         val resultEventDates = resultContact.contactDataSet
         val sortedOriginalEventDates = eventDates.sortedBy { it.sortOrder }
         resultEventDates.forEach { resultEventDate ->
