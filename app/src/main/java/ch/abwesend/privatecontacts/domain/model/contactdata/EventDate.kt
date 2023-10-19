@@ -65,6 +65,11 @@ data class EventDate(
         return copy(type = type, modelStatus = status)
     }
 
+    override fun changeSortOrder(newSortOrder: Int, updateStatus: Boolean): EventDate {
+        val status = if (updateStatus) modelStatus.tryChangeTo(CHANGED) else modelStatus
+        return copy(sortOrder = newSortOrder, modelStatus = status)
+    }
+
     override fun delete(): EventDate {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)
         return copy(modelStatus = status)

@@ -1,7 +1,11 @@
 package ch.abwesend.privatecontacts.domain.util
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
+
+fun List<ContactData>.enforceContinuousSortOrder(): List<ContactData> =
+    sortedBy { it.sortOrder }.mapIndexed { index, data -> data.changeSortOrder(index, updateStatus = false) }
 
 fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> =
     removeDuplicates()

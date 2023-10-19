@@ -6,6 +6,7 @@ sealed interface BaseGenericContactData<TValue> : ContactData {
 
 interface GenericContactData<TValue, TThis : GenericContactData<TValue, TThis>> : BaseGenericContactData<TValue> {
     override fun changeType(type: ContactDataType): TThis
+    override fun changeSortOrder(newSortOrder: Int, updateStatus: Boolean): TThis
     override fun delete(): TThis
 
     fun changeValue(value: TValue): TThis

@@ -46,6 +46,8 @@ class VCardToContactMapperTest : RepositoryTestBase() {
         module.single { ContactSanitizingService() }
     }
 
+    // TODO Add tests for all contact-data types which also test for the sort-order in the case of null
+
     @Test
     fun `should map phone numbers correctly`() {
         val vCard = someVCard()
