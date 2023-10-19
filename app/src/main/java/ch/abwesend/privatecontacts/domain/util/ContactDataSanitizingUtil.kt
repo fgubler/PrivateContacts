@@ -4,8 +4,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactDa
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 
+/** make sure that no intermediate values are skipped in the sort-order (because some data is filtered out) */
 fun List<ContactData>.enforceContinuousSortOrder(): List<ContactData> =
-    sortedBy { it.sortOrder }.mapIndexed { index, data -> data.changeSortOrder(index, updateStatus = false) }
+    sortedBy { it.sortOrder }.mapIndexed { index, data -> data.changeSortOrder(index) }
 
 fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> =
     removeDuplicates()

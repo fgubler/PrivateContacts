@@ -38,8 +38,8 @@ data class Company(
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
     override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
-    override fun changeSortOrder(newSortOrder: Int, updateStatus: Boolean): Company {
-        val status = if (updateStatus) modelStatus.tryChangeTo(CHANGED) else modelStatus
+    override fun changeSortOrder(newSortOrder: Int): Company {
+        val status = modelStatus.tryChangeTo(CHANGED)
         return copy(sortOrder = newSortOrder, modelStatus = status)
     }
 

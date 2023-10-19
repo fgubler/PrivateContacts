@@ -48,8 +48,8 @@ data class Relationship(
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
     override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
-    override fun changeSortOrder(newSortOrder: Int, updateStatus: Boolean): Relationship {
-        val status = if (updateStatus) modelStatus.tryChangeTo(CHANGED) else modelStatus
+    override fun changeSortOrder(newSortOrder: Int): Relationship {
+        val status = modelStatus.tryChangeTo(CHANGED)
         return copy(sortOrder = newSortOrder, modelStatus = status)
     }
 
