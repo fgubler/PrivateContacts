@@ -2,11 +2,15 @@ package ch.abwesend.privatecontacts.testutil.databuilders
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData.CreatedVCards
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.toUid
+import ch.abwesend.privatecontacts.infrastructure.service.CUSTOM_RELATIONSHIP_TYPE_ORGANISATION
 import ezvcard.VCard
+import ezvcard.parameter.RelatedType
 import ezvcard.property.Address
 import ezvcard.property.Anniversary
 import ezvcard.property.Birthday
@@ -106,6 +110,12 @@ fun someVCardAddress(
 fun someVCardRelation(relation: String? = "Some Relation"): Related = Related(relation).also {
     it.text = relation
 }
+
+fun someCompanyVCardPseudoRelation(companyName: String? = "Ergon", type: ContactDataType = Main): Related =
+    Related(companyName).also {
+        it.text = companyName
+        it.types.add(RelatedType.get("${CUSTOM_RELATIONSHIP_TYPE_ORGANISATION}${type.key.name}"))
+    }
 
 fun someVCardUrl(url: String? = "https://www.google.com"): Url = Url(url)
 
