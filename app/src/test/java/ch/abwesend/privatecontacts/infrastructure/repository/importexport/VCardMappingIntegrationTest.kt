@@ -124,6 +124,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             somePhoneNumber(value = "456", sortOrder = 3, type = Other),
             somePhoneNumber(value = "789", sortOrder = 5, type = CustomValue("Test")),
             somePhoneNumber(value = "567", sortOrder = 4, type = Main),
+            somePhoneNumber(value = "890", sortOrder = 6, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = phoneNumbers)
 
@@ -161,6 +162,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             someEmailAddress(value = "d@e.f", sortOrder = 2, type = Other),
             someEmailAddress(value = "f@g.h", sortOrder = 4, type = CustomValue("Test")),
             someEmailAddress(value = "e@f.g", sortOrder = 3, type = Main),
+            someEmailAddress(value = "g@h.i", sortOrder = 5, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = emailAddresses)
 
@@ -200,6 +202,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             somePhysicalAddress(value = longAddress, sortOrder = 2, type = Other),
             somePhysicalAddress(value = "customStreet 1", sortOrder = 4, type = CustomValue("Test")),
             somePhysicalAddress(value = "mainstreet 4", sortOrder = 3, type = Main),
+            somePhysicalAddress(value = "customStreet 2", sortOrder = 5, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = addresses)
 
@@ -239,6 +242,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             someWebsite(value = "http://mail.google.com", sortOrder = 2, type = Other),
             someWebsite(value = "https://calendar.google.com", sortOrder = 4, type = CustomValue("Test")),
             someWebsite(value = "ftp://alpha.beta.org", sortOrder = 3, type = Main),
+            someWebsite(value = "https://other.google.com", sortOrder = 5, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = websites)
 
@@ -281,6 +285,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             someRelationship(value = "Tobias", sortOrder = 9, type = RelationshipWork),
             someRelationship(value = "Alex", sortOrder = 2, type = Other),
             someRelationship(value = "Pascal", sortOrder = 4, type = CustomValue("Test")),
+            someRelationship(value = "Kendra", sortOrder = 10, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = relationships)
 
@@ -317,6 +322,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             someCompany(value = "Apple", sortOrder = 0, type = Other),
             someCompany(value = "Amazon", sortOrder = 2, type = CustomValue("Shopping")),
             someCompany(value = "Ergon Informatik", sortOrder = 3, type = Main),
+            someCompany(value = "BSI", sortOrder = 4, type = CustomValue("")),
         )
         val originalContact = someContactEditable(contactData = companies)
 
@@ -415,6 +421,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
     /**
      * Beware:
      *  - Sort-Order is lost between Anniversary and Birthday
+     *  - VCard only supports "Anniversary" and "Birthday" all other types will be converted to one of them
      */
     @Test
     fun `should map event dates`() {
@@ -424,6 +431,8 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             someEventDate(value = LocalDate.now().minusDays(2), sortOrder = 2, type = Anniversary),
             someEventDate(value = dateWithoutYear, sortOrder = 0, type = Birthday),
             someEventDate(value = dateWithoutYear.minusDays(3), sortOrder = 3, type = Birthday),
+            someEventDate(value = dateWithoutYear.minusDays(7), sortOrder = 4, type = Other),
+            someEventDate(value = dateWithoutYear.minusDays(8), sortOrder = 5, type = CustomValue("Test")),
         )
         val originalContact = someContactEditable(contactData = eventDates)
 
@@ -431,6 +440,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
         val vCard = vCardResult.getValueOrNull()
         assertThat(vCard).isNotNull
+        val supportedEventTypes = listOf(Anniversary, Birthday)
 
         val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
 
@@ -449,7 +459,11 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             assertThat(originalEventDate).isNotNull
             assertThat(resultEventDate.value).isEqualTo(originalEventDate!!.value)
             assertThat(resultEventDate.modelStatus).isEqualTo(ModelStatus.NEW)
-            assertThat(resultEventDate.type).isEqualTo(originalEventDate.type)
+            if (originalEventDate.type in supportedEventTypes) {
+                assertThat(resultEventDate.type).isEqualTo(originalEventDate.type)
+            } else {
+                assertThat(resultEventDate.type).isIn(supportedEventTypes)
+            }
         }
     }
 }
