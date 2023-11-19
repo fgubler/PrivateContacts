@@ -66,8 +66,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactEditScreen {
-    var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun Screen(screenContext: IContactEditScreenContext) {
         val viewModel = screenContext.contactEditViewModel

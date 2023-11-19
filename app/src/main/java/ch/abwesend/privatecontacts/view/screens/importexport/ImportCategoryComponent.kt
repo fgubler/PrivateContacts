@@ -52,8 +52,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ImportCategoryComponent {
-    private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun ImportCategory(viewModel: ContactImportViewModel, permissionProvider: IPermissionProvider) {
         val targetType = viewModel.targetType.value
@@ -75,11 +73,9 @@ object ImportCategoryComponent {
         targetType: ContactType,
         selectedAccount: ContactAccount,
     ) {
-        ContactTypeField(
-            labelRes = R.string.import_contacts_as,
-            selectedType = targetType,
-            isScrolling = { parent.isScrolling }
-        ) { newType -> viewModel.selectTargetType(newType) }
+        ContactTypeField(labelRes = R.string.import_contacts_as, selectedType = targetType) { newType ->
+            viewModel.selectTargetType(newType)
+        }
 
         if (targetType.accountSelectionRequired) {
             Spacer(modifier = Modifier.height(5.dp))

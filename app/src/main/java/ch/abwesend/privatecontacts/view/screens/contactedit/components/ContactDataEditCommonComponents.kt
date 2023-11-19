@@ -45,7 +45,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDa
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.StringDropDownOption
 import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.secondaryIconModifier
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
@@ -62,8 +61,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactDataEditCommonComponents {
-    private val parent = ContactEditScreen // TODO remove once google issue 212091796 is fixed
-
     @Composable
     inline fun <reified T : StringBasedContactDataGeneric<T>> ContactDataCategory(
         contact: IContactEditable,
@@ -195,7 +192,6 @@ object ContactDataEditCommonComponents {
             labelRes = R.string.type,
             selectedOption = selectedOption,
             options = options,
-            isScrolling = { parent.isScrolling },
         ) { newValue ->
             if (newValue == ContactDataType.Custom) {
                 waitForCustomType(data)

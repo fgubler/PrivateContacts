@@ -29,7 +29,6 @@ import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 @Composable
 fun VCardVersionField(
     selectedVersion: VCardVersion,
-    isScrolling: () -> Boolean,
     onValueChanged: (VCardVersion) -> Unit,
 ) {
     VCardVersionField(
@@ -40,7 +39,6 @@ fun VCardVersionField(
                 labelRes = R.string.vcard_version_label,
                 selectedOption = selectedOption,
                 options = options,
-                isScrolling = isScrolling,
                 onValueChanged = { onOptionSelected(it) },
             )
         }

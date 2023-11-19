@@ -30,7 +30,6 @@ import ch.abwesend.privatecontacts.view.model.DropDownOption
 @Composable
 fun <T> DropDownComponent(
     options: List<DropDownOption<T>>,
-    isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
     maxMenuItemWidth: Dp = Dp.Unspecified,
     content: @Composable (dropDownExpanded: Boolean, modifier: Modifier) -> Unit,
@@ -46,16 +45,9 @@ fun <T> DropDownComponent(
 
     ExposedDropdownMenuBox(
         expanded = dropdownExpanded,
-        onExpandedChange = {
-            // ignore clicks while scrolling: see https://issuetracker.google.com/issues/212091796
-            // fallback with focused (in case scrolling should fail at some point)
-            dropdownExpanded = !dropdownExpanded && (focused || !isScrolling())
-        },
+        onExpandedChange = { dropdownExpanded = !dropdownExpanded },
     ) {
-        content(
-            dropDownExpanded = dropdownExpanded,
-            modifier = Modifier.onFocusChanged { focused = it.isFocused },
-        )
+        content(dropdownExpanded, Modifier.onFocusChanged { focused = it.isFocused })
         ExposedDropdownMenu(
             expanded = dropdownExpanded,
             modifier = Modifier.widthIn(min = 100.dp, max = maxMenuItemWidth),

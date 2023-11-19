@@ -21,7 +21,6 @@ fun <T> DropDownField(
     @StringRes labelRes: Int,
     value: T,
     options: List<DropDownOption<T>>,
-    isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
 ) {
     val selectedOption = options.find { it.value == value }
@@ -29,26 +28,20 @@ fun <T> DropDownField(
         labelRes = labelRes,
         selectedOption = selectedOption,
         options = options,
-        isScrolling = isScrolling,
         onValueChanged = onValueChanged
     )
 }
 
-/**
- * [isScrolling] work-around for a bug: ignore clicks while scrolling.
- */
 @ExperimentalMaterialApi
 @Composable
 fun <T> DropDownField(
     @StringRes labelRes: Int,
     selectedOption: DropDownOption<T>?,
     options: List<DropDownOption<T>>,
-    isScrolling: () -> Boolean,
     onValueChanged: (T) -> Unit,
 ) {
     DropDownComponent(
         options = options,
-        isScrolling = isScrolling,
         onValueChanged = onValueChanged
     ) { dropDownExpanded, modifier ->
         OutlinedTextField(

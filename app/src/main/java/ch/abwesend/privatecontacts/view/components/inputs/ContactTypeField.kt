@@ -34,7 +34,6 @@ import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 @Composable
 fun ContactTypeField(
     selectedType: ContactType,
-    isScrolling: () -> Boolean,
     @StringRes labelRes: Int = R.string.type,
     showInfoButton: Boolean = true,
     onValueChanged: (ContactType) -> Unit,
@@ -52,7 +51,6 @@ fun ContactTypeField(
                 labelRes = labelRes,
                 selectedOption = selectedOption,
                 options = options,
-                isScrolling = isScrolling,
                 onValueChanged = onValueChanged
             )
         }

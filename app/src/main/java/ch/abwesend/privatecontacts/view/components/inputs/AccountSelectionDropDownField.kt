@@ -31,7 +31,6 @@ fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChange
             labelRes = R.string.target_account,
             selectedOption = selectedOption,
             options = options,
-            isScrolling = { false },
         ) { newValue -> onOptionSelected(newValue) }
     }
 

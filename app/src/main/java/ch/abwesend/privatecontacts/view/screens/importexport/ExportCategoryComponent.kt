@@ -53,8 +53,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ExportCategoryComponent {
-    private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun ExportCategory(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
         ImportExportCategory(title = R.string.export_title) {
@@ -72,15 +70,13 @@ object ExportCategoryComponent {
             labelRes = R.string.contact_type_to_export,
             selectedType = selectedType,
             showInfoButton = false,
-            isScrolling = { parent.isScrolling },
         ) { newType -> viewModel.selectSourceType(newType) }
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        VCardVersionField(
-            selectedVersion = viewModel.vCardVersion.value,
-            isScrolling = { parent.isScrolling },
-        ) { newVersion -> viewModel.selectVCardVersion(newVersion) }
+        VCardVersionField(selectedVersion = viewModel.vCardVersion.value) { newVersion ->
+            viewModel.selectVCardVersion(newVersion)
+        }
 
         Spacer(modifier = Modifier.height(10.dp))
 

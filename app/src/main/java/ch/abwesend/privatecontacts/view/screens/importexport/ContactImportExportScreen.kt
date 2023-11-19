@@ -6,9 +6,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
@@ -20,12 +17,9 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactImportExportScreen {
-    var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun Screen(screenContext: IContactImportExportScreenContext) {
         val scrollState = rememberScrollState()
-        isScrolling = scrollState.isScrollInProgress
 
         BaseScreen(screenContext = screenContext, selectedScreen = ImportExport) { padding ->
             Column(modifier = Modifier.padding(padding).verticalScroll(scrollState)) {

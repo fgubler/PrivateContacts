@@ -48,9 +48,6 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScree
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object SettingsScreen {
-    var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
-        private set
-
     @Composable
     fun Screen(screenContext: ISettingsScreenContext) {
         val settingsRepository = Settings.repository
@@ -58,7 +55,6 @@ object SettingsScreen {
         val permissionProvider = screenContext.permissionProvider
 
         val scrollState = rememberScrollState()
-        isScrolling = scrollState.isScrollInProgress
 
         val callDetectionPossible = remember { callIdentificationPossible }
 
