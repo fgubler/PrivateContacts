@@ -107,9 +107,9 @@ internal val koinModule = module {
     single { AndroidContactMapper() }
     single { AndroidContactDataMapper() }
 
-    single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
-    single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
-    single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
+    factory { AndroidContactPermissionHelper() } // should only ever be injected into MainActivity
+    factory { CallPermissionHelper() } // should only ever be injected into MainActivity
+    factory { CallScreeningRoleHelper() } // should only ever be injected into MainActivity
 
     factory { ContactImportService() }
     factory { ContactExportService() }

@@ -40,6 +40,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
@@ -54,7 +55,7 @@ object ImportCategoryComponent {
     private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun ImportCategory(viewModel: ContactImportViewModel) {
+    fun ImportCategory(viewModel: ContactImportViewModel, permissionProvider: IPermissionProvider) {
         val targetType = viewModel.targetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
         val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
@@ -62,7 +63,7 @@ object ImportCategoryComponent {
         ImportExportCategory(title = R.string.import_title) {
             TargetTypeFields(viewModel, targetType, selectedAccount)
             Spacer(modifier = Modifier.height(10.dp))
-            ImportButton(viewModel, targetType, selectedAccount)
+            ImportButton(viewModel, permissionProvider, targetType, selectedAccount)
         }
 
         ProgressAndResultHandler(viewModel = viewModel)
@@ -91,10 +92,11 @@ object ImportCategoryComponent {
     @Composable
     private fun ImportButton(
         viewModel: ContactImportViewModel,
+        permissionProvider: IPermissionProvider,
         targetType: ContactType,
         selectedAccount: ContactAccount,
     ) {
-        val importAction = rememberActionWithContactPermission()
+        val importAction = rememberActionWithContactPermission(permissionProvider)
 
         val launcher = rememberOpenFileLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
             viewModel.importContacts(sourceFile, targetType, selectedAccount)

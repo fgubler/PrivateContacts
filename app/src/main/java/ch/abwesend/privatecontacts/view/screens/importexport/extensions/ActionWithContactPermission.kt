@@ -12,8 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.AndroidPermissionDeniedDialog
 
 /**
@@ -23,8 +22,7 @@ import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenC
  *
  *  Beware: make sure to call [VisibleComponent] in your composable function to make sure the dialog can be shown.
  */
-class ActionWithContactPermission private constructor() {
-    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
+class ActionWithContactPermission private constructor(private val permissionProvider: IPermissionProvider) {
     private var showPermissionDeniedDialog: Boolean by mutableStateOf(false)
 
     @Composable
@@ -36,7 +34,7 @@ class ActionWithContactPermission private constructor() {
 
     fun executeAction(permissionRequired: Boolean, action: () -> Unit) {
         if (permissionRequired) {
-            contactPermissionHelper.requestAndroidContactPermissions { result ->
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions { result ->
                 logger.debug("Android contact permissions: $result")
                 if (result.usable) { action() } else { showPermissionDeniedDialog = true }
             }
@@ -45,7 +43,7 @@ class ActionWithContactPermission private constructor() {
 
     companion object {
         @Composable
-        fun rememberActionWithContactPermission(): ActionWithContactPermission =
-            remember { ActionWithContactPermission() }
+        fun rememberActionWithContactPermission(permissionProvider: IPermissionProvider): ActionWithContactPermission =
+            remember { ActionWithContactPermission(permissionProvider) }
     }
 }

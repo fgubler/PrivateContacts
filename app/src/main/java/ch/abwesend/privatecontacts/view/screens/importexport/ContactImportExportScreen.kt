@@ -29,8 +29,8 @@ object ContactImportExportScreen {
 
         BaseScreen(screenContext = screenContext, selectedScreen = ImportExport) { padding ->
             Column(modifier = Modifier.padding(padding).verticalScroll(scrollState)) {
-                ImportCategory(viewModel = screenContext.importViewModel)
-                ExportCategory(viewModel = screenContext.exportViewModel)
+                ImportCategory(screenContext.importViewModel, screenContext.permissionProvider)
+                ExportCategory(screenContext.exportViewModel, screenContext.permissionProvider)
             }
         }
     }

@@ -40,6 +40,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
@@ -55,16 +56,16 @@ object ExportCategoryComponent {
     private val parent = ContactImportExportScreen // TODO remove once google issue 212091796 is fixed
 
     @Composable
-    fun ExportCategory(viewModel: ContactExportViewModel) {
+    fun ExportCategory(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
         ImportExportCategory(title = R.string.export_title) {
-            ExportCategoryContent(viewModel = viewModel)
+            ExportCategoryContent(viewModel = viewModel, permissionProvider = permissionProvider)
         }
 
         ProgressAndResultHandler(viewModel = viewModel)
     }
 
     @Composable
-    private fun ExportCategoryContent(viewModel: ContactExportViewModel) {
+    private fun ExportCategoryContent(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
         val selectedType = viewModel.sourceType.value
 
         ContactTypeField(
@@ -83,16 +84,16 @@ object ExportCategoryComponent {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        ExportButton(viewModel)
+        ExportButton(viewModel, permissionProvider)
     }
 
     @Composable
-    private fun ExportButton(viewModel: ContactExportViewModel) {
+    private fun ExportButton(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
         val sourceType = viewModel.sourceType.value
         val vCardVersion = viewModel.vCardVersion.value
 
         val defaultFileName = createDefaultFileName(sourceType = sourceType, vCardVersion)
-        val exportAction = rememberActionWithContactPermission()
+        val exportAction = rememberActionWithContactPermission(permissionProvider)
 
         val launcher = rememberCreateFileLauncher(
             mimeType = VCF_MAIN_MIME_TYPE,
