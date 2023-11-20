@@ -76,6 +76,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showAndroidContacts
         set(value) = dataStore.setValue(showAndroidContactsEntry, value)
 
+    override var authenticationRequired: Boolean
+        get() = currentSettings.authenticationRequired
+        set(value) = dataStore.setValue(authenticationRequiredEntry, value)
+
     override var showInitialAppInfoDialog: Boolean
         get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)

@@ -49,6 +49,9 @@ interface ISettingsState {
     // Android Contacts
     val showAndroidContacts: Boolean
 
+    // Security
+    val authenticationRequired: Boolean
+
     // Others
     val sendErrorsToCrashlytics: Boolean
     val currentVersion: Int
@@ -74,6 +77,8 @@ data class SettingsState(
 
     override val showAndroidContacts: Boolean,
 
+    override val authenticationRequired: Boolean,
+
     override val sendErrorsToCrashlytics: Boolean,
     override val currentVersion: Int,
 ) : ISettingsState {
@@ -89,6 +94,7 @@ data class SettingsState(
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             showAndroidContacts = true,
+            authenticationRequired = false,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
