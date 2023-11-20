@@ -7,18 +7,23 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -29,6 +34,8 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
@@ -41,6 +48,7 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
+import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
@@ -80,6 +88,9 @@ object SettingsScreen {
                 SettingsCategorySpacer()
 
                 DefaultValuesCategory(permissionProvider, settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+
+                SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
                 MiscellaneousCategory(settingsRepository, currentSettings)
@@ -295,6 +306,46 @@ object SettingsScreen {
                 options = options,
                 onValueChanged = onOptionSelected
             )
+        }
+    }
+
+    @Composable
+    private fun SecurityCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        SettingsCategory(titleRes = R.string.settings_category_security) {
+            AuthenticationField(settingsRepository, currentSettings)
+        }
+    }
+
+    @Composable
+    private fun AuthenticationField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
+
+        val context = LocalContext.current
+        val authenticationAvailable = remember { context.canUseBiometrics() }
+        LaunchedEffect(authenticationAvailable) {
+            if (!authenticationAvailable) {
+                settingsRepository.authenticationRequired = false
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(modifier = Modifier.weight(1.0f)) {
+                SettingsCheckbox(
+                    label = R.string.settings_entry_enable_authentication,
+                    description = R.string.settings_entry_enable_authentication_description,
+                    enabled = authenticationAvailable,
+                    value = currentSettings.authenticationRequired,
+                    onValueChanged = { settingsRepository.authenticationRequired = it }
+                )
+            }
+            InfoIconButton { showInfoDialog = true }
+        }
+
+        if (showInfoDialog) {
+            OkDialog(
+                title = R.string.settings_entry_enable_authentication,
+                text = R.string.settings_entry_enable_authentication_info_dialog,
+            ) { showInfoDialog = false }
         }
     }
 

@@ -7,9 +7,9 @@
 package ch.abwesend.privatecontacts.view
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,10 +20,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -59,6 +62,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
@@ -75,7 +79,7 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalMaterialApi
 @ExperimentalContracts
 @FlowPreview
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
     private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
     private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
@@ -110,7 +114,7 @@ class MainActivity : ComponentActivity() {
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
-                    MainContent(initializationState, it) { viewModel.goToNextState() }
+                    MainContent(initializationState, viewModel, it) { viewModel.goToNextState() }
                 } ?: InitialLoadingView()
             }
         }
@@ -119,25 +123,54 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainContent(
         initializationState: InitializationState,
+        viewModel: MainViewModel,
         settings: ISettingsState,
         nextState: () -> Unit,
     ) {
+        // TODO consider doing this only once
+        LaunchedEffect(settings) {
+            handleAuthentication(settings, viewModel)
+        }
+
+        val hasAccess: State<Boolean> = viewModel.accessGranted
         val navController = rememberNavController()
         val screenContext = createScreenContext(navController, settings)
 
-        MainNavHost(
-            navController = navController,
-            screenContext = screenContext,
-        )
+        if (hasAccess.value) {
+            MainNavHost(
+                navController = navController,
+                screenContext = screenContext,
+            )
 
-        when (initializationState) {
-            InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
-            CallPermissionsDialog -> CallPermissionHandler(
-                settings = settings,
-                permissionHelper = callPermissionHelper,
-                roleHelper = callScreeningRoleHelper,
-            ) { nextState() }
-            Initialized -> { /* nothing to do */ }
+            when (initializationState) {
+                InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
+                CallPermissionsDialog -> CallPermissionHandler(
+                    settings = settings,
+                    permissionHelper = callPermissionHelper,
+                    roleHelper = callScreeningRoleHelper,
+                ) { nextState() }
+                Initialized -> { /* nothing to do */ }
+            }
+        } else {
+            Column {
+                Text(text = stringResource(id = R.string.authentication_failed))
+                Button(onClick = { handleAuthentication(settings, viewModel) }) {
+                    Text(text = stringResource(id = R.string.try_again))
+                }
+            }
+        }
+    }
+
+    private fun handleAuthentication(settings: ISettingsState, viewModel: MainViewModel) {
+        if (settings.authenticationRequired) {
+            val authenticationFlow = authenticateWithBiometrics(
+                activity = this,
+                promptTitle = getString(R.string.app_name),
+                promptSubtitle = getString(R.string.login),
+            )
+            viewModel.handleAuthenticationResult(authenticationFlow)
+        } else {
+            viewModel.grantAccessWithoutAuthentication()
         }
     }
 

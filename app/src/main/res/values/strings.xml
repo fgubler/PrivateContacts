@@ -45,6 +45,7 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="try_again">Try again</string>
     <string name="refresh">Refresh</string>
+    <string name="login">Login</string>
 
     <string name="error">Error</string>
     <string name="errors">Errors</string>
@@ -223,6 +224,7 @@
     <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
+    <string name="settings_category_security">Security</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
 
@@ -249,6 +251,10 @@
 
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
+
+    <string name="settings_entry_enable_authentication">App authentication</string>
+    <string name="settings_entry_enable_authentication_description">Require the user to authenticate before being able to use the app.</string>
+    <string name="settings_entry_enable_authentication_info_dialog">If this option is selected, the user must use Android\'s screen-unlock to authenticate. This option is only available if a screen-lock is set in the system settings. </string>
 
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
@@ -319,4 +325,6 @@
     <string name="exported_contacts">Exported contacts:</string>
     <string name="failed_to_export_contacts">Failed contacts:</string>
     <string name="no_contact_name_fallback">[No contact name]</string>
+
+    <string name="authentication_failed">Failed to authenticate user: access denied.</string>
 </resources>
