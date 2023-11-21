@@ -3,7 +3,6 @@ package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ma
 import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
-import ch.abwesend.privatecontacts.domain.model.contactdata.BaseGenericContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataIdAndroid
@@ -19,8 +18,10 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.createExternalDummyC
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.domain.util.removeDuplicates
+import ch.abwesend.privatecontacts.domain.util.removePhoneNumberDuplicates
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
@@ -57,7 +58,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.let { removePhoneNumberDuplicates(it) }
+        }.removePhoneNumberDuplicates()
 
     private fun Contact.getEmailAddresses(): List<EmailAddress> {
         return mails.mapIndexed { index, email ->
@@ -180,22 +181,8 @@ class AndroidContactDataMapper {
             }
 
     @VisibleForTesting
-    internal fun removePhoneNumberDuplicates(phoneNumbers: List<PhoneNumber>): List<PhoneNumber> =
-        phoneNumbers.removeDuplicates()
-            .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
-
-    @VisibleForTesting
     internal fun isPseudoRelationForCompany(relation: LabeledValue<Relation>): Boolean {
         val label = relation.label
         return label is Label.Custom && companyMappingService.matchesCompanyCustomRelationshipPattern(label.label)
     }
-
-    private fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
-        removeDuplicatesBy { it.displayValue }
-            .removeDuplicatesBy { it.value }
-
-    private fun <T : BaseGenericContactData<S>, S, R> List<T>.removeDuplicatesBy(attributeSelector: (T) -> R): List<T> =
-        groupBy(attributeSelector)
-            .map { (_, value) -> value.minByOrNull { it.type.priority } }
-            .filterNotNull()
 }

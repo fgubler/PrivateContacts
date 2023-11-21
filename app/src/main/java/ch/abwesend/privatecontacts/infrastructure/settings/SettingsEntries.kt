@@ -77,6 +77,11 @@ internal val defaultExternalContactAccountProviderEntry = SettingsEntry(
     key = stringPreferencesKey("defaultExternalContactAccountProvider"),
     defaultValue = defaultSettings.defaultExternalContactAccount.accountProviderOrNull.orEmpty()
 )
+internal val defaultVCardVersionEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("defaultVCardVersion"),
+    defaultValue = defaultSettings.defaultVCardVersion
+)
+
 internal val currentVersionEntry = SettingsEntry(
     key = intPreferencesKey("currentVersion"),
     defaultValue = defaultSettings.currentVersion

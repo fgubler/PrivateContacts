@@ -58,8 +58,7 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
             }
         }
 
-    // TODO test manually
-    override suspend fun writeFile(file: Uri, fileContent: FileContent, requestPermission: Boolean): FileWriteResult =
+    override suspend fun writeFile(fileContent: FileContent, file: Uri, requestPermission: Boolean): FileWriteResult =
         withContext(dispatchers.io) {
             try {
                 logger.debugLocally("Writing content to '${file.path}'")

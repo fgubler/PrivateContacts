@@ -41,6 +41,7 @@ fun someAndroidContact(
     sisters: List<String> = emptyList(),
     birthdays: List<LocalDate> = emptyList(),
     organisation: String = "",
+    jobTitle: String = "",
     thumbnailUri: Uri = someUri("some thumbnail uri"),
     imageData: ImageData = ImageData(ByteArray(0)),
     relaxed: Boolean = false,
@@ -70,6 +71,7 @@ fun someAndroidContact(
     every { mock.thumbnailUri } returns thumbnailUri
     every { mock.imageData } returns imageData
     every { mock.organization } returns organisation
+    every { mock.jobTitle } returns jobTitle
 
     return mock
 }

@@ -25,14 +25,14 @@ ktlint {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
-        targetSdk 33
-        versionCode 42
-        versionName "2.7.0"
+        targetSdk 34
+        versionCode 45
+        versionName "3.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -54,12 +54,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
 //        useIR = true // gradle build fails with this option set to true...
     }
     buildFeatures {
@@ -87,9 +87,9 @@ dependencies {
 
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "com.google.android.material:material:1.8.0"
+    implementation "com.google.android.material:material:1.10.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -105,8 +105,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.6.1"
-    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation "androidx.activity:activity-compose:1.8.1"
+    implementation "androidx.navigation:navigation-compose:2.7.5"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -122,7 +122,7 @@ dependencies {
     // Others
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"

@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toLabel
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import com.alexstyl.contactstore.GroupMembership
 import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.Label

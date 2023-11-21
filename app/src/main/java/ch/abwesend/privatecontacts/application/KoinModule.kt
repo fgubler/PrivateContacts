@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
+import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
@@ -24,7 +25,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.ContactValidationService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
-import ch.abwesend.privatecontacts.domain.service.FileReadService
+import ch.abwesend.privatecontacts.domain.service.FileReadWriteService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
@@ -53,12 +54,11 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.rep
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactSaveRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactAccountService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardImportExportRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.repository.VCardRepository
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
@@ -68,6 +68,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseInitializer
 import ch.abwesend.privatecontacts.infrastructure.room.database.IDatabaseFactory
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidAccountService
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidPermissionService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidTelephoneService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
@@ -91,7 +92,7 @@ internal val koinModule = module {
     single { EasterEggService() }
     single { DatabaseService() }
     single { ContactTypeChangeService() }
-    single { FileReadService() }
+    single { FileReadWriteService() }
     single<TelephoneService> { AndroidTelephoneService(androidContext()) }
     single<PermissionService> { AndroidPermissionService() }
     single<AccountService> { AndroidAccountService(androidContext()) }
@@ -106,11 +107,12 @@ internal val koinModule = module {
     single { AndroidContactMapper() }
     single { AndroidContactDataMapper() }
 
-    single { AndroidContactPermissionHelper() } // needs to be as singleton for initialization with the Activity
-    single { CallPermissionHelper() } // needs to be as singleton for initialization with the Activity
-    single { CallScreeningRoleHelper() } // needs to be as singleton for initialization with the Activity
+    factory { AndroidContactPermissionHelper() } // should only ever be injected into MainActivity
+    factory { CallPermissionHelper() } // should only ever be injected into MainActivity
+    factory { CallScreeningRoleHelper() } // should only ever be injected into MainActivity
 
-    single { ContactImportService() }
+    factory { ContactImportService() }
+    factory { ContactExportService() }
     single { ContactToVCardMapper() }
     single { VCardToContactMapper() }
     single { ToPhysicalAddressMapper() }

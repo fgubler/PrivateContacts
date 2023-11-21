@@ -7,7 +7,9 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.importexport
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
@@ -50,6 +52,76 @@ class VCardImportExportRepositoryTest : RepositoryTestBase() {
         module.single { parsingRepository }
         module.single { toVCardMapper }
         module.single { fromVCardMapper }
+    }
+
+    @Test
+    fun `should export mapped VCard successfully`() {
+        val contact = someContactEditable()
+        val vCard = someVCard()
+        val vCardVersion = VCardVersion.V4
+        val createdFileContent = someFileContent()
+        coEvery { toVCardMapper.mapToVCard(any()) } returns SuccessResult(vCard)
+        coEvery { parsingRepository.exportVCards(any(), any()) } returns createdFileContent
+
+        val result = runBlocking { underTest.exportContacts(listOf(contact), vCardVersion) }
+
+        coVerify { toVCardMapper.mapToVCard(contact) }
+        coVerify { parsingRepository.exportVCards(listOf(vCard), vCardVersion) }
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        assertThat(result.getValueOrNull()!!.failedContacts).isEmpty()
+        assertThat(result.getValueOrNull()!!.fileContent).isEqualTo(createdFileContent)
+    }
+
+    @Test
+    fun `should return failed contact successfully if mapping fails`() {
+        val failedContact = someContactEditable(firstName = "Failed")
+        val successfulContact = someContactEditable(firstName = "Successful")
+        val successfulVCard = someVCard()
+        val vCardVersion = VCardVersion.V4
+        coEvery { toVCardMapper.mapToVCard(failedContact) } returns ErrorResult(failedContact)
+        coEvery { toVCardMapper.mapToVCard(successfulContact) } returns SuccessResult(successfulVCard)
+        coEvery { parsingRepository.exportVCards(any(), any()) } returns someFileContent()
+
+        val result = runBlocking { underTest.exportContacts(listOf(successfulContact, failedContact), vCardVersion) }
+
+        coVerify { toVCardMapper.mapToVCard(failedContact) }
+        coVerify { parsingRepository.exportVCards(listOf(successfulVCard), vCardVersion) }
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val resultValue = result.getValueOrNull()
+        assertThat(resultValue).isNotNull
+        assertThat(resultValue!!.failedContacts).containsExactly(failedContact)
+    }
+
+    @Test
+    fun `export should fail if all contacts fail to be mapped`() {
+        val contact = someContactEditable()
+        val vCardVersion = VCardVersion.V4
+        coEvery { toVCardMapper.mapToVCard(any()) } returns ErrorResult(contact)
+
+        val result = runBlocking { underTest.exportContacts(listOf(contact), vCardVersion) }
+
+        coVerify { toVCardMapper.mapToVCard(contact) }
+        coVerify(exactly = 0) { parsingRepository.exportVCards(any(), any()) }
+        assertThat(result).isInstanceOf(ErrorResult::class.java)
+        assertThat(result.getValueOrNull()).isNull()
+        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardCreateError.NO_CONTACTS_TO_EXPORT)
+    }
+
+    @Test
+    fun `should return ErrorResult if export fails`() {
+        val contact = someContactEditable()
+        val vCardVersion = VCardVersion.V4
+        val vCard = someVCard()
+        coEvery { toVCardMapper.mapToVCard(any()) } returns SuccessResult(vCard)
+        coEvery { parsingRepository.exportVCards(any(), any()) } throws RuntimeException("Test")
+
+        val result = runBlocking { underTest.exportContacts(listOf(contact), vCardVersion) }
+
+        coVerify { toVCardMapper.mapToVCard(contact) }
+        coVerify { parsingRepository.exportVCards(listOf(vCard), vCardVersion) }
+        assertThat(result).isInstanceOf(ErrorResult::class.java)
+        assertThat(result.getValueOrNull()).isNull()
+        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardCreateError.VCF_SERIALIZATION_FAILED)
     }
 
     @Test

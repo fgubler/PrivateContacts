@@ -25,6 +25,11 @@ import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.inputs.helper.CreateFileContract
 import ch.abwesend.privatecontacts.view.components.inputs.helper.OpenFileContract
 
+/**
+ * The path and file-name is not shown nicely, so it probably makes more sense to
+ * just let the user select the file and immediately use it.
+ */
+@Deprecated(message = "Do not use", replaceWith = ReplaceWith("OpenFileFilePickerLauncher"))
 @Composable
 fun OpenFileFilePicker(
     @StringRes labelRes: Int,
@@ -45,7 +50,10 @@ fun OpenFileFilePicker(
 /**
  * [defaultFileName] the pre-selected filename passed to the Android file-picker
  * [displayFilePath] the file does not exist yet, so we don't have a meaningful path: just show a dummy
+ *
+ * This already creates the file and leaves it if unused as an empty husk. Not very nice.
  */
+@Deprecated("don't show the selected file in a field")
 @Composable
 fun CreateFileFilePicker(
     @StringRes labelRes: Int,

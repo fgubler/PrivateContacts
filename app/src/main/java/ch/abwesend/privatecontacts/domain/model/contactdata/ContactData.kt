@@ -25,6 +25,7 @@ sealed interface ContactData : WithModelStatus {
     fun overrideStatus(newStatus: ModelStatus): ContactData
     fun changeToInternalId(): ContactData
     fun changeToExternalId(): ContactData
+    fun changeSortOrder(newSortOrder: Int): ContactData
     fun delete(): ContactData
 
     /** returning null means that the data will be ignored in search */

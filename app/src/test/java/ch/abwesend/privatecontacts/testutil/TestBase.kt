@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.testutil
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
+import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import io.mockk.every
@@ -38,7 +39,9 @@ import org.koin.test.junit5.mock.MockProviderExtension
  */
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
-abstract class TestBase : KoinTest {
+abstract class TestBase(
+    private val mockTelephoneService: Boolean = true,
+) : KoinTest {
     private lateinit var loggerFactory: ILoggerFactory
     private lateinit var testLogger: ILogger
 
@@ -58,6 +61,9 @@ abstract class TestBase : KoinTest {
                 single<IDispatchers> { TestDispatchers }
                 single<SettingsRepository> { testSettings }
                 single<StringProvider> { TestStringProvider() }
+                if (mockTelephoneService) {
+                    single<TelephoneService> { TestTelephoneService() }
+                }
                 setupKoinModule(this)
             }
         )

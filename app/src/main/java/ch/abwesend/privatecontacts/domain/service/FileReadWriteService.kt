@@ -7,13 +7,18 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import android.net.Uri
+import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
 import ch.abwesend.privatecontacts.domain.repository.FileReadResult
+import ch.abwesend.privatecontacts.domain.repository.FileWriteResult
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
-class FileReadService {
+class FileReadWriteService {
     private val repository: IFileAccessRepository by injectAnywhere()
 
     suspend fun readFileContent(fileUri: Uri): FileReadResult =
         repository.readFileContent(fileUri)
+
+    suspend fun writeContentToFile(content: FileContent, fileUri: Uri): FileWriteResult =
+        repository.writeFile(content, fileUri)
 }

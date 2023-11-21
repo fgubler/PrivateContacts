@@ -15,5 +15,9 @@ import ch.abwesend.privatecontacts.R
 
 enum class ContactType(@StringRes val label: Int, val icon: ImageVector, val androidPermissionRequired: Boolean) {
     SECRET(label = R.string.secret_contact, icon = Icons.Default.Lock, androidPermissionRequired = false),
-    PUBLIC(label = R.string.public_contact, icon = Icons.Default.LockOpen, androidPermissionRequired = true),
+    PUBLIC(label = R.string.public_contact, icon = Icons.Default.LockOpen, androidPermissionRequired = true);
+
+    companion object {
+        val default: ContactType = SECRET
+    }
 }

@@ -23,6 +23,7 @@ const val PAGING_DEPRECATION = "No longer using paging because it would not work
  */
 interface IContactRepository {
     suspend fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>>
+    suspend fun loadAllContactsFull(): List<IContact>
 
     @Deprecated(PAGING_DEPRECATION)
     suspend fun loadContactsPaged(

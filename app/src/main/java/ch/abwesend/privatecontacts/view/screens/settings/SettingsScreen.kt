@@ -29,14 +29,12 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
+import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.screencontext.ISettingsScreenContext
-import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
-import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
-import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategory
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategorySpacer
@@ -50,20 +48,13 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScree
 @ExperimentalMaterialApi
 @ExperimentalContracts
 object SettingsScreen {
-    private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
-    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
-    private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
-
-    var isScrolling: Boolean by mutableStateOf(false) // TODO remove once google issue 212091796 is fixed
-        private set
-
     @Composable
     fun Screen(screenContext: ISettingsScreenContext) {
         val settingsRepository = Settings.repository
         val currentSettings = screenContext.settings
+        val permissionProvider = screenContext.permissionProvider
 
         val scrollState = rememberScrollState()
-        isScrolling = scrollState.isScrollInProgress
 
         val callDetectionPossible = remember { callIdentificationPossible }
 
@@ -81,14 +72,14 @@ object SettingsScreen {
                 UxCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                if (callDetectionPossible) CallDetectionCategory(settingsRepository, currentSettings)
+                if (callDetectionPossible) CallDetectionCategory(permissionProvider, settingsRepository, currentSettings)
                 else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
 
-                AndroidContactsCategory(settingsRepository, currentSettings)
+                AndroidContactsCategory(permissionProvider, settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                DefaultValuesCategory(settingsRepository, currentSettings)
+                DefaultValuesCategory(permissionProvider, settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
                 MiscellaneousCategory(settingsRepository, currentSettings)
@@ -148,7 +139,7 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun CallDetectionCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun CallDetectionCategory(permissionProvider: IPermissionProvider, settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
         SettingsCategory(titleRes = R.string.settings_category_call_detection, infoPopupText = R.string.settings_info_dialog_call_detection) {
@@ -175,8 +166,8 @@ object SettingsScreen {
         if (requestPermissions) {
             getCurrentActivity()?.CallPermissionHandler(
                 settings = currentSettings,
-                permissionHelper = callPermissionHelper,
-                roleHelper = callScreeningRoleHelper,
+                permissionHelper = permissionProvider.callPermissionHelper,
+                roleHelper = permissionProvider.callScreeningRoleHelper,
             ) {
                 requestPermissions = false
             } ?: logger.warning("Activity not found: cannot ask for permissions")
@@ -191,7 +182,11 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun AndroidContactsCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun AndroidContactsCategory(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+    ) {
         SettingsCategory(
             titleRes = R.string.settings_category_contacts,
             infoPopupText = R.string.settings_info_dialog_android_contacts_permission,
@@ -201,13 +196,17 @@ object SettingsScreen {
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
                 value = currentSettings.showAndroidContacts,
-            ) { newValue -> onShowAndroidContactsChanged(settingsRepository, newValue) }
+            ) { newValue -> onShowAndroidContactsChanged(permissionProvider, settingsRepository, newValue) }
         }
     }
 
-    private fun onShowAndroidContactsChanged(settingsRepository: SettingsRepository, newValue: Boolean) {
+    private fun onShowAndroidContactsChanged(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        newValue: Boolean,
+    ) {
         if (newValue) {
-            contactPermissionHelper.requestAndroidContactPermissions { result ->
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions { result ->
                 logger.debug("Android contact permissions: $result")
                 settingsRepository.showAndroidContacts = result.usable
             }
@@ -217,26 +216,54 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun DefaultValuesCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun DefaultValuesCategory(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState
+    ) {
         SettingsCategory(titleRes = R.string.settings_category_default_values) {
-            DefaultContactTypeField(settingsRepository, currentSettings)
+            DefaultContactTypeField(permissionProvider, settingsRepository, currentSettings)
             Divider()
             DefaultContactAccountField(settingsRepository, currentSettings)
+            Divider()
+            DefaultVCardVersionField(settingsRepository, currentSettings)
         }
     }
 
     @Composable
-    private fun DefaultContactTypeField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun DefaultContactTypeField(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+    ) {
         val contactTypeOptions = remember {
             ContactType.values().map { ResDropDownOption(labelRes = it.label, value = it) }
         }
+        var requestPermissionsFor: ContactType? by remember { mutableStateOf(null) }
+
         SettingsDropDown(
             label = R.string.settings_entry_default_contact_type,
             description = R.string.settings_entry_default_contact_type_description,
             value = currentSettings.defaultContactType,
             options = contactTypeOptions,
-            onValueChanged = { settingsRepository.defaultContactType = it }
+            onValueChanged = {
+                if (!it.androidPermissionRequired) {
+                    settingsRepository.defaultContactType = it
+                } else {
+                    requestPermissionsFor = it
+                }
+            }
         )
+
+        val targetType = requestPermissionsFor
+        if (targetType != null) {
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                requestPermissionsFor = null
+                if (it.usable) {
+                    settingsRepository.defaultContactType = targetType
+                }
+            }
+        }
     }
 
     @Composable
@@ -248,6 +275,22 @@ object SettingsScreen {
             SettingsDropDown(
                 label = R.string.settings_entry_default_external_contact_account,
                 description = R.string.settings_entry_default_external_contact_account_description,
+                value = selectedOption.value,
+                options = options,
+                onValueChanged = onOptionSelected
+            )
+        }
+    }
+
+    @Composable
+    private fun DefaultVCardVersionField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        VCardVersionField(
+            selectedVersion = currentSettings.defaultVCardVersion,
+            onValueChanged = { settingsRepository.defaultVCardVersion = it },
+        ) { options, selectedOption, onOptionSelected ->
+            SettingsDropDown(
+                label = R.string.settings_entry_default_vcard_version,
+                description = R.string.settings_entry_default_vcard_version_description,
                 value = selectedOption.value,
                 options = options,
                 onValueChanged = onOptionSelected

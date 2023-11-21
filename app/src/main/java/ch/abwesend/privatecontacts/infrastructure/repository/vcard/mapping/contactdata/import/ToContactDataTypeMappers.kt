@@ -4,9 +4,10 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata
+package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.getContactDataTypeByCustomVCardString
 import ezvcard.parameter.AddressType
 import ezvcard.parameter.EmailType
 import ezvcard.parameter.RelatedType
@@ -24,7 +25,7 @@ fun EmailType.toContactDataType(): ContactDataType = toDefaultContactDataType()
 
 fun AddressType.toContactDataType(): ContactDataType = toDefaultContactDataType()
 
-fun Url.toContactDataType(): ContactDataType = typeValueToContactDataType(value)
+fun Url.toContactDataType(): ContactDataType = typeValueToContactDataType(type)
 
 fun RelatedType.toContactDataType(): ContactDataType = when (this) {
     RelatedType.CHILD -> ContactDataType.RelationshipChild
@@ -47,7 +48,7 @@ fun List<ContactDataType>.getByPriority(): ContactDataType =
  */
 private fun VCardParameter.toDefaultContactDataType(): ContactDataType = typeValueToContactDataType(value)
 
-private fun typeValueToContactDataType(typeValue: String?): ContactDataType {
+fun typeValueToContactDataType(typeValue: String?): ContactDataType {
     val valueSanitized = typeValue
         .orEmpty()
         .trim()
@@ -57,8 +58,11 @@ private fun typeValueToContactDataType(typeValue: String?): ContactDataType {
         TelephoneType.HOME.value.lowercase() -> ContactDataType.Personal
         TelephoneType.WORK.value.lowercase() -> ContactDataType.Business
         TelephoneType.PREF.value.lowercase() -> ContactDataType.Main
-        "" -> ContactDataType.Other
-        else -> ContactDataType.CustomValue(customValue = typeValue.customCapitalize())
+        else -> {
+            val customValue = typeValue.customCapitalize() // the app has a fallback for empty-labels...
+            val contactDataType = getContactDataTypeByCustomVCardString(valueSanitized)
+            contactDataType ?: ContactDataType.CustomValue(customValue = customValue)
+        }
     }
 }
 

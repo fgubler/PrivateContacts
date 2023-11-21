@@ -4,17 +4,16 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata
+package ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import
 
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ezvcard.property.Related
 
-fun Related.toContactData(sortOrder: Int): ContactData? = text?.let {
+fun Related.toRelationship(sortOrder: Int): Relationship? = text?.let { value ->
     Relationship.createEmpty(sortOrder)
         .changeType(getContactDataType())
-        .changeValue(value = it)
+        .changeValue(value)
 }
 
 private fun Related.getContactDataType(): ContactDataType =

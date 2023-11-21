@@ -69,13 +69,10 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 object ContactEditScreenContent {
-    private val parent = ContactEditScreen // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun ContactEditContent(
         viewModel: ContactEditViewModel,
         contact: IContactEditable,
-        showAllFields: Boolean,
         modifier: Modifier = Modifier,
     ) {
         val onChanged = { newContact: IContactEditable ->
@@ -106,7 +103,6 @@ object ContactEditScreenContent {
         }
 
         val scrollState = rememberScrollState()
-        parent.isScrolling = scrollState.isScrollInProgress
         val hasWritePermission = remember { viewModel.hasContactWritePermission }
 
         Column(
@@ -120,37 +116,31 @@ object ContactEditScreenContent {
 
             PhoneNumbers(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             EmailAddresses(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             PhysicalAddresses(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Relationships(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Websites(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
             Companies(
                 contact = contact,
-                showIfEmpty = showAllFields,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged
             )
@@ -227,10 +217,7 @@ object ContactEditScreenContent {
 
     @Composable
     private fun ContactTypeField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
-        ContactTypeField(
-            selectedType = contact.type,
-            isScrolling = { parent.isScrolling },
-        ) { newValue ->
+        ContactTypeField(selectedType = contact.type) { newValue ->
             val oldValue = contact.type
             contact.type = newValue
             adaptSaveInAccount(contact, oldValue, newValue)

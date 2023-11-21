@@ -17,15 +17,26 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birt
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
+import ch.abwesend.privatecontacts.domain.util.Constants
+import ch.abwesend.privatecontacts.domain.util.enforceContinuousSortOrder
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.ToPhysicalAddressMapper
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.toContactData
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.toContactGroup
+import ch.abwesend.privatecontacts.domain.util.removeDuplicates
+import ch.abwesend.privatecontacts.domain.util.removePhoneNumberDuplicates
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.firstTypeOrNull
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toCompany
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactData
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toRelationship
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
+import ezvcard.property.Related
 
-// TODO add unit tests
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
+    private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
+    private val sanitizingService: ContactSanitizingService by injectAnywhere()
 
     fun mapToContact(vCard: VCard, targetType: ContactType): BinaryResult<IContactEditable, Unit> =
         try {
@@ -40,11 +51,12 @@ class VCardToContactMapper {
             val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
             contact.nickname = nicknames.filterNotNull().joinToString(", ")
 
+            contact.notes = vCard.notes.orEmpty().mapNotNull { it.value }.joinToString(Constants.linebreak)
+
             val contactData = getContactData(vCard)
             contact.contactDataSet.addAll(contactData)
 
-            // TODO test with a dataset which actually has categories
-            val groups = vCard.categoriesList.orEmpty().mapNotNull { it.toContactGroup() }
+            val groups = vCard.categoriesList.orEmpty().flatMap { it.toContactGroups() }
             contact.contactGroups.addAll(groups)
 
             val contactCategory = vCard.kind // TODO use once this becomes a thing
@@ -58,23 +70,64 @@ class VCardToContactMapper {
 
     private fun getContactData(vCard: VCard): List<ContactData> {
         val phoneNumbers = vCard.telephoneNumbers.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+            .map { sanitizingService.sanitizePhoneNumber(it) }
+            .removePhoneNumberDuplicates()
+            .enforceContinuousSortOrder()
         val emails = vCard.emails.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
         val addresses = vCard.addresses.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> addressMapper.toContactData(elem, index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
         val websites = vCard.urls.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
+
         val relationships = vCard.relations.orEmpty()
-            .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
+            .filterNotNull()
+            .filterNot { it.isPseudoRelationForCompany() }
+            .mapIndexedNotNull { index, elem -> elem.toRelationship(index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
+
+        val companiesFromRelations = vCard.relations.orEmpty() // companies from pseudo-relations
+            .filterNotNull()
+            .filter { it.isPseudoRelationForCompany() }
+            .mapIndexedNotNull { index, elem -> elem.toCompany(index, companyMappingService) }
+        val numberOfRelationCompanies = companiesFromRelations.size
+        val companiesFromOrganisations = vCard.organizations // companies from organizations
+            .filterNotNull()
+            .mapIndexedNotNull { index, elem -> elem.toCompany(numberOfRelationCompanies + index) }
+        val allCompanies = (companiesFromRelations + companiesFromOrganisations)
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
+
         val birthDays = vCard.birthdays.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Birthday, index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
         val anniversaries = vCard.anniversaries.orEmpty()
+            .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Anniversary, index) }
+            .removeDuplicates()
+            .enforceContinuousSortOrder()
 
-        // TODO get companies with some fancy mapping
-
-        val allData = phoneNumbers + emails + addresses + websites + relationships + birthDays + anniversaries
+        val allData = phoneNumbers + emails + addresses + websites +
+            relationships + allCompanies + birthDays + anniversaries
         return allData.distinct()
+    }
+
+    private fun Related.isPseudoRelationForCompany(): Boolean {
+        val type = firstTypeOrNull
+        return type != null && companyMappingService.matchesCompanyCustomRelationshipPattern(type)
     }
 }

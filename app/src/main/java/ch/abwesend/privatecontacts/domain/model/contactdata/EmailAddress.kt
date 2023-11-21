@@ -38,6 +38,10 @@ data class EmailAddress(
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
     override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
+    override fun changeSortOrder(newSortOrder: Int): EmailAddress {
+        val status = modelStatus.tryChangeTo(CHANGED)
+        return copy(sortOrder = newSortOrder, modelStatus = status)
+    }
 
     override fun delete(): EmailAddress {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)

@@ -37,6 +37,10 @@ class AddressFormattingService : IAddressFormattingService {
         country: String,
         useFallbackForEmptyAddress: Boolean,
     ): String {
+        if ((street + neighborhood + postalCode + city + region + country).isEmpty()) {
+            return ""
+        }
+
         val currentLocale = Locale.getDefault()
         val validCountry = isValidCountryCode(country)
         val countryCode = if (validCountry) country else currentLocale.country

@@ -247,6 +247,9 @@
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
 
+    <string name="settings_entry_default_vcard_version">VCF Version</string>
+    <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
+
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
 
@@ -277,7 +280,7 @@
     <string name="import_complete_title">Import complete</string>
     <string name="import_failed_title">Import failed</string>
     <string name="file_reading_failed">Failed to read file</string>
-    <string name="vcf_parsing_failed">Failed to VCF in file</string>
+    <string name="vcf_parsing_failed">Failed to read VCF in file</string>
     <string name="newly_imported_contacts">Newly imported contacts:</string>
     <string name="ignored_existing_contacts">Ignored contacts:</string>
     <string name="vcf_parsing_errors">VCF errors:</string>
@@ -293,8 +296,27 @@
     <string name="select_file_to_export_to">Select .vcf file to export to</string>
     <string name="contact_type_to_export">Export contacts of type</string>
     <string name="export_file_selected">Export file selected</string>
+    <string name="file_writing_failed">Failed to write file</string>
+    <string name="no_contacts_to_export">No contacts could be exported</string>
+    <string name="export_failed_title">Export failed</string>
+    <string name="vcf_serialization_failed">Failed to write contacts to VCF</string>
+    <string name="export_contacts_progress">Contacts are being exported</string>
+    <string name="export_complete_title">Export complete</string>
+    <string name="export_failed_contacts">Contacts which could not be exported</string>
 
     <string name="failed_to_select_file">Failed to select file "%1$s"</string>
     <string name="new_something">New</string>
 
+    <string name="vcard_v3_label">Version 3</string>
+    <string name="vcard_v4_label">Version 4</string>
+    <string name="vcard_version_label">VCF Version</string>
+    <string name="vcard_versions_label">VCF Versions</string>
+    <string name="vcard_v3_info_text">is compatible with all contact apps but does not support all fields. Some data will be lost in the export.</string>
+    <string name="vcard_v3_info_text_relationships">- Relations/Relationships (e.g. \'sister\')</string>
+    <string name="vcard_v3_info_text_events">- Events/Dates (e.g. \'anniversary\')</string>
+    <string name="vcard_v4_info_text">supports all fields: no data will be lost in the export. However, not all contact apps are able to read it.</string>
+
+    <string name="exported_contacts">Exported contacts:</string>
+    <string name="failed_to_export_contacts">Failed contacts:</string>
+    <string name="no_contact_name_fallback">[No contact name]</string>
 </resources>

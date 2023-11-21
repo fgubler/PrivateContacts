@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.view.model.screencontext
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
@@ -23,6 +24,7 @@ import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
  */
 interface IScreenContextBase {
     val settings: ISettingsState
+    val permissionProvider: IPermissionProvider
     fun navigateUp(): Boolean
 }
 

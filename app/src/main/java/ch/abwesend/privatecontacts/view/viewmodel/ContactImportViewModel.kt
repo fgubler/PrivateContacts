@@ -24,16 +24,14 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class ContactImportViewModel : ViewModel() {
     private val importService: ContactImportService by injectAnywhere()
 
-    private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
-    val fileUri: MutableState<Uri?> = _fileUri
-
-    private val _targetType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    private val _targetType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val targetType: State<ContactType> = _targetType
 
     private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
@@ -42,10 +40,6 @@ class ContactImportViewModel : ViewModel() {
     /** implemented as a resource to show a loading-indicator during import */
     private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
     val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _importResult
-
-    fun selectFile(uri: Uri?) {
-        _fileUri.value = uri
-    }
 
     fun selectTargetType(contactType: ContactType) {
         _targetType.value = contactType
@@ -62,8 +56,7 @@ class ContactImportViewModel : ViewModel() {
         }
     }
 
-    fun importContacts(targetType: ContactType, targetAccount: ContactAccount) {
-        val sourceFile = fileUri.value
+    fun importContacts(sourceFile: Uri?, targetType: ContactType, targetAccount: ContactAccount) {
         if (sourceFile == null) {
             logger.warning("Trying to import vcf file but no file is selected")
             return
@@ -73,7 +66,7 @@ class ContactImportViewModel : ViewModel() {
         viewModelScope.launch {
             _importResult.withLoadingState {
                 val result = importService.importContacts(sourceFile, targetType, targetAccount)
-                logger.debug("Importing vcf file: result of type ${result.javaClass.simpleName}")
+                logger.debug("Imported vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }
         }

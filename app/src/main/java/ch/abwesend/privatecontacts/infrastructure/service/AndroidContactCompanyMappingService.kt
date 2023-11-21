@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
+package ch.abwesend.privatecontacts.infrastructure.service
 
 import androidx.annotation.VisibleForTesting
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -19,11 +19,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 internal const val CUSTOM_RELATIONSHIP_TYPE_ORGANISATION = "Organisation:"
 
 /**
- * Service between the internal data-type "Company" and pseudo-relationships on Android.
+ * Service between the internal data-type "Company" and pseudo-relationships outside of this app.
  */
 class AndroidContactCompanyMappingService {
     fun matchesCompanyCustomRelationshipPattern(label: String): Boolean =
-        label.startsWith(CUSTOM_RELATIONSHIP_TYPE_ORGANISATION)
+        label.startsWith(CUSTOM_RELATIONSHIP_TYPE_ORGANISATION, ignoreCase = true)
 
     fun encodeToPseudoRelationshipLabel(type: ContactDataType): String {
         val baseLabel = "$CUSTOM_RELATIONSHIP_TYPE_ORGANISATION${type.key.name}"
@@ -32,12 +32,20 @@ class AndroidContactCompanyMappingService {
     }
 
     fun decodeFromPseudoRelationshipLabel(label: String): ContactDataType = try {
-        val typeNameWithPotentialCustomValue = label.replaceFirst(CUSTOM_RELATIONSHIP_TYPE_ORGANISATION, "")
+        val typeNameWithPotentialCustomValue = label.replaceFirst(
+            oldValue = CUSTOM_RELATIONSHIP_TYPE_ORGANISATION,
+            newValue = "",
+            ignoreCase = true,
+        )
         val typeName = typeNameWithPotentialCustomValue.takeWhile { character -> character != ':' }
         val typeKey = ContactDataType.Key.parseOrNull(typeName) ?: ContactDataType.Key.BUSINESS
 
         val customValue = if (typeKey == ContactDataType.Key.CUSTOM) {
-            typeNameWithPotentialCustomValue.replaceFirst("$typeName:", "").ifEmpty { null }
+            typeNameWithPotentialCustomValue.replaceFirst(
+                oldValue = "$typeName:",
+                newValue = "",
+                ignoreCase = true,
+            ).ifEmpty { null }
         } else null
 
         ContactDataType.fromKey(key = typeKey, customValue = customValue)

@@ -55,6 +55,7 @@ import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
+import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
@@ -170,10 +171,15 @@ class MainActivity : ComponentActivity() {
         settings: ISettingsState
     ): ScreenContext {
         val router: GenericRouter = getAnywhereWithParams(navController)
-
+        val permissionProvider = PermissionProvider(
+            callPermissionHelper,
+            contactPermissionHelper,
+            callScreeningRoleHelper
+        )
         return ScreenContext(
             genericRouter = router,
             settings = settings,
+            permissionProvider = permissionProvider,
             contactListViewModel = contactListViewModel,
             contactDetailViewModel = contactDetailViewModel,
             contactEditViewModel = contactEditViewModel,

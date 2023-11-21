@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -42,6 +43,15 @@ class AndroidContactLoadService : IAndroidContactLoadService {
             is All -> loadContacts()
             is Query -> searchContacts(searchConfig.query)
         }
+
+    // TODO add unit tests
+    override suspend fun loadAllContactsFull(): List<IContact> {
+        val contactsRaw = contactLoadRepository.loadAllFullContactsRaw()
+        return contactsRaw.map { contactRaw ->
+            val contactId = ContactIdAndroid(contactNo = contactRaw.contactId)
+            resolveContact(contactId, contactRaw)
+        }
+    }
 
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
         val contactRaw = contactLoadRepository.resolveContactRaw(contactId)

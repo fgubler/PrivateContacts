@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EVENT_DATE
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Anniversary
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Birthday
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Custom
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
@@ -43,6 +44,8 @@ data class EventDate(
 
     override val isEmpty: Boolean = value == null
 
+    val isYearSet: Boolean = value != null && value.year != DUMMY_YEAR_INT
+
     override val displayValue: String by lazy {
         value?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)).orEmpty()
             .replace(oldValue = DUMMY_YEAR_STRING, newValue = "")
@@ -60,6 +63,11 @@ data class EventDate(
     override fun changeType(type: ContactDataType): EventDate {
         val status = modelStatus.tryChangeTo(CHANGED)
         return copy(type = type, modelStatus = status)
+    }
+
+    override fun changeSortOrder(newSortOrder: Int): EventDate {
+        val status = modelStatus.tryChangeTo(CHANGED)
+        return copy(sortOrder = newSortOrder, modelStatus = status)
     }
 
     override fun delete(): EventDate {
@@ -83,8 +91,8 @@ data class EventDate(
 
         private val defaultAllowedTypes = listOf(
             Birthday,
+            Anniversary,
             Custom,
-            Other,
         )
 
         fun deserializeDate(rawValue: String): LocalDate? = try {
@@ -97,8 +105,8 @@ data class EventDate(
         fun createDate(day: Int?, month: Int?, year: Int?): LocalDate? = try {
             LocalDate.of(
                 /* year = */ year ?: DUMMY_YEAR_INT,
-                /* month = */ month ?: 0,
-                /* dayOfMonth = */ day ?: 0,
+                /* month = */ month ?: 1,
+                /* dayOfMonth = */ day ?: 1,
             )
         } catch (e: DateTimeException) {
             logger.error("Failed to create date from day = $day, month = $month, year = $year", e)

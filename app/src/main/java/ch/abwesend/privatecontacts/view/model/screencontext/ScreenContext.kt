@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
@@ -28,6 +29,7 @@ data class ScreenContext(
     override val settingsViewModel: SettingsViewModel,
     override val exportViewModel: ContactExportViewModel,
     override val importViewModel: ContactImportViewModel,
+    override val permissionProvider: IPermissionProvider,
     override val settings: ISettingsState,
 ) : IScreenContext {
     /** from [IScreenContextBase] */

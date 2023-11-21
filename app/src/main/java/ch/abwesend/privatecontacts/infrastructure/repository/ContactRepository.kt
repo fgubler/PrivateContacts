@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -58,6 +59,15 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
             resultFlow.toResourceFlow()
         }
+
+    // TODO use proper bulk-processing and then add unit tests
+    override suspend fun loadAllContactsFull(): List<IContact> = withDatabase { database ->
+        val entities = database.contactDao().getAll()
+        val contactIds = entities.map { it.id }
+        contactIds.mapAsyncChunked { contactId ->
+            resolveContact(contactId)
+        }
+    }
 
     @Deprecated(PAGING_DEPRECATION)
     override suspend fun loadContactsPaged(

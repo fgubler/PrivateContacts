@@ -12,36 +12,63 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
+import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class ContactExportViewModel : ViewModel() {
-    private val _fileUri: MutableState<Uri?> = mutableStateOf(value = null)
-    val fileUri: MutableState<Uri?> = _fileUri
+    private val exportService: ContactExportService by injectAnywhere()
 
-    private val _sourceType: MutableState<ContactType> = mutableStateOf(ContactType.SECRET)
+    private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
-    fun selectFile(uri: Uri?) {
-        _fileUri.value = uri
-    }
+    private val _vCardVersion: MutableState<VCardVersion> = mutableStateOf(VCardVersion.V3) // TODO add setting for default
+    val vCardVersion: State<VCardVersion> = _vCardVersion
+
+    /** implemented as a resource to show a loading-indicator during export */
+    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
+    val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
 
     fun selectSourceType(contactType: ContactType) {
         _sourceType.value = contactType
     }
 
-    fun exportContacts(sourceType: ContactType) {
-        val sourceFile = fileUri.value
-        if (sourceFile == null) {
+    fun selectVCardVersion(version: VCardVersion) {
+        _vCardVersion.value = version
+    }
+
+    fun resetExportResult() {
+        logger.debug("Resetting contact export result")
+        viewModelScope.launch {
+            _exportResult.emitInactive()
+        }
+    }
+
+    fun exportContacts(targetFile: Uri?, sourceType: ContactType, vCardVersion: VCardVersion) {
+        if (targetFile == null) {
             logger.warning("Trying to export to vcf file but no file is selected")
             return
         }
         logger.debugLocally("Exporting to vcf file from $sourceType")
 
         viewModelScope.launch {
-            // TODO implement
+            _exportResult.withLoadingState {
+                val result = exportService.exportContacts(targetFile, sourceType, vCardVersion)
+                logger.debug("Exported vcf file: result of type ${result.javaClass.simpleName}")
+                result
+            }
         }
     }
 }

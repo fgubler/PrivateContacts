@@ -38,6 +38,10 @@ data class Company(
     override fun overrideStatus(newStatus: ModelStatus) = copy(modelStatus = newStatus)
     override fun changeToInternalId(): ContactData = copy(id = createContactDataId())
     override fun changeToExternalId(): ContactData = copy(id = createExternalDummyContactDataId())
+    override fun changeSortOrder(newSortOrder: Int): Company {
+        val status = modelStatus.tryChangeTo(CHANGED)
+        return copy(sortOrder = newSortOrder, modelStatus = status)
+    }
 
     override fun delete(): Company {
         val status = modelStatus.tryChangeTo(ModelStatus.DELETED)
@@ -46,22 +50,24 @@ data class Company(
 
     companion object {
         val icon = Icons.Default.Apartment
-        const val labelPlural = R.string.companies
-        const val labelSingular = R.string.company
+        val labelPlural get() = R.string.companies
+        val labelSingular get() = R.string.company
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Main,
             ContactDataType.Other,
             ContactDataType.Custom,
         )
-        fun createEmpty(sortOrder: Int): Company =
-            Company(
+        fun createEmpty(sortOrder: Int): Company {
+            val isMain = (sortOrder == 0)
+            return Company(
                 id = createContactDataId(),
                 sortOrder = sortOrder,
-                type = ContactDataType.Main,
+                type = if (isMain) ContactDataType.Main else ContactDataType.Other,
                 value = "",
-                isMain = (sortOrder == 0),
+                isMain = isMain,
                 modelStatus = ModelStatus.NEW,
             )
+        }
     }
 }

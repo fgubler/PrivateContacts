@@ -45,10 +45,6 @@ import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
 object SettingsComponents {
-
-    @ExperimentalMaterialApi
-    private val parent = SettingsScreen // TODO remove once google issue 212091796 is fixed
-
     @Composable
     fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
 
@@ -129,11 +125,7 @@ object SettingsComponents {
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
 
-        DropDownComponent(
-            options = options,
-            isScrolling = { parent.isScrolling },
-            onValueChanged = onValueChanged,
-        ) { _, modifier ->
+        DropDownComponent(options = options, onValueChanged = onValueChanged) { _, modifier ->
             Column(
                 modifier = modifier
                     .heightIn(min = 45.dp)

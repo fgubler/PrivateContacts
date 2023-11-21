@@ -183,7 +183,7 @@ sealed class ContactDataType {
         RELATIONSHIP_WORK;
 
         companion object {
-            fun parseOrNull(name: String): Key? = values().firstOrNull { it.name == name }
+            fun parseOrNull(name: String): Key? = values().firstOrNull { it.name == name.uppercase() }
         }
     }
 

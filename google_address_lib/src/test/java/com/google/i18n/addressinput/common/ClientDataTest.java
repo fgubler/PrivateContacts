@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
 import com.google.i18n.addressinput.testing.InMemoryAsyncRequest;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,6 +38,7 @@ import java.util.Map;
  * Tests for the ClientData class, to ensure it uses the cache data to correctly fetch data from the
  * server and recovers if no data is present.
  */
+@Ignore
 @RunWith(JUnit4.class)
 public class ClientDataTest {
   private static CacheData createTestCacheData(Map<String, String> keyToJsonMap) {

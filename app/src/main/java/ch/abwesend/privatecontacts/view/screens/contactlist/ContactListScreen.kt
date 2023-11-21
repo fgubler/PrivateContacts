@@ -43,7 +43,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
-import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeErrorDialog
@@ -54,7 +53,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactListScreenContext
-import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
+import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
@@ -69,13 +68,12 @@ import kotlin.contracts.ExperimentalContracts
 @FlowPreview
 @ExperimentalContracts
 object ContactListScreen {
-    private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
-
     @Composable
     fun Screen(screenContext: IContactListScreenContext) {
         val scaffoldState = rememberScaffoldState()
         val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
+        val permissionProvider = screenContext.permissionProvider
 
         LaunchedEffect(Unit) { initializeScreen(viewModel, settings) }
 
@@ -100,9 +98,9 @@ object ContactListScreen {
                     Surface(modifier = Modifier.weight(1.0f)) { // let the tabs get their space first
                         ContactListContent(screenContext)
                     }
-                    TabBox(viewModel, settings)
+                    TabBox(viewModel, settings, permissionProvider)
                 } else {
-                    TabBox(viewModel, settings)
+                    TabBox(viewModel, settings, permissionProvider)
                     ContactListContent(screenContext)
                 }
             }
@@ -121,7 +119,7 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun TabBox(viewModel: ContactListViewModel, settings: ISettingsState) {
+    private fun TabBox(viewModel: ContactListViewModel, settings: ISettingsState, permissions: IPermissionProvider) {
         val androidContactsEnabled = settings.showAndroidContacts
 
         if (androidContactsEnabled) {
@@ -129,14 +127,19 @@ object ContactListScreen {
 
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
-                    Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel)
+                    Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
                 }
             }
         }
     }
 
     @Composable
-    private fun Tab(tab: ContactListTab, selectedTab: ContactListTab, viewModel: ContactListViewModel) {
+    private fun Tab(
+        tab: ContactListTab,
+        selectedTab: ContactListTab,
+        viewModel: ContactListViewModel,
+        permissionProvider: IPermissionProvider,
+    ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
         LeadingIconTab(
@@ -153,7 +156,7 @@ object ContactListScreen {
         )
 
         if (requestPermissions) {
-            contactPermissionHelper.requestAndroidContactPermissions {
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
                 requestPermissions = false
                 if (it.usable) {
                     viewModel.selectTab(tab)

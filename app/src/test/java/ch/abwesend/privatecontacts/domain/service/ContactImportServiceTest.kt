@@ -42,7 +42,7 @@ class ContactImportServiceTest : TestBase() {
     private lateinit var importExportRepository: IVCardImportExportRepository
 
     @MockK
-    private lateinit var fileReadService: FileReadService
+    private lateinit var fileReadService: FileReadWriteService
 
     @MockK
     private lateinit var contactSaveService: ContactSaveService

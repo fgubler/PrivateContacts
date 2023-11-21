@@ -19,6 +19,9 @@ interface ContactDao {
     @Query("SELECT * FROM ContactEntity")
     fun getAllAsFlow(): Flow<List<ContactEntity>>
 
+    @Query("SELECT * FROM ContactEntity")
+    fun getAll(): List<ContactEntity>
+
     @Query(
         """
         SELECT * 

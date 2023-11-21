@@ -9,18 +9,23 @@ package ch.abwesend.privatecontacts.view.screens.importexport
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 
 object ImportExportScreenComponents {
@@ -65,5 +70,24 @@ object ImportExportScreenComponents {
         )
 
         BackHandler { onClose() }
+    }
+
+    @Composable
+    fun AndroidPermissionDeniedDialog(closeDialog: () -> Unit) {
+        OkDialog(
+            title = R.string.import_export_permission_required_title,
+            onClose = closeDialog
+        ) {
+            Column {
+                Text(text = stringResource(id = R.string.import_export_permission_required_explanation))
+                Spacer(modifier = Modifier.height(10.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(id = R.string.settings_info_dialog_android_contacts_permission),
+                    fontStyle = FontStyle.Italic,
+                )
+            }
+        }
     }
 }

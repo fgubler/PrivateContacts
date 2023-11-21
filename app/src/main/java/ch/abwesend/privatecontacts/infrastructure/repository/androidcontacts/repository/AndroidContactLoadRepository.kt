@@ -52,6 +52,18 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
         } ?: throw IllegalArgumentException("Contact $contactId not found on android")
     }
 
+    suspend fun loadAllFullContactsRaw(): List<Contact> {
+        logger.debug("Loading all full contacts")
+        checkContactReadPermission { exception -> throw exception }
+
+        return withContactStore { contactStore ->
+            contactStore.fetchContacts(columnsToFetch = allContactColumns()).asFlow()
+                .flowOn(dispatchers.io)
+                .firstOrNull()
+                .also { logger.debug("Found ${it?.size} contacts") }
+        }.orEmpty()
+    }
+
     suspend fun loadContactsSnapshot(
         predicate: ContactPredicate? = null
     ): List<IContactBase> = withContactStore { contactStore ->
