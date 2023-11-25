@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -37,8 +38,7 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 val contentResolver = context.contentResolver
 
                 if (requestPermission) {
-                    context.grantUriPermission(context.packageName, fileUri, FLAG_GRANT_READ_URI_PERMISSION)
-                    contentResolver.takePersistableUriPermission(fileUri, FLAG_GRANT_READ_URI_PERMISSION)
+                    requestReadPermission(contentResolver, fileUri)
                 }
 
                 val content = contentResolver.openFileDescriptor(fileUri, MODE_READ_ONLY)?.use { parcelDescriptor ->
@@ -65,8 +65,7 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 val contentResolver = context.contentResolver
 
                 if (requestPermission) {
-                    context.grantUriPermission(context.packageName, file, FLAG_GRANT_WRITE_URI_PERMISSION)
-                    contentResolver.takePersistableUriPermission(file, FLAG_GRANT_WRITE_URI_PERMISSION)
+                    requestWritePermission(contentResolver, file)
                 }
 
                 contentResolver.openFileDescriptor(file, MODE_WRITE_ONLY)?.use { parcelDescriptor ->
@@ -84,4 +83,23 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 ErrorResult(error = e)
             }
         }
+
+    private fun requestReadPermission(contentResolver: ContentResolver, fileUri: Uri) {
+        requestPermission(contentResolver, fileUri, FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
+    private fun requestWritePermission(contentResolver: ContentResolver, fileUri: Uri) {
+        requestPermission(contentResolver, fileUri, FLAG_GRANT_WRITE_URI_PERMISSION)
+    }
+
+    private fun requestPermission(contentResolver: ContentResolver, fileUri: Uri, permissionFlag: Int) {
+        context.grantUriPermission(context.packageName, fileUri, permissionFlag)
+        try {
+            contentResolver.takePersistableUriPermission(fileUri, permissionFlag)
+        } catch (e: SecurityException) {
+            logger.debugLocally("Failed to get persistable permission for file: ${fileUri.path}", e)
+            // the exception-text might contain user-information (the path): do not log it to crashlytics
+            logger.warning("Failed to get persistable permission for file: $permissionFlag")
+        }
+    }
 }
