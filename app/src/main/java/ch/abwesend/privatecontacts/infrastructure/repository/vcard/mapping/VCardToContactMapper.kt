@@ -28,6 +28,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toCompany
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactImage
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toRelationship
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
@@ -58,6 +59,9 @@ class VCardToContactMapper {
 
             val groups = vCard.categoriesList.orEmpty().flatMap { it.toContactGroups() }
             contact.contactGroups.addAll(groups)
+
+            val image = vCard.photos.orEmpty().filterNotNull().toContactImage()
+            contact.image = image
 
             val contactCategory = vCard.kind // TODO use once this becomes a thing
             // TODO figure out how to handle the name of companies/organizations
