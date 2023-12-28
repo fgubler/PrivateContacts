@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.viewmodel
 
+import android.net.Uri
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
@@ -26,7 +27,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
@@ -50,6 +56,7 @@ class ContactListViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
     private val searchService: FullTextSearchService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
+    private val exportService: ContactExportService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
 
     private var showSearch: Boolean = false
@@ -112,6 +119,10 @@ class ContactListViewModel : ViewModel() {
     /** implemented as a resource to show a loading-indicator during type-change */
     private val _typeChangeResult = mutableResourceStateFlow<ContactIdBatchChangeResult>()
     val typeChangeResult: ResourceFlow<ContactIdBatchChangeResult> = _typeChangeResult
+
+    /** implemented as a resource to show a loading-indicator during export */
+    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
+    val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -241,6 +252,21 @@ class ContactListViewModel : ViewModel() {
                 launch { reloadContacts() }
                 setBulkMode(enabled = false) // bulk-action is over
             }
+        }
+    }
+
+    fun exportContacts(targetFile: Uri, vCardVersion: VCardVersion, baseContacts: Collection<IContactBase>) {
+        logger.debug("Exporting ${baseContacts.size} to vcf file.")
+
+        viewModelScope.launch {
+            val contactIds = baseContacts.map { it.id }
+            val contacts = loadService.resolveContacts(contactIds)
+            _exportResult.withLoadingState {
+                exportService.exportContacts(targetFile, vCardVersion, contacts).also {
+                    logger.debug("Exported vcf file: result of type ${it.javaClass.simpleName}")
+                }
+            }
+            setBulkMode(enabled = false) // bulk-action is over
         }
     }
 

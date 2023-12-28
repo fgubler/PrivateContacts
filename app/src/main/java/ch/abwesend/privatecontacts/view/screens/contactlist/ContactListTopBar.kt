@@ -48,6 +48,7 @@ import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SearchIconButton
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
+import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsMenuItem
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
@@ -171,6 +172,8 @@ fun BulkModeActionsMenu(
                 )
             }
             DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
+            Divider()
+            ExportMenuItem(viewModel, selectedContacts, onCloseMenu)
         }
     }
 }
@@ -216,6 +219,23 @@ private fun DeleteMenuItem(
         }
         onCloseMenu()
     }
+}
+
+@ExperimentalMaterialApi
+@Composable
+private fun ExportMenuItem(
+    viewModel: ContactListViewModel,
+    selectedContacts: Set<IContactBase>,
+    onCloseMenu: () -> Unit,
+) {
+    ExportContactsMenuItem(
+        contacts = selectedContacts,
+        onCancel = onCloseMenu,
+        onExportContact = { targetFile, vCardVersion ->
+            viewModel.exportContacts(targetFile, vCardVersion, selectedContacts)
+            onCloseMenu()
+        }
+    )
 }
 
 @ExperimentalComposeUiApi

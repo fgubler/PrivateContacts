@@ -116,9 +116,11 @@ private fun createDefaultExportFileName(contacts: Set<IContactBase>, vCardVersio
     val datePrefix = LocalDate.now().toString()
     val versionInfix = vCardVersion.name
     val contactPostfix = if (contacts.size == 1) {
-        contacts.first().displayName.replace(' ', '_').filter { it.isLetter() || it == '_' }
+        contacts.first().displayName
+            .replace(' ', '_')
+            .filter { it.isLetter() || it == '_' }
     } else {
-        stringResource(id = R.string.selected_for_export)
+        "${stringResource(id = R.string.selected_for_export)}_${contacts.size}"
     }
     val extension = ImportExportConstants.VCF_FILE_EXTENSION
     return "${datePrefix}_${versionInfix}_$contactPostfix.$extension"

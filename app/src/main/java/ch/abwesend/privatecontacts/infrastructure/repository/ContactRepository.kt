@@ -60,13 +60,10 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             resultFlow.toResourceFlow()
         }
 
-    // TODO use proper bulk-processing and then add unit tests
     override suspend fun loadAllContactsFull(): List<IContact> = withDatabase { database ->
         val entities = database.contactDao().getAll()
-        val contactIds = entities.map { it.id }
-        contactIds.mapAsyncChunked { contactId ->
-            resolveContact(contactId)
-        }
+        val contactIds = entities.map { it.id }.toSet()
+        resolveContacts(contactIds)
     }
 
     @Deprecated(PAGING_DEPRECATION)
@@ -162,6 +159,18 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             saveInAccount = ContactAccount.None,
             isNew = false,
         )
+    }
+
+    // TODO use proper bulk-processing and then add unit tests
+    override suspend fun resolveContacts(contactIds: Set<IContactIdInternal>): List<IContact> {
+        return contactIds.mapAsyncChunked { contactId ->
+            try {
+                resolveContact(contactId)
+            } catch (e: Exception) {
+                logger.warning("Failed to resolve contact $contactId")
+                null
+            }
+        }.filterNotNull()
     }
 
     override suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult =

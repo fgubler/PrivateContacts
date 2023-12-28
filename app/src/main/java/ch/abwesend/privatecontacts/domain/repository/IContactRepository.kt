@@ -35,6 +35,7 @@ interface IContactRepository {
     suspend fun findContactsWithNumberEndingOn(endOfPhoneNumber: String): List<ContactWithPhoneNumbers>
 
     suspend fun resolveContact(contactId: IContactIdInternal): IContact
+    suspend fun resolveContacts(contactIds: Set<IContactIdInternal>): List<IContact>
     suspend fun createContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult
