@@ -27,11 +27,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
-import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
@@ -46,6 +43,9 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
+import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactDeleteResult
+import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactExportResult
+import ch.abwesend.privatecontacts.view.viewmodel.model.BulkOperationResult
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.emitAll
@@ -113,16 +113,16 @@ class ContactListViewModel : ViewModel() {
     val contacts: ResourceStateFlow<List<IContactBase>> = _contacts
 
     /** implemented as a resource to show a loading-indicator during deletion */
-    private val _deleteResult = mutableResourceStateFlow<ContactIdBatchChangeResult>()
-    val deleteResult: ResourceFlow<ContactIdBatchChangeResult> = _deleteResult
+    private val _deleteResult = mutableResourceStateFlow<BulkContactDeleteResult>()
+    val deleteResult: ResourceFlow<BulkContactDeleteResult> = _deleteResult
 
     /** implemented as a resource to show a loading-indicator during type-change */
     private val _typeChangeResult = mutableResourceStateFlow<ContactIdBatchChangeResult>()
     val typeChangeResult: ResourceFlow<ContactIdBatchChangeResult> = _typeChangeResult
 
     /** implemented as a resource to show a loading-indicator during export */
-    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
-    val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
+    private val _exportResult = mutableResourceStateFlow<BulkContactExportResult>()
+    val exportResult: ResourceFlow<BulkContactExportResult> = _exportResult
 
     /** to remember the scrolling-position after returning from an opened contact */
     val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
@@ -231,11 +231,11 @@ class ContactListViewModel : ViewModel() {
 
     fun deleteContacts(contactIds: Set<ContactId>) {
         viewModelScope.launch {
-            val result = _deleteResult.withLoadingState {
-                saveService.deleteContacts(contactIds)
+            val bulkOperationResult = _deleteResult.withLoadingState {
+                BulkOperationResult(saveService.deleteContacts(contactIds), contactIds.size)
             }
 
-            if (result == null || !result.completelyFailed) {
+            if (bulkOperationResult == null || !bulkOperationResult.result.completelyFailed) {
                 launch { reloadContacts() }
                 setBulkMode(enabled = false) // bulk-action is over
             }
@@ -262,9 +262,9 @@ class ContactListViewModel : ViewModel() {
             val contactIds = baseContacts.map { it.id }
             val contacts = loadService.resolveContacts(contactIds)
             _exportResult.withLoadingState {
-                exportService.exportContacts(targetFile, vCardVersion, contacts).also {
-                    logger.debug("Exported vcf file: result of type ${it.javaClass.simpleName}")
-                }
+                val result = exportService.exportContacts(targetFile, vCardVersion, contacts)
+                logger.debug("Exported vcf file: result of type ${result.javaClass.simpleName}")
+                BulkOperationResult(result, baseContacts.size)
             }
             setBulkMode(enabled = false) // bulk-action is over
         }
@@ -279,6 +279,12 @@ class ContactListViewModel : ViewModel() {
     fun resetTypeChangeResult() {
         viewModelScope.launch {
             _typeChangeResult.emitInactive()
+        }
+    }
+
+    fun resetExportResult() {
+        viewModelScope.launch {
+            _exportResult.emitInactive()
         }
     }
 }

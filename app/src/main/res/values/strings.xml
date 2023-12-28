@@ -148,7 +148,6 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
-    <string name="delete_contact_progress">Contact is being deleted</string>
     <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
     <string name="create_as_new_contact">Create as new</string>
 
@@ -161,7 +160,7 @@
 
     <string name="make_contact_secret">Change contact to \'Secret\'</string>
     <string name="make_contact_secret_title">Change contact to \'Secret\'</string>
-    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.</string>
+    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.\n\nPlease make sure that no expected information is missing when checking the contact-details in this app before taking this step.</string>
 
     <string name="make_contacts_secret">Change contacts to \'Secret\'</string>
     <string name="make_contacts_secret_title">Change contacts to \'Secret\'</string>

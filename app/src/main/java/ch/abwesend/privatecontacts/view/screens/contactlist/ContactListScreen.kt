@@ -39,9 +39,10 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
 import ch.abwesend.privatecontacts.domain.lib.flow.LoadingResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ReadyResource
-import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
@@ -49,6 +50,8 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactType
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsLoadingDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsLoadingDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsResultDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressAndResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
@@ -211,19 +214,21 @@ object ContactListScreen {
             is ReadyResource -> showContactList(contactsResource.value)
         }
 
-        TypeChangeResultHandler(viewModel, selectedContacts)
-        DeletionResultHandler(viewModel, selectedContacts)
+        val progressForMultiple = selectedContacts.size > 1
+        TypeChangeResultHandler(viewModel, progressForMultiple)
+        DeletionResultHandler(viewModel, progressForMultiple)
+        ExportResultHandler(viewModel, progressForMultiple)
     }
 
     @Composable
-    private fun DeletionResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
+    private fun DeletionResultHandler(viewModel: ContactListViewModel, progressForMultiple: Boolean) {
         ResourceFlowProgressAndResultDialog(
             flow = viewModel.deleteResult,
             onCloseDialog = { viewModel.resetDeletionResult() },
-            ProgressDialog = { DeleteContactsLoadingDialog(deleteMultiple = selectedContacts.size > 1) },
-            ResultDialog = { result, onClose ->
-                val numberOfFailed = result.failedChanges.size
-                val totalNumber = numberOfFailed + result.successfulChanges.size
+            ProgressDialog = { DeleteContactsLoadingDialog(deleteMultiple = progressForMultiple) },
+            ResultDialog = { bulkOperationResult, onClose ->
+                val numberOfFailed = bulkOperationResult.result.failedChanges.size
+                val totalNumber = bulkOperationResult.numberOfSelectedContacts
                 DeleteContactsResultDialog(
                     numberOfErrors = numberOfFailed,
                     numberOfAttemptedChanges = totalNumber,
@@ -234,11 +239,11 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun TypeChangeResultHandler(viewModel: ContactListViewModel, selectedContacts: Set<ContactId>) {
+    private fun TypeChangeResultHandler(viewModel: ContactListViewModel, progressForMultiple: Boolean) {
         ResourceFlowProgressAndResultDialog(
             flow = viewModel.typeChangeResult,
             onCloseDialog = { viewModel.resetTypeChangeResult() },
-            ProgressDialog = { ChangeContactTypeLoadingDialog(changeMultiple = selectedContacts.size > 1) },
+            ProgressDialog = { ChangeContactTypeLoadingDialog(changeMultiple = progressForMultiple) },
             ResultDialog = { result, onClose ->
                 val flattenedErrors = result.flattenedErrors()
                 ChangeContactTypeErrorDialog(
@@ -246,6 +251,28 @@ object ContactListScreen {
                     errors = flattenedErrors.errors,
                     numberOfAttemptedChanges = result.numberOfAttemptedChanges,
                     numberOfSuccessfulChanges = result.successfulChanges.size,
+                    onClose = onClose,
+                )
+            }
+        )
+    }
+
+    @Composable
+    private fun ExportResultHandler(viewModel: ContactListViewModel, progressForMultiple: Boolean) {
+        ResourceFlowProgressAndResultDialog(
+            flow = viewModel.exportResult,
+            onCloseDialog = { viewModel.resetExportResult() },
+            ProgressDialog = { ExportContactsLoadingDialog(exportMultiple = progressForMultiple) },
+            ResultDialog = { bulkOperationResult, onClose ->
+                val result = bulkOperationResult.result
+                val numberOfFailed = when (result) {
+                    is ErrorResult -> bulkOperationResult.numberOfSelectedContacts
+                    is SuccessResult -> result.value.failedContacts.size
+                }
+                val totalNumber = bulkOperationResult.numberOfSelectedContacts
+                ExportContactsResultDialog(
+                    numberOfErrors = numberOfFailed,
+                    numberOfAttemptedChanges = totalNumber,
                     onClose = onClose,
                 )
             }
