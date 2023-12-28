@@ -55,7 +55,7 @@ fun VCardVersionField(
     var showInfoDialog: Boolean by remember { mutableStateOf(false) }
 
     val selectedOption = ResDropDownOption(labelRes = selectedVersion.label, value = selectedVersion)
-    val options = VCardVersion.values().map {
+    val options = VCardVersion.entries.map {
         ResDropDownOption(labelRes = it.label, value = it)
     }
 

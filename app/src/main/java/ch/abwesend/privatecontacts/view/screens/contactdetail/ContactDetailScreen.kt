@@ -189,7 +189,7 @@ object ContactDetailScreen {
                 content = { Text(stringResource(id = R.string.refresh)) }
             )
             Divider()
-            ContactType.values().forEach { targetType ->
+            ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
                     contact = contact,

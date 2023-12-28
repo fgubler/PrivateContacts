@@ -161,7 +161,7 @@ fun BulkModeActionsMenu(
         }
         if (selectedContacts.isNotEmpty()) {
             Divider()
-            ContactType.values().forEach { targetType ->
+            ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
                     contacts = selectedContacts,

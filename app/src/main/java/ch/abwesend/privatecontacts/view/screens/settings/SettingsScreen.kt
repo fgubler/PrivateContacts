@@ -91,7 +91,7 @@ object SettingsScreen {
     @Composable
     private fun UxCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         val appThemeOptions = remember {
-            AppTheme.values().map { ResDropDownOption(labelRes = it.labelRes, value = it) }
+            AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
 
         SettingsCategory(titleRes = R.string.settings_category_ux) {
@@ -237,7 +237,7 @@ object SettingsScreen {
         currentSettings: ISettingsState,
     ) {
         val contactTypeOptions = remember {
-            ContactType.values().map { ResDropDownOption(labelRes = it.label, value = it) }
+            ContactType.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
         }
         var requestPermissionsFor: ContactType? by remember { mutableStateOf(null) }
 
