@@ -19,7 +19,6 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportR
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.withContext
 
-// TODO add unit tests
 class ContactExportService {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val loadService: ContactLoadService by injectAnywhere()
