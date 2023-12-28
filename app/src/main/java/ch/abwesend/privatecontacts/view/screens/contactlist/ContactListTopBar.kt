@@ -209,7 +209,7 @@ private fun DeleteMenuItem(
     selectedContacts: Set<IContactBase>,
     onCloseMenu: () -> Unit,
 ) {
-    DeleteContactMenuItem(contacts = selectedContacts) { delete ->
+    DeleteContactMenuItem(numberOfContacts = selectedContacts.size) { delete ->
         if (delete) {
             val contactIds = selectedContacts.map { it.id }.toSet()
             viewModel.deleteContacts(contactIds)

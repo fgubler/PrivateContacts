@@ -292,6 +292,7 @@
     <string name="import_failed_contacts">Contacts which could not be imported</string>
 
     <string name="export_title">Export</string>
+    <string name="export_contact">Export contact</string>
     <string name="export_contacts">Export contacts</string>
     <string name="select_file_to_export_to">Select .vcf file to export to</string>
     <string name="contact_type_to_export">Export contacts of type</string>
@@ -319,4 +320,14 @@
     <string name="exported_contacts">Exported contacts:</string>
     <string name="failed_to_export_contacts">Failed contacts:</string>
     <string name="no_contact_name_fallback">[No contact name]</string>
+
+    <string name="export_contact_title">Export contact</string>
+    <string name="export_contacts_title">Export contacts</string>
+    <string name="selected_for_export">selected</string>
+    <string name="contact_export_success">The contact has been successfully exported.</string>
+    <string name="contacts_export_success">The contacts have been successfully exported.</string>
+    <string name="export_contact_error">Something went wrong. The contact could not be exported.</string>
+    <string name="export_contacts_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be exported.</string>
+    <string name="export_contacts_full_error">Something went wrong. No contacts could be exported.</string>
+
 </resources>
