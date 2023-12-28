@@ -305,7 +305,7 @@ object ContactDetailScreen {
             contacts = setOf(contact),
             onCancel = onCloseMenu,
             onExportContact = { targetFile, vCardVersion ->
-                viewModel.exportContacts(targetFile, vCardVersion, contact)
+                viewModel.exportContact(targetFile, vCardVersion, contact)
                 onCloseMenu()
             }
         )

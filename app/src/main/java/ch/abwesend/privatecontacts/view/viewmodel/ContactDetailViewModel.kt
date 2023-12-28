@@ -84,7 +84,7 @@ class ContactDetailViewModel : ViewModel() {
         }
     }
 
-    fun exportContacts(targetFile: Uri, vCardVersion: VCardVersion, contact: IContact) {
+    fun exportContact(targetFile: Uri, vCardVersion: VCardVersion, contact: IContact) {
         logger.debugLocally("Exporting '${contact.displayName}' to vcf file.")
 
         viewModelScope.launch {
