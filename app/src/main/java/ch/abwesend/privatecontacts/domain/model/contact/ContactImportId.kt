@@ -9,4 +9,4 @@ package ch.abwesend.privatecontacts.domain.model.contact
 import java.util.UUID
 
 @JvmInline
-value class ContactImportId(val value: UUID)
+value class ContactImportId(val uuid: UUID)

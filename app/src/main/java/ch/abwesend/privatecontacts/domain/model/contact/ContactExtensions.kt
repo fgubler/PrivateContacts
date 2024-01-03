@@ -31,6 +31,7 @@ fun IContact.asEditable(): ContactEditable =
 fun IContact.toContactEditable(): ContactEditable =
     ContactEditable(
         id = id,
+        importId = importId,
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,

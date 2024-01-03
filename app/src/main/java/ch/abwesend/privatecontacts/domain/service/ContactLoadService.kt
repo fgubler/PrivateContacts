@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
+import ch.abwesend.privatecontacts.domain.model.contact.ContactImportId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -120,6 +121,6 @@ class ContactLoadService {
         }
     }
 
-    suspend fun filterForExistingContacts(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal> =
-        contactRepository.filterForExisting(contactIds)
+    suspend fun resolveMatchingContacts(importIds: Collection<ContactImportId>): List<IContact> =
+        contactRepository.resolveMatchingContacts(importIds)
 }

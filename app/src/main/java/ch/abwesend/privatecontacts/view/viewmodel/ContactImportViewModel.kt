@@ -37,6 +37,9 @@ class ContactImportViewModel : ViewModel() {
     private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
     val targetAccount: State<ContactAccount?> = _targetAccount
 
+    private val _replaceExistingContacts: MutableState<Boolean> = mutableStateOf(false)
+    val replaceExistingContacts: State<Boolean> = _replaceExistingContacts
+
     /** implemented as a resource to show a loading-indicator during import */
     private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
     val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _importResult
@@ -49,6 +52,10 @@ class ContactImportViewModel : ViewModel() {
         _targetAccount.value = contactAccount
     }
 
+    fun setReplaceExisting(replaceExisting: Boolean) {
+        _replaceExistingContacts.value = replaceExisting
+    }
+
     fun resetImportResult() {
         logger.debug("Resetting contact import result")
         viewModelScope.launch {
@@ -56,16 +63,22 @@ class ContactImportViewModel : ViewModel() {
         }
     }
 
-    fun importContacts(sourceFile: Uri?, targetType: ContactType, targetAccount: ContactAccount) {
+    fun importContacts(
+        sourceFile: Uri?,
+        targetType: ContactType,
+        targetAccount: ContactAccount,
+        replaceExisting: Boolean,
+    ) {
         if (sourceFile == null) {
             logger.warning("Trying to import vcf file but no file is selected")
             return
         }
         logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType in account ${targetAccount.type}")
+        logger.debug("Importing vcf file as $targetType, ${if (replaceExisting) "" else "not "}replacing")
 
         viewModelScope.launch {
             _importResult.withLoadingState {
-                val result = importService.importContacts(sourceFile, targetType, targetAccount)
+                val result = importService.importContacts(sourceFile, targetType, targetAccount, replaceExisting)
                 logger.debug("Imported vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }

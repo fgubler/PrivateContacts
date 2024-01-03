@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactImportId
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
@@ -207,19 +208,19 @@ class ContactLoadServiceTest : TestBase() {
     }
 
     @Test
-    fun `should check whether internal contacts exist`() {
+    fun `should check whether internal contacts exist and return them`() {
         val contactIds = listOf(
-            someInternalContactId(),
-            someInternalContactId(),
-            someInternalContactId(),
+            someContactImportId(),
+            someContactImportId(),
+            someContactImportId(),
         )
-        coEvery { contactRepository.filterForExisting(any()) } answers {
-            firstArg<Collection<IContactIdInternal>>().toSet()
+        coEvery { contactRepository.resolveMatchingContacts(any()) } answers {
+            firstArg<Collection<IContactIdInternal>>().map { someContactEditable(id = it) }
         }
 
-        runBlocking { underTest.filterForExistingContacts(contactIds) }
+        runBlocking { underTest.resolveMatchingContacts(contactIds) }
 
-        coVerify { contactRepository.filterForExisting(contactIds) }
+        coVerify { contactRepository.resolveMatchingContacts(contactIds) }
         confirmVerified(androidContactService)
         confirmVerified(contactRepository)
     }

@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.repository
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.model.contact.ContactImportId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -40,5 +41,5 @@ interface IContactRepository {
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult
 
-    suspend fun filterForExisting(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal>
+    suspend fun resolveMatchingContacts(importIds: Collection<ContactImportId>): List<IContact>
 }

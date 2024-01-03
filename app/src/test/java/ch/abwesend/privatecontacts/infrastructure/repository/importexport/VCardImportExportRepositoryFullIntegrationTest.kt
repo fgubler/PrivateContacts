@@ -115,7 +115,7 @@ class VCardImportExportRepositoryFullIntegrationTest : RepositoryTestBase() {
         assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
         val resultContact = resultContacts!!.first()
 
-        assertThat(resultContact.importId?.value).isEqualTo(uuid)
+        assertThat(resultContact.importId?.uuid).isEqualTo(uuid)
         assertThat(resultContact.id).isInstanceOf(IContactIdInternal::class.java)
         assertThat((resultContact.id as IContactIdInternal).uuid).isNotEqualTo(uuid) // should choose a new UUID
         assertThat(resultContact.type).isEqualTo(type)
