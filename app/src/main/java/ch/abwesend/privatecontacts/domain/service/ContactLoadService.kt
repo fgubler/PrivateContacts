@@ -7,10 +7,8 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
-import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -26,7 +24,6 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
@@ -92,29 +89,31 @@ class ContactLoadService {
             is IContactIdExternal -> androidContactService.resolveContact(contactId)
         }
 
-    // TODO use proper bulk-processing
-    suspend fun resolveContacts(contactIds: Collection<ContactId>): Map<ContactId, IContact?> =
-        withContext(dispatchers.default) {
-            contactIds.mapAsyncChunked { contactId ->
-                val contact = try {
-                    resolveContact(contactId)
-                } catch (e: Exception) {
-                    logger.warning("Failed to load contact $contactId", e)
-                    null
-                }
-                contactId to contact
-            }.toMap()
+    suspend fun resolveContacts(contactIds: Collection<ContactId>): List<IContact> = coroutineScope {
+        val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>().toSet()
+        val externalContactIds = contactIds.filterIsInstance<IContactIdExternal>().toSet()
+
+        val externalContacts = async {
+            if (externalContactIds.isEmpty()) emptyList()
+            else androidContactService.resolveContacts(externalContactIds)
         }
+        val internalContacts = async {
+            if (internalContactIds.isEmpty()) emptyList()
+            else contactRepository.resolveContacts(internalContactIds)
+        }
+
+        internalContacts.await() + externalContacts.await()
+    }
 
     suspend fun resolveContactsWithAccountInformation(
         baseContacts: Collection<IContactBaseWithAccountInformation>
     ): Map<ContactId, IContact?> {
         val baseContactsById = baseContacts.associateBy { it.id }
         val contactIds = baseContactsById.keys
-        val resolvedContacts = resolveContacts(contactIds)
+        val resolvedContacts = resolveContacts(contactIds).associateBy { it.id }
         return resolvedContacts.mapValues { (id, resolvedContact) ->
             baseContactsById[id]?.let { correspondingContact ->
-                resolvedContact?.asEditable()?.also { editableContact ->
+                resolvedContact.asEditable().also { editableContact ->
                     editableContact.saveInAccount = correspondingContact.saveInAccount
                 }
             }

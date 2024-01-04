@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service
 
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -56,6 +57,18 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     override suspend fun resolveContact(contactId: IContactIdExternal): IContact {
         val contactRaw = contactLoadRepository.resolveContactRaw(contactId)
         return resolveContact(contactId, contactRaw)
+    }
+
+    // TODO add proper batch-processing and then unit-tests
+    override suspend fun resolveContacts(contactIds: Set<IContactIdExternal>): List<IContact> {
+        return contactIds.mapAsyncChunked { contactId ->
+            try {
+                resolveContact(contactId)
+            } catch (e: Exception) {
+                logger.warning("Failed to resolve contact $contactId")
+                null
+            }
+        }.filterNotNull()
     }
 
     suspend fun resolveContact(contactId: IContactIdExternal, contactRaw: Contact): IContact {
