@@ -14,10 +14,10 @@ Additional features
 - Moving contacts from the standard Android database to the app (and removing them from the standard database so they are no longer visible to other apps)
 - Creating new contacts in the standard Android database
 - Moving contacts from Private Contacts back the the standard Android contact database (in case that is desired)
-
+- Support of Imports/Exports in vcf format
 
 ## What the app will be able to do in the future
-- Support of Imports/Exports in vcf format
+
 - Support of additional features of a contact app
   - Profile images
   - Mark contacts as favorites
