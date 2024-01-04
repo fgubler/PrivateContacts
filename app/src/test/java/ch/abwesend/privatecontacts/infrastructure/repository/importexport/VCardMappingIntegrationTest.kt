@@ -47,6 +47,7 @@ import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.Addr
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
@@ -464,6 +465,34 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
             } else {
                 assertThat(resultEventDate.type).isIn(supportedEventTypes)
             }
+        }
+    }
+
+    @Test
+    fun `should map images`() {
+        val images = listOf(
+            someContactImage(thumbnailUri = "Test", fullImage = byteArrayOf(0, 3, 5, 7)),
+            someContactImage(thumbnailUri = null, fullImage = byteArrayOf(0, 3, 5, 7)),
+            someContactImage(thumbnailUri = "Test", fullImage = null),
+        )
+        val originalContacts = images.map { someContactEditable(image = it) }
+
+        images.indices.forEach {
+            val image = images[it]
+            val originalContact = originalContacts[it]
+
+            val vCardResult = toVCardMapper.mapToVCard(originalContact)
+            assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+            val vCard = vCardResult.getValueOrNull()
+            assertThat(vCard).isNotNull
+
+            val contactResult = fromVCardMapper.mapToContact(vCard!!, originalContact.type)
+
+            assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+            val resultContact = contactResult.getValueOrNull()
+            assertThat(resultContact).isNotNull
+            assertThat(resultContact!!.image.thumbnailUri).isEqualTo(image.thumbnailUri)
+            assertThat(resultContact.image.fullImage).isEqualTo(image.fullImage)
         }
     }
 }

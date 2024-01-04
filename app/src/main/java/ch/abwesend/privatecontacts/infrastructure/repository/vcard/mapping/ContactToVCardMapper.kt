@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toCategories
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toPhotos
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAddress
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardAnniversary
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardBirthday
@@ -63,6 +64,10 @@ class ContactToVCardMapper {
 
             val categories = contact.contactGroups.toCategories()
             vCard.addCategories(categories)
+
+            contact.image.toPhotos().forEach { photo ->
+                vCard.addPhoto(photo)
+            }
 
             vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
             SuccessResult(vCard)
