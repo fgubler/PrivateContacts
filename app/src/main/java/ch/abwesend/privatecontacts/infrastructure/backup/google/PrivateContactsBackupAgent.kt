@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 private const val LOGGING_PREFIX = "Custom backup:"
-class CustomBackupAgent : BackupAgentHelper() {
+class PrivateContactsBackupAgent : BackupAgentHelper() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
 
     override fun onBackup(oldState: ParcelFileDescriptor?, data: BackupDataOutput?, newState: ParcelFileDescriptor?) {
