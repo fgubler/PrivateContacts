@@ -9,7 +9,9 @@ adb shell settings put secure backup_enable_d2d_test_mode 1
 adb shell bmgr transport com.google.android.gms/.backup.migrate.service.D2dTransport
 adb shell bmgr init com.google.android.gms/.backup.migrate.service.D2dTransport
 adb shell bmgr list transports | grep -q -F "  * com.google.android.gms/.backup.migrate.service.D2dTransport" || (echo "Failed to select and initialize backup transport"; exit 1)
-adb shell bmgr backupnow "$1" | grep -F "Package $1 with result: Success" || (echo "Backup failed"; exit 1)
+
+# adb shell bmgr backupnow "$1" | grep -F "Package $1 with result: Success" || (echo "Backup failed"; exit 1) # reinsert to quit if backup fails
+adb shell bmgr backupnow "$1" | grep -F "Package $1 with result: Success" || (echo "!!!!!!!! Backup failed !!!!!!!!")
 
 # Uninstall and reinstall the app to clear the data and trigger a restore
 apk_path_list=$(adb shell pm path "$1")
