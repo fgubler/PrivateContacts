@@ -56,6 +56,7 @@ class DatabaseInitializer {
         get() = mutableListOf(
             ContactEditable(
                 id = ContactIdInternal.randomId(),
+                importId = null,
                 firstName = "Darth",
                 lastName = "Vader",
                 nickname = "Darthy",
@@ -68,6 +69,7 @@ class DatabaseInitializer {
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
+                importId = null,
                 firstName = "Luke",
                 lastName = "Skywalker",
                 nickname = "Lucky Luke",
@@ -160,6 +162,7 @@ class DatabaseInitializer {
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
+                importId = null,
                 firstName = "Obi-Wan",
                 lastName = "Kenobi",
                 nickname = "Obi",
@@ -189,6 +192,7 @@ class DatabaseInitializer {
             ),
             ContactEditable(
                 id = ContactIdInternal.randomId(),
+                importId = null,
                 firstName = "Yoda",
                 lastName = "",
                 nickname = "Yo-Da",

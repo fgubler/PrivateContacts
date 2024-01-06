@@ -106,7 +106,7 @@ class VCardMappingIntegrationTest : RepositoryTestBase() {
         assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
         val resultContact = contactResult.getValueOrNull()
         assertThat(resultContact).isNotNull
-        assertThat(resultContact!!.importId?.value).isEqualTo(uuid)
+        assertThat(resultContact!!.importId?.uuid).isEqualTo(uuid)
         assertThat(resultContact.id).isInstanceOf(IContactIdInternal::class.java)
         assertThat((resultContact.id as IContactIdInternal).uuid).isNotEqualTo(uuid) // should choose a new UUID
         assertThat(resultContact.type).isEqualTo(type)

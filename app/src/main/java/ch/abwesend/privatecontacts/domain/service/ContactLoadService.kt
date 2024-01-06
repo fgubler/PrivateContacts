@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
-import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
@@ -29,8 +28,6 @@ class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val androidContactService: IAndroidContactLoadService by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
-
-    private val dispatchers: IDispatchers by injectAnywhere()
 
     suspend fun loadFullContactsByType(type: ContactType): List<IContact> =
         when (type) {
@@ -119,7 +116,4 @@ class ContactLoadService {
             }
         }
     }
-
-    suspend fun filterForExistingContacts(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal> =
-        contactRepository.filterForExisting(contactIds)
 }
