@@ -65,16 +65,20 @@ object ImportCategoryComponent {
         val targetType = viewModel.targetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
         val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
-        val replaceExisting = viewModel.replaceExistingContacts.value
+        var replaceExistingContacts: Boolean by remember { mutableStateOf(false) }
 
         ImportExportCategory(title = R.string.import_title) {
             TargetTypeFields(viewModel, targetType, selectedAccount)
-            Spacer(modifier = Modifier.height(10.dp))
+
             if (targetType == ContactType.SECRET) {
-                ReplaceExistingContactsCheckBox(viewModel, replaceExisting)
                 Spacer(modifier = Modifier.height(10.dp))
+                ReplaceExistingContactsCheckBox(replaceExistingContacts) {
+                    replaceExistingContacts = !replaceExistingContacts
+                }
             }
-            ImportButton(viewModel, permissionProvider, targetType, selectedAccount, replaceExisting)
+
+            Spacer(modifier = Modifier.height(10.dp))
+            ImportButton(viewModel, permissionProvider, targetType, selectedAccount, replaceExistingContacts)
         }
 
         ProgressAndResultHandler(viewModel = viewModel)
@@ -99,12 +103,7 @@ object ImportCategoryComponent {
     }
 
     @Composable
-    private fun ReplaceExistingContactsCheckBox(
-        viewModel: ContactImportViewModel,
-        replaceExisting: Boolean,
-    ) {
-        val toggleValue: () -> Unit = { viewModel.setReplaceExisting(!replaceExisting) }
-
+    private fun ReplaceExistingContactsCheckBox(currentValue: Boolean, toggleValue: () -> Unit) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -125,7 +124,7 @@ object ImportCategoryComponent {
                 )
             }
             Checkbox(
-                checked = replaceExisting,
+                checked = currentValue,
                 onCheckedChange = { toggleValue() },
                 modifier = Modifier.padding(start = 10.dp)
             )

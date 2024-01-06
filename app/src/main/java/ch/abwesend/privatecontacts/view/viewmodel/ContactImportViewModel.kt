@@ -37,9 +37,6 @@ class ContactImportViewModel : ViewModel() {
     private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
     val targetAccount: State<ContactAccount?> = _targetAccount
 
-    private val _replaceExistingContacts: MutableState<Boolean> = mutableStateOf(false)
-    val replaceExistingContacts: State<Boolean> = _replaceExistingContacts
-
     /** implemented as a resource to show a loading-indicator during import */
     private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
     val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _importResult
@@ -50,10 +47,6 @@ class ContactImportViewModel : ViewModel() {
 
     fun selectTargetAccount(contactAccount: ContactAccount) {
         _targetAccount.value = contactAccount
-    }
-
-    fun setReplaceExisting(replaceExisting: Boolean) {
-        _replaceExistingContacts.value = replaceExisting
     }
 
     fun resetImportResult() {
