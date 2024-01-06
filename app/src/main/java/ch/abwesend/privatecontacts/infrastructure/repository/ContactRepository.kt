@@ -251,13 +251,9 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             val byId = database.contactDao().filterForExisting(uuids)
             val byImportId = database.contactDao().getExistingIdsByImportIds(uuids)
             byId + byImportId
-        }
+        }.flatten()
 
-        val contactIds = bulkResult
-            .flatten()
-            .map { ContactIdInternal(it) }
-            .toSet()
-
+        val contactIds = bulkResult.map { ContactIdInternal(it) }.toSet()
         return resolveContacts(contactIds)
     }
 }

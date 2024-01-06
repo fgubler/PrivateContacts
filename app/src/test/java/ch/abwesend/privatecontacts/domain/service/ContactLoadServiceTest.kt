@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
-import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
@@ -15,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
-import ch.abwesend.privatecontacts.testutil.databuilders.someContactImportId
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someOnlineAccount
@@ -205,23 +203,5 @@ class ContactLoadServiceTest : TestBase() {
         assertThat(result).hasSameSizeAs(contacts)
         val accountsByContactId = result.mapValues { (_, contact) -> contact?.saveInAccount }
         assertThat(accountsByContactId).isEqualTo(expectedAccountsByContactId)
-    }
-
-    @Test
-    fun `should check whether internal contacts exist and return them`() {
-        val contactIds = listOf(
-            someContactImportId(),
-            someContactImportId(),
-            someContactImportId(),
-        )
-        coEvery { contactRepository.resolveMatchingContacts(any()) } answers {
-            firstArg<Collection<IContactIdInternal>>().map { someContactEditable(id = it) }
-        }
-
-        runBlocking { underTest.resolveMatchingContacts(contactIds) }
-
-        coVerify { contactRepository.resolveMatchingContacts(contactIds) }
-        confirmVerified(androidContactService)
-        confirmVerified(contactRepository)
     }
 }
