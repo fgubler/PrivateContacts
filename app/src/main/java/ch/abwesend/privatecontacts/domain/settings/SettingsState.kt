@@ -51,6 +51,7 @@ interface ISettingsState {
 
     // Others
     val sendErrorsToCrashlytics: Boolean
+    val useGoogleBackup: Boolean
     val currentVersion: Int
 }
 
@@ -75,6 +76,7 @@ data class SettingsState(
     override val showAndroidContacts: Boolean,
 
     override val sendErrorsToCrashlytics: Boolean,
+    override val useGoogleBackup: Boolean,
     override val currentVersion: Int,
 ) : ISettingsState {
     companion object {
@@ -90,6 +92,7 @@ data class SettingsState(
             observeIncomingCalls = true,
             showAndroidContacts = true,
             sendErrorsToCrashlytics = true,
+            useGoogleBackup = true,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,

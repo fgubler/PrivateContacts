@@ -224,6 +224,7 @@
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
+    <string name="settings_category_privacy">Privacy</string>
 
     <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
     <string name="settings_info_dialog_android_contacts_permission">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
@@ -245,6 +246,8 @@
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
+    <string name="settings_entry_google_one_backup">Use Google backup</string>
+    <string name="settings_entry_google_one_backup_description">If enabled, the app-settings as well as the list of secret contacts will be backed up as part of the "normal" Google One backup to be restored on a new device (max. 25MB).</string>
 
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
