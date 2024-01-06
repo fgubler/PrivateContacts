@@ -34,6 +34,8 @@ fun someInternalContactId(): ContactIdInternal = ContactIdInternal.randomId()
 fun someContactImportId(): ContactImportId = ContactImportId(UUID.randomUUID())
 fun someExternalContactId(contactNo: Long = 442): ContactIdAndroid = ContactIdAndroid(contactNo = contactNo)
 
+fun someImportId(uuid: UUID = UUID.randomUUID()): ContactImportId = ContactImportId(uuid)
+
 fun someContactBase(
     id: ContactId = someInternalContactId(),
     firstName: String = "John",
@@ -109,6 +111,7 @@ fun someContactEditableByIdType(
 
 fun someContactEditable(
     id: ContactId = someInternalContactId(),
+    importId: ContactImportId? = null,
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -121,6 +124,7 @@ fun someContactEditable(
     saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
+    importId = importId,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
@@ -209,6 +213,7 @@ fun someTestContact(
 
 fun <T : ContactId> someContactEditableGeneric(
     id: T,
+    importId: ContactImportId? = null,
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -221,7 +226,7 @@ fun <T : ContactId> someContactEditableGeneric(
     saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = ContactEditable(
     id = id,
-    importId = null,
+    importId = importId,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
