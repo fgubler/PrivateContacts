@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
@@ -19,20 +20,22 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactDataEntity
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableWithId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEntity
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
+import ch.abwesend.privatecontacts.testutil.databuilders.someImportId
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
-import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.runs
+import io.mockk.spyk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -56,11 +59,11 @@ class ContactRepositoryTest : RepositoryTestBase() {
     @RelaxedMockK
     private lateinit var searchService: FullTextSearchService
 
-    @InjectMockKs
     private lateinit var underTest: ContactRepository
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
+        underTest = spyk(ContactRepository())
         module.single { contactDataRepository }
         module.single { contactGroupRepository }
         module.single { contactImageRepository }
@@ -345,5 +348,51 @@ class ContactRepositoryTest : RepositoryTestBase() {
         assertThat(result[0].phoneNumbers).hasSize(2)
         assertThat(result[1].id).isEqualTo(contactId2)
         assertThat(result[1].phoneNumbers).hasSize(1)
+    }
+
+    @Test
+    fun `should resolve matching contacts by id`() {
+        val importIds = listOf(someImportId(), someImportId(), someImportId())
+        val importUuids = importIds.map { it.uuid }.toSet()
+        val internalIds = importUuids.map { ContactIdInternal(it) }
+        coEvery { contactDao.filterForExisting(any()) } answers {
+            firstArg<Collection<UUID>>().toList()
+        }
+        coEvery { contactDao.getExistingIdsByImportIds(any()) } returns emptyList()
+        coEvery { underTest.resolveContacts(any()) } answers {
+            val contactIds: Set<IContactIdInternal> = firstArg()
+            contactIds.map { someContactEditable(id = it) }
+        }
+
+        val result = runBlocking { underTest.resolveMatchingContacts(importIds) }
+
+        assertThat(result).hasSameSizeAs(importIds)
+        val resultingIds = result.map { it.id }
+        assertThat(resultingIds).isEqualTo(internalIds)
+        coVerify { contactDao.filterForExisting(importUuids) }
+        coVerify { underTest.resolveContacts(internalIds.toSet()) }
+    }
+
+    @Test
+    fun `should resolve matching contacts by importId`() {
+        val importIds = listOf(someImportId(), someImportId(), someImportId())
+        val importUuids = importIds.map { it.uuid }.toSet()
+        val internalIds = importUuids.map { ContactIdInternal(it) }
+        coEvery { contactDao.getExistingIdsByImportIds(any()) } answers {
+            firstArg<Collection<UUID>>().toList()
+        }
+        coEvery { contactDao.filterForExisting(any()) } returns emptyList()
+        coEvery { underTest.resolveContacts(any()) } answers {
+            val contactIds: Set<IContactIdInternal> = firstArg()
+            contactIds.map { someContactEditable(id = it) }
+        }
+
+        val result = runBlocking { underTest.resolveMatchingContacts(importIds) }
+
+        assertThat(result).hasSameSizeAs(importIds)
+        val resultingIds = result.map { it.id }
+        assertThat(resultingIds).isEqualTo(internalIds)
+        coVerify { contactDao.getExistingIdsByImportIds(importUuids) }
+        coVerify { underTest.resolveContacts(internalIds.toSet()) }
     }
 }

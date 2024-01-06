@@ -38,6 +38,7 @@ class AndroidContactMapper {
             val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
             ContactEditable(
                 id = ContactIdAndroid(contactNo = contactId),
+                importId = null,
                 type = ContactType.PUBLIC,
                 firstName = "$firstName$middleNamePart",
                 lastName = lastName,

@@ -7,7 +7,6 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
-import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
@@ -204,23 +203,5 @@ class ContactLoadServiceTest : TestBase() {
         assertThat(result).hasSameSizeAs(contacts)
         val accountsByContactId = result.mapValues { (_, contact) -> contact?.saveInAccount }
         assertThat(accountsByContactId).isEqualTo(expectedAccountsByContactId)
-    }
-
-    @Test
-    fun `should check whether internal contacts exist`() {
-        val contactIds = listOf(
-            someInternalContactId(),
-            someInternalContactId(),
-            someInternalContactId(),
-        )
-        coEvery { contactRepository.filterForExisting(any()) } answers {
-            firstArg<Collection<IContactIdInternal>>().toSet()
-        }
-
-        runBlocking { underTest.filterForExistingContacts(contactIds) }
-
-        coVerify { contactRepository.filterForExisting(contactIds) }
-        confirmVerified(androidContactService)
-        confirmVerified(contactRepository)
     }
 }

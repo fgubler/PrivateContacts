@@ -6,22 +6,30 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Checkbox
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -57,11 +65,20 @@ object ImportCategoryComponent {
         val targetType = viewModel.targetType.value
         val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
         val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
+        var replaceExistingContacts: Boolean by remember { mutableStateOf(false) }
 
         ImportExportCategory(title = R.string.import_title) {
             TargetTypeFields(viewModel, targetType, selectedAccount)
+
+            if (targetType == ContactType.SECRET) {
+                Spacer(modifier = Modifier.height(10.dp))
+                ReplaceExistingContactsCheckBox(replaceExistingContacts) {
+                    replaceExistingContacts = !replaceExistingContacts
+                }
+            }
+
             Spacer(modifier = Modifier.height(10.dp))
-            ImportButton(viewModel, permissionProvider, targetType, selectedAccount)
+            ImportButton(viewModel, permissionProvider, targetType, selectedAccount, replaceExistingContacts)
         }
 
         ProgressAndResultHandler(viewModel = viewModel)
@@ -86,16 +103,46 @@ object ImportCategoryComponent {
     }
 
     @Composable
+    private fun ReplaceExistingContactsCheckBox(currentValue: Boolean, toggleValue: () -> Unit) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { toggleValue() },
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(id = R.string.replace_existing_contacts_label),
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.body1,
+                )
+                Text(
+                    text = stringResource(id = R.string.replace_existing_contacts_description),
+                    fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.body2,
+                )
+            }
+            Checkbox(
+                checked = currentValue,
+                onCheckedChange = { toggleValue() },
+                modifier = Modifier.padding(start = 10.dp)
+            )
+        }
+    }
+
+    @Composable
     private fun ImportButton(
         viewModel: ContactImportViewModel,
         permissionProvider: IPermissionProvider,
         targetType: ContactType,
         selectedAccount: ContactAccount,
+        replaceExisting: Boolean,
     ) {
         val importAction = rememberActionWithContactPermission(permissionProvider)
 
         val launcher = rememberOpenFileLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
-            viewModel.importContacts(sourceFile, targetType, selectedAccount)
+            viewModel.importContacts(sourceFile, targetType, selectedAccount, replaceExisting)
         }
 
         importAction.VisibleComponent()
@@ -175,9 +222,9 @@ object ImportCategoryComponent {
                 Text(text = importData.newImportedContacts.size.toString())
             }
             Row {
-                Text(text = stringResource(id = R.string.ignored_existing_contacts), fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.replaced_existing_contacts), fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(5.dp))
-                Text(text = importData.existingIgnoredContacts.size.toString())
+                Text(text = importData.replacedExistingContacts.size.toString())
             }
             Row {
                 Text(text = stringResource(id = R.string.vcf_parsing_errors), fontWeight = FontWeight.Bold)

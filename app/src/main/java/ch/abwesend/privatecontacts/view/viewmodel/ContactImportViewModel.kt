@@ -56,16 +56,22 @@ class ContactImportViewModel : ViewModel() {
         }
     }
 
-    fun importContacts(sourceFile: Uri?, targetType: ContactType, targetAccount: ContactAccount) {
+    fun importContacts(
+        sourceFile: Uri?,
+        targetType: ContactType,
+        targetAccount: ContactAccount,
+        replaceExisting: Boolean,
+    ) {
         if (sourceFile == null) {
             logger.warning("Trying to import vcf file but no file is selected")
             return
         }
         logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType in account ${targetAccount.type}")
+        logger.debug("Importing vcf file as $targetType, ${if (replaceExisting) "" else "not "}replacing")
 
         viewModelScope.launch {
             _importResult.withLoadingState {
-                val result = importService.importContacts(sourceFile, targetType, targetAccount)
+                val result = importService.importContacts(sourceFile, targetType, targetAccount, replaceExisting)
                 logger.debug("Imported vcf file: result of type ${result.javaClass.simpleName}")
                 result
             }
