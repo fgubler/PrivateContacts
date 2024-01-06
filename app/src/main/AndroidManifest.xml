@@ -18,7 +18,7 @@
         android:name=".application.PrivateContactsApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
-        android:backupAgent=".infrastructure.backup.google.PrivateContactsBackupAgent"
+        android:backupAgent=".infrastructure.backup.google.CustomBackupAgent"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/app_icon_round"
