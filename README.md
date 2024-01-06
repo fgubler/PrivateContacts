@@ -14,10 +14,10 @@ Additional features
 - Moving contacts from the standard Android database to the app (and removing them from the standard database so they are no longer visible to other apps)
 - Creating new contacts in the standard Android database
 - Moving contacts from Private Contacts back the the standard Android contact database (in case that is desired)
-
+- Support of Imports/Exports in vcf format
 
 ## What the app will be able to do in the future
-- Support of Imports/Exports in vcf format
+
 - Support of additional features of a contact app
   - Profile images
   - Mark contacts as favorites
@@ -26,6 +26,12 @@ Additional features
 - Maybe an additional category of "Anonymized" contacts which are shared with other apps but under an alias.
 - Encryption and password protection
 - Suggestions are always welcome...
+
+## Technical Restrictions
+- What we would like to do is provide contacts to e.g. the official phone-app while withholding them from e.g. WhatsApp. Unfortunately, Android does not allow this: we cannot provide a contact to some apps but not to others.
+  - Either a contact is in the public contact-database where every app with the necessary permission can read it;
+  - or it is secret and no app (other) can read it.
+- Both Google and phone manufacturers like Samsung tightly restrict call-detection (i.e. reacting to an incoming call by e.g. showing a popup). This is good because it improves our privacy. Unfortunately, it also restricts what we can do within this app. We try to detect incoming calls and show notifications but the corresponding logic changes with every version of Android and may also vary between phone manufacturers. Therefore, the detection-feature can be a bit flaky and may not work reliably on your device. We are sorry for the inconvenience and happy about feedback (e.g. on which devices it does not work or also technical suggestions for improving it).   
 
 ## Screenshots
 
