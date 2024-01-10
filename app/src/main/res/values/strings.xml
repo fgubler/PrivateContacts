@@ -249,6 +249,8 @@
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
 
+    <string name="settings_action_copy_logs">Copy logs to clipboard</string>
+
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
 

@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
+import android.widget.Toast
+import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -15,8 +17,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.LogCache
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
@@ -45,6 +52,8 @@ fun SettingsActions(viewModel: SettingsViewModel) {
         DropdownMenuItem(onClick = { showDatabaseResetConfirmation = true }) {
             Text(stringResource(id = R.string.settings_action_reset_database))
         }
+        Divider()
+        CopyLogToClipBoardEntry()
     }
 
     ConfirmationDialogs(
@@ -123,4 +132,19 @@ private fun DatabaseResetStateDialog(state: DatabaseResetState, changeState: (Da
             )
         }
     }
+}
+
+@Composable
+private fun CopyLogToClipBoardEntry() {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
+
+    DropdownMenuItem(
+        onClick = {
+            val logs = LogCache.getLog()
+            clipboardManager.setText(AnnotatedString(logs))
+            Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
+        },
+        content = { Text(stringResource(id = R.string.settings_action_copy_logs)) }
+    )
 }
