@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
@@ -40,6 +41,7 @@ class ContactExportService {
         contacts: List<IContact>,
     ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
         val vCardResult = importExportRepository.exportContacts(contacts, vCardVersion)
+            .ifHasError { logger.warning("Failed to create vCards for contacts: $it") }
 
         val fileWriteResult = vCardResult.mapValueToBinaryResult { createdVCards ->
             fileWriteService.writeContentToFile(createdVCards.fileContent, targetFile)
@@ -48,6 +50,7 @@ class ContactExportService {
                     val successfulContacts = contacts.minus(failedContacts.toSet())
                     ContactExportData(successfulContacts = successfulContacts, failedContacts = failedContacts)
                 }
+                .ifHasError { logger.warning("Failed to export vCards to file: $it") }
                 .mapError { FILE_WRITING_FAILED }
         }
         fileWriteResult

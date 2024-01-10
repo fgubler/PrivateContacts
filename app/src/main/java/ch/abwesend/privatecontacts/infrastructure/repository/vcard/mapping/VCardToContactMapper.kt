@@ -68,7 +68,7 @@ class VCardToContactMapper {
 
             SuccessResult(contact)
         } catch (e: Exception) {
-            logger.warning("Failed to map contact '${vCard.uid}'")
+            logger.warning("Failed to map contact '${vCard.uid}'", e)
             ErrorResult(Unit)
         }
 
