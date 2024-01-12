@@ -49,6 +49,7 @@
     <string name="error">Error</string>
     <string name="errors">Errors</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="unexpected_error">Unexpected error</string>
     <string name="validation_error">Validation error</string>
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
@@ -293,6 +294,8 @@
     <string name="import_show_error_details">Show error details</string>
     <string name="import_show_result_overview">Show result overview</string>
     <string name="import_failed_contacts">Contacts which could not be imported</string>
+
+    <string name="file_picker_error">Failed to open file explorer: cannot select file.\nYour phone does not seem to support this action. We apologize for the inconvenience.</string>
 
     <string name="export_title">Export</string>
     <string name="export_contact">Export contact</string>

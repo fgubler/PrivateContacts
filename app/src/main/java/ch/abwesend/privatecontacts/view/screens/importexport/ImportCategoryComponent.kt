@@ -140,6 +140,7 @@ object ImportCategoryComponent {
         replaceExisting: Boolean,
     ) {
         val importAction = rememberActionWithContactPermission(permissionProvider)
+        var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
 
         val launcher = rememberOpenFileLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
             viewModel.importContacts(sourceFile, targetType, selectedAccount, replaceExisting)
@@ -148,7 +149,9 @@ object ImportCategoryComponent {
         importAction.VisibleComponent()
         SecondaryButton(
             onClick = {
-                importAction.executeAction(targetType.androidPermissionRequired) { launcher.launch() }
+                importAction.executeAction(targetType.androidPermissionRequired) {
+                    showFilePickerErrorDialog = !launcher.launch()
+                }
             },
             content = {
                 Text(
@@ -157,6 +160,12 @@ object ImportCategoryComponent {
                 )
             }
         )
+
+        if (showFilePickerErrorDialog) {
+            OkDialog(title = R.string.unexpected_error, text = R.string.file_picker_error) {
+                showFilePickerErrorDialog = false
+            }
+        }
     }
 
     @Composable

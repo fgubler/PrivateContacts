@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher
@@ -84,6 +85,7 @@ fun ExportContactConfirmationDialog(
     if (visible) {
         val numberOfContacts = contacts.size
         var vCardVersion: VCardVersion by remember { mutableStateOf(VCardVersion.default) }
+        var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
 
         val defaultFileName = createDefaultExportFileName(contacts, vCardVersion)
 
@@ -102,12 +104,19 @@ fun ExportContactConfirmationDialog(
             title = titleRes,
             yesButtonLabel = R.string.ok,
             noButtonLabel = R.string.cancel,
-            onYes = { launcher.launch() },
+            onYes = { showFilePickerErrorDialog = !launcher.launch() },
             onNo = onCancel,
             text = {
                 VCardVersionField(vCardVersion) { newValue -> vCardVersion = newValue }
             },
         )
+
+        if (showFilePickerErrorDialog) {
+            OkDialog(title = R.string.unexpected_error, text = R.string.file_picker_error) {
+                onCancel()
+                showFilePickerErrorDialog = false
+            }
+        }
     }
 }
 
