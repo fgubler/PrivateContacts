@@ -31,8 +31,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 34
-        versionCode 49
-        versionName "3.4.1"
+        versionCode 50
+        versionName "3.4.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -132,7 +132,7 @@ dependencies {
     implementation "com.alexstyl:contactstore:${contactStoreVersion}"
     implementation "com.alexstyl:contactstore-coroutines:${contactStoreVersion}"
 
-    implementation 'com.googlecode.ez-vcard:ez-vcard:0.12.0'
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.12.0' // 0.12.1 produces strange errors
 
     // ===== Testing =====
     // Unit Tests
