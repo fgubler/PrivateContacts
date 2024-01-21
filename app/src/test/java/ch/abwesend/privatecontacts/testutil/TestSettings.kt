@@ -30,6 +30,7 @@ data class TestSettings(
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
     override var showAndroidContacts: Boolean = currentSettings.showAndroidContacts
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
+    override var useGoogleBackup: Boolean = currentSettings.useGoogleBackup
     override var currentVersion: Int = 0
     override var defaultExternalContactAccount: ContactAccount = currentSettings.defaultExternalContactAccount
     override var defaultVCardVersion: VCardVersion = currentSettings.defaultVCardVersion

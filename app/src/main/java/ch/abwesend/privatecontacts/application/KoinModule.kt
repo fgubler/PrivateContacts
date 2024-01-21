@@ -131,7 +131,7 @@ internal val koinModule = module {
     single { ContactImageRepository() }
     single { CallNotificationRepository() }
     single { ToastRepository() }
-    single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) }
+    single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
     single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
 
     // Factories

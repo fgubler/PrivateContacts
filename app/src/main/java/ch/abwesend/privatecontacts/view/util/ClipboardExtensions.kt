@@ -25,7 +25,7 @@ fun Modifier.longClickForCopyToClipboard(
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
-    Modifier.combinedClickable(
+    combinedClickable(
         onClick = onClick,
         onLongClick = {
             val text = AnnotatedString(text = textToCopy)

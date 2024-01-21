@@ -14,12 +14,11 @@ import ezvcard.property.Address
 fun PhysicalAddress.toVCardAddress(): Address {
     val vCardData = Address()
     vCardData.streetAddress = value
-    val vCardType = getContactDataType()
-    vCardData.types.add(vCardType)
+    getContactDataType()?.let { vCardType -> vCardData.types.add(vCardType) }
     return vCardData
 }
 
-private fun PhysicalAddress.getContactDataType(): AddressType {
+private fun PhysicalAddress.getContactDataType(): AddressType? {
     val typeString = getVCardStringByContactDataType(type)
-    return AddressType.get(typeString)
+    return getAddressType(typeString)
 }

@@ -13,12 +13,11 @@ import ezvcard.property.Email
 
 fun EmailAddress.toVCardEmailAddress(): Email {
     val vCardData = Email(value)
-    val vCardType = getContactDataType()
-    vCardData.types.add(vCardType)
+    getContactDataType()?.let { vCardType -> vCardData.types.add(vCardType) }
     return vCardData
 }
 
-private fun EmailAddress.getContactDataType(): EmailType {
+private fun EmailAddress.getContactDataType(): EmailType? {
     val typeString = getVCardStringByContactDataType(type)
-    return EmailType.get(typeString)
+    return getEmailType(typeString)
 }
