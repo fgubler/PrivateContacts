@@ -40,7 +40,7 @@ private inline fun <reified T : Any, S : Any> S.getVCardDataType(
     converter(typeString)
 } catch (e: Exception) {
     val baseMessage = "Failed to get ${T::class.java.simpleName}"
-    logger.error(baseMessage, e) // TODO consider changing to warning
+    logger.error(baseMessage, e) // this would probably happen due to Proguard and Reflection => need to know...
     logger.debugLocally("$baseMessage '$typeString'", e)
     null
 }
