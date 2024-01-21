@@ -13,6 +13,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 private const val LOGGING_PREFIX = "Custom backup:"
+
+// TODO currently, this would disable the backup of settings but not of the SQLite database.
+//   that would probably require to get the FileBackupHelper approach to work. => Fix it
 class CustomBackupAgent : BackupAgentHelper() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
 

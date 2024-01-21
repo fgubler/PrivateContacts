@@ -301,13 +301,15 @@ object SettingsScreen {
     @Composable
     private fun PrivacyCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
-            SettingsCheckbox(
-                label = R.string.settings_entry_google_one_backup,
-                description = R.string.settings_entry_google_one_backup_description,
-                value = currentSettings.useGoogleBackup,
-                onValueChanged = { settingsRepository.useGoogleBackup = it }
-            )
-            SettingsEntryDivider()
+            // TODO reinsert once CustomBackupAgent works properly
+//            SettingsCheckbox(
+//                label = R.string.settings_entry_google_one_backup,
+//                description = R.string.settings_entry_google_one_backup_description,
+//                value = currentSettings.useGoogleBackup,
+//                onValueChanged = { settingsRepository.useGoogleBackup = it }
+//            )
+//            SettingsEntryDivider()
+
             SettingsCheckbox(
                 label = R.string.settings_entry_error_reports,
                 description = R.string.settings_entry_error_reports_description,
