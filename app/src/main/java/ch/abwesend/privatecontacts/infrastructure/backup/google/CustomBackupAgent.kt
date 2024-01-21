@@ -13,24 +13,29 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 
 private const val LOGGING_PREFIX = "Custom backup:"
+private const val BACKUP_HELPER_KEY_NO_FILE_BACKUP = "NoFileBackupPlease"
 
-// TODO currently, this would disable the backup of settings but not of the SQLite database.
-//   that would probably require to get the FileBackupHelper approach to work. => Fix it
 class CustomBackupAgent : BackupAgentHelper() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
 
-    override fun onBackup(oldState: ParcelFileDescriptor?, data: BackupDataOutput?, newState: ParcelFileDescriptor?) {
-        if (shouldPerformBackup()) {
-            logger.info("$LOGGING_PREFIX creating backup")
-            super.onBackup(oldState, data, newState)
+    override fun onCreate() {
+        super.onCreate()
+
+        if (!shouldPerformFileBackup()) {
+            logger.info("$LOGGING_PREFIX preventing file backup")
+            val backupHelper = PreventFileBackupHelper(this)
+            addHelper(BACKUP_HELPER_KEY_NO_FILE_BACKUP, backupHelper)
         }
     }
 
+    override fun onBackup(oldState: ParcelFileDescriptor?, data: BackupDataOutput?, newState: ParcelFileDescriptor?) {
+        logger.info("$LOGGING_PREFIX creating backup")
+        super.onBackup(oldState, data, newState)
+    }
+
     override fun onFullBackup(data: FullBackupDataOutput?) {
-        if (shouldPerformBackup()) {
-            logger.info("$LOGGING_PREFIX creating full backup")
-            super.onFullBackup(data)
-        }
+        logger.info("$LOGGING_PREFIX creating full backup")
+        super.onFullBackup(data)
     }
 
     override fun onRestore(data: BackupDataInput?, appVersionCode: Int, newState: ParcelFileDescriptor?) {
@@ -43,15 +48,15 @@ class CustomBackupAgent : BackupAgentHelper() {
         logger.error("$LOGGING_PREFIX backup-Quota of $quotaBytes bytes exceeded: needed $backupDataBytes bytes")
     }
 
-    private fun shouldPerformBackup(): Boolean =
+    private fun shouldPerformFileBackup(): Boolean =
         try {
-            logger.info("$LOGGING_PREFIX checking settings to decide whether to perform Google backup")
+            logger.info("$LOGGING_PREFIX checking settings to decide whether to perform Google file backup")
             val settings = runBlocking { settingsRepository.settings.first() }
             if (settings.useGoogleBackup) {
-                logger.info("$LOGGING_PREFIX checked settings: proceeding with Google backup")
+                logger.info("$LOGGING_PREFIX checked settings: proceeding with Google file backup")
                 true
             } else {
-                logger.info("$LOGGING_PREFIX checked settings: skipping Google backup")
+                logger.info("$LOGGING_PREFIX checked settings: skipping Google file backup")
                 false
             }
         } catch (e: Exception) {
