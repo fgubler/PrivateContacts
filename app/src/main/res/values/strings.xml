@@ -247,8 +247,6 @@
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
-    <string name="settings_entry_google_one_backup">Use Google backup</string>
-    <string name="settings_entry_google_one_backup_description">If enabled, the app-settings as well as the list of secret contacts will be backed up as part of the "normal" Google One backup to be restored on a new device (max. 25MB).</string>
 
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>

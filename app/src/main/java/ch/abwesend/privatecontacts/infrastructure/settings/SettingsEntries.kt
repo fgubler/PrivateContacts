@@ -61,10 +61,6 @@ internal val sendErrorsToCrashlyticsEntry = SettingsEntry(
     key = booleanPreferencesKey("sendErrorsToCrashlytics"),
     defaultValue = defaultSettings.sendErrorsToCrashlytics
 )
-internal val useGoogleBackupEntry = SettingsEntry(
-    key = booleanPreferencesKey("useGoogleBackup"),
-    defaultValue = defaultSettings.useGoogleBackup
-)
 internal val defaultContactTypeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("defaultContactType"),
     defaultValue = defaultSettings.defaultContactType

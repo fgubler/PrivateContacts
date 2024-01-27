@@ -40,6 +40,5 @@ interface SettingsRepository : ISettingsState {
 
     // Others
     override var sendErrorsToCrashlytics: Boolean
-    override var useGoogleBackup: Boolean
     override var currentVersion: Int
 }
