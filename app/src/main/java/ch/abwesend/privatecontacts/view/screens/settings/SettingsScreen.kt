@@ -82,7 +82,7 @@ object SettingsScreen {
                 DefaultValuesCategory(permissionProvider, settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                MiscellaneousCategory(settingsRepository, currentSettings)
+                PrivacyCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }
@@ -299,8 +299,8 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
+    private fun PrivacyCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        SettingsCategory(titleRes = R.string.settings_category_privacy) {
             SettingsCheckbox(
                 label = R.string.settings_entry_error_reports,
                 description = R.string.settings_entry_error_reports_description,

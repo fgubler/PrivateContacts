@@ -13,12 +13,11 @@ import ezvcard.property.Telephone
 
 fun PhoneNumber.toVCardPhoneNumber(): Telephone {
     val vCardData = Telephone(value)
-    val vCardType = getContactDataType()
-    vCardData.types.add(vCardType)
+    getContactDataType()?.let { vCardType -> vCardData.types.add(vCardType) }
     return vCardData
 }
 
-private fun PhoneNumber.getContactDataType(): TelephoneType {
+private fun PhoneNumber.getContactDataType(): TelephoneType? {
     val typeString = getVCardStringByContactDataType(type)
-    return TelephoneType.get(typeString)
+    return getTelephoneType(typeString)
 }

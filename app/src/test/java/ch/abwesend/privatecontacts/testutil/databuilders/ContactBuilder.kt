@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.ContactImportId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET
@@ -26,10 +27,14 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactEntity
 import ch.abwesend.privatecontacts.testutil.TestContact
+import java.util.UUID
 
 fun someContactId(): ContactIdInternal = someInternalContactId()
 fun someInternalContactId(): ContactIdInternal = ContactIdInternal.randomId()
+fun someContactImportId(): ContactImportId = ContactImportId(UUID.randomUUID())
 fun someExternalContactId(contactNo: Long = 442): ContactIdAndroid = ContactIdAndroid(contactNo = contactNo)
+
+fun someImportId(uuid: UUID = UUID.randomUUID()): ContactImportId = ContactImportId(uuid)
 
 fun someContactBase(
     id: ContactId = someInternalContactId(),
@@ -54,6 +59,7 @@ fun someContactEntity(
     fullTextSearch: String = "TestSearch",
 ): ContactEntity = ContactEntity(
     rawId = id.uuid,
+    importId = null,
     externalContactNo = externalContactNo,
     firstName = firstName,
     lastName = lastName,
@@ -105,6 +111,7 @@ fun someContactEditableByIdType(
 
 fun someContactEditable(
     id: ContactId = someInternalContactId(),
+    importId: ContactImportId? = null,
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -117,6 +124,7 @@ fun someContactEditable(
     saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = someContactEditableGeneric(
     id = id,
+    importId = importId,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,
@@ -205,6 +213,7 @@ fun someTestContact(
 
 fun <T : ContactId> someContactEditableGeneric(
     id: T,
+    importId: ContactImportId? = null,
     firstName: String = "John",
     lastName: String = "Snow",
     nickname: String = "Lord Snow",
@@ -217,6 +226,7 @@ fun <T : ContactId> someContactEditableGeneric(
     saveInAccount: ContactAccount = ContactAccount.None,
 ): IContactEditable = ContactEditable(
     id = id,
+    importId = importId,
     firstName = firstName,
     lastName = lastName,
     nickname = nickname,

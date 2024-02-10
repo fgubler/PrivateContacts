@@ -14,12 +14,11 @@ import ezvcard.property.Related
 fun Company.toVCardCompany(mappingService: AndroidContactCompanyMappingService): Related {
     val vCardData = Related()
     vCardData.text = value
-    val vCardType = getContactDataType(mappingService)
-    vCardData.types.add(vCardType)
+    getContactDataType(mappingService)?.let { vCardType -> vCardData.types.add(vCardType) }
     return vCardData
 }
 
-private fun Company.getContactDataType(mappingService: AndroidContactCompanyMappingService): RelatedType {
+private fun Company.getContactDataType(mappingService: AndroidContactCompanyMappingService): RelatedType? {
     val typeString = mappingService.encodeToPseudoRelationshipLabel(type)
-    return RelatedType.get(typeString)
+    return getRelatedType(typeString)
 }

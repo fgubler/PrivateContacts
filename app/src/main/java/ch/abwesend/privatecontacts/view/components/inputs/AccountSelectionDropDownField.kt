@@ -42,14 +42,15 @@ fun AccountSelectionDropDownField(
     dropDownFieldProvider: ContactAccountDropDownFieldProvider,
 ) {
     val options = remember { getAccountOptions() }
-    val selectedOption: DropDownOption<ContactAccount> = options
+    val selectedOption: DropDownOption<ContactAccount>? = options
         .firstOrNull { it.value == selectedAccount }
-        ?: options.first().also {
+        ?: options.firstOrNull()?.also {
             selectedAccount.logger.info("Selected option not found: changing to ${it.value.type}")
             onValueChanged(it.value)
         }
 
-    dropDownFieldProvider(options, selectedOption, onValueChanged)
+    selectedOption?.let { dropDownFieldProvider(options, selectedOption, onValueChanged) }
+        ?: selectedAccount.logger.warning("No options found for account selection drop-down")
 }
 
 private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {

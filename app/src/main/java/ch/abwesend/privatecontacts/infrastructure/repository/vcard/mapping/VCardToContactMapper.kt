@@ -52,6 +52,8 @@ class VCardToContactMapper {
             val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
             contact.nickname = nicknames.filterNotNull().joinToString(", ")
 
+            contact.addNameWorkarounds(vCard)
+
             contact.notes = vCard.notes.orEmpty().mapNotNull { it.value }.joinToString(Constants.linebreak)
 
             val contactData = getContactData(vCard)
@@ -68,7 +70,7 @@ class VCardToContactMapper {
 
             SuccessResult(contact)
         } catch (e: Exception) {
-            logger.warning("Failed to map contact '${vCard.uid}'")
+            logger.warning("Failed to map contact '${vCard.uid}'", e)
             ErrorResult(Unit)
         }
 
@@ -133,5 +135,25 @@ class VCardToContactMapper {
     private fun Related.isPseudoRelationForCompany(): Boolean {
         val type = firstTypeOrNull
         return type != null && companyMappingService.matchesCompanyCustomRelationshipPattern(type)
+    }
+
+    /**
+     * Contacts without first-/last-name are not allowed.
+     * Workaround for nickname but also companies.
+     * TODO consider removing this once proper company-support is added
+     */
+    private fun IContactEditable.addNameWorkarounds(vCard: VCard) {
+        if (firstName.isEmpty() && lastName.isEmpty()) {
+            val organization = vCard.organization?.values.orEmpty()
+                .filterNot { it.isNullOrEmpty() }
+                .joinToString(" - ")
+
+            if (nickname.isNotEmpty()) {
+                firstName = nickname
+            } else if (organization.isNotEmpty()) {
+                // temporary workaround: this should actually be stored in a field like "organizationName"
+                firstName = organization
+            }
+        }
     }
 }

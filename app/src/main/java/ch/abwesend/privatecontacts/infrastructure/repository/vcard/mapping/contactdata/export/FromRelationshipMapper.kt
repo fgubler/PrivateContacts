@@ -14,12 +14,11 @@ import ezvcard.property.Related
 fun Relationship.toVCardRelationship(): Related {
     val vCardData = Related()
     vCardData.text = value
-    val vCardType = getContactDataType()
-    vCardData.types.add(vCardType)
+    getContactDataType()?.let { vCardType -> vCardData.types.add(vCardType) }
     return vCardData
 }
 
-private fun Relationship.getContactDataType(): RelatedType {
+private fun Relationship.getContactDataType(): RelatedType? {
     val typeString = getVCardStringByContactDataType(type)
-    return RelatedType.get(typeString)
+    return getRelatedType(typeString)
 }

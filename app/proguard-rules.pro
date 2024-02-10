@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# Keep all classes and resources from ezvcard: the library uses reflection in some cases
+# re-insterting those creates strange warnings => trying to go without, first
+#-keep class ezvcard.** { *; }
+#-keep interface ezvcard.** { *; }
+#-keepclassmembers class ezvcard.** { *; }
+-keepclassmembernames class ezvcard.** { *; }

@@ -28,6 +28,7 @@ interface IContactEditable : IContact, IContactBaseWithAccountInformation {
 
 data class ContactEditable(
     override val id: ContactId,
+    override val importId: ContactImportId?,
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,
@@ -38,7 +39,6 @@ data class ContactEditable(
     override val contactGroups: MutableList<ContactGroup>,
     override var saveInAccount: ContactAccount,
     override var isNew: Boolean = false,
-    override val importId: ContactImportId? = null,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()
@@ -53,6 +53,7 @@ data class ContactEditable(
             val type = Settings.current.defaultContactType
             return ContactEditable(
                 id = ContactIdInternal.randomId(),
+                importId = importId,
                 firstName = "",
                 lastName = "",
                 nickname = "",
@@ -63,7 +64,6 @@ data class ContactEditable(
                 contactGroups = mutableListOf(),
                 saveInAccount = ContactAccount.currentDefaultForContactType(type),
                 isNew = true,
-                importId = importId,
             )
         }
     }

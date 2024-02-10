@@ -41,8 +41,10 @@ class ContactImageRepository : RepositoryBase() {
             }
             ModelStatus.NEW -> {
                 logger.debug("Creating image for contact $contactId")
-                database.contactImageDao().insert(entity)
-                true
+                if (contactImage.isEmpty) false else {
+                    database.contactImageDao().insert(entity)
+                    true
+                }
             }
             ModelStatus.UNCHANGED -> { false }
         }

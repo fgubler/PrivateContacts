@@ -21,6 +21,7 @@ fun IContact.toEntity(contactId: IContactIdInternal): ContactEntity {
     return ContactEntity(
         rawId = contactId.uuid,
         externalContactNo = externalContactNo,
+        importId = importId?.uuid,
         type = type,
         firstName = firstName,
         lastName = lastName,

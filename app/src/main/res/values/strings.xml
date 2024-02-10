@@ -49,6 +49,7 @@
     <string name="error">Error</string>
     <string name="errors">Errors</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="unexpected_error">Unexpected error</string>
     <string name="validation_error">Validation error</string>
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
@@ -224,6 +225,7 @@
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
+    <string name="settings_category_privacy">Privacy</string>
 
     <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
     <string name="settings_info_dialog_android_contacts_permission">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
@@ -249,6 +251,8 @@
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
 
+    <string name="settings_action_copy_logs">Copy logs to clipboard</string>
+
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
 
@@ -273,6 +277,8 @@
 
     <string name="import_title">Import</string>
     <string name="import_contacts">Import contacts</string>
+    <string name="replace_existing_contacts_label">Replace matching contacts</string>
+    <string name="replace_existing_contacts_description">Replace an existing contact if it matches one from the import (same name and ID).</string>
     <string name="select_file_to_import">Select .vcf file to import</string>
     <string name="import_contacts_as">Import contacts as</string>
     <string name="import_contacts_progress">Contacts are being imported</string>
@@ -281,7 +287,7 @@
     <string name="file_reading_failed">Failed to read file</string>
     <string name="vcf_parsing_failed">Failed to read VCF in file</string>
     <string name="newly_imported_contacts">Newly imported contacts:</string>
-    <string name="ignored_existing_contacts">Ignored contacts:</string>
+    <string name="replaced_existing_contacts">Replaced contacts:</string>
     <string name="vcf_parsing_errors">VCF errors:</string>
     <string name="import_errors">Import errors:</string>
     <string name="import_validation_errors">Import validation errors:</string>
@@ -289,6 +295,8 @@
     <string name="import_show_error_details">Show error details</string>
     <string name="import_show_result_overview">Show result overview</string>
     <string name="import_failed_contacts">Contacts which could not be imported</string>
+
+    <string name="file_picker_error">Failed to open file explorer: cannot select file.\nYour phone does not seem to support this action. We apologize for the inconvenience.</string>
 
     <string name="export_title">Export</string>
     <string name="export_contact">Export contact</string>

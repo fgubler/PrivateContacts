@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.ContactImportId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -148,6 +149,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
 
         return ContactEditable(
             id = contactEntity.id,
+            importId = contactEntity.importId?.let { ContactImportId(it) },
             firstName = contactEntity.firstName,
             lastName = contactEntity.lastName,
             nickname = contactEntity.nickname,
@@ -243,15 +245,15 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         return ContactIdBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
     }
 
-    override suspend fun filterForExisting(contactIds: Collection<IContactIdInternal>): Set<IContactIdInternal> {
-        val bulkResult = bulkOperation(contactIds) { database, chunkedContactIds ->
+    override suspend fun resolveMatchingContacts(importIds: Collection<ContactImportId>): List<IContact> {
+        val bulkResult = bulkOperation(importIds) { database, chunkedContactIds ->
             val uuids = chunkedContactIds.map { it.uuid }.toSet()
-            database.contactDao().filterForExisting(uuids)
-        }
+            val byId = database.contactDao().filterForExisting(uuids)
+            val byImportId = database.contactDao().getExistingIdsByImportIds(uuids)
+            byId + byImportId
+        }.flatten()
 
-        return bulkResult
-            .flatten()
-            .map { ContactIdInternal(it) }
-            .toSet()
+        val contactIds = bulkResult.map { ContactIdInternal(it) }.toSet()
+        return resolveContacts(contactIds)
     }
 }

@@ -72,7 +72,7 @@ class ContactToVCardMapper {
             vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
             SuccessResult(vCard)
         } catch (e: Exception) {
-            logger.warning("Failed to map contact '${contact.id}'")
+            logger.warning("Failed to map contact '${contact.id}'", e)
             ErrorResult(contact)
         }
 

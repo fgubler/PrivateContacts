@@ -22,24 +22,28 @@ class LogcatLogger(
     override fun debugImpl(messages: Collection<String>) {
         for (message in messages) {
             Log.d(loggingTag, prefix(message))
+            LogCache.tryAddLog(LogLevel.DEBUG, message)
         }
     }
 
     override fun infoImpl(messages: Collection<String>) {
         for (message in messages) {
             Log.i(loggingTag, prefix(message))
+            LogCache.tryAddLog(LogLevel.INFO, message)
         }
     }
 
     override fun warningImpl(messages: Collection<String>) {
         for (message in messages) {
             Log.w(loggingTag, prefix(message))
+            LogCache.tryAddLog(LogLevel.WARNING, message)
         }
     }
 
     override fun errorImpl(messages: Collection<String>) {
         for (message in messages) {
             Log.e(loggingTag, prefix(message))
+            LogCache.tryAddLog(LogLevel.ERROR, message)
         }
     }
 
