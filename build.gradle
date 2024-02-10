@@ -25,7 +25,7 @@ buildscript {
         junitJupiterVersion = "5.10.1"
         junit5AndroidVersion = "1.4.0"
         archUnitVersion = "1.2.1"
-        mockkVersion = "1.13.9"
+        mockkVersion = "1.13.4" // version 1.13.9 introduces strange bugs with IContactIdInternal
     }
     repositories {
         google()
