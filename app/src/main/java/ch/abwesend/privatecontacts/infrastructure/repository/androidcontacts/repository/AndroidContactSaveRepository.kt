@@ -1,10 +1,15 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.model.IAndroidContactMutable
 import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.MutableContactGroup
 
+/**
+ * Beware: ContactStore access uses ContentProviders which have a maximum of 500 operations.
+ * => All batch-operations must be chunked. Also, it is probably better not to parallelize too much.
+ */
 class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
     suspend fun deleteContacts(contactIds: Set<IContactIdExternal>) {
         if (contactIds.isEmpty()) {
@@ -13,7 +18,9 @@ class AndroidContactSaveRepository : AndroidContactRepositoryBase() {
         checkContactWritePermission { exception -> throw exception }
 
         withContactStore { contactStore ->
-            contactStore.execute { contactIds.forEach { delete(it.contactNo) } }
+            contactIds.chunked(Constants.defaultChunkSize).forEach { chunk ->
+                contactStore.execute { chunk.forEach { delete(it.contactNo) } }
+            }
         }
     }
     suspend fun updateContact(contact: IAndroidContactMutable) {
