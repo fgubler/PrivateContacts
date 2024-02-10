@@ -117,7 +117,7 @@ class ArchitectureTest {
         .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
         .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
 
-    private fun layers() = Architectures.layeredArchitecture()
+    private fun layers() = Architectures.layeredArchitecture().consideringAllDependencies()
         .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)
         .layer(VIEW_LAYER).definedBy(VIEW_PACKAGE)
         .layer(DOMAIN_LAYER).definedBy(DOMAIN_PACKAGE)
