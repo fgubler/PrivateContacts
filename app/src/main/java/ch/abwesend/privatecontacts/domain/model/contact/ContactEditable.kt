@@ -15,6 +15,9 @@ interface IContactEditable : IContact, IContactBaseWithAccountInformation {
     override var firstName: String
     override var lastName: String
     override var nickname: String
+    override var middleName: String
+    override var namePrefix: String
+    override var nameSuffix: String
     override var type: ContactType
     override var notes: String
     override var image: ContactImage
@@ -32,6 +35,9 @@ data class ContactEditable(
     override var firstName: String,
     override var lastName: String,
     override var nickname: String,
+    override var middleName: String,
+    override var namePrefix: String,
+    override var nameSuffix: String,
     override var type: ContactType,
     override var notes: String,
     override var image: ContactImage,
@@ -57,6 +63,9 @@ data class ContactEditable(
                 firstName = "",
                 lastName = "",
                 nickname = "",
+                middleName = "",
+                namePrefix = "",
+                nameSuffix = "",
                 type = type,
                 notes = "",
                 image = ContactImage.empty,

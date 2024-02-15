@@ -49,6 +49,10 @@ class VCardToContactMapper {
             contact.firstName = vCard.structuredName?.given ?: vCard.formattedName?.value.orEmpty()
             contact.lastName = vCard.structuredName?.family.orEmpty()
 
+            contact.middleName = vCard.structuredName?.additionalNames.orEmpty().joinToString(" ")
+            vCard.structuredName.prefixes.orEmpty().firstOrNull()?.let { contact.namePrefix = it }
+            vCard.structuredName.suffixes.orEmpty().firstOrNull()?.let { contact.nameSuffix = it }
+
             val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
             contact.nickname = nicknames.filterNotNull().joinToString(", ")
 

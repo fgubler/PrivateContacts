@@ -51,6 +51,9 @@ class ContactToVCardMapper {
             val structuredName = StructuredName()
             structuredName.given = contact.firstName
             structuredName.family = contact.lastName
+            structuredName.additionalNames?.add(contact.middleName)
+            structuredName.prefixes?.add(contact.namePrefix)
+            structuredName.suffixes?.add(contact.nameSuffix)
             vCard.structuredName = structuredName
 
             val nickname = Nickname()

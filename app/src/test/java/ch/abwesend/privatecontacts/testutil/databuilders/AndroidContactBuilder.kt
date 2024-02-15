@@ -33,6 +33,8 @@ fun someAndroidContact(
     lastName: String = "Skywalker",
     displayName: String = "$firstName $lastName",
     nickName: String = displayName,
+    prefix: String = "",
+    suffix: String = "",
     note: String = "daddy issues",
     phoneNumbers: List<String> = emptyList(),
     emails: List<String> = emptyList(),
@@ -54,6 +56,8 @@ fun someAndroidContact(
     every { mock.firstName } returns firstName
     every { mock.lastName } returns lastName
     every { mock.middleName } returns middleName
+    every { mock.prefix } returns prefix
+    every { mock.suffix } returns suffix
     every { mock.displayName } returns displayName
     every { mock.nickname } returns nickName
     every { mock.note } returns Note(note)

@@ -26,6 +26,9 @@ fun IContact.toEntity(contactId: IContactIdInternal): ContactEntity {
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,
+        middleName = middleName,
+        namePrefix = namePrefix,
+        nameSuffix = nameSuffix,
         notes = notes,
         fullTextSearch = fullTextSearchColumn,
     )
@@ -37,4 +40,8 @@ private fun IContact.computeFullTextSearchColumn(): String {
 }
 
 fun ContactEntity.toContactBase(): ContactBase =
-    ContactBase(id = id, type = type, displayName = getFullName(firstName, lastName, nickname))
+    ContactBase(
+        id = id,
+        type = type,
+        displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix),
+    )

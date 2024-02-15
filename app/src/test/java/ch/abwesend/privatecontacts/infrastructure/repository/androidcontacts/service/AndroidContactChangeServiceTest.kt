@@ -122,12 +122,14 @@ class AndroidContactChangeServiceTest : TestBase() {
             firstName = "original first",
             lastName = "original last",
             nickname = "original nick",
+            namePrefix = "original prefix",
             notes = "",
         )
         val changedContact = someContactEditable(
             firstName = originalContact.firstName,
             lastName = "changed last",
             nickname = "",
+            namePrefix = "changed prefix",
             notes = "changed notes",
         )
         val mutableContact = someAndroidContactMutable(
@@ -146,6 +148,7 @@ class AndroidContactChangeServiceTest : TestBase() {
         assertThat(mutableContact.firstName).isEqualTo(androidFirstName)
         assertThat(mutableContact.lastName).isEqualTo(changedContact.lastName)
         assertThat(mutableContact.nickname).isEqualTo(changedContact.nickname)
+        assertThat(mutableContact.prefix).isEqualTo(changedContact.namePrefix)
         assertThat(mutableContact.note?.raw).isEqualTo(changedContact.notes)
     }
 

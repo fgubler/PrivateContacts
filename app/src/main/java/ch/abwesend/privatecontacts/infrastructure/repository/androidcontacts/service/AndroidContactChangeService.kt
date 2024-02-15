@@ -62,6 +62,15 @@ class AndroidContactChangeService {
         if (originalContact?.nickname != changedContact.nickname) {
             mutableContact.nickname = changedContact.nickname
         }
+        if (originalContact?.middleName != changedContact.middleName) {
+            mutableContact.middleName = changedContact.middleName
+        }
+        if (originalContact?.namePrefix != changedContact.namePrefix) {
+            mutableContact.prefix = changedContact.namePrefix
+        }
+        if (originalContact?.nameSuffix != changedContact.nameSuffix) {
+            mutableContact.suffix = changedContact.nameSuffix
+        }
         if (originalContact?.notes != changedContact.notes) {
             mutableContact.note = Note(changedContact.notes)
         }
