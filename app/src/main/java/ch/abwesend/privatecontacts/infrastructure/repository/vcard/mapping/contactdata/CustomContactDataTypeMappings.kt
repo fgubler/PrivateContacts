@@ -20,6 +20,8 @@ private const val CONTACT_TYPE_SIBLING_STRING = "sibling"
 private const val CONTACT_TYPE_BROTHER_STRING = "brother"
 private const val CONTACT_TYPE_SISTER_STRING = "sister"
 private const val CONTACT_TYPE_PARENT_STRING = "parent"
+private const val CONTACT_TYPE_FATHER_STRING = "father"
+private const val CONTACT_TYPE_MOTHER_STRING = "mother"
 private const val CONTACT_TYPE_CHILD_STRING = "child"
 private const val CONTACT_TYPE_RELATIVE_STRING = "relative"
 private const val CONTACT_TYPE_PARTNER_STRING = "partner"
@@ -39,6 +41,8 @@ fun getVCardStringByContactDataType(type: ContactDataType): String = when (type)
     is ContactDataType.CustomValue -> type.customValue
     is ContactDataType.RelationshipFriend -> CONTACT_TYPE_FRIEND_STRING
     is ContactDataType.RelationshipParent -> CONTACT_TYPE_PARENT_STRING
+    is ContactDataType.RelationshipFather -> CONTACT_TYPE_FATHER_STRING
+    is ContactDataType.RelationshipMother -> CONTACT_TYPE_MOTHER_STRING
     is ContactDataType.RelationshipChild -> CONTACT_TYPE_CHILD_STRING
     is ContactDataType.RelationshipPartner -> CONTACT_TYPE_PARTNER_STRING
     is ContactDataType.RelationshipRelative -> CONTACT_TYPE_RELATIVE_STRING
@@ -62,6 +66,8 @@ fun getContactDataTypeByCustomVCardString(vCardString: String): ContactDataType?
     CONTACT_TYPE_MAIN_STRING -> ContactDataType.Main
     CONTACT_TYPE_FRIEND_STRING -> ContactDataType.RelationshipFriend
     CONTACT_TYPE_PARENT_STRING -> ContactDataType.RelationshipParent
+    CONTACT_TYPE_FATHER_STRING -> ContactDataType.RelationshipFather
+    CONTACT_TYPE_MOTHER_STRING -> ContactDataType.RelationshipMother
     CONTACT_TYPE_CHILD_STRING -> ContactDataType.RelationshipChild
     CONTACT_TYPE_PARTNER_STRING -> ContactDataType.RelationshipPartner
     CONTACT_TYPE_RELATIVE_STRING -> ContactDataType.RelationshipRelative
