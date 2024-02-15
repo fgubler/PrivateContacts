@@ -10,6 +10,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
@@ -73,12 +75,16 @@ class AndroidContactMapper {
         }
 
         val numberOfCompanies = contactDataSet.count { it is Company }
-        if (androidContact.organization.isNotEmpty()) {
+        val companyFromOrganization = androidContact.organization
+        val alreadyPresent = contactDataSet
+            .any { it.category == ContactDataCategory.COMPANY && it.value == companyFromOrganization }
+
+        if (companyFromOrganization.isNotEmpty() && !alreadyPresent) {
             val companyName = with(androidContact) {
                 if (jobTitle.isBlank()) organization else "$organization ($jobTitle)"
             }
             val companyFromOrganisation = Company.createEmpty(sortOrder = numberOfCompanies)
-                .copy(value = companyName)
+                .copy(value = companyName, type = ContactDataType.Main)
             contactDataSet.add(companyFromOrganisation)
         }
     }

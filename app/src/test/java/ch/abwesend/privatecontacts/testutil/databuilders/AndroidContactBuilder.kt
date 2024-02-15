@@ -39,6 +39,7 @@ fun someAndroidContact(
     websites: List<String> = emptyList(),
     addresses: List<String> = emptyList(),
     sisters: List<String> = emptyList(),
+    additionalRelations: List<LabeledValue<Relation>> = emptyList(),
     birthdays: List<LocalDate> = emptyList(),
     organisation: String = "",
     jobTitle: String = "",
@@ -64,7 +65,8 @@ fun someAndroidContact(
     every { mock.postalAddresses } returns addresses.map {
         LabeledValue(PostalAddress(it), label = Label.LocationHome)
     }
-    every { mock.relations } returns sisters.map { LabeledValue(Relation(it), label = Label.RelationSister) }
+    every { mock.relations } returns sisters
+        .map { LabeledValue(Relation(it), label = Label.RelationSister) } + additionalRelations
     every { mock.events } returns birthdays.map {
         LabeledValue(EventDate(it.dayOfMonth, it.monthValue, it.year), label = Label.DateBirthday)
     }

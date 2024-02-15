@@ -288,6 +288,54 @@ class AndroidContactChangeServiceTest : TestBase() {
     }
 
     @Test
+    fun `should set single company as 'organization'`() {
+        val companyName = "The Big Company"
+        val companies = listOf(
+            someCompany(value = companyName, type = Other, modelStatus = NEW, sortOrder = 1),
+        )
+        val mutableContact = someAndroidContactMutable()
+        val changedContact = someContactEditable(contactData = companies)
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.relations).hasSize(1)
+        assertThat(mutableContact.organization).isEqualTo(companyName)
+    }
+
+    @Test
+    fun `should treat single company of type 'custom' differently`() {
+        val companyName = "The Big Company"
+        val customType = "The Type"
+        val companies = listOf(
+            someCompany(value = companyName, type = CustomValue(customType), modelStatus = NEW, sortOrder = 1),
+        )
+        val mutableContact = someAndroidContactMutable()
+        val changedContact = someContactEditable(contactData = companies)
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.relations).hasSize(1)
+        assertThat(mutableContact.organization).contains(companyName)
+        assertThat(mutableContact.organization).contains(customType)
+    }
+
+    @Test
+    fun `should set main company as 'organization'`() {
+        val companyName = "The Big Company"
+        val companies = listOf(
+            someCompany(value = "something else", type = Other, modelStatus = NEW, sortOrder = 1),
+            someCompany(value = companyName, type = Main, modelStatus = NEW, sortOrder = 2),
+        )
+        val mutableContact = someAndroidContactMutable()
+        val changedContact = someContactEditable(contactData = companies)
+
+        underTest.updateChangedContactData(changedContact = changedContact, mutableContact = mutableContact)
+
+        assertThat(mutableContact.relations).hasSize(2)
+        assertThat(mutableContact.organization).isEqualTo(companyName)
+    }
+
+    @Test
     fun `should leave unchanged contact data as-is`() {
         val data = createContactBaseData()
         val mutableContact = someAndroidContactMutable(contactData = ContactDataContainer.createEmpty())
