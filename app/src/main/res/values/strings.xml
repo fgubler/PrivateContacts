@@ -108,6 +108,9 @@
     <string name="first_name_colon">First name:</string>
     <string name="last_name_colon">Last name:</string>
     <string name="nickname_colon">Nickname:</string>
+    <string name="middle_name_colon">Middle name:</string>
+    <string name="name_prefix_colon">Prefix:</string>
+    <string name="name_suffix_colon">Suffix:</string>
     <string name="image">Image</string>
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>

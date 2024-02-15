@@ -38,12 +38,11 @@ class AndroidContactMapper {
         rethrowExceptions: Boolean
     ): IContact? = with(contact) {
         try {
-            val middleNamePart = if (middleName.isBlank()) "" else " $middleName"
             ContactEditable(
                 id = ContactIdAndroid(contactNo = contactId),
                 importId = null,
                 type = ContactType.PUBLIC,
-                firstName = "$firstName$middleNamePart",
+                firstName = firstName,
                 lastName = lastName,
                 nickname = nickname,
                 middleName = middleName,
