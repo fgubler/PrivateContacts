@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.application
+package ch.abwesend.privatecontacts.domain
 
 /** This is an experiment: let us see whether it will actually work. */
 object ContactDetailInitializationWorkaround {

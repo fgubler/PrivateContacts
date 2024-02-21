@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
-import ch.abwesend.privatecontacts.application.ContactDetailInitializationWorkaround
+import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.error
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
