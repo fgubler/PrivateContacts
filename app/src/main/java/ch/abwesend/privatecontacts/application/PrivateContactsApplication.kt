@@ -19,6 +19,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         initializeKoin()
+        ContactDetailInitializationWorkaround.hasOpenedContact = false
     }
 
     private fun initializeKoin() {
