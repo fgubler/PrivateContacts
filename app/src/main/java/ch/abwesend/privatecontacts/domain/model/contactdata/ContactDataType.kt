@@ -18,7 +18,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.PERSONAL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_BROTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_CHILD
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FATHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_FRIEND
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_MOTHER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARENT
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_PARTNER
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Key.RELATIONSHIP_RELATIVE
@@ -41,50 +43,50 @@ sealed class ContactDataType {
     open fun getTitle(stringProvider: StringProvider): String =
         stringProvider(titleRes)
 
-    object Mobile : ContactDataType() {
+    data object Mobile : ContactDataType() {
         override val key: Key = MOBILE
         override val titleRes: Int = R.string.type_mobile
         override val priority: Int = 100
     }
 
-    object Personal : ContactDataType() {
+    data object Personal : ContactDataType() {
         override val key: Key = PERSONAL
         override val titleRes: Int = R.string.type_personal
         override val priority: Int = 200
     }
 
-    object Business : ContactDataType() {
+    data object Business : ContactDataType() {
         override val key: Key = BUSINESS
         override val titleRes: Int = R.string.type_business
         override val priority: Int = 300
     }
 
-    object MobileBusiness : ContactDataType() {
+    data object MobileBusiness : ContactDataType() {
         override val key: Key = MOBILE_BUSINESS
         override val titleRes: Int = R.string.type_business
         override val priority: Int = 310
     }
 
-    object Birthday : ContactDataType() {
+    data object Birthday : ContactDataType() {
         override val key: Key = BIRTHDAY
         override val titleRes: Int = R.string.type_birthday
         override val priority: Int = 500
     }
 
-    object Anniversary : ContactDataType() {
+    data object Anniversary : ContactDataType() {
         override val key: Key = ANNIVERSARY
         override val titleRes: Int = R.string.type_anniversary
         override val priority: Int = 600
     }
 
-    object Main : ContactDataType() {
+    data object Main : ContactDataType() {
         override val key: Key = MAIN
         override val titleRes: Int = R.string.type_main
         override val priority: Int = 700
     }
 
     /** The "Custom" which is shown in the dropdown of possible sub-types */
-    object Custom : ContactDataType() {
+    data object Custom : ContactDataType() {
         override val key: Key = CUSTOM
         override val titleRes: Int = R.string.type_custom
         override val isPlaceHolder: Boolean = true
@@ -101,61 +103,73 @@ sealed class ContactDataType {
         override val priority: Int = 410
     }
 
-    object RelationshipBrother : ContactDataType() {
+    data object RelationshipBrother : ContactDataType() {
         override val key: Key = RELATIONSHIP_BROTHER
         override val titleRes: Int = R.string.type_relationship_brother
         override val priority: Int = 800
     }
 
-    object RelationshipSister : ContactDataType() {
+    data object RelationshipSister : ContactDataType() {
         override val key: Key = RELATIONSHIP_SISTER
         override val titleRes: Int = R.string.type_relationship_sister
         override val priority: Int = 802
     }
 
-    object RelationshipSibling : ContactDataType() {
+    data object RelationshipSibling : ContactDataType() {
         override val key: Key = RELATIONSHIP_SIBLING
         override val titleRes: Int = R.string.type_relationship_sibling
         override val priority: Int = 805
     }
 
-    object RelationshipParent : ContactDataType() {
+    data object RelationshipParent : ContactDataType() {
         override val key: Key = RELATIONSHIP_PARENT
         override val titleRes: Int = R.string.type_relationship_parent
         override val priority: Int = 810
     }
 
-    object RelationshipChild : ContactDataType() {
+    data object RelationshipFather : ContactDataType() {
+        override val key: Key = RELATIONSHIP_FATHER
+        override val titleRes: Int = R.string.type_relationship_father
+        override val priority: Int = 811
+    }
+
+    data object RelationshipMother : ContactDataType() {
+        override val key: Key = RELATIONSHIP_MOTHER
+        override val titleRes: Int = R.string.type_relationship_mother
+        override val priority: Int = 812
+    }
+
+    data object RelationshipChild : ContactDataType() {
         override val key: Key = RELATIONSHIP_CHILD
         override val titleRes: Int = R.string.type_relationship_child
         override val priority: Int = 820
     }
 
-    object RelationshipPartner : ContactDataType() {
+    data object RelationshipPartner : ContactDataType() {
         override val key: Key = RELATIONSHIP_PARTNER
         override val titleRes: Int = R.string.type_relationship_partner
         override val priority: Int = 830
     }
 
-    object RelationshipRelative : ContactDataType() {
+    data object RelationshipRelative : ContactDataType() {
         override val key: Key = RELATIONSHIP_RELATIVE
         override val titleRes: Int = R.string.type_relationship_relative
         override val priority: Int = 840
     }
 
-    object RelationshipFriend : ContactDataType() {
+    data object RelationshipFriend : ContactDataType() {
         override val key: Key = RELATIONSHIP_FRIEND
         override val titleRes: Int = R.string.type_relationship_friend
         override val priority: Int = 850
     }
 
-    object RelationshipWork : ContactDataType() {
+    data object RelationshipWork : ContactDataType() {
         override val key: Key = RELATIONSHIP_WORK
         override val titleRes: Int = R.string.type_relationship_work
         override val priority: Int = 860
     }
 
-    object Other : ContactDataType() {
+    data object Other : ContactDataType() {
         override val key: Key = OTHER
         override val titleRes: Int = R.string.type_other
         override val priority: Int = 9000
@@ -176,6 +190,8 @@ sealed class ContactDataType {
         RELATIONSHIP_BROTHER,
         RELATIONSHIP_SISTER,
         RELATIONSHIP_PARENT,
+        RELATIONSHIP_MOTHER,
+        RELATIONSHIP_FATHER,
         RELATIONSHIP_CHILD,
         RELATIONSHIP_RELATIVE,
         RELATIONSHIP_PARTNER,
@@ -183,7 +199,7 @@ sealed class ContactDataType {
         RELATIONSHIP_WORK;
 
         companion object {
-            fun parseOrNull(name: String): Key? = values().firstOrNull { it.name == name.uppercase() }
+            fun parseOrNull(name: String): Key? = entries.firstOrNull { it.name == name.uppercase() }
         }
     }
 
@@ -203,6 +219,8 @@ sealed class ContactDataType {
             RELATIONSHIP_BROTHER -> RelationshipBrother
             RELATIONSHIP_SISTER -> RelationshipSister
             RELATIONSHIP_PARENT -> RelationshipParent
+            RELATIONSHIP_MOTHER -> RelationshipMother
+            RELATIONSHIP_FATHER -> RelationshipFather
             RELATIONSHIP_CHILD -> RelationshipChild
             RELATIONSHIP_RELATIVE -> RelationshipRelative
             RELATIONSHIP_PARTNER -> RelationshipPartner

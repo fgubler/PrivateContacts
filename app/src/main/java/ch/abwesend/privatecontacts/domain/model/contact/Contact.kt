@@ -20,6 +20,9 @@ interface IContact : IContactBase {
     val firstName: String
     val lastName: String
     val nickname: String
+    val middleName: String
+    val namePrefix: String
+    val nameSuffix: String
     val notes: String
     val contactDataSet: List<ContactData>
     val contactGroups: List<ContactGroup>

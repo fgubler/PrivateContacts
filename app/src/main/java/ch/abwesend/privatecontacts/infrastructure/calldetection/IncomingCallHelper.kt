@@ -26,11 +26,9 @@ class IncomingCallHelper {
         context: Context,
         phoneNumber: String,
     ) {
-        val defaultCountryIso = telephoneService.telephoneDefaultCountryIso
-
         applicationScope.launch {
             val correspondingContacts = incomingCallService
-                .findCorrespondingContacts(phoneNumber, defaultCountryIso)
+                .findCorrespondingContacts(phoneNumber)
                 .map { it.displayName }
                 .distinct()
 

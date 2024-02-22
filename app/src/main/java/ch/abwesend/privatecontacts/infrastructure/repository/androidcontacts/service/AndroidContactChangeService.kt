@@ -62,6 +62,15 @@ class AndroidContactChangeService {
         if (originalContact?.nickname != changedContact.nickname) {
             mutableContact.nickname = changedContact.nickname
         }
+        if (originalContact?.middleName != changedContact.middleName) {
+            mutableContact.middleName = changedContact.middleName
+        }
+        if (originalContact?.namePrefix != changedContact.namePrefix) {
+            mutableContact.prefix = changedContact.namePrefix
+        }
+        if (originalContact?.nameSuffix != changedContact.nameSuffix) {
+            mutableContact.suffix = changedContact.nameSuffix
+        }
         if (originalContact?.notes != changedContact.notes) {
             mutableContact.note = Note(changedContact.notes)
         }
@@ -143,6 +152,14 @@ class AndroidContactChangeService {
         val companies = contactData.filterIsInstance<Company>()
         logger.debug("Updating ${companies.size} companies as pseudo-relationships on contact $contactId")
 
+        if (companies.size == 1) {
+            val company = companies.first()
+            setMainCompany(company)
+        }
+
+        companies.firstOrNull { it.type == ContactDataType.Main }
+            ?.let { company -> setMainCompany(company) }
+
         updateContactDataOfType(
             newContactData = companies,
             mutableDataOnContact = relations,
@@ -152,6 +169,20 @@ class AndroidContactChangeService {
             },
             valueMapper = { newAddress -> ContactStoreRelation(name = newAddress.value) },
         )
+    }
+
+    private fun IAndroidContactMutable.setMainCompany(company: Company) {
+        when (company.modelStatus) {
+            DELETED -> { organization = "" }
+            UNCHANGED -> { /* nothing to do */ }
+            CHANGED, NEW -> {
+                organization = company.value
+
+                if (company.type is ContactDataType.CustomValue) {
+                    organization = "$organization (${company.type.customValue})"
+                }
+            }
+        }
     }
 
     private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =

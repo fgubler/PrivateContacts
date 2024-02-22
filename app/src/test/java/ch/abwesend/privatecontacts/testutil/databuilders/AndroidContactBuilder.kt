@@ -33,12 +33,15 @@ fun someAndroidContact(
     lastName: String = "Skywalker",
     displayName: String = "$firstName $lastName",
     nickName: String = displayName,
+    prefix: String = "",
+    suffix: String = "",
     note: String = "daddy issues",
     phoneNumbers: List<String> = emptyList(),
     emails: List<String> = emptyList(),
     websites: List<String> = emptyList(),
     addresses: List<String> = emptyList(),
     sisters: List<String> = emptyList(),
+    additionalRelations: List<LabeledValue<Relation>> = emptyList(),
     birthdays: List<LocalDate> = emptyList(),
     organisation: String = "",
     jobTitle: String = "",
@@ -53,6 +56,8 @@ fun someAndroidContact(
     every { mock.firstName } returns firstName
     every { mock.lastName } returns lastName
     every { mock.middleName } returns middleName
+    every { mock.prefix } returns prefix
+    every { mock.suffix } returns suffix
     every { mock.displayName } returns displayName
     every { mock.nickname } returns nickName
     every { mock.note } returns Note(note)
@@ -64,7 +69,8 @@ fun someAndroidContact(
     every { mock.postalAddresses } returns addresses.map {
         LabeledValue(PostalAddress(it), label = Label.LocationHome)
     }
-    every { mock.relations } returns sisters.map { LabeledValue(Relation(it), label = Label.RelationSister) }
+    every { mock.relations } returns sisters
+        .map { LabeledValue(Relation(it), label = Label.RelationSister) } + additionalRelations
     every { mock.events } returns birthdays.map {
         LabeledValue(EventDate(it.dayOfMonth, it.monthValue, it.year), label = Label.DateBirthday)
     }

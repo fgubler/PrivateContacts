@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
+import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.error
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -46,6 +47,7 @@ data class ScreenContext(
 
     /** from [IContactListScreenContext] */
     override fun navigateToContactDetailScreen(contact: IContactBase): Boolean {
+        ContactDetailInitializationWorkaround.hasOpenedContact = true
         contactDetailViewModel.selectContact(contact)
         return genericRouter.navigateToScreen(Screen.ContactDetail)
     }

@@ -35,12 +35,18 @@ class ContactExtensionsTest : TestBase() {
             firstName = firstName,
             lastName = lastName,
             nickname = nickname,
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = "",
             firstNameFirst = true,
         )
         val fullNameStartingWithLast = getFullName(
             firstName = firstName,
             lastName = lastName,
             nickname = nickname,
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = "",
             firstNameFirst = false,
         )
 
@@ -57,17 +63,107 @@ class ContactExtensionsTest : TestBase() {
             firstName = firstName,
             lastName = lastName,
             nickname = nickname,
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = "",
             firstNameFirst = true,
         )
         val fullNameStartingWithLast = getFullName(
             firstName = firstName,
             lastName = lastName,
             nickname = nickname,
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = "",
             firstNameFirst = false,
         )
 
         assertThat(fullNameStartingWithFirst).isEqualTo("""John "Fix-All" Snow""")
         assertThat(fullNameStartingWithLast).isEqualTo("""Snow "Fix-All" John""")
+    }
+
+    @Test
+    fun `should get display name with middle-name`() {
+        val firstName = "John"
+        val lastName = "Snow"
+        val middleName = "Middle"
+        val fullNameStartingWithFirst = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = middleName,
+            namePrefix = "",
+            nameSuffix = "",
+            firstNameFirst = true,
+        )
+        val fullNameStartingWithLast = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = middleName,
+            namePrefix = "",
+            nameSuffix = "",
+            firstNameFirst = false,
+        )
+
+        assertThat(fullNameStartingWithFirst).isEqualTo("""John Middle Snow""")
+        assertThat(fullNameStartingWithLast).isEqualTo("""Snow Middle John""")
+    }
+
+    @Test
+    fun `should get display name with prefix`() {
+        val firstName = "John"
+        val lastName = "Snow"
+        val prefix = "Pre"
+        val fullNameStartingWithFirst = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = "",
+            namePrefix = prefix,
+            nameSuffix = "",
+            firstNameFirst = true,
+        )
+        val fullNameStartingWithLast = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = "",
+            namePrefix = prefix,
+            nameSuffix = "",
+            firstNameFirst = false,
+        )
+
+        assertThat(fullNameStartingWithFirst).isEqualTo("""Pre John Snow""")
+        assertThat(fullNameStartingWithLast).isEqualTo("""Pre Snow John""")
+    }
+
+    @Test
+    fun `should get display name with suffix`() {
+        val firstName = "John"
+        val lastName = "Snow"
+        val suffix = "Suf"
+        val fullNameStartingWithFirst = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = suffix,
+            firstNameFirst = true,
+        )
+        val fullNameStartingWithLast = getFullName(
+            firstName = firstName,
+            lastName = lastName,
+            nickname = "",
+            middleName = "",
+            namePrefix = "",
+            nameSuffix = suffix,
+            firstNameFirst = false,
+        )
+
+        assertThat(fullNameStartingWithFirst).isEqualTo("""John Snow, Suf""")
+        assertThat(fullNameStartingWithLast).isEqualTo("""Snow John, Suf""")
     }
 
     @Test

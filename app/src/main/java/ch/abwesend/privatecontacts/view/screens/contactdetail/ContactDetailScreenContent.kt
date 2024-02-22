@@ -115,6 +115,15 @@ object ContactDetailScreenContent {
                     if (contact.nickname.isNotEmpty()) {
                         PersonalInformationRow(label = R.string.nickname_colon, value = contact.nickname)
                     }
+                    if (contact.middleName.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.middle_name_colon, value = contact.middleName)
+                    }
+                    if (contact.namePrefix.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.name_prefix_colon, value = contact.namePrefix)
+                    }
+                    if (contact.nameSuffix.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.name_suffix_colon, value = contact.nameSuffix)
+                    }
 
                     PersonalInformationRow(
                         label = R.string.visibility_colon,

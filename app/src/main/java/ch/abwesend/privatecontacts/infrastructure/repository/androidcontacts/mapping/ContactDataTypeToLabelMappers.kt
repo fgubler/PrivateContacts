@@ -38,8 +38,8 @@ fun Label.toContactDataType(): ContactDataType =
         Label.RelationBrother -> ContactDataType.RelationshipBrother
         Label.RelationSister -> ContactDataType.RelationshipSister
         Label.RelationChild -> ContactDataType.RelationshipChild
-        Label.RelationFather -> ContactDataType.RelationshipParent
-        Label.RelationMother -> ContactDataType.RelationshipParent
+        Label.RelationFather -> ContactDataType.RelationshipFather
+        Label.RelationMother -> ContactDataType.RelationshipMother
         Label.RelationParent -> ContactDataType.RelationshipParent
         Label.RelationPartner -> ContactDataType.RelationshipPartner
         Label.RelationDomesticPartner -> ContactDataType.RelationshipPartner
@@ -82,6 +82,8 @@ private fun ContactDataType.toLabel(category: ContactDataCategory, stringProvide
         ContactDataType.RelationshipChild -> Label.RelationChild
         ContactDataType.RelationshipFriend -> Label.RelationFriend
         ContactDataType.RelationshipParent -> Label.RelationParent
+        ContactDataType.RelationshipFather -> Label.RelationFather
+        ContactDataType.RelationshipMother -> Label.RelationMother
         ContactDataType.RelationshipPartner -> Label.RelationPartner
         ContactDataType.RelationshipRelative -> Label.RelationRelative
         ContactDataType.RelationshipBrother -> Label.RelationBrother

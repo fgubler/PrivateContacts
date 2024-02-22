@@ -12,12 +12,17 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingS
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactDataMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository.AndroidContactLoadRepository
+import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContact
 import ch.abwesend.privatecontacts.testutil.databuilders.someAndroidContactGroup
+import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someExternalContactId
 import ch.abwesend.privatecontacts.testutil.databuilders.someInternetAccount
+import com.alexstyl.contactstore.Label
+import com.alexstyl.contactstore.LabeledValue
+import com.alexstyl.contactstore.Relation
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -48,6 +53,9 @@ class AndroidContactLoadServiceTest : TestBase() {
     @SpyK
     private var contactDataFactory: AndroidContactDataMapper = AndroidContactDataMapper()
 
+    @SpyK
+    private var companyMappingService: AndroidContactCompanyMappingService = AndroidContactCompanyMappingService()
+
     @InjectMockKs
     private lateinit var underTest: AndroidContactLoadService
 
@@ -57,6 +65,7 @@ class AndroidContactLoadServiceTest : TestBase() {
         module.single { addressFormattingService }
         module.single { contactFactory }
         module.single { contactDataFactory }
+        module.single { companyMappingService }
     }
 
     override fun setup() {
@@ -149,5 +158,43 @@ class AndroidContactLoadServiceTest : TestBase() {
         assertThat(result).hasSize(1)
         assertThat(result.first().id.name).isEqualTo(expectedContactGroup.title)
         assertThat(result.first().notes).isEqualTo(expectedContactGroup.note)
+    }
+
+    @Test
+    fun `should interpret 'organization' as company`() {
+        val contactId = ContactIdAndroid(contactNo = 123123)
+        val organization = "The Company"
+        val contact = someAndroidContact(contactId = contactId.contactNo, organisation = organization, relaxed = true)
+        coEvery { contactLoadRepository.resolveContactRaw(any()) } returns contact
+        coEvery { contactLoadRepository.loadContactGroups(any()) } returns emptyList()
+
+        val result = runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactLoadRepository.resolveContactRaw(contactId) }
+        assertThat(result.contactDataSet).hasSize(1)
+        assertThat(result.contactDataSet.first().value).isEqualTo(organization)
+    }
+
+    @Test
+    fun `should avoid duplicates when interpreting 'organization' as company`() {
+        val contactId = ContactIdAndroid(contactNo = 123123)
+        val organization = "The Company"
+        val companyPseudoRelation = someCompany(value = organization)
+        val label = companyMappingService.encodeToPseudoRelationshipLabel(companyPseudoRelation.type)
+        val pseudoRelation = LabeledValue(Relation(organization), label = Label.Custom(label))
+        val contact = someAndroidContact(
+            contactId = contactId.contactNo,
+            organisation = organization,
+            additionalRelations = listOf(pseudoRelation),
+            relaxed = true,
+        )
+        coEvery { contactLoadRepository.resolveContactRaw(any()) } returns contact
+        coEvery { contactLoadRepository.loadContactGroups(any()) } returns emptyList()
+
+        val result = runBlocking { underTest.resolveContact(contactId) }
+
+        coVerify { contactLoadRepository.resolveContactRaw(contactId) }
+        assertThat(result.contactDataSet).hasSize(1)
+        assertThat(result.contactDataSet.first().value).isEqualTo(organization)
     }
 }

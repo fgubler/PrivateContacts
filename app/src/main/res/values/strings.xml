@@ -84,6 +84,8 @@
     <string name="type_relationship_brother">Brother</string>
     <string name="type_relationship_sister">Sister</string>
     <string name="type_relationship_parent">Parent</string>
+    <string name="type_relationship_father">Father</string>
+    <string name="type_relationship_mother">Mother</string>
     <string name="type_relationship_child">Child</string>
     <string name="type_relationship_partner">Partner</string>
     <string name="type_relationship_relative">Relative</string>
@@ -108,6 +110,9 @@
     <string name="first_name_colon">First name:</string>
     <string name="last_name_colon">Last name:</string>
     <string name="nickname_colon">Nickname:</string>
+    <string name="middle_name_colon">Middle name:</string>
+    <string name="name_prefix_colon">Prefix:</string>
+    <string name="name_suffix_colon">Suffix:</string>
     <string name="image">Image</string>
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>

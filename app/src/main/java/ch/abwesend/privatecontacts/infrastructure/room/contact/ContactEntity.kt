@@ -24,6 +24,12 @@ data class ContactEntity(
     val firstName: String,
     val lastName: String,
     val nickname: String,
+    @ColumnInfo(defaultValue = "")
+    val middleName: String,
+    @ColumnInfo(defaultValue = "")
+    val namePrefix: String,
+    @ColumnInfo(defaultValue = "")
+    val nameSuffix: String,
     val type: ContactType,
     val notes: String,
     var fullTextSearch: String, // column optimized for full-text search
