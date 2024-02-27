@@ -118,8 +118,8 @@ object ContactEditScreen {
                     errors = savingErrors,
                     onTryAgain = { onSave(viewModel, contact) },
                     onChangeToNewContact = {
-                        contact.isNew = true
-                        viewModel.changeContact(contact)
+                        val newContact = contact.deepCopy(isContactNew = true, replaceId = true)
+                        viewModel.changeContact(newContact)
                     },
                     onClose = { savingErrors = emptyList() },
                 )
