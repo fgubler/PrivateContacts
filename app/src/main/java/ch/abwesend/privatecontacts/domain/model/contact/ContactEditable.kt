@@ -21,12 +21,12 @@ interface IContactEditable : IContact, IContactBaseWithAccountInformation {
     override var type: ContactType
     override var notes: String
     override var image: ContactImage
-    override var isNew: Boolean
+    override val isNew: Boolean
     override val contactDataSet: MutableList<ContactData>
     override val contactGroups: MutableList<ContactGroup>
 
     fun wrap(): ContactEditableWrapper
-    fun deepCopy(isContactNew: Boolean = isNew): IContactEditable
+    fun deepCopy(isContactNew: Boolean = isNew, replaceId: Boolean = false): IContactEditable
 }
 
 data class ContactEditable(
@@ -44,15 +44,17 @@ data class ContactEditable(
     override val contactDataSet: MutableList<ContactData>,
     override val contactGroups: MutableList<ContactGroup>,
     override var saveInAccount: ContactAccount,
-    override var isNew: Boolean = false,
+    override val isNew: Boolean = false,
 ) : IContactEditable {
     override val displayName: String
         get() = getFullName()
 
     override fun wrap(): ContactEditableWrapper = ContactEditableWrapper(this)
 
-    override fun deepCopy(isContactNew: Boolean): ContactEditable =
-        copy(isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
+    override fun deepCopy(isContactNew: Boolean, replaceId: Boolean): ContactEditable {
+        val contactId = if (replaceId) ContactIdInternal.randomId() else id
+        return copy(id = contactId, isNew = isContactNew, contactDataSet = contactDataSet.toMutableList())
+    }
 
     companion object {
         fun createNew(importId: ContactImportId? = null): ContactEditable {
