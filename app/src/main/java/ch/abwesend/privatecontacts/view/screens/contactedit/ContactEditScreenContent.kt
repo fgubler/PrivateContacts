@@ -20,6 +20,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Visibility
@@ -109,6 +110,7 @@ object ContactEditScreenContent {
             modifier = modifier.verticalScroll(scrollState)
         ) {
             PersonalInformation(contact, onChanged)
+            AdditionalInformation(contact, onChanged)
 
             if (contact.isNew && hasWritePermission) {
                 Visibility(contact = contact, onChanged = onChanged)
@@ -164,7 +166,8 @@ object ContactEditScreenContent {
 
         ContactCategory(
             categoryTitle = R.string.personal_information,
-            icon = Icons.Default.Person
+            icon = Icons.Default.Person,
+            initiallyExpanded = false,
         ) {
             Column {
                 OutlinedTextField(
@@ -187,6 +190,79 @@ object ContactEditScreenContent {
                     value = contact.lastName,
                     onValueChange = { newValue ->
                         contact.lastName = newValue
+                        onChanged(contact)
+                    },
+                    singleLine = true,
+                    modifier = textFieldModifier,
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
+                    keyboardActions = KeyboardActions(onDone = {
+                        manager.closeKeyboardAndClearFocus()
+                    }),
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun AdditionalInformation(
+        contact: IContactEditable,
+        onChanged: (IContactEditable) -> Unit
+    ) {
+        val manager = createKeyboardAndFocusManager()
+
+        ContactCategory(
+            categoryTitle = R.string.additional_information,
+            icon = Icons.Default.Group
+        ) {
+            Column {
+                OutlinedTextField(
+                    label = { Text(stringResource(id = R.string.nickname)) },
+                    value = contact.nickname,
+                    onValueChange = { newValue ->
+                        contact.nickname = newValue
+                        onChanged(contact)
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next,
+                        capitalization = Words
+                    ),
+                    modifier = textFieldModifier,
+                )
+                OutlinedTextField(
+                    label = { Text(stringResource(id = R.string.middle_name)) },
+                    value = contact.middleName,
+                    onValueChange = { newValue ->
+                        contact.middleName = newValue
+                        onChanged(contact)
+                    },
+                    singleLine = true,
+                    modifier = textFieldModifier,
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
+                    keyboardActions = KeyboardActions(onDone = {
+                        manager.closeKeyboardAndClearFocus()
+                    }),
+                )
+                OutlinedTextField(
+                    label = { Text(stringResource(id = R.string.name_prefix)) },
+                    value = contact.namePrefix,
+                    onValueChange = { newValue ->
+                        contact.namePrefix = newValue
+                        onChanged(contact)
+                    },
+                    singleLine = true,
+                    modifier = textFieldModifier,
+                    keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
+                    keyboardActions = KeyboardActions(onDone = {
+                        manager.closeKeyboardAndClearFocus()
+                    }),
+                )
+                OutlinedTextField(
+                    label = { Text(stringResource(id = R.string.name_suffix)) },
+                    value = contact.nameSuffix,
+                    onValueChange = { newValue ->
+                        contact.nameSuffix = newValue
                         onChanged(contact)
                     },
                     singleLine = true,
