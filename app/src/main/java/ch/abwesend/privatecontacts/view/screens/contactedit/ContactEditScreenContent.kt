@@ -20,8 +20,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
@@ -167,7 +167,6 @@ object ContactEditScreenContent {
         ContactCategory(
             categoryTitle = R.string.personal_information,
             icon = Icons.Default.Person,
-            initiallyExpanded = false,
         ) {
             Column {
                 OutlinedTextField(
@@ -212,24 +211,31 @@ object ContactEditScreenContent {
 
         ContactCategory(
             categoryTitle = R.string.additional_information,
-            icon = Icons.Default.Group
+            icon = Icons.Default.PersonAdd,
+            initiallyExpanded = false,
         ) {
             Column {
-                OutlinedTextField(
-                    label = { Text(stringResource(id = R.string.nickname)) },
-                    value = contact.nickname,
-                    onValueChange = { newValue ->
-                        contact.nickname = newValue
-                        onChanged(contact)
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next,
-                        capitalization = Words
-                    ),
-                    modifier = textFieldModifier,
-                )
+                when (contact.type) {
+                    ContactType.PUBLIC -> Unit // cannot edit nickname on public contacts (bug in ContactStore library)
+                    ContactType.SECRET -> {
+                        OutlinedTextField(
+                            label = { Text(stringResource(id = R.string.nickname)) },
+                            value = contact.nickname,
+                            onValueChange = { newValue ->
+                                contact.nickname = newValue
+                                onChanged(contact)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Next,
+                                capitalization = Words
+                            ),
+                            modifier = textFieldModifier,
+                        )
+                    }
+                }
+
                 OutlinedTextField(
                     label = { Text(stringResource(id = R.string.middle_name)) },
                     value = contact.middleName,
