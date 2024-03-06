@@ -104,9 +104,13 @@
     <string name="reload_contact">Reload contact</string>
 
     <string name="personal_information">Personal information</string>
+    <string name="additional_information">Additional information</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="nickname">Nickname</string>
+    <string name="middle_name">Middle name</string>
+    <string name="name_prefix">Prefix</string>
+    <string name="name_suffix">Suffix</string>
     <string name="first_name_colon">First name:</string>
     <string name="last_name_colon">Last name:</string>
     <string name="nickname_colon">Nickname:</string>
