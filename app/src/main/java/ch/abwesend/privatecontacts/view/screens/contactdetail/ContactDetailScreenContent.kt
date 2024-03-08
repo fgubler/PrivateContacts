@@ -182,15 +182,17 @@ object ContactDetailScreenContent {
     private fun PhoneNumbers(contact: IContact) {
         val context = LocalContext.current
 
-        val secondaryActionConfig = IconButtonConfigGeneric<PhoneNumber>(
-            label = R.string.send_sms,
-            icon = Icons.Default.Chat
-        ) { phoneNumber -> phoneNumber.navigateToSms(context) }
+        val secondaryActionConfigs = listOf(
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_sms,
+                icon = Icons.Default.Chat
+            ) { phoneNumber -> phoneNumber.navigateToSms(context) },
+        )
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
-            secondaryActionConfig = secondaryActionConfig,
+            secondaryActionConfigs = secondaryActionConfigs,
             factory = { PhoneNumber.createEmpty(it) },
         ) { phoneNumber -> phoneNumber.navigateToDial(context) }
     }
