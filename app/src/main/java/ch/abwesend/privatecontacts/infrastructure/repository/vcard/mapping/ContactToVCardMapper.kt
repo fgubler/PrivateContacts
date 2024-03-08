@@ -28,6 +28,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.export.toVCardUrl
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
+import ezvcard.property.FormattedName
 import ezvcard.property.Kind
 import ezvcard.property.Nickname
 import ezvcard.property.Note
@@ -59,6 +60,9 @@ class ContactToVCardMapper {
             val nickname = Nickname()
             nickname.values.add(contact.nickname)
             vCard.addNickname(nickname)
+
+            val formattedName = FormattedName(contact.displayName)
+            vCard.addFormattedName(formattedName)
 
             val note = Note(contact.notes)
             vCard.addNote(note)
