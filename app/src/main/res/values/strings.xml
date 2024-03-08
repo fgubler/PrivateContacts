@@ -189,6 +189,7 @@
     <string name="type_change_batch_error">While changing the types of %1$s contacts, the change failed for %2$s contacts.\nThis was due to %3$s failed validation(s) and %4$s other error(s).\n\nIn the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>
+    <string name="send_whatsapp_message">Send WhatsApp message</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
 
     <string name="show_caller_information_title">Show caller information?</string>

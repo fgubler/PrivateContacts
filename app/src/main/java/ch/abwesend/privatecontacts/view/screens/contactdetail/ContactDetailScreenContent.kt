@@ -40,8 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ch.abwesend.privatecontacts.R
@@ -68,6 +70,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
 import ch.abwesend.privatecontacts.view.util.navigateToLocation
 import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
+import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp
 
 const val UTF_8 = "utf-8"
 const val IMAGE_MAX_SIZE_DP = 750
@@ -183,6 +186,10 @@ object ContactDetailScreenContent {
         val context = LocalContext.current
 
         val secondaryActionConfigs = listOf(
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_whatsapp_message,
+                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+            ) { phoneNumber -> phoneNumber.navigateToWhatsApp(context) },
             IconButtonConfigGeneric<PhoneNumber>(
                 label = R.string.send_sms,
                 icon = Icons.Default.Chat
