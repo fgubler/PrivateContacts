@@ -72,6 +72,8 @@ import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
 import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp
 import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp2
+import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp3
+import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp4
 
 const val UTF_8 = "utf-8"
 const val IMAGE_MAX_SIZE_DP = 750
@@ -192,13 +194,21 @@ object ContactDetailScreenContent {
                 icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
             ) { phoneNumber -> phoneNumber.navigateToWhatsApp(context) },
             IconButtonConfigGeneric<PhoneNumber>(
-                label = R.string.send_sms,
-                icon = Icons.Default.Chat
-            ) { phoneNumber -> phoneNumber.navigateToSms(context) },
-            IconButtonConfigGeneric<PhoneNumber>(
                 label = R.string.send_whatsapp_message,
                 icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
             ) { phoneNumber -> phoneNumber.navigateToWhatsApp2(context) },
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_whatsapp_message,
+                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+            ) { phoneNumber -> phoneNumber.navigateToWhatsApp3(context) },
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_whatsapp_message,
+                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+            ) { phoneNumber -> phoneNumber.navigateToWhatsApp4(context) },
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_sms,
+                icon = Icons.Default.Chat
+            ) { phoneNumber -> phoneNumber.navigateToSms(context) },
         )
 
         ContactDataCategory(
