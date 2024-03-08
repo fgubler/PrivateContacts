@@ -15,6 +15,21 @@ fun PhoneNumber.navigateToWhatsApp(context: Context): Boolean = try {
         val url = "https://api.whatsapp.com/send?phone=$number"
         val intent = Intent(Intent.ACTION_VIEW)
         intent.setData(Uri.parse(url))
+        intent.setPackage("com.whatsapp")
+        context.startActivity(intent)
+        true
+    } ?: false.also { logger.info("Number is not in international format") }
+} catch (e: Exception) {
+    logger.error("Failed to send intent to whatsapp", e)
+    false
+}
+fun PhoneNumber.navigateToWhatsApp2(context: Context): Boolean = try {
+    // TODO check if this actually works
+    tryGetInternationalFormat()?.let { number ->
+        val url = "whatsapp://send?phone=$number"
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(url))
+        intent.setPackage("com.whatsapp")
         context.startActivity(intent)
         true
     } ?: false.also { logger.info("Number is not in international format") }
