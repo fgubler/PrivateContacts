@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.util.getAnywhere
 
 // TODO return ENUM
 fun PhoneNumber.navigateToWhatsApp(context: Context): Boolean = try {
-    // TODO check if this actually works
+    // TODO check if this actually works: works
     tryGetInternationalFormat()?.let { number ->
         val url = "https://api.whatsapp.com/send?phone=$number"
         val intent = Intent(Intent.ACTION_VIEW)
@@ -24,7 +24,7 @@ fun PhoneNumber.navigateToWhatsApp(context: Context): Boolean = try {
     false
 }
 fun PhoneNumber.navigateToWhatsApp2(context: Context): Boolean = try {
-    // TODO check if this actually works
+    // TODO check if this actually works: works
     tryGetInternationalFormat()?.let { number ->
         val url = "whatsapp://send?phone=$number"
         val intent = Intent(Intent.ACTION_VIEW)
@@ -38,7 +38,7 @@ fun PhoneNumber.navigateToWhatsApp2(context: Context): Boolean = try {
     false
 }
 fun PhoneNumber.navigateToWhatsApp3(context: Context): Boolean = try {
-    // TODO check if this actually works
+    // TODO check if this actually works: does NOT work
     tryGetInternationalFormat()?.let { number ->
         val intent = Intent(Intent.ACTION_VIEW).also {
             it.action = Intent.ACTION_SEND
@@ -54,7 +54,7 @@ fun PhoneNumber.navigateToWhatsApp3(context: Context): Boolean = try {
 }
 
 fun PhoneNumber.navigateToWhatsApp4(context: Context): Boolean = try {
-    // TODO check if this actually works
+    // TODO check if this actually works: works
     tryGetInternationalFormat()?.let { number ->
         val url = "https://wa.me/$number"
         val intent = Intent(Intent.ACTION_VIEW)
