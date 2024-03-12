@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +49,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
@@ -56,8 +59,10 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.util.Constants
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
+import ch.abwesend.privatecontacts.view.model.whatsapp.WhatsAppNavigationResult
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
@@ -70,10 +75,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
 import ch.abwesend.privatecontacts.view.util.navigateToLocation
 import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
-import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp
-import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp2
-import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp3
-import ch.abwesend.privatecontacts.view.util.navigateToWhatsApp4
+import ch.abwesend.privatecontacts.view.util.tryNavigateToWhatsApp
 
 const val UTF_8 = "utf-8"
 const val IMAGE_MAX_SIZE_DP = 750
@@ -189,22 +191,7 @@ object ContactDetailScreenContent {
         val context = LocalContext.current
 
         val secondaryActionConfigs = listOf(
-            IconButtonConfigGeneric<PhoneNumber>(
-                label = R.string.send_whatsapp_message,
-                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
-            ) { phoneNumber -> phoneNumber.navigateToWhatsApp(context) },
-            IconButtonConfigGeneric<PhoneNumber>(
-                label = R.string.send_whatsapp_message,
-                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
-            ) { phoneNumber -> phoneNumber.navigateToWhatsApp2(context) },
-            IconButtonConfigGeneric<PhoneNumber>(
-                label = R.string.send_whatsapp_message,
-                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
-            ) { phoneNumber -> phoneNumber.navigateToWhatsApp3(context) },
-            IconButtonConfigGeneric<PhoneNumber>(
-                label = R.string.send_whatsapp_message,
-                icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
-            ) { phoneNumber -> phoneNumber.navigateToWhatsApp4(context) },
+            phoneNumberWhatsAppButton(context),
             IconButtonConfigGeneric<PhoneNumber>(
                 label = R.string.send_sms,
                 icon = Icons.Default.Chat
@@ -217,6 +204,35 @@ object ContactDetailScreenContent {
             secondaryActionConfigs = secondaryActionConfigs,
             factory = { PhoneNumber.createEmpty(it) },
         ) { phoneNumber -> phoneNumber.navigateToDial(context) }
+    }
+
+    @Composable
+    private fun phoneNumberWhatsAppButton(context: Context): IconButtonConfigGeneric<PhoneNumber> {
+        var whatsAppClickCounter: Int by remember { mutableIntStateOf(0) }
+
+        @StringRes var errorMessageRes: Int? by remember { mutableStateOf(null) }
+
+        errorMessageRes?.let { stringRes ->
+            OkDialog(
+                title = R.string.whatsapp_error_navigation_failed_title,
+                text = stringRes,
+                okButtonLabel = R.string.close,
+            ) { errorMessageRes = null }
+        }
+
+        return IconButtonConfigGeneric<PhoneNumber>(
+            label = R.string.send_whatsapp_message,
+            icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+        ) { phoneNumber ->
+            val result = phoneNumber.tryNavigateToWhatsApp(context, whatsAppClickCounter)
+            whatsAppClickCounter++
+            when (result) {
+                WhatsAppNavigationResult.NOT_INSTALLED -> errorMessageRes = R.string.whatsapp_error_not_installed
+                WhatsAppNavigationResult.PHONE_NUMBER_INVALID_FORMAT -> errorMessageRes = R.string.whatsapp_error_number_format_invalid
+                WhatsAppNavigationResult.NAVIGATION_FAILED -> errorMessageRes = R.string.whatsapp_error_navigation_failed
+                WhatsAppNavigationResult.SUCCESS -> logger.info("Navigation to whatsapp successful")
+            }
+        }
     }
 
     @Composable

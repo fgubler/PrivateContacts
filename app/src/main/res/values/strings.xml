@@ -196,6 +196,11 @@
     <string name="send_whatsapp_message">Send WhatsApp message</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
 
+    <string name="whatsapp_error_not_installed">WhatsApp seems not to be installed.</string>
+    <string name="whatsapp_error_number_format_invalid">Please change the phone-number to international format, starting with the appropriate country-code, e.g. +1 for the United States.</string>
+    <string name="whatsapp_error_navigation_failed_title">Navigation Failed</string>
+    <string name="whatsapp_error_navigation_failed">The navigation to WhatsApp failed for unknown reasons. Please try again.</string>
+
     <string name="show_caller_information_title">Show caller information?</string>
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
     <string name="activate_feature">Would you like to activate this feature now?</string>
