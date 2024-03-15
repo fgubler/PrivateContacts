@@ -125,7 +125,7 @@ object ContactDetailCommonComponents {
     inline fun <reified T : ContactData> ContactDataCategory(
         contact: IContact,
         iconConfig: IconConfig,
-        secondaryActionConfig: IconButtonConfigGeneric<T>? = null,
+        secondaryActionConfigs: List<IconButtonConfigGeneric<T>> = emptyList(),
         noinline factory: (sortOrder: Int) -> T,
         noinline primaryAction: (T) -> Unit,
     ) {
@@ -140,7 +140,7 @@ object ContactDetailCommonComponents {
                             primaryText = element.displayValue,
                             secondaryText = element.type.getTitle(),
                             primaryAction = primaryAction,
-                            secondaryActionConfig = secondaryActionConfig,
+                            secondaryActionConfigs = secondaryActionConfigs,
                         )
                     }
                 }
@@ -154,7 +154,7 @@ object ContactDetailCommonComponents {
         primaryText: String,
         secondaryText: String?,
         primaryAction: (T) -> Unit,
-        secondaryActionConfig: IconButtonConfigGeneric<T>?
+        secondaryActionConfigs: List<IconButtonConfigGeneric<T>>
     ) {
         val labelStyle = LocalTextStyle.current.copy(
             fontSize = LocalTextStyle.current.fontSize.times(0.8),
@@ -177,7 +177,7 @@ object ContactDetailCommonComponents {
                     Text(text = it, style = labelStyle)
                 }
             }
-            secondaryActionConfig?.AsIconButton(data)
+            secondaryActionConfigs.forEach { it.AsIconButton(data) }
         }
     }
 }
