@@ -135,6 +135,15 @@ object SettingsScreen {
                     settingsRepository.showExtraButtonsInEditScreen = !it // the buttons don't make sense if true
                 }
             )
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_whatsapp_buttons,
+                description = R.string.settings_entry_show_whatsapp_buttons_description,
+                value = currentSettings.showWhatsAppButtons,
+                onValueChanged = { settingsRepository.showWhatsAppButtons = it }
+            )
         }
     }
 

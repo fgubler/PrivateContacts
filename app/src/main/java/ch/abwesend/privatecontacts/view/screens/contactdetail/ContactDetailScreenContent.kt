@@ -58,6 +58,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
@@ -85,11 +86,11 @@ const val IMAGE_MAX_SIZE_DP = 750
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
     @Composable
-    fun ScreenContent(contact: IContact, modifier: Modifier = Modifier) {
+    fun ScreenContent(contact: IContact, settings: ISettingsState, modifier: Modifier = Modifier) {
         val scrollState = rememberScrollState()
         Column(modifier = modifier.verticalScroll(state = scrollState)) {
             PersonalInformation(contact = contact)
-            PhoneNumbers(contact = contact)
+            PhoneNumbers(contact = contact, settings = settings)
             EmailAddresses(contact = contact)
             PhysicalAddresses(contact = contact)
             Websites(contact = contact)
@@ -187,11 +188,11 @@ object ContactDetailScreenContent {
     }
 
     @Composable
-    private fun PhoneNumbers(contact: IContact) {
+    private fun PhoneNumbers(contact: IContact, settings: ISettingsState) {
         val context = LocalContext.current
 
-        val secondaryActionConfigs = listOf(
-            phoneNumberWhatsAppButton(context),
+        val secondaryActionConfigs = listOfNotNull(
+            phoneNumberWhatsAppButton(context).takeIf { settings.showWhatsAppButtons },
             IconButtonConfigGeneric<PhoneNumber>(
                 label = R.string.send_sms,
                 icon = Icons.Default.Chat

@@ -25,6 +25,8 @@ interface SettingsRepository : ISettingsState {
 
     override var showInitialAppInfoDialog: Boolean // invisible
 
+    override var showWhatsAppButtons: Boolean
+
     // Defaults
     override var defaultContactType: ContactType
     override var defaultExternalContactAccount: ContactAccount

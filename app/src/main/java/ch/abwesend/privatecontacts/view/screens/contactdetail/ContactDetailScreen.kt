@@ -99,7 +99,13 @@ object ContactDetailScreen {
                 .composeIfLoading {
                     LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
                 }
-                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
+                .composeIfReady {
+                    ContactDetailScreenContent.ScreenContent(
+                        contact = it,
+                        settings = screenContext.settings,
+                        modifier = modifier,
+                    )
+                }
         }
 
         DeleteResultObserver(viewModel = viewModel, onSuccess = screenContext::navigateUp)
