@@ -61,6 +61,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.model.whatsapp.WhatsAppNavigationResult
@@ -209,10 +210,24 @@ object ContactDetailScreenContent {
 
     @Composable
     private fun phoneNumberWhatsAppButton(context: Context): IconButtonConfigGeneric<PhoneNumber> {
+        var phoneNumberToShare: PhoneNumber? by remember { mutableStateOf(null) }
+        phoneNumberToShare?.let {
+            WhatsAppConfirmationDialog(context = context, phoneNumber = it) {
+                phoneNumberToShare = null
+            }
+        }
+
+        return IconButtonConfigGeneric<PhoneNumber>(
+            label = R.string.send_whatsapp_message,
+            icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+        ) { phoneNumber -> phoneNumberToShare = phoneNumber }
+    }
+
+    @Composable
+    private fun WhatsAppConfirmationDialog(context: Context, phoneNumber: PhoneNumber, closeDialog: () -> Unit) {
         var whatsAppClickCounter: Int by remember { mutableIntStateOf(0) }
 
         @StringRes var errorMessageRes: Int? by remember { mutableStateOf(null) }
-
         errorMessageRes?.let { stringRes ->
             OkDialog(
                 title = R.string.whatsapp_error_navigation_failed_title,
@@ -221,19 +236,22 @@ object ContactDetailScreenContent {
             ) { errorMessageRes = null }
         }
 
-        return IconButtonConfigGeneric<PhoneNumber>(
-            label = R.string.send_whatsapp_message,
-            icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
-        ) { phoneNumber ->
-            val result = phoneNumber.tryNavigateToWhatsApp(context, whatsAppClickCounter)
-            whatsAppClickCounter++
-            when (result) {
-                WhatsAppNavigationResult.NOT_INSTALLED -> errorMessageRes = R.string.whatsapp_error_not_installed
-                WhatsAppNavigationResult.PHONE_NUMBER_INVALID_FORMAT -> errorMessageRes = R.string.whatsapp_error_number_format_invalid
-                WhatsAppNavigationResult.NAVIGATION_FAILED -> errorMessageRes = R.string.whatsapp_error_navigation_failed
-                WhatsAppNavigationResult.SUCCESS -> logger.info("Navigation to whatsapp successful")
-            }
-        }
+        YesNoDialog(
+            title = R.string.whatsapp_confirmation_title,
+            text = { Text(stringResource(id = R.string.whatsapp_confirmation_text)) },
+            onNo = { closeDialog() },
+            onYes = {
+                val result = phoneNumber.tryNavigateToWhatsApp(context, whatsAppClickCounter)
+                whatsAppClickCounter++
+                when (result) {
+                    WhatsAppNavigationResult.NOT_INSTALLED -> errorMessageRes = R.string.whatsapp_error_not_installed
+                    WhatsAppNavigationResult.PHONE_NUMBER_INVALID_FORMAT -> errorMessageRes = R.string.whatsapp_error_number_format_invalid
+                    WhatsAppNavigationResult.NAVIGATION_FAILED -> errorMessageRes = R.string.whatsapp_error_navigation_failed
+                    WhatsAppNavigationResult.SUCCESS -> logger.info("Navigation to whatsapp successful")
+                }
+                closeDialog()
+            },
+        )
     }
 
     @Composable
