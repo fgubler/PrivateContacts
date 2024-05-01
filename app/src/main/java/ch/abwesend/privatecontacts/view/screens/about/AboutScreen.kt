@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -31,6 +33,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.UserFeedbackPseudoExceptio
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.components.BulletPointListItem
 import ch.abwesend.privatecontacts.view.components.LinkText
+import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.components.text.SectionTitle
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
@@ -48,7 +51,12 @@ object AboutScreen {
     fun Screen(screenContext: IScreenContextBase) {
         val context = LocalContext.current
         BaseScreen(screenContext = screenContext, selectedScreen = AboutTheApp) { padding ->
-            Column(modifier = Modifier.padding(padding).padding(10.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .padding(10.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
                 AboutTheApp(context)
                 ContactDevelopers(context)
                 LegalDisclaimer()
@@ -158,5 +166,8 @@ object AboutScreen {
     private fun LegalDisclaimer() {
         SectionTitle(titleRes = R.string.legal_disclaimer_title)
         Text(text = stringResource(id = R.string.legal_disclaimer_text), fontStyle = FontStyle.Italic)
+        Spacer(modifier = Modifier.height(5.dp))
+        SectionSubtitle(titleRes = R.string.legal_disclaimer_whatsapp_title)
+        Text(text = stringResource(id = R.string.legal_disclaimer_whatsapp_text), fontStyle = FontStyle.Italic)
     }
 }
