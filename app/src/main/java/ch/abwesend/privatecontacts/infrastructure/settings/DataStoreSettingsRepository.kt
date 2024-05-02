@@ -80,6 +80,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
 
+    override var showWhatsAppButtons: Boolean
+        get() = currentSettings.showWhatsAppButtons
+        set(value) = dataStore.setValue(showWhatsAppButtonsEntry, value)
+
     override var requestIncomingCallPermissions: Boolean
         get() = currentSettings.requestIncomingCallPermissions
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
@@ -120,6 +124,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         invertTopAndBottomBars = settings.invertTopAndBottomBars
         showIncomingCallsOnLockScreen = settings.showIncomingCallsOnLockScreen
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
+        showWhatsAppButtons = settings.showWhatsAppButtons
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         showAndroidContacts = settings.showAndroidContacts

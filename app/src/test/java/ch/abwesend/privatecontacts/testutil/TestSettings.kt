@@ -24,6 +24,7 @@ data class TestSettings(
     override var orderByFirstName: Boolean = currentSettings.orderByFirstName
     override var showContactTypeInList: Boolean = currentSettings.showContactTypeInList
     override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
+    override var showWhatsAppButtons: Boolean = currentSettings.showWhatsAppButtons
     override var defaultContactType: ContactType = currentSettings.defaultContactType
     override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions

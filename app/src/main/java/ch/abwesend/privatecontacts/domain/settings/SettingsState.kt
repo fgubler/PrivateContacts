@@ -25,6 +25,9 @@ interface ISettingsState {
 
     val showInitialAppInfoDialog: Boolean
 
+    /** shows a button to open a phone-number in WhatsApp */
+    val showWhatsAppButtons: Boolean
+
     // Defaults
     val defaultContactType: ContactType
     val defaultExternalContactAccount: ContactAccount
@@ -64,6 +67,8 @@ data class SettingsState(
 
     override val showInitialAppInfoDialog: Boolean,
 
+    override val showWhatsAppButtons: Boolean,
+
     override val defaultContactType: ContactType,
     override val defaultExternalContactAccount: ContactAccount,
     override val defaultVCardVersion: VCardVersion,
@@ -86,6 +91,7 @@ data class SettingsState(
             invertTopAndBottomBars = false,
             showIncomingCallsOnLockScreen = true,
             showInitialAppInfoDialog = true,
+            showWhatsAppButtons = true,
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             showAndroidContacts = true,

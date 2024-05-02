@@ -141,6 +141,8 @@
     <string name="contact_list_bulk_mode_title">%1$s items selected</string>
 
     <string name="show_additional_fields">Show additional fields</string>
+    <string name="whatsapp_confirmation_title">Open WhatsApp?</string>
+    <string name="whatsapp_confirmation_text">Are you sure you want to open a chat in WhatsApp with this number?\n\nThis action will share the phone-number in question with WhatsApp.\n\nNo other contact-information will be shared.</string>
 
     <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
 
@@ -193,7 +195,13 @@
     <string name="type_change_batch_error">While changing the types of %1$s contacts, the change failed for %2$s contacts.\nThis was due to %3$s failed validation(s) and %4$s other error(s).\n\nIn the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>
+    <string name="send_whatsapp_message">Send WhatsApp message</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
+
+    <string name="whatsapp_error_not_installed">WhatsApp seems not to be installed.</string>
+    <string name="whatsapp_error_number_format_invalid">Please change the phone-number to international format, starting with the appropriate country-code, e.g. +1 for the United States.</string>
+    <string name="whatsapp_error_navigation_failed_title">Navigation Failed</string>
+    <string name="whatsapp_error_navigation_failed">The navigation to WhatsApp failed for unknown reasons. Please try again.</string>
 
     <string name="show_caller_information_title">Show caller information?</string>
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
@@ -220,6 +228,8 @@
     <string name="privacy_title">Privacy Declaration</string>
     <string name="legal_disclaimer_title">Legal Disclaimer</string>
     <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
+    <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
+    <string name="legal_disclaimer_whatsapp_text">The developers have no association whatsoever with WhatsApp or its parent-company. The functionality to open WhatsApp from within this app is based exclusively on public APIs offered by WhatsApp.\n\nNo data is shared with WhatsApp unless you click one of the buttons to open a phone-number in WhatsApp.\nIf you do, the only information shared with WhatsApp is that exact number. Even then, no other information of that contact (e.g. name, email, notes, other phone-numbers, etc.) is shared.</string>
 
     <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
@@ -244,6 +254,8 @@
     <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
     <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
     <string name="settings_entry_invert_top_and_bottom_bars">Show the navigation-bar at the bottom of the screen</string>
+    <string name="settings_entry_show_whatsapp_buttons">Show WhatsApp buttons</string>
+    <string name="settings_entry_show_whatsapp_buttons_description">Show buttons in the contact-detail screen to start a chat in WhatsApp.</string>
     <string name="settings_entry_default_contact_type">Contact-type</string>
     <string name="settings_entry_default_external_contact_account">Contact account</string>
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
