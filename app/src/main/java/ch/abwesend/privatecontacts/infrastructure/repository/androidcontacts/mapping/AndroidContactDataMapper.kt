@@ -172,6 +172,7 @@ class AndroidContactDataMapper {
                     modelStatus = ModelStatus.UNCHANGED,
                 )
             }
+            .removeDuplicates()
     }
 
     private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =

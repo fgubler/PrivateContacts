@@ -50,6 +50,7 @@ import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.Addr
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someCompany
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactImage
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.someEventDate
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
@@ -114,7 +115,7 @@ class VCardImportExportRepositoryFullIntegrationTest : RepositoryTestBase() {
         assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
         val resultContact = resultContacts!!.first()
 
-        assertThat(resultContact.importId?.value).isEqualTo(uuid)
+        assertThat(resultContact.importId?.uuid).isEqualTo(uuid)
         assertThat(resultContact.id).isInstanceOf(IContactIdInternal::class.java)
         assertThat((resultContact.id as IContactIdInternal).uuid).isNotEqualTo(uuid) // should choose a new UUID
         assertThat(resultContact.type).isEqualTo(type)
@@ -479,6 +480,38 @@ class VCardImportExportRepositoryFullIntegrationTest : RepositoryTestBase() {
             assertThat(resultEventDate.value).isEqualTo(originalEventDate!!.value)
             assertThat(resultEventDate.modelStatus).isEqualTo(ModelStatus.NEW)
             assertThat(resultEventDate.type).isEqualTo(originalEventDate.type)
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["V3", "V4"])
+    fun `should map images`(vCardVersionRaw: String) {
+        val vCardVersion = VCardVersion.valueOf(vCardVersionRaw)
+        val images = listOf(
+            someContactImage(thumbnailUri = "Test", fullImage = byteArrayOf(0, 3, 5, 7)),
+            someContactImage(thumbnailUri = null, fullImage = byteArrayOf(0, 3, 5, 7)),
+            someContactImage(thumbnailUri = "Test", fullImage = null),
+        )
+        val originalContacts = images.map { someContactEditable(image = it) }
+
+        images.indices.forEach {
+            val image = images[it]
+            val originalContact = originalContacts[it]
+
+            val vCardResult = runBlocking { underTest.exportContacts(listOf(originalContact), vCardVersion) }
+            assertThat(vCardResult).isInstanceOf(SuccessResult::class.java)
+            val vCardContent = vCardResult.getValueOrNull()?.fileContent
+            assertThat(vCardContent).isNotNull
+
+            val contactResult = runBlocking { underTest.parseContacts(vCardContent!!, originalContact.type) }
+            assertThat(contactResult).isInstanceOf(SuccessResult::class.java)
+            val resultContacts = contactResult.getValueOrNull()?.successfulContacts
+            assertThat(resultContacts).isNotNull.isNotEmpty.hasSize(1)
+            val resultContact = resultContacts!!.firstOrNull()
+            assertThat(resultContact).isNotNull
+
+            assertThat(resultContact!!.image.thumbnailUri).isEqualTo(image.thumbnailUri)
+            assertThat(resultContact.image.fullImage).isEqualTo(image.fullImage)
         }
     }
 }

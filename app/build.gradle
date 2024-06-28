@@ -31,8 +31,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 34
-        versionCode 45
-        versionName "3.1.0"
+        versionCode 61
+        versionName "3.7.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -54,6 +54,7 @@ android {
         }
     }
     compileOptions {
+
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
@@ -89,7 +90,7 @@ dependencies {
     // Android Core
     implementation "androidx.core:core-ktx:1.12.0"
     implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "com.google.android.material:material:1.10.0"
+    implementation "com.google.android.material:material:1.11.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -105,8 +106,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.8.1"
-    implementation "androidx.navigation:navigation-compose:2.7.5"
+    implementation "androidx.activity:activity-compose:1.8.2"
+    implementation "androidx.navigation:navigation-compose:2.7.6"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -133,7 +134,7 @@ dependencies {
     implementation "com.alexstyl:contactstore:${contactStoreVersion}"
     implementation "com.alexstyl:contactstore-coroutines:${contactStoreVersion}"
 
-    implementation 'com.googlecode.ez-vcard:ez-vcard:0.12.0'
+    implementation 'com.googlecode.ez-vcard:ez-vcard:0.12.0' // 0.12.1 produces strange errors
 
     // ===== Testing =====
     // Unit Tests

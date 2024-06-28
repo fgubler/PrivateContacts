@@ -53,6 +53,10 @@ internal val initialInfoDialogEntry = SettingsEntry(
     key = booleanPreferencesKey("showInitialInfoDialog"),
     defaultValue = defaultSettings.showInitialAppInfoDialog
 )
+internal val showWhatsAppButtonsEntry = SettingsEntry(
+    key = booleanPreferencesKey("showWhatsAppButtons"),
+    defaultValue = defaultSettings.showWhatsAppButtons
+)
 internal val requestIncomingCallPermissionsEntry = SettingsEntry(
     key = booleanPreferencesKey("requestIncomingCallPermissions"),
     defaultValue = defaultSettings.requestIncomingCallPermissions

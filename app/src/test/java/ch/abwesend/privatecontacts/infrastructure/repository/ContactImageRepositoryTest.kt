@@ -104,15 +104,42 @@ class ContactImageRepositoryTest : RepositoryTestBase() {
     }
 
     @Test
-    fun `should create a new image`() {
+    fun `should create a new image with thumbnail`() {
         val contactId = someContactId()
-        val image = someContactImage(modelStatus = NEW)
+        val image = someContactImage(thumbnailUri = "test", modelStatus = NEW)
         coJustRun { contactImageDao.insert(any()) }
 
         val result = runBlocking { underTest.storeImage(contactId, image) }
 
         assertThat(result).isTrue
         coVerify { contactImageDao.insert(match { it.contactId == contactId.uuid }) }
+        confirmVerified(contactImageDao)
+    }
+
+    @Test
+    fun `should create a new image with fullImage`() {
+        val contactId = someContactId()
+        val image = someContactImage(fullImage = ByteArray(42), modelStatus = NEW)
+        coJustRun { contactImageDao.insert(any()) }
+
+        val result = runBlocking { underTest.storeImage(contactId, image) }
+
+        assertThat(result).isTrue
+        coVerify { contactImageDao.insert(match { it.contactId == contactId.uuid }) }
+        confirmVerified(contactImageDao)
+    }
+
+    @Test
+    fun `should not create an empty new image`() {
+        val contactId = someContactId()
+        val image = someContactImage(fullImage = null, thumbnailUri = null, modelStatus = NEW)
+        coJustRun { contactImageDao.insert(any()) }
+
+        val result = runBlocking { underTest.storeImage(contactId, image) }
+
+        assertThat(image.isEmpty).isTrue // make sure the test-setup works
+        assertThat(result).isFalse
+        coVerify(exactly = 0) { contactImageDao.insert(any()) }
         confirmVerified(contactImageDao)
     }
 }

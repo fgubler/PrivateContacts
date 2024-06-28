@@ -15,8 +15,9 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Cust
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Other
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipBrother
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipChild
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFather
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipFriend
-import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipParent
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipMother
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipPartner
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipRelative
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.RelationshipSister
@@ -64,7 +65,8 @@ data class Relationship(
         const val labelPlural = R.string.relationships
 
         private val defaultAllowedTypes = listOf(
-            RelationshipParent,
+            RelationshipFather,
+            RelationshipMother,
             RelationshipChild,
             RelationshipBrother,
             RelationshipSister,

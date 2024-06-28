@@ -101,3 +101,32 @@ private fun ErrorsChapter(title: String, errorTexts: List<String>) {
         }
     }
 }
+
+@Composable
+fun ExportContactsResultDialog(
+    numberOfErrors: Int,
+    numberOfAttemptedChanges: Int,
+    onClose: () -> Unit
+) {
+    if (numberOfErrors > 0) {
+        val description = when {
+            numberOfAttemptedChanges == 1 -> stringResource(id = R.string.export_contact_error)
+            numberOfAttemptedChanges > numberOfErrors -> {
+                val formatArgs = arrayOf(numberOfErrors, numberOfAttemptedChanges)
+                stringResource(id = R.string.export_contacts_partial_error, formatArgs = formatArgs)
+            }
+            else -> stringResource(id = R.string.export_contacts_full_error)
+        }
+
+        OkDialog(title = R.string.error, onClose = onClose) {
+            Text(text = description)
+        }
+    } else {
+        val descriptionRes =
+            if (numberOfAttemptedChanges > 1) R.string.contacts_export_success else R.string.contact_export_success
+
+        OkDialog(title = R.string.export_complete_title, onClose = onClose) {
+            Text(text = stringResource(id = descriptionRes))
+        }
+    }
+}

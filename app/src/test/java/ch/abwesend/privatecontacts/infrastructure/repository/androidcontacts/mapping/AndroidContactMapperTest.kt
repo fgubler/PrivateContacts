@@ -93,27 +93,4 @@ class AndroidContactMapperTest : TestBase() {
         assertThat(result.contactDataSet).hasSize(1)
         assertThat(result.contactDataSet.first().value).isEqualTo(androidContact.organization)
     }
-
-    @Test
-    fun `should write the middle name to the end of the first name`() {
-        val androidContact = someAndroidContact(
-            contactId = 433L,
-            firstName = "Gabriel",
-            middleName = "Something",
-            lastName = "De Leon",
-            nickName = "Black Lion",
-            note = "likes silver",
-        )
-        every { contactDataFactory.getContactData(any()) } returns emptyList()
-
-        val result = underTest.toContact(
-            contact = androidContact,
-            groups = emptyList(),
-            rethrowExceptions = true,
-        )
-
-        assertThat(result).isNotNull
-        assertThat(result!!.id).isInstanceOf(IContactIdExternal::class.java)
-        assertThat(result.firstName).isEqualTo("Gabriel Something")
-    }
 }

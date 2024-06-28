@@ -28,6 +28,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toCompany
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactData
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactGroups
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toContactImage
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toRelationship
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
@@ -48,8 +49,14 @@ class VCardToContactMapper {
             contact.firstName = vCard.structuredName?.given ?: vCard.formattedName?.value.orEmpty()
             contact.lastName = vCard.structuredName?.family.orEmpty()
 
-            val nicknames = vCard.nickname?.values ?: vCard.structuredName?.additionalNames.orEmpty()
+            contact.middleName = vCard.structuredName?.additionalNames.orEmpty().joinToString(" ")
+            vCard.structuredName?.prefixes.orEmpty().firstOrNull()?.let { contact.namePrefix = it }
+            vCard.structuredName?.suffixes.orEmpty().firstOrNull()?.let { contact.nameSuffix = it }
+
+            val nicknames = vCard.nickname?.values.orEmpty()
             contact.nickname = nicknames.filterNotNull().joinToString(", ")
+
+            contact.addNameWorkarounds(vCard)
 
             contact.notes = vCard.notes.orEmpty().mapNotNull { it.value }.joinToString(Constants.linebreak)
 
@@ -59,12 +66,15 @@ class VCardToContactMapper {
             val groups = vCard.categoriesList.orEmpty().flatMap { it.toContactGroups() }
             contact.contactGroups.addAll(groups)
 
+            val image = vCard.photos.orEmpty().filterNotNull().toContactImage()
+            contact.image = image
+
             val contactCategory = vCard.kind // TODO use once this becomes a thing
             // TODO figure out how to handle the name of companies/organizations
 
             SuccessResult(contact)
         } catch (e: Exception) {
-            logger.warning("Failed to map contact '${vCard.uid}'")
+            logger.warning("Failed to map contact '${vCard.uid}'", e)
             ErrorResult(Unit)
         }
 
@@ -129,5 +139,25 @@ class VCardToContactMapper {
     private fun Related.isPseudoRelationForCompany(): Boolean {
         val type = firstTypeOrNull
         return type != null && companyMappingService.matchesCompanyCustomRelationshipPattern(type)
+    }
+
+    /**
+     * Contacts without first-/last-name are not allowed.
+     * Workaround for nickname but also companies.
+     * TODO consider removing this once proper company-support is added
+     */
+    private fun IContactEditable.addNameWorkarounds(vCard: VCard) {
+        if (firstName.isEmpty() && lastName.isEmpty()) {
+            val organization = vCard.organization?.values.orEmpty()
+                .filterNot { it.isNullOrEmpty() }
+                .joinToString(" - ")
+
+            if (nickname.isNotEmpty()) {
+                firstName = nickname
+            } else if (organization.isNotEmpty()) {
+                // temporary workaround: this should actually be stored in a field like "organizationName"
+                firstName = organization
+            }
+        }
     }
 }

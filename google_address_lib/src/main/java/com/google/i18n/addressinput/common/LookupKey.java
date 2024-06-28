@@ -264,7 +264,7 @@ public final class LookupKey {
      * Builds lookup keys.
      */
     // TODO: This is used in AddressWidget in a small number of places and it should be possible
-    // to hide this type within this package quite easily.
+    //   to hide this type within this package quite easily.
     public static class Builder {
         private KeyType keyType;
 

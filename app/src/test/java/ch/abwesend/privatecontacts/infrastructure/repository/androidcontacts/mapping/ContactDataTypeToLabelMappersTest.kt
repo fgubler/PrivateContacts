@@ -79,8 +79,6 @@ class ContactDataTypeToLabelMappersTest : TestBase() {
     fun `labels without 1-1 mapping should only be overwritten if changed`(labelUnchanged: Boolean) {
         val labels = listOf(
             LabelConversionErrorData(Label.Main, ContactDataCategory.WEBSITE, Label.WebsiteHomePage),
-            LabelConversionErrorData(Label.RelationFather, ContactDataCategory.RELATIONSHIP, Label.RelationParent),
-            LabelConversionErrorData(Label.RelationMother, ContactDataCategory.RELATIONSHIP, Label.RelationParent),
             LabelConversionErrorData(
                 Label.RelationDomesticPartner,
                 ContactDataCategory.RELATIONSHIP,

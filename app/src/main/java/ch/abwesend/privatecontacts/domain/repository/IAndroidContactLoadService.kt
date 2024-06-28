@@ -16,4 +16,5 @@ interface IAndroidContactLoadService {
     fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>>
     suspend fun loadAllContactsFull(): List<IContact>
     suspend fun resolveContact(contactId: IContactIdExternal): IContact
+    suspend fun resolveContacts(contactIds: Set<IContactIdExternal>): List<IContact>
 }

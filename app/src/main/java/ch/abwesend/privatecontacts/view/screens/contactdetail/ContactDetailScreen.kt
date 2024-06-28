@@ -19,8 +19,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -37,6 +40,8 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.view.components.FullScreenError
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
@@ -46,6 +51,8 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactType
 import ch.abwesend.privatecontacts.view.components.contactmenu.ChangeContactTypeMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsMenuItem
+import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsResultDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
@@ -79,6 +86,12 @@ object ContactDetailScreen {
                 ContactDetailTopBar(screenContext = screenContext, contact = contactResource.valueOrNull)
             }
         ) { padding ->
+            LaunchedEffect(Unit) {
+                if (!ContactDetailInitializationWorkaround.hasOpenedContact) {
+                    screenContext.navigateUp()
+                }
+            }
+
             val modifier = Modifier.padding(padding)
             contactResource
                 .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
@@ -86,11 +99,18 @@ object ContactDetailScreen {
                 .composeIfLoading {
                     LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
                 }
-                .composeIfReady { ContactDetailScreenContent.ScreenContent(contact = it, modifier = modifier) }
+                .composeIfReady {
+                    ContactDetailScreenContent.ScreenContent(
+                        contact = it,
+                        settings = screenContext.settings,
+                        modifier = modifier,
+                    )
+                }
         }
 
         DeleteResultObserver(viewModel = viewModel, onSuccess = screenContext::navigateUp)
         TypeChangeResultObserver(viewModel = viewModel, onSuccess = screenContext::navigateUp)
+        ExportResultObserver(viewModel)
     }
 
     @Composable
@@ -131,6 +151,26 @@ object ContactDetailScreen {
                 is ContactSaveResult.ValidationFailure -> validationErrors = result.validationErrors
                 is ContactSaveResult.Failure -> errors = result.errors
             }
+        }
+    }
+
+    @Composable
+    private fun ExportResultObserver(viewModel: ContactDetailViewModel) {
+        var numberOfExportErrors: Int by remember { mutableIntStateOf(0) }
+        var dialogVisible: Boolean by remember { mutableStateOf(false) }
+
+        if (dialogVisible) {
+            ExportContactsResultDialog(numberOfErrors = numberOfExportErrors, numberOfAttemptedChanges = 1) {
+                dialogVisible = false
+            }
+        }
+
+        viewModel.exportResult.collectWithEffect { result ->
+            numberOfExportErrors = when (result) {
+                is SuccessResult -> result.value.failedContacts.size
+                is ErrorResult -> 1
+            }
+            dialogVisible = true
         }
     }
 
@@ -189,7 +229,7 @@ object ContactDetailScreen {
                 content = { Text(stringResource(id = R.string.refresh)) }
             )
             Divider()
-            ContactType.values().forEach { targetType ->
+            ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
                     contact = contact,
@@ -199,6 +239,8 @@ object ContactDetailScreen {
                 )
             }
             DeleteMenuItem(viewModel, contact, onCloseMenu)
+            Divider()
+            ExportMenuItem(viewModel, contact, onCloseMenu)
         }
     }
 
@@ -232,7 +274,7 @@ object ContactDetailScreen {
         contact: IContact,
         onCloseMenu: () -> Unit,
     ) {
-        DeleteContactMenuItem(contacts = setOf(contact)) { delete ->
+        DeleteContactMenuItem(numberOfContacts = 1) { delete ->
             if (delete) {
                 viewModel.deleteContact(contact)
             }
@@ -263,6 +305,22 @@ object ContactDetailScreen {
                 icon = Icons.Default.Sync,
             ) {
                 viewModel.reloadContact()
+            }
+        )
+    }
+
+    @Composable
+    private fun ExportMenuItem(
+        viewModel: ContactDetailViewModel,
+        contact: IContact,
+        onCloseMenu: () -> Unit,
+    ) {
+        ExportContactsMenuItem(
+            contacts = setOf(contact),
+            onCancel = onCloseMenu,
+            onExportContact = { targetFile, vCardVersion ->
+                viewModel.exportContact(targetFile, vCardVersion, contact)
+                onCloseMenu()
             }
         )
     }

@@ -41,7 +41,7 @@ fun ContactTypeField(
     var showTypeInfoDialog: Boolean by remember { mutableStateOf(false) }
 
     val selectedOption = ResDropDownOption(labelRes = selectedType.label, value = selectedType)
-    val options = ContactType.values().map {
+    val options = ContactType.entries.map {
         ResDropDownOption(labelRes = it.label, value = it)
     }
 

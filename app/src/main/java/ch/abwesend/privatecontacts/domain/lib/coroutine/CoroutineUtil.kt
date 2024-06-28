@@ -11,7 +11,11 @@ suspend fun <T, S> Collection<T>.mapAsync(mapper: suspend (T) -> S): List<S> = c
     deferred.awaitAll()
 }
 
-/** same as [mapAsync] but chunked */
+/**
+ * same as [mapAsync] but chunked:
+ *   - all elements in a chunk are run in parallel
+ *   - chunks are run sequentially
+ */
 suspend fun <T, S> Collection<T>.mapAsyncChunked(
     chunkSize: Int = Constants.defaultChunkSize,
     mapper: suspend (T) -> S

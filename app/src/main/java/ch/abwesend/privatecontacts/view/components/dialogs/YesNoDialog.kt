@@ -34,6 +34,8 @@ fun YesNoDialog(
     @StringRes title: Int,
     text: @Composable () -> Unit,
     yesButtonEnabled: Boolean = true,
+    @StringRes yesButtonLabel: Int = R.string.yes,
+    @StringRes noButtonLabel: Int = R.string.no,
     onYes: () -> Unit,
     onNo: () -> Unit,
 ) {
@@ -43,12 +45,12 @@ fun YesNoDialog(
         onDismissRequest = onNo,
         confirmButton = {
             Button(onClick = onYes, enabled = yesButtonEnabled) {
-                Text(stringResource(id = R.string.yes))
+                Text(stringResource(id = yesButtonLabel))
             }
         },
         dismissButton = {
             OutlinedButton(onClick = onNo) {
-                Text(stringResource(id = R.string.no))
+                Text(stringResource(id = noButtonLabel))
             }
         },
     )

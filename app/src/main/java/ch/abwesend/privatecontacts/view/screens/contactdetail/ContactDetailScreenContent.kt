@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,11 +42,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
@@ -53,9 +58,13 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.util.Constants
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
+import ch.abwesend.privatecontacts.view.model.whatsapp.WhatsAppNavigationResult
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
@@ -68,6 +77,7 @@ import ch.abwesend.privatecontacts.view.util.navigateToEmailClient
 import ch.abwesend.privatecontacts.view.util.navigateToLocation
 import ch.abwesend.privatecontacts.view.util.navigateToOnlineSearch
 import ch.abwesend.privatecontacts.view.util.navigateToSms
+import ch.abwesend.privatecontacts.view.util.tryNavigateToWhatsApp
 
 const val UTF_8 = "utf-8"
 const val IMAGE_MAX_SIZE_DP = 750
@@ -77,11 +87,11 @@ const val IMAGE_MAX_SIZE_DP = 750
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
     @Composable
-    fun ScreenContent(contact: IContact, modifier: Modifier = Modifier) {
+    fun ScreenContent(contact: IContact, settings: ISettingsState, modifier: Modifier = Modifier) {
         val scrollState = rememberScrollState()
         Column(modifier = modifier.verticalScroll(state = scrollState)) {
             PersonalInformation(contact = contact)
-            PhoneNumbers(contact = contact)
+            PhoneNumbers(contact = contact, settings = settings)
             EmailAddresses(contact = contact)
             PhysicalAddresses(contact = contact)
             Websites(contact = contact)
@@ -114,6 +124,15 @@ object ContactDetailScreenContent {
                     }
                     if (contact.nickname.isNotEmpty()) {
                         PersonalInformationRow(label = R.string.nickname_colon, value = contact.nickname)
+                    }
+                    if (contact.middleName.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.middle_name_colon, value = contact.middleName)
+                    }
+                    if (contact.namePrefix.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.name_prefix_colon, value = contact.namePrefix)
+                    }
+                    if (contact.nameSuffix.isNotEmpty()) {
+                        PersonalInformationRow(label = R.string.name_suffix_colon, value = contact.nameSuffix)
                     }
 
                     PersonalInformationRow(
@@ -170,20 +189,69 @@ object ContactDetailScreenContent {
     }
 
     @Composable
-    private fun PhoneNumbers(contact: IContact) {
+    private fun PhoneNumbers(contact: IContact, settings: ISettingsState) {
         val context = LocalContext.current
 
-        val secondaryActionConfig = IconButtonConfigGeneric<PhoneNumber>(
-            label = R.string.send_sms,
-            icon = Icons.Default.Chat
-        ) { phoneNumber -> phoneNumber.navigateToSms(context) }
+        val secondaryActionConfigs = listOfNotNull(
+            phoneNumberWhatsAppButton(context).takeIf { settings.showWhatsAppButtons },
+            IconButtonConfigGeneric<PhoneNumber>(
+                label = R.string.send_sms,
+                icon = Icons.Default.Chat
+            ) { phoneNumber -> phoneNumber.navigateToSms(context) },
+        )
 
         ContactDataCategory(
             contact = contact,
             iconConfig = IconConfig(label = PhoneNumber.labelSingular, icon = PhoneNumber.icon),
-            secondaryActionConfig = secondaryActionConfig,
+            secondaryActionConfigs = secondaryActionConfigs,
             factory = { PhoneNumber.createEmpty(it) },
         ) { phoneNumber -> phoneNumber.navigateToDial(context) }
+    }
+
+    @Composable
+    private fun phoneNumberWhatsAppButton(context: Context): IconButtonConfigGeneric<PhoneNumber> {
+        var phoneNumberToShare: PhoneNumber? by remember { mutableStateOf(null) }
+        phoneNumberToShare?.let {
+            WhatsAppConfirmationDialog(context = context, phoneNumber = it) {
+                phoneNumberToShare = null
+            }
+        }
+
+        return IconButtonConfigGeneric<PhoneNumber>(
+            label = R.string.send_whatsapp_message,
+            icon = ImageVector.vectorResource(R.drawable.whatsapp_icon)
+        ) { phoneNumber -> phoneNumberToShare = phoneNumber }
+    }
+
+    @Composable
+    private fun WhatsAppConfirmationDialog(context: Context, phoneNumber: PhoneNumber, closeDialog: () -> Unit) {
+        var whatsAppClickCounter: Int by remember { mutableIntStateOf(0) }
+
+        @StringRes var errorMessageRes: Int? by remember { mutableStateOf(null) }
+        errorMessageRes?.let { stringRes ->
+            OkDialog(
+                title = R.string.whatsapp_error_navigation_failed_title,
+                text = stringRes,
+                okButtonLabel = R.string.close,
+            ) { errorMessageRes = null }
+        }
+
+        YesNoDialog(
+            title = R.string.whatsapp_confirmation_title,
+            text = { Text(stringResource(id = R.string.whatsapp_confirmation_text)) },
+            onNo = { closeDialog() },
+            onYes = {
+                val result = phoneNumber.tryNavigateToWhatsApp(context, whatsAppClickCounter)
+                whatsAppClickCounter++
+                when (result) {
+                    WhatsAppNavigationResult.NOT_INSTALLED -> errorMessageRes = R.string.whatsapp_error_not_installed
+                    WhatsAppNavigationResult.PHONE_NUMBER_INVALID_FORMAT -> errorMessageRes = R.string.whatsapp_error_number_format_invalid
+                    WhatsAppNavigationResult.NAVIGATION_FAILED -> errorMessageRes = R.string.whatsapp_error_navigation_failed
+                    WhatsAppNavigationResult.SUCCESS -> logger.info("Navigation to whatsapp successful")
+                }
+                closeDialog()
+            },
+        )
     }
 
     @Composable

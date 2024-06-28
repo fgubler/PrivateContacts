@@ -25,6 +25,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     invertTopAndBottomBars = getValue(invertTopAndBottomBarsEntry),
     showIncomingCallsOnLockScreen = getValue(incomingCallsOnLockScreenEntry),
     showInitialAppInfoDialog = getValue(initialInfoDialogEntry),
+    showWhatsAppButtons = getValue(showWhatsAppButtonsEntry),
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),
     observeIncomingCalls = getValue(observeIncomingCallsEntry),
     showAndroidContacts = getValue(showAndroidContactsEntry),

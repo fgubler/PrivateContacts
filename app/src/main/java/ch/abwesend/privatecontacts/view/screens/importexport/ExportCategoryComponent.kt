@@ -90,6 +90,7 @@ object ExportCategoryComponent {
 
         val defaultFileName = createDefaultFileName(sourceType = sourceType, vCardVersion)
         val exportAction = rememberActionWithContactPermission(permissionProvider)
+        var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
 
         val launcher = rememberCreateFileLauncher(
             mimeType = VCF_MAIN_MIME_TYPE,
@@ -101,7 +102,9 @@ object ExportCategoryComponent {
 
         SecondaryButton(
             onClick = {
-                exportAction.executeAction(sourceType.androidPermissionRequired) { launcher.launch() }
+                exportAction.executeAction(sourceType.androidPermissionRequired) {
+                    showFilePickerErrorDialog = !launcher.launch()
+                }
             },
             content = {
                 Text(
@@ -110,6 +113,12 @@ object ExportCategoryComponent {
                 )
             },
         )
+
+        if (showFilePickerErrorDialog) {
+            OkDialog(title = R.string.unexpected_error, text = R.string.file_picker_error) {
+                showFilePickerErrorDialog = false
+            }
+        }
     }
 
     @Composable

@@ -27,6 +27,9 @@ class FullTextSearchService {
             firstName,
             lastName,
             nickname,
+            middleName,
+            namePrefix,
+            nameSuffix,
             notes
         )
 
@@ -34,8 +37,10 @@ class FullTextSearchService {
             .mapNotNull { it.formatValueForSearch() }
             .filter { it.isNotEmpty() }
 
+        val groupData = contactGroups.map { it.id.name }
+
         val service: FullTextSearchService = getAnywhere()
-        val allData = baseData + additionalData
+        val allData = baseData + additionalData + groupData
 
         return allData
             .map { service.prepareQuery(it) }

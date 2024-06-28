@@ -39,3 +39,4 @@ inline fun ILogger.error(message: String) {
 
 /** log a message which must not be sent to Firebase for privacy-reasons */
 fun ILogger.debugLocally(message: String) = debug(message)
+fun ILogger.debugLocally(message: String, t: Throwable) = debug(message, t)

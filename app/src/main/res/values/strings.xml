@@ -50,6 +50,7 @@
     <string name="error">Error</string>
     <string name="errors">Errors</string>
     <string name="unknown_error">Unknown error</string>
+    <string name="unexpected_error">Unexpected error</string>
     <string name="validation_error">Validation error</string>
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
@@ -84,6 +85,8 @@
     <string name="type_relationship_brother">Brother</string>
     <string name="type_relationship_sister">Sister</string>
     <string name="type_relationship_parent">Parent</string>
+    <string name="type_relationship_father">Father</string>
+    <string name="type_relationship_mother">Mother</string>
     <string name="type_relationship_child">Child</string>
     <string name="type_relationship_partner">Partner</string>
     <string name="type_relationship_relative">Relative</string>
@@ -102,12 +105,19 @@
     <string name="reload_contact">Reload contact</string>
 
     <string name="personal_information">Personal information</string>
+    <string name="additional_information">Additional information</string>
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="nickname">Nickname</string>
+    <string name="middle_name">Middle name</string>
+    <string name="name_prefix">Prefix</string>
+    <string name="name_suffix">Suffix</string>
     <string name="first_name_colon">First name:</string>
     <string name="last_name_colon">Last name:</string>
     <string name="nickname_colon">Nickname:</string>
+    <string name="middle_name_colon">Middle name:</string>
+    <string name="name_prefix_colon">Prefix:</string>
+    <string name="name_suffix_colon">Suffix:</string>
     <string name="image">Image</string>
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>
@@ -132,6 +142,8 @@
     <string name="contact_list_bulk_mode_title">%1$s items selected</string>
 
     <string name="show_additional_fields">Show additional fields</string>
+    <string name="whatsapp_confirmation_title">Open WhatsApp?</string>
+    <string name="whatsapp_confirmation_text">Are you sure you want to open a chat in WhatsApp with this number?\n\nThis action will share the phone-number in question with WhatsApp.\n\nNo other contact-information will be shared.</string>
 
     <string name="generic_unknown_error">Something went very wrong. The desired operation could not be executed properly.</string>
 
@@ -149,7 +161,6 @@
     <string name="delete_contact">Delete Contact</string>
     <string name="delete_contact_title">Delete Contact</string>
     <string name="delete_contact_text">Deleted contacts cannot be restored. Are you sure you would like to delete this contact?</string>
-    <string name="delete_contact_progress">Contact is being deleted</string>
     <string name="delete_contact_error">Something went wrong. The contact could not be deleted.</string>
     <string name="create_as_new_contact">Create as new</string>
 
@@ -162,7 +173,7 @@
 
     <string name="make_contact_secret">Change contact to \'Secret\'</string>
     <string name="make_contact_secret_title">Change contact to \'Secret\'</string>
-    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.</string>
+    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.\n\nPlease make sure that no expected information is missing when checking the contact-details in this app before taking this step.</string>
 
     <string name="make_contacts_secret">Change contacts to \'Secret\'</string>
     <string name="make_contacts_secret_title">Change contacts to \'Secret\'</string>
@@ -185,7 +196,13 @@
     <string name="type_change_batch_error">While changing the types of %1$s contacts, the change failed for %2$s contacts.\nThis was due to %3$s failed validation(s) and %4$s other error(s).\n\nIn the case of an error the old contact was not deleted to avoid data-loss.</string>
 
     <string name="send_sms">Send SMS</string>
+    <string name="send_whatsapp_message">Send WhatsApp message</string>
     <string name="deeplink_failed_no_appropriate_app">No appropriate app found for this action.</string>
+
+    <string name="whatsapp_error_not_installed">WhatsApp seems not to be installed.</string>
+    <string name="whatsapp_error_number_format_invalid">Please change the phone-number to international format, starting with the appropriate country-code, e.g. +1 for the United States.</string>
+    <string name="whatsapp_error_navigation_failed_title">Navigation Failed</string>
+    <string name="whatsapp_error_navigation_failed">The navigation to WhatsApp failed for unknown reasons. Please try again.</string>
 
     <string name="show_caller_information_title">Show caller information?</string>
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
@@ -212,6 +229,8 @@
     <string name="privacy_title">Privacy Declaration</string>
     <string name="legal_disclaimer_title">Legal Disclaimer</string>
     <string name="legal_disclaimer_text">The software is provided as-is. The developers refuse any liability or accountability for any damages or losses occurring due to its use.</string>
+    <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
+    <string name="legal_disclaimer_whatsapp_text">The developers have no association whatsoever with WhatsApp or its parent-company. The functionality to open WhatsApp from within this app is based exclusively on public APIs offered by WhatsApp.\n\nNo data is shared with WhatsApp unless you click one of the buttons to open a phone-number in WhatsApp.\nIf you do, the only information shared with WhatsApp is that exact number. Even then, no other information of that contact (e.g. name, email, notes, other phone-numbers, etc.) is shared.</string>
 
     <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
@@ -227,6 +246,7 @@
     <string name="settings_category_security">Security</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
+    <string name="settings_category_privacy">Privacy</string>
 
     <string name="settings_info_dialog_call_detection">Unfortunately, call detection is strongly dependent on phone manufacturers and Android versions.\n\nTherefore, this feature does currently not obtain the same reliability as the rest of this app. Please let us know about any strange or incorrect behavior (see the \"About\" screen).\n\nWe apologize for any inconvenience caused.</string>
     <string name="settings_info_dialog_android_contacts_permission">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
@@ -236,6 +256,8 @@
     <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
     <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
     <string name="settings_entry_invert_top_and_bottom_bars">Show the navigation-bar at the bottom of the screen</string>
+    <string name="settings_entry_show_whatsapp_buttons">Show WhatsApp buttons</string>
+    <string name="settings_entry_show_whatsapp_buttons_description">Show buttons in the contact-detail screen to start a chat in WhatsApp.</string>
     <string name="settings_entry_default_contact_type">Contact-type</string>
     <string name="settings_entry_default_external_contact_account">Contact account</string>
     <string name="settings_entry_default_contact_type_description">Public contacts are shared with other apps on the phone. Secret contacts are not.</string>
@@ -251,6 +273,8 @@
 
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
+
+    <string name="settings_action_copy_logs">Copy logs to clipboard</string>
 
     <string name="settings_entry_enable_authentication">App authentication</string>
     <string name="settings_entry_enable_authentication_description">Require the user to authenticate before being able to use the app.</string>
@@ -280,6 +304,8 @@
 
     <string name="import_title">Import</string>
     <string name="import_contacts">Import contacts</string>
+    <string name="replace_existing_contacts_label">Replace matching contacts</string>
+    <string name="replace_existing_contacts_description">Replace an existing contact if it matches one from the import (same name and ID).</string>
     <string name="select_file_to_import">Select .vcf file to import</string>
     <string name="import_contacts_as">Import contacts as</string>
     <string name="import_contacts_progress">Contacts are being imported</string>
@@ -288,7 +314,7 @@
     <string name="file_reading_failed">Failed to read file</string>
     <string name="vcf_parsing_failed">Failed to read VCF in file</string>
     <string name="newly_imported_contacts">Newly imported contacts:</string>
-    <string name="ignored_existing_contacts">Ignored contacts:</string>
+    <string name="replaced_existing_contacts">Replaced contacts:</string>
     <string name="vcf_parsing_errors">VCF errors:</string>
     <string name="import_errors">Import errors:</string>
     <string name="import_validation_errors">Import validation errors:</string>
@@ -297,7 +323,10 @@
     <string name="import_show_result_overview">Show result overview</string>
     <string name="import_failed_contacts">Contacts which could not be imported</string>
 
+    <string name="file_picker_error">Failed to open file explorer: cannot select file.\nYour phone does not seem to support this action. We apologize for the inconvenience.</string>
+
     <string name="export_title">Export</string>
+    <string name="export_contact">Export contact</string>
     <string name="export_contacts">Export contacts</string>
     <string name="select_file_to_export_to">Select .vcf file to export to</string>
     <string name="contact_type_to_export">Export contacts of type</string>
@@ -325,6 +354,15 @@
     <string name="exported_contacts">Exported contacts:</string>
     <string name="failed_to_export_contacts">Failed contacts:</string>
     <string name="no_contact_name_fallback">[No contact name]</string>
+
+    <string name="export_contact_title">Export contact</string>
+    <string name="export_contacts_title">Export contacts</string>
+    <string name="selected_for_export">selected</string>
+    <string name="contact_export_success">The contact has been successfully exported.</string>
+    <string name="contacts_export_success">The contacts have been successfully exported.</string>
+    <string name="export_contact_error">Something went wrong. The contact could not be exported.</string>
+    <string name="export_contacts_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be exported.</string>
+    <string name="export_contacts_full_error">Something went wrong. No contacts could be exported.</string>
 
     <string name="authentication_failed">Failed to authenticate user: access denied.</string>
 </resources>

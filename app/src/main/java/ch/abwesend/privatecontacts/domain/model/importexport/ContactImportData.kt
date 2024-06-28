@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 
 data class ContactImportData(
     val newImportedContacts: List<IContact>,
-    val existingIgnoredContacts: List<IContactEditable>,
+    val replacedExistingContacts: List<IContact>,
 
     val importValidationFailures: Map<IContact, List<ContactValidationError>>,
     val importFailures: Map<IContact, List<ContactChangeError>>,
@@ -32,6 +32,6 @@ sealed interface ContactImportPartialData {
         val importValidationFailures: Map<IContact, List<ContactValidationError>>,
         val importFailures: Map<IContact, List<ContactChangeError>>,
 
-        val existingIgnoredContacts: List<IContactEditable>,
+        val replacedExistingContacts: List<IContact>,
     )
 }

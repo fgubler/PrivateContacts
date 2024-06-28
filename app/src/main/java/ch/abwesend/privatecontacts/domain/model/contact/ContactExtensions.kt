@@ -10,18 +10,31 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 
 fun IContact.getFullName(
     firstNameFirst: Boolean = Settings.current.orderByFirstName
-): String = getFullName(firstName, lastName, nickname, firstNameFirst)
+): String = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix, firstNameFirst)
 
 fun getFullName(
     firstName: String,
     lastName: String,
     nickname: String,
+    middleName: String,
+    namePrefix: String,
+    nameSuffix: String,
     firstNameFirst: Boolean = Settings.current.orderByFirstName,
 ): String {
-    val middlePart = if (nickname.isBlank()) " " else " \"$nickname\" "
-    val fullName = if (firstNameFirst) "$firstName$middlePart$lastName"
-    else "$lastName$middlePart$firstName"
-    return fullName.trim()
+    val nicknamePart = if (nickname.isBlank()) "" else " \"$nickname\" "
+
+    val nameParts = if (firstNameFirst) {
+        listOf(namePrefix, firstName, middleName, nicknamePart, lastName)
+    } else {
+        listOf(namePrefix, lastName, middleName, nicknamePart, firstName)
+    }
+    val namePartsSanitized = nameParts
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+
+    val nameWithoutSuffix = namePartsSanitized.joinToString(" ")
+    val suffixPart = if (nameSuffix.isBlank()) "" else ", $nameSuffix"
+    return nameWithoutSuffix + suffixPart
 }
 
 fun IContact.asEditable(): ContactEditable =
@@ -31,9 +44,13 @@ fun IContact.asEditable(): ContactEditable =
 fun IContact.toContactEditable(): ContactEditable =
     ContactEditable(
         id = id,
+        importId = importId,
         firstName = firstName,
         lastName = lastName,
         nickname = nickname,
+        middleName = middleName,
+        namePrefix = namePrefix,
+        nameSuffix = nameSuffix,
         type = type,
         notes = notes,
         image = image,
@@ -42,12 +59,7 @@ fun IContact.toContactEditable(): ContactEditable =
         saveInAccount = ContactAccount.currentDefaultForContactType(type)
     )
 
-fun IContact.toContactBase(): ContactBase =
-    ContactBase(
-        id = id,
-        type = type,
-        displayName = getFullName(firstName, lastName, nickname),
-    )
+fun IContact.toContactBase(): ContactBase = ContactBase(id = id, type = type, displayName = getFullName())
 
 val IContactBase.isExternal: Boolean
     get() = id.isExternal

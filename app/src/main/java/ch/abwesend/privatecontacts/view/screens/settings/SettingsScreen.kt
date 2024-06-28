@@ -93,7 +93,7 @@ object SettingsScreen {
                 SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                MiscellaneousCategory(settingsRepository, currentSettings)
+                PrivacyCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }
@@ -102,7 +102,7 @@ object SettingsScreen {
     @Composable
     private fun UxCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         val appThemeOptions = remember {
-            AppTheme.values().map { ResDropDownOption(labelRes = it.labelRes, value = it) }
+            AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
 
         SettingsCategory(titleRes = R.string.settings_category_ux) {
@@ -145,6 +145,15 @@ object SettingsScreen {
                     settingsRepository.invertTopAndBottomBars = it
                     settingsRepository.showExtraButtonsInEditScreen = !it // the buttons don't make sense if true
                 }
+            )
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_whatsapp_buttons,
+                description = R.string.settings_entry_show_whatsapp_buttons_description,
+                value = currentSettings.showWhatsAppButtons,
+                onValueChanged = { settingsRepository.showWhatsAppButtons = it }
             )
         }
     }
@@ -248,7 +257,7 @@ object SettingsScreen {
         currentSettings: ISettingsState,
     ) {
         val contactTypeOptions = remember {
-            ContactType.values().map { ResDropDownOption(labelRes = it.label, value = it) }
+            ContactType.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
         }
         var requestPermissionsFor: ContactType? by remember { mutableStateOf(null) }
 
@@ -350,8 +359,8 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun MiscellaneousCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        SettingsCategory(titleRes = R.string.settings_category_miscellaneous) {
+    private fun PrivacyCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        SettingsCategory(titleRes = R.string.settings_category_privacy) {
             SettingsCheckbox(
                 label = R.string.settings_entry_error_reports,
                 description = R.string.settings_entry_error_reports_description,
