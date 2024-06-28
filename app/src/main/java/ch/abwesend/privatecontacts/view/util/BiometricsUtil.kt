@@ -70,7 +70,9 @@ fun authenticateWithBiometrics(
                 .setTitle(promptTitle)
                 .setSubtitle(promptSubtitle)
                 .setAllowedAuthenticators(allowedAuthentications)
+                .setConfirmationRequired(false)
                 .build()
+
             withContext(Dispatchers.Main.immediate) {
                 biometricPrompt.authenticate(promptInfo)
             }
