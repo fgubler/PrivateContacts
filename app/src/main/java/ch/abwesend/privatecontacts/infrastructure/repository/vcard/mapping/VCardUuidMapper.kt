@@ -11,9 +11,14 @@ import ezvcard.property.Uid
 import java.util.UUID
 
 private const val UID_PREFIX = "urn:uuid:"
+const val PROTON_PREFIX = "proton-web-"
+
 fun UUID.toUid(): Uid = Uid(UID_PREFIX + toString())
 fun Uid.toUuidOrNull(): UUID? {
-    val uidValue = value.orEmpty().replaceFirst(oldValue = UID_PREFIX, newValue = "")
+    val uidValue = value.orEmpty()
+        .replaceFirst(oldValue = UID_PREFIX, newValue = "")
+        .replaceFirst(oldValue = PROTON_PREFIX, newValue = "")
+
     val uuid = runCatching { UUID.fromString(uidValue) }
 
     return uuid.getOrElse {
