@@ -17,6 +17,8 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -27,8 +29,8 @@ class MainViewModel : ViewModel() {
     private val _initializationState: MutableState<InitializationState> = mutableStateOf(InitialInfoDialog)
     val initializationState: State<InitializationState> = _initializationState
 
-    private val _accessGranted: MutableState<Boolean> = mutableStateOf(true)
-    val accessGranted: State<Boolean> = _accessGranted
+    private val _authenticationStatus: MutableState<AuthenticationStatus> = mutableStateOf(NOT_AUTHENTICATED)
+    val authenticationStatus: State<AuthenticationStatus> = _authenticationStatus
 
     fun goToNextState() {
         val oldState = _initializationState.value
@@ -42,12 +44,12 @@ class MainViewModel : ViewModel() {
     fun handleAuthenticationResult(authenticationFlow: Flow<AuthenticationStatus>) {
         viewModelScope.launch(dispatchers.default) {
             authenticationFlow.firstOrNull()?.let {
-                _accessGranted.value = it.allowAccess
+                _authenticationStatus.value = it
             }
         }
     }
 
     fun grantAccessWithoutAuthentication() {
-        _accessGranted.value = true
+        _authenticationStatus.value = SUCCESS
     }
 }

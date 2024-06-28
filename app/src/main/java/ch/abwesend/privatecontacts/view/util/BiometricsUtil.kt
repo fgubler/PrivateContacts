@@ -9,6 +9,7 @@ import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
 import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
 import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
 import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
@@ -57,32 +58,31 @@ fun Context.canUseBiometrics(): Boolean {
 fun authenticateWithBiometrics(
     activity: AppCompatActivity,
     promptTitle: String,
-    promptSubtitle: String,
-): Flow<AuthenticationStatus> =
-    callbackFlow {
-        logger.debug("Authenticating with biometrics: title = $promptTitle")
-        if (activity.canUseBiometrics()) {
-            val executor = ContextCompat.getMainExecutor(activity.applicationContext)
-            val callback = createAuthenticationCallback()
+    promptDescription: String? = null,
+): Flow<AuthenticationStatus> = callbackFlow {
+    logger.debug("Authenticating with biometrics: title = $promptTitle")
+    if (activity.canUseBiometrics()) {
+        val executor = ContextCompat.getMainExecutor(activity.applicationContext)
+        val callback = createAuthenticationCallback()
 
-            val biometricPrompt = BiometricPrompt(activity, executor, callback)
-            val promptInfo = BiometricPrompt.PromptInfo.Builder()
-                .setTitle(promptTitle)
-                .setSubtitle(promptSubtitle)
-                .setAllowedAuthenticators(allowedAuthentications)
-                .setConfirmationRequired(false)
-                .build()
+        val biometricPrompt = BiometricPrompt(activity, executor, callback)
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(promptTitle)
+            .setDescription(promptDescription)
+            .setAllowedAuthenticators(allowedAuthentications)
+            .setConfirmationRequired(false)
+            .build()
 
-            withContext(Dispatchers.Main.immediate) {
-                biometricPrompt.authenticate(promptInfo)
-            }
-        } else {
-            logger.debug("Cannot authenticate with biometrics.")
-            trySendBlocking(AuthenticationStatus.NOT_AUTHENTICATED)
-            channel.close()
+        withContext(Dispatchers.Main.immediate) {
+            biometricPrompt.authenticate(promptInfo)
         }
-        awaitClose { logger.debug("Authentication closed") }
+    } else {
+        logger.debug("Cannot authenticate with biometrics.")
+        trySendBlocking(AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED)
+        channel.close()
     }
+    awaitClose { logger.debug("Authentication closed") }
+}
 
 private fun ProducerScope<AuthenticationStatus>.createAuthenticationCallback(): BiometricPrompt.AuthenticationCallback {
     return object : BiometricPrompt.AuthenticationCallback() {
@@ -96,14 +96,18 @@ private fun ProducerScope<AuthenticationStatus>.createAuthenticationCallback(): 
         override fun onAuthenticationFailed() {
             super.onAuthenticationFailed()
             logger.debug("Authentication failed: do not grant access.")
-            trySendBlocking(AuthenticationStatus.FAILURE)
+            trySendBlocking(AuthenticationStatus.DENIED)
             channel.close()
         }
 
         override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
             super.onAuthenticationError(errorCode, errString)
-            logger.debug("Error during authentication: do not grant access.")
-            trySendBlocking(AuthenticationStatus.ERROR)
+            logger.debug("Error '$errorCode' during authentication: do not grant access. $errString")
+            val status = when (errorCode) {
+                ERROR_USER_CANCELED -> AuthenticationStatus.CANCELLED
+                else -> AuthenticationStatus.ERROR
+            }
+            trySendBlocking(status)
             channel.close()
         }
     }

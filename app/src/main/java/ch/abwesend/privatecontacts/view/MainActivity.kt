@@ -26,7 +26,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -54,6 +53,12 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallP
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.DENIED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.ERROR
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
 import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
@@ -127,16 +132,14 @@ class MainActivity : AppCompatActivity() {
         settings: ISettingsState,
         nextState: () -> Unit,
     ) {
-        // TODO consider doing this only once
-        LaunchedEffect(settings) {
+        LaunchedEffect(Unit) {
             handleAuthentication(settings, viewModel)
         }
 
-        val hasAccess: State<Boolean> = viewModel.accessGranted
         val navController = rememberNavController()
         val screenContext = createScreenContext(navController, settings)
 
-        if (hasAccess.value) {
+        AuthenticatedContent(settings) {
             MainNavHost(
                 navController = navController,
                 screenContext = screenContext,
@@ -151,13 +154,6 @@ class MainActivity : AppCompatActivity() {
                 ) { nextState() }
                 Initialized -> { /* nothing to do */ }
             }
-        } else {
-            Column {
-                Text(text = stringResource(id = R.string.authentication_failed))
-                Button(onClick = { handleAuthentication(settings, viewModel) }) {
-                    Text(text = stringResource(id = R.string.try_again))
-                }
-            }
         }
     }
 
@@ -166,11 +162,32 @@ class MainActivity : AppCompatActivity() {
             val authenticationFlow = authenticateWithBiometrics(
                 activity = this,
                 promptTitle = getString(R.string.app_name),
-                promptSubtitle = getString(R.string.login),
+                promptDescription = getString(R.string.authentication_required_prompt_description)
             )
             viewModel.handleAuthenticationResult(authenticationFlow)
         } else {
             viewModel.grantAccessWithoutAuthentication()
+        }
+    }
+
+    @Composable
+    private fun AuthenticatedContent(settings: ISettingsState, content: @Composable () -> Unit) {
+        when (viewModel.authenticationStatus.value) {
+            SUCCESS, NO_DEVICE_AUTHENTICATION_REGISTERED -> content()
+            NOT_AUTHENTICATED -> Unit // wait for authentication-result
+            CANCELLED, DENIED, ERROR -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Text(text = stringResource(id = R.string.authentication_failed))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(onClick = { handleAuthentication(settings, viewModel) }) {
+                        Text(text = stringResource(id = R.string.try_again))
+                    }
+                }
+            }
         }
     }
 
