@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ch.abwesend.privatecontacts.domain.util.doIf
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
@@ -99,7 +100,7 @@ object SettingsComponents {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { if (enabled) { onValueChanged(!value) } },
+                .doIf(enabled) { it.clickable { onValueChanged(!value) } },
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 SettingsLabel(labelRes = label, textColor = textColor)
