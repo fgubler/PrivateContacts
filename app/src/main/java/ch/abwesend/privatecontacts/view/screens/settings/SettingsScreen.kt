@@ -25,6 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -55,6 +57,7 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
+import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -337,11 +340,21 @@ object SettingsScreen {
     private fun AuthenticationField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         var showInfoDialog: Boolean by remember { mutableStateOf(false) }
         var errorDialogTextRes: Int? by remember { mutableStateOf(null) }
+        var fieldEnabled: Boolean by remember { mutableStateOf(true) }
 
         val activity = getCurrentActivity() ?: return
         val coroutineScope = rememberCoroutineScope()
         val confirmationTitle = stringResource(R.string.enable_authentication_confirmation_title)
         val confirmationDescription = stringResource(R.string.authentication_registration_prompt_description)
+
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            val canEnableAuthentication = activity.canUseBiometrics()
+            fieldEnabled = canEnableAuthentication
+
+            if (!canEnableAuthentication) {
+                settingsRepository.authenticationRequired = false
+            }
+        }
 
         val onValueChanged: (Boolean) -> Unit = { newValue ->
             coroutineScope.launch {
@@ -366,6 +379,7 @@ object SettingsScreen {
                 SettingsCheckbox(
                     label = R.string.settings_entry_enable_authentication,
                     description = R.string.settings_entry_enable_authentication_description,
+                    enabled = fieldEnabled,
                     value = currentSettings.authenticationRequired,
                     onValueChanged = onValueChanged
                 )

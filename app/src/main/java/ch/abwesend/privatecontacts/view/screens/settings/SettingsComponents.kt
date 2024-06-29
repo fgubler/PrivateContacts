@@ -99,7 +99,7 @@ object SettingsComponents {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onValueChanged(!value) },
+                .clickable { if (enabled) { onValueChanged(!value) } },
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 SettingsLabel(labelRes = label, textColor = textColor)

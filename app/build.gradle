@@ -99,6 +99,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${androidLifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${androidLifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-service:${androidLifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:${androidLifecycleVersion}"
 
     // Android Jetpack Compose
     implementation "androidx.compose.ui:ui:${composeVersion}"
