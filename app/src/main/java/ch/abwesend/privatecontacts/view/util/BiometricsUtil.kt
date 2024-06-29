@@ -9,7 +9,13 @@ import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED
 import androidx.biometric.BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE
 import androidx.biometric.BiometricManager.BIOMETRIC_SUCCESS
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT_PERMANENT
+import androidx.biometric.BiometricPrompt.ERROR_NEGATIVE_BUTTON
+import androidx.biometric.BiometricPrompt.ERROR_NO_BIOMETRICS
+import androidx.biometric.BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_VENDOR
 import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
@@ -104,7 +110,10 @@ private fun ProducerScope<AuthenticationStatus>.createAuthenticationCallback(): 
             super.onAuthenticationError(errorCode, errString)
             logger.debug("Error '$errorCode' during authentication: do not grant access. $errString")
             val status = when (errorCode) {
-                ERROR_USER_CANCELED -> AuthenticationStatus.CANCELLED
+                ERROR_USER_CANCELED, ERROR_NEGATIVE_BUTTON -> AuthenticationStatus.CANCELLED
+                ERROR_NO_BIOMETRICS, ERROR_NO_DEVICE_CREDENTIAL, ERROR_VENDOR ->
+                    AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
+                ERROR_LOCKOUT, ERROR_LOCKOUT_PERMANENT -> AuthenticationStatus.DENIED
                 else -> AuthenticationStatus.ERROR
             }
             trySendBlocking(status)
