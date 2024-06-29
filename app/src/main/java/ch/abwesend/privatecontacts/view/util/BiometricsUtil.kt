@@ -114,7 +114,7 @@ private fun ProducerScope<AuthenticationStatus>.createAuthenticationCallback(): 
                 ERROR_NO_BIOMETRICS, ERROR_NO_DEVICE_CREDENTIAL, ERROR_VENDOR ->
                     AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
                 ERROR_LOCKOUT, ERROR_LOCKOUT_PERMANENT -> AuthenticationStatus.DENIED
-                else -> AuthenticationStatus.ERROR
+                else -> AuthenticationStatus.ERROR // TODO pass the error-string to the user?
             }
             trySendBlocking(status)
             channel.close()
