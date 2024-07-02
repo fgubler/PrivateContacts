@@ -14,7 +14,7 @@ buildscript {
         composeMaterialVersion = "1.6.8"
         composeCompilerVersion = "1.5.14"
         coroutinesVersion = "1.7.3"
-        androidLifecycleVersion = "2.8.2"
+        androidLifecycleVersion = "2.7.0" // version 2.8.x is incompatible with compose 1.6.8 (IllegalStateException)
 
         ktlintVersion = "11.3.1"
         koinVersion = "3.5.3"
