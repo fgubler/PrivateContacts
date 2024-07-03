@@ -45,6 +45,7 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="try_again">Try again</string>
     <string name="refresh">Refresh</string>
+    <string name="login">Login</string>
 
     <string name="error">Error</string>
     <string name="errors">Errors</string>
@@ -242,6 +243,7 @@
     <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
+    <string name="settings_category_security">Security</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
     <string name="settings_category_privacy">Privacy</string>
@@ -273,6 +275,10 @@
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
 
     <string name="settings_action_copy_logs">Copy logs to clipboard</string>
+
+    <string name="settings_entry_enable_authentication">App authentication</string>
+    <string name="settings_entry_enable_authentication_description">Require the user to authenticate before being able to use the app.</string>
+    <string name="settings_entry_enable_authentication_info_dialog">If this option is selected, the user must use Android\'s screen-unlock to authenticate.\n\nThis option is only available if a screen-lock is set in the system settings. </string>
 
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
@@ -358,4 +364,11 @@
     <string name="export_contacts_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be exported.</string>
     <string name="export_contacts_full_error">Something went wrong. No contacts could be exported.</string>
 
+    <string name="authentication_required_prompt_description">Authentication is needed to access this app.</string>
+    <string name="enable_authentication_confirmation_title">Change Authentication Settings</string>
+    <string name="authentication_registration_prompt_description">Authentication is needed to change these settings.</string>
+    <string name="authentication_failed">Failed to authenticate user: access denied.</string>
+    <string name="authentication_registration_failed_title">Failed to enable authentication</string>
+    <string name="authentication_registration_error_none_registered">No authentication-mechanism is enabled on this device.\n\nPlease enable biometric authentication or a PIN or password in the system-settings to use this feature.</string>
+    <string name="authentication_registration_error_unknown">Failed to enable device authentication: please try again or send us a message.</string>
 </resources>
