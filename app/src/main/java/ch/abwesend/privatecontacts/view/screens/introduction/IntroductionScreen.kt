@@ -25,6 +25,9 @@ object IntroductionScreen {
 
                 SectionTitle(titleRes = R.string.permissions)
                 Text(text = stringResource(id = R.string.show_caller_information_text))
+
+                SectionTitle(titleRes = R.string.privacy_advertisement_id_title)
+                Text(text = stringResource(id = R.string.advertisement_id_information_text))
             }
         }
     }
