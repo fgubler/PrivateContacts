@@ -209,7 +209,7 @@
     <string name="activate_feature">Would you like to activate this feature now?</string>
 
     <string name="privacy_advertisement_id_title">Privacy</string>
-    <string name="advertisement_id_information_text">You may have noticed in the play-store that the app accesses your device\'s "Advertisement ID". We realise that this is undesirable - especially in an app focused on privacy.\nUnfortunately, that ID is required for the framework to receive error-reports. Without them, we cannot fix bugs in the app.\nThis ID is not used by the app itself in any way: no advertisement, no tracking.\n\nIn any case, we recommend deleting your device\'s advertisement ID in the system settings to generally improve your own privacy.</string>
+    <string name="advertisement_id_information_text">You may have noticed in the play-store that the app accesses your device\'s "Advertisement ID". We realise that this is undesirable - especially in an app focused on privacy.\n\nUnfortunately, that ID is required for the framework to receive error-reports. Without them, we cannot fix bugs in the app. This ID is not used by the app itself in any way: no advertisement, no tracking.\n\nIn any case, we recommend deleting your device\'s advertisement ID in the system settings to generally improve your own privacy.</string>
 
     <string name="show_android_contacts">Show public contacts?</string>
     <string name="show_android_contacts_text">To also manage the contacts from the "normal" Android contacts app, some permissions are needed.\n\nIf wish to use this app only to manage your secret contacts, these permissions are not needed.</string>
