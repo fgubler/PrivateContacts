@@ -233,7 +233,7 @@
     <string name="legal_disclaimer_whatsapp_text">The developers have no association whatsoever with WhatsApp or its parent-company. The functionality to open WhatsApp from within this app is based exclusively on public APIs offered by WhatsApp.\n\nNo data is shared with WhatsApp unless you click one of the buttons to open a phone-number in WhatsApp.\nIf you do, the only information shared with WhatsApp is that exact number. Even then, no other information of that contact (e.g. name, email, notes, other phone-numbers, etc.) is shared.</string>
 
     <string name="permissions">Permissions</string>
-    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
+    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nIt lets you declare for each contact separately whether it should be shared with other apps or not.</string>
 
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
