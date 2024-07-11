@@ -115,6 +115,7 @@ dependencies {
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:33.1.1")
     implementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
+    implementation("com.google.firebase:firebase-analytics")
 
     // Room
     implementation "androidx.room:room-ktx:$roomVersion"
