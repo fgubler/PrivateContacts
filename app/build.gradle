@@ -25,12 +25,12 @@ ktlint {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode 61
         versionName "3.7.2"
 

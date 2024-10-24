@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.view
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -67,8 +68,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
@@ -98,6 +99,7 @@ class MainActivity : ComponentActivity() {
 
         Settings.repository.currentVersion = BuildConfig.VERSION_CODE
 
+        enableEdgeToEdge()
         setContent {
             val initializationState by viewModel.initializationState
             val settings by Settings.observeAsNullableState()
