@@ -6,14 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.screens
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -29,8 +24,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
-import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.CoroutineScope
 
 private val hidden: @Composable () -> Unit = {}
 
