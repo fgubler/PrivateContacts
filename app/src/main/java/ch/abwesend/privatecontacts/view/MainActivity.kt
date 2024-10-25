@@ -106,12 +106,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val initializationState by viewModel.initializationState
             val settings by Settings.observeAsNullableState()
-
-            val isDarkTheme = when (settings?.appTheme ?: SettingsState.defaultSettings.appTheme) {
-                AppTheme.LIGHT_MODE -> false
-                AppTheme.DARK_MODE -> true
-                AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()
-            }
+            val isDarkTheme = isDarkTheme(settings)
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
@@ -120,6 +115,14 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    @Composable
+    private fun isDarkTheme(settings: ISettingsState?): Boolean =
+        when (settings?.appTheme ?: SettingsState.defaultSettings.appTheme) {
+            AppTheme.LIGHT_MODE -> false
+            AppTheme.DARK_MODE -> true
+            AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()
+        }
 
     @Composable
     private fun MainContent(
