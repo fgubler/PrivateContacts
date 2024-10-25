@@ -9,13 +9,14 @@
 // compose versions: see https://developer.android.com/jetpack/androidx/releases/compose
 buildscript {
     ext {
-        kotlinVersion = "1.9.20"
+        kotlinVersion = "2.0.21"
         composeVersion = "1.7.0"
         composeMaterialVersion = "1.7.0"
         composeCompilerVersion = "1.7.0"
         coroutinesVersion = "1.8.0"
         androidLifecycleVersion = "2.8.6"
 
+        kspVersion = '2.0.21-1.0.25'
         ktlintVersion = "11.3.1"
         koinVersion = "4.0.0"
         roomVersion = "2.6.1"
@@ -40,6 +41,7 @@ buildscript {
         classpath "com.google.gms:google-services:4.4.2"
         classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
 
+        classpath "androidx.room:room-gradle-plugin:${roomVersion}"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -49,6 +51,8 @@ buildscript {
 
 plugins {
     id "org.jlleitschuh.gradle.ktlint" version "${ktlintVersion}"
+    id 'org.jetbrains.kotlin.plugin.compose' version "${kotlinVersion}" apply false
+    id 'com.google.devtools.ksp' version "${kspVersion}"
 }
 
 tasks.register('clean', Delete) {

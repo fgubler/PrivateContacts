@@ -9,10 +9,12 @@ plugins {
     id "kotlin-android"
     id "de.mannodermaus.android-junit5"
     id "org.jlleitschuh.gradle.ktlint"
-    id "kotlin-kapt"
+    id 'com.google.devtools.ksp' version "${kspVersion}"
+    id 'androidx.room'
 
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 ktlint {
@@ -40,10 +42,8 @@ android {
             useSupportLibrary true
         }
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/room_schemas".toString()]
-            }
+        room {
+            schemaDirectory "$projectDir/room_schemas"
         }
     }
 
@@ -107,8 +107,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.8.2"
-    implementation "androidx.navigation:navigation-compose:2.7.6"
+    implementation "androidx.activity:activity-compose:1.9.3"
+    implementation "androidx.navigation:navigation-compose:2.8.3"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -119,7 +119,8 @@ dependencies {
     // Room
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Others
     implementation "androidx.datastore:datastore-preferences:1.1.1"
