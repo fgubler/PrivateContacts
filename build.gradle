@@ -10,16 +10,16 @@
 buildscript {
     ext {
         kotlinVersion = "1.9.20"
-        composeVersion = "1.5.4"
-        composeMaterialVersion = "1.5.4"
-        composeCompilerVersion = "1.5.4"
-        coroutinesVersion = "1.7.3"
-        androidLifecycleVersion = "2.7.0"
+        composeVersion = "1.7.0"
+        composeMaterialVersion = "1.7.0"
+        composeCompilerVersion = "1.7.0"
+        coroutinesVersion = "1.8.0"
+        androidLifecycleVersion = "2.8.6"
 
         ktlintVersion = "11.3.1"
-        koinVersion = "3.5.3"
+        koinVersion = "4.0.0"
         roomVersion = "2.6.1"
-        pagingVersion = "3.2.1"
+        pagingVersion = "3.3.2"
         contactStoreVersion = "1.7.0"
 
         junitJupiterVersion = "5.10.1"
@@ -37,8 +37,8 @@ buildscript {
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${ktlintVersion}"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1"
 
-        classpath "com.google.gms:google-services:4.4.0"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+        classpath "com.google.gms:google-services:4.4.2"
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
 
 
         // NOTE: Do not place your application dependencies here; they belong

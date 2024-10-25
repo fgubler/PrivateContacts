@@ -29,8 +29,10 @@ plugins {
     id "org.checkerframework" version "0.6.19"
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
@@ -60,9 +62,9 @@ test {
 
 // TODO try to replace some of the dependencies with kotlin coroutines?
 dependencies {
-    implementation 'org.checkerframework:checker-qual:3.27.0'
+    implementation 'org.checkerframework:checker-qual:3.33.0'
     implementation 'com.google.guava:guava:31.0.1-android'
-    implementation "androidx.concurrent:concurrent-futures:1.1.0"
+    implementation "androidx.concurrent:concurrent-futures:1.2.0"
 
     /* Note that gradle will warn about this not being the same version as *
      * the Android JSON library (but will not compile if it's removed).    */

@@ -89,9 +89,9 @@ dependencies {
 
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.12.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "com.google.android.material:material:1.11.0"
+    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "com.google.android.material:material:1.12.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -112,7 +112,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
-    implementation platform("com.google.firebase:firebase-bom:29.0.3")
+    implementation platform("com.google.firebase:firebase-bom:29.0.3") // be careful when upgrading that firebase-core is still found
     implementation 'com.google.firebase:firebase-core'
     implementation 'com.google.firebase:firebase-crashlytics'
 
@@ -122,9 +122,9 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
 
     // Others
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.datastore:datastore-preferences:1.1.1"
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
 
     implementation "io.insert-koin:koin-core:$koinVersion"
     implementation "io.insert-koin:koin-android:${koinVersion}"
@@ -162,8 +162,8 @@ dependencies {
 
     // Instrumented Tests
     androidTestImplementation "org.assertj:assertj-core:3.21.0"
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    androidTestImplementation "androidx.test.ext:junit:1.2.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:${composeVersion}"
 
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
