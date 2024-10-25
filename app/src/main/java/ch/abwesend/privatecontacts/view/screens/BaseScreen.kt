@@ -24,8 +24,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
-import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.CoroutineScope
+import kotlin.contracts.ExperimentalContracts
 
 private val hidden: @Composable () -> Unit = {}
 
