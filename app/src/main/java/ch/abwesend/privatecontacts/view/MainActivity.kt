@@ -127,6 +127,7 @@ class MainActivity : ComponentActivity() {
         settings: ISettingsState,
         nextState: () -> Unit,
     ) {
+        // Android 14 work-around: TODO fix in a better way
         val primaryColor = MaterialTheme.colors.primary.toArgb()
         LaunchedEffect(Unit) {
             window.statusBarColor = primaryColor
