@@ -20,9 +20,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
-import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -352,7 +352,7 @@ object ContactEditScreenContent {
 
         ContactCategory(
             categoryTitle = R.string.notes,
-            icon = Icons.Default.SpeakerNotes,
+            icon = Icons.AutoMirrored.Default.SpeakerNotes,
             modifier = Modifier.bringIntoViewRequester(viewRequester),
             alignContentWithTitle = false,
         ) {

@@ -10,13 +10,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Expand
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Save
@@ -64,7 +64,7 @@ fun RefreshIcon() {
 @Composable
 fun InfoIcon() {
     Icon(
-        imageVector = Icons.Default.Help,
+        imageVector = Icons.AutoMirrored.Default.Help,
         contentDescription = stringResource(id = R.string.info),
         tint = LocalContentColor.current.copy(alpha = LocalContentAlpha.current / 2)
     )
@@ -73,7 +73,7 @@ fun InfoIcon() {
 @Composable
 fun BackIcon() {
     Icon(
-        imageVector = Icons.Default.ArrowBack,
+        imageVector = Icons.AutoMirrored.Default.ArrowBack,
         contentDescription = stringResource(id = R.string.back)
     )
 }
