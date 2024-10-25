@@ -102,7 +102,6 @@ class MainActivity : ComponentActivity() {
 
         Settings.repository.currentVersion = BuildConfig.VERSION_CODE
 
-        enableEdgeToEdge()
         setContent {
             val initializationState by viewModel.initializationState
             val settings by Settings.observeAsNullableState()
@@ -130,12 +129,6 @@ class MainActivity : ComponentActivity() {
         settings: ISettingsState,
         nextState: () -> Unit,
     ) {
-        // Android 14 work-around: TODO fix in a better way
-        val primaryColor = MaterialTheme.colors.primary.toArgb()
-        LaunchedEffect(Unit) {
-            window.statusBarColor = primaryColor
-        }
-
         val navController = rememberNavController()
         val screenContext = createScreenContext(navController, settings)
 
