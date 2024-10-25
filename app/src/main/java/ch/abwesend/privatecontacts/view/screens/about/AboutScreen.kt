@@ -169,5 +169,7 @@ object AboutScreen {
         Spacer(modifier = Modifier.height(5.dp))
         SectionSubtitle(titleRes = R.string.legal_disclaimer_whatsapp_title)
         Text(text = stringResource(id = R.string.legal_disclaimer_whatsapp_text), fontStyle = FontStyle.Italic)
+        SectionSubtitle(titleRes = R.string.privacy_advertisement_id_title)
+        Text(text = stringResource(id = R.string.advertisement_id_information_text))
     }
 }

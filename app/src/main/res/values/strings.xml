@@ -45,6 +45,7 @@
     <string name="copied_to_clipboard">Copied to clipboard</string>
     <string name="try_again">Try again</string>
     <string name="refresh">Refresh</string>
+    <string name="login">Login</string>
 
     <string name="error">Error</string>
     <string name="errors">Errors</string>
@@ -207,6 +208,9 @@
     <string name="show_caller_information_text">To show caller information during an incoming call, some permissions are needed.\n\nThese permissions will be used exclusively to match incoming phone-numbers with stored contacts.</string>
     <string name="activate_feature">Would you like to activate this feature now?</string>
 
+    <string name="privacy_advertisement_id_title">Advertisement ID</string>
+    <string name="advertisement_id_information_text">You may have noticed in the play-store that the app accesses your device\'s "Advertisement ID". We realise that this is undesirable - especially in an app focused on privacy.\n\nUnfortunately, that ID is required for the "Crashlytics" framework to receive error-reports. Without them, we cannot fix bugs in the app. This ID is not used by the app in any other way: no advertisement, no tracking.\n\nIn any case, we recommend deleting your device\'s advertisement ID in the system settings to generally improve your own privacy.</string>
+
     <string name="show_android_contacts">Show public contacts?</string>
     <string name="show_android_contacts_text">To also manage the contacts from the "normal" Android contacts app, some permissions are needed.\n\nIf wish to use this app only to manage your secret contacts, these permissions are not needed.</string>
 
@@ -232,7 +236,7 @@
     <string name="legal_disclaimer_whatsapp_text">The developers have no association whatsoever with WhatsApp or its parent-company. The functionality to open WhatsApp from within this app is based exclusively on public APIs offered by WhatsApp.\n\nNo data is shared with WhatsApp unless you click one of the buttons to open a phone-number in WhatsApp.\nIf you do, the only information shared with WhatsApp is that exact number. Even then, no other information of that contact (e.g. name, email, notes, other phone-numbers, etc.) is shared.</string>
 
     <string name="permissions">Permissions</string>
-    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nFor now, that is all the app does: A clone of the normal contacts app which does not share any contacts you create.\n\nIn the future, additional functionality will be added to also manage your "normal" contacts in this app and declare for each contact separately whether it should be shared with other apps or not.</string>
+    <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nIt lets you declare for each contact separately whether it should be shared with other apps or not.</string>
 
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
@@ -242,6 +246,7 @@
     <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
+    <string name="settings_category_security">Security</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
     <string name="settings_category_privacy">Privacy</string>
@@ -273,6 +278,10 @@
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
 
     <string name="settings_action_copy_logs">Copy logs to clipboard</string>
+
+    <string name="settings_entry_enable_authentication">App authentication</string>
+    <string name="settings_entry_enable_authentication_description">Require the user to authenticate before being able to use the app.</string>
+    <string name="settings_entry_enable_authentication_info_dialog">If this option is selected, the user must use Android\'s screen-unlock to authenticate.\n\nThis option is only available if a screen-lock is set in the system settings. </string>
 
     <string name="settings_action_restore_default">Restore default settings</string>
     <string name="settings_action_restore_default_confirmation">Are you sure you want to restore all settings to their default values?</string>
@@ -358,4 +367,11 @@
     <string name="export_contacts_partial_error">Something went wrong. %1$s of %2$s attempted contacts could not be exported.</string>
     <string name="export_contacts_full_error">Something went wrong. No contacts could be exported.</string>
 
+    <string name="authentication_required_prompt_description">Authentication is needed to access this app.</string>
+    <string name="enable_authentication_confirmation_title">Change Authentication Settings</string>
+    <string name="authentication_registration_prompt_description">Authentication is needed to change these settings.</string>
+    <string name="authentication_failed">Failed to authenticate user: access denied.</string>
+    <string name="authentication_registration_failed_title">Failed to enable authentication</string>
+    <string name="authentication_registration_error_none_registered">No authentication-mechanism is enabled on this device.\n\nPlease enable biometric authentication or a PIN or password in the system-settings to use this feature.</string>
+    <string name="authentication_registration_error_unknown">Failed to enable device authentication: please try again or send us a message.</string>
 </resources>

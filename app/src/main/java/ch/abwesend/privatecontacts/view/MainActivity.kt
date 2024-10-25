@@ -7,10 +7,9 @@
 package ch.abwesend.privatecontacts.view
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -21,18 +20,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -55,6 +53,12 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallP
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.DENIED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.ERROR
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
 import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
@@ -63,6 +67,7 @@ import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
+import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
@@ -71,15 +76,15 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
 @ExperimentalContracts
 @FlowPreview
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private val callPermissionHelper: CallPermissionHelper by injectAnywhere()
     private val contactPermissionHelper: AndroidContactPermissionHelper by injectAnywhere()
     private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
@@ -109,7 +114,7 @@ class MainActivity : ComponentActivity() {
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
-                    MainContent(initializationState, it) { viewModel.goToNextState() }
+                    MainContent(initializationState, viewModel, it) { viewModel.goToNextState() }
                 } ?: InitialLoadingView()
             }
         }
@@ -126,25 +131,66 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun MainContent(
         initializationState: InitializationState,
+        viewModel: MainViewModel,
         settings: ISettingsState,
         nextState: () -> Unit,
     ) {
+        LaunchedEffect(Unit) {
+            handleAuthentication(settings, viewModel)
+        }
+
         val navController = rememberNavController()
         val screenContext = createScreenContext(navController, settings)
 
-        MainNavHost(
-            navController = navController,
-            screenContext = screenContext,
-        )
+        AuthenticatedContent(settings) {
+            MainNavHost(
+                navController = navController,
+                screenContext = screenContext,
+            )
 
-        when (initializationState) {
-            InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
-            CallPermissionsDialog -> CallPermissionHandler(
-                settings = settings,
-                permissionHelper = callPermissionHelper,
-                roleHelper = callScreeningRoleHelper,
-            ) { nextState() }
-            Initialized -> { /* nothing to do */ }
+            when (initializationState) {
+                InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
+                CallPermissionsDialog -> CallPermissionHandler(
+                    settings = settings,
+                    permissionHelper = callPermissionHelper,
+                    roleHelper = callScreeningRoleHelper,
+                ) { nextState() }
+                Initialized -> { /* nothing to do */ }
+            }
+        }
+    }
+
+    private fun handleAuthentication(settings: ISettingsState, viewModel: MainViewModel) {
+        if (settings.authenticationRequired) {
+            val authenticationFlow = authenticateWithBiometrics(
+                activity = this,
+                promptTitle = getString(R.string.app_name),
+                promptDescription = getString(R.string.authentication_required_prompt_description)
+            )
+            viewModel.handleAuthenticationResult(authenticationFlow)
+        } else {
+            viewModel.grantAccessWithoutAuthentication()
+        }
+    }
+
+    @Composable
+    private fun AuthenticatedContent(settings: ISettingsState, content: @Composable () -> Unit) {
+        when (viewModel.authenticationStatus.value) {
+            SUCCESS, NO_DEVICE_AUTHENTICATION_REGISTERED -> content()
+            NOT_AUTHENTICATED -> Unit // wait for authentication-result
+            CANCELLED, DENIED, ERROR -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Text(text = stringResource(id = R.string.authentication_failed))
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Button(onClick = { handleAuthentication(settings, viewModel) }) {
+                        Text(text = stringResource(id = R.string.try_again))
+                    }
+                }
+            }
         }
     }
 

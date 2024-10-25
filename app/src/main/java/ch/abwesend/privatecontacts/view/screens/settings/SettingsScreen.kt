@@ -7,20 +7,26 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -29,9 +35,18 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.DENIED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.ERROR
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 import ch.abwesend.privatecontacts.view.model.screencontext.ISettingsScreenContext
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
@@ -41,7 +56,11 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
+import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
+import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
@@ -80,6 +99,9 @@ object SettingsScreen {
                 SettingsCategorySpacer()
 
                 DefaultValuesCategory(permissionProvider, settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+
+                SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
                 PrivacyCategory(settingsRepository, currentSettings)
@@ -308,6 +330,78 @@ object SettingsScreen {
     }
 
     @Composable
+    private fun SecurityCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        SettingsCategory(titleRes = R.string.settings_category_security) {
+            AuthenticationField(settingsRepository, currentSettings)
+        }
+    }
+
+    @Composable
+    private fun AuthenticationField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
+        var errorDialogTextRes: Int? by remember { mutableStateOf(null) }
+        var fieldEnabled: Boolean by remember { mutableStateOf(true) }
+
+        val activity = getCurrentActivity() ?: return
+        val coroutineScope = rememberCoroutineScope()
+        val confirmationTitle = stringResource(R.string.enable_authentication_confirmation_title)
+        val confirmationDescription = stringResource(R.string.authentication_registration_prompt_description)
+
+        LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+            val canEnableAuthentication = activity.canUseBiometrics()
+            fieldEnabled = canEnableAuthentication
+
+            if (!canEnableAuthentication) {
+                settingsRepository.authenticationRequired = false
+            }
+        }
+
+        val onValueChanged: (Boolean) -> Unit = { newValue ->
+            coroutineScope.launch {
+                val authenticationStatus = authenticateWithBiometrics(
+                    activity,
+                    confirmationTitle,
+                    confirmationDescription
+                ).firstOrNull()
+
+                if (authenticationStatus == null) {
+                    errorDialogTextRes = R.string.authentication_registration_error_unknown
+                } else if (authenticationStatus.canEnableAuthentication) {
+                    settingsRepository.authenticationRequired = newValue
+                } else {
+                    errorDialogTextRes = authenticationStatus.authenticationErrorTextRes
+                }
+            }
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(modifier = Modifier.weight(1.0f)) {
+                SettingsCheckbox(
+                    label = R.string.settings_entry_enable_authentication,
+                    description = R.string.settings_entry_enable_authentication_description,
+                    enabled = fieldEnabled,
+                    value = currentSettings.authenticationRequired,
+                    onValueChanged = onValueChanged
+                )
+            }
+            InfoIconButton { showInfoDialog = true }
+        }
+
+        if (showInfoDialog) {
+            OkDialog(
+                title = R.string.settings_entry_enable_authentication,
+                text = R.string.settings_entry_enable_authentication_info_dialog,
+            ) { showInfoDialog = false }
+        }
+        errorDialogTextRes?.let {
+            OkDialog(
+                title = R.string.authentication_registration_failed_title,
+                text = it,
+            ) { errorDialogTextRes = null }
+        }
+    }
+
+    @Composable
     private fun PrivacyCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
             SettingsCheckbox(
@@ -319,3 +413,18 @@ object SettingsScreen {
         }
     }
 }
+
+private val AuthenticationStatus.canEnableAuthentication: Boolean
+    get() = when (this) {
+        SUCCESS -> true
+        NO_DEVICE_AUTHENTICATION_REGISTERED, CANCELLED, NOT_AUTHENTICATED, DENIED, ERROR -> false
+    }
+
+private val AuthenticationStatus.authenticationErrorTextRes: Int?
+    get() = when (this) {
+        SUCCESS -> null
+        CANCELLED -> null
+        NO_DEVICE_AUTHENTICATION_REGISTERED -> R.string.authentication_registration_error_none_registered
+        DENIED -> R.string.authentication_failed
+        NOT_AUTHENTICATED, ERROR -> R.string.authentication_registration_error_unknown
+    }

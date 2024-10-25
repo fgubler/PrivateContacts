@@ -8,7 +8,7 @@ package ch.abwesend.privatecontacts.view.util
 
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
@@ -75,10 +75,10 @@ fun <T> IconButtonConfigGeneric<T>.AsIconButton(listenerInput: T) {
 }
 
 @Composable
-fun getCurrentActivity(): ComponentActivity? = LocalContext.current.getActivityRecursive()
+fun getCurrentActivity(): AppCompatActivity? = LocalContext.current.getActivityRecursive()
 
-private fun Context.getActivityRecursive(): ComponentActivity? = when (this) {
-    is ComponentActivity -> this
+private tailrec fun Context.getActivityRecursive(): AppCompatActivity? = when (this) {
+    is AppCompatActivity -> this
     is ContextWrapper -> baseContext.getActivityRecursive()
     else -> null
 }
