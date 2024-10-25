@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.screens
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -15,6 +16,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.components.buttons.MenuBackButton
@@ -22,8 +24,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
-import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.CoroutineScope
 
 private val hidden: @Composable () -> Unit = {}
 
@@ -55,6 +57,7 @@ fun BaseScreen(
         scaffoldState = scaffoldState,
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
+        modifier = Modifier.safeDrawingPadding(),
         floatingActionButton = floatingActionButton,
         drawerContent = {
             if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {

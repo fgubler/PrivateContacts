@@ -9,8 +9,9 @@ plugins {
     id "kotlin-android"
     id "de.mannodermaus.android-junit5"
     id "org.jlleitschuh.gradle.ktlint"
-    id "kotlin-kapt"
-    id "org.jetbrains.kotlin.plugin.compose"
+    id 'com.google.devtools.ksp' version "${kspVersion}"
+    id 'androidx.room'
+    id 'org.jetbrains.kotlin.plugin.compose'
 
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
@@ -26,14 +27,14 @@ ktlint {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
-        targetSdk 34
-        versionCode 66
-        versionName "3.8.4"
+        targetSdk 35
+        versionCode 67
+        versionName "4.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -41,10 +42,8 @@ android {
             useSupportLibrary true
         }
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/room_schemas".toString()]
-            }
+        room {
+            schemaDirectory "$projectDir/room_schemas"
         }
     }
 
@@ -66,6 +65,7 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
     }
     composeOptions {
         kotlinCompilerExtensionVersion composeCompilerVersion
@@ -108,8 +108,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.9.0"
-    implementation "androidx.navigation:navigation-compose:2.7.7"
+    implementation "androidx.activity:activity-compose:1.9.3"
+    implementation "androidx.navigation:navigation-compose:2.8.3"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
@@ -120,12 +120,13 @@ dependencies {
     // Room
     implementation "androidx.room:room-ktx:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
-    kapt "androidx.room:room-compiler:$roomVersion"
+    annotationProcessor "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
 
     // Others
     implementation "androidx.datastore:datastore-preferences:1.1.1"
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.2'
 
     implementation "androidx.biometric:biometric:1.1.0"
 

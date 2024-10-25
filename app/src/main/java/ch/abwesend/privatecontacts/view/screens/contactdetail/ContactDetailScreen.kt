@@ -16,7 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -289,7 +289,7 @@ object ContactDetailScreen {
             modifier = modifier,
             buttonConfig = ButtonConfig(
                 label = R.string.back,
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Default.ArrowBack,
                 onClick = navigateUp
             )
         )

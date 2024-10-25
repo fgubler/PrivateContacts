@@ -26,10 +26,10 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.SpeakerNotes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -196,7 +196,7 @@ object ContactDetailScreenContent {
             phoneNumberWhatsAppButton(context).takeIf { settings.showWhatsAppButtons },
             IconButtonConfigGeneric<PhoneNumber>(
                 label = R.string.send_sms,
-                icon = Icons.Default.Chat
+                icon = Icons.AutoMirrored.Default.Chat
             ) { phoneNumber -> phoneNumber.navigateToSms(context) },
         )
 
@@ -342,7 +342,7 @@ object ContactDetailScreenContent {
         if (contact.notes.isNotEmpty()) {
             ContactCategoryWithHeader(
                 categoryTitle = R.string.notes,
-                icon = Icons.Default.SpeakerNotes,
+                icon = Icons.AutoMirrored.Default.SpeakerNotes,
                 alignContentWithTitle = false,
                 modifier = Modifier.longClickForCopyToClipboard(contact.notes),
             ) {
