@@ -99,7 +99,7 @@ private fun ReviewDialog(settings: ISettingsState, close: () -> Unit) {
 private fun shouldShowDialog(settings: ISettingsState): Boolean {
     val daysSinceLastUserPrompt = Period.between(LocalDate.now(), settings.latestUserPromptAtStartup).days
     return settings.showReviewDialog &&
-        settings.numberOfAppStarts.mod(31) == 0 &&
+        settings.numberOfAppStarts.mod(17) == 0 && // ask on every 17th startup
         daysSinceLastUserPrompt > 35 // should not prompt more than once a month
 }
 
