@@ -23,6 +23,7 @@ import androidx.compose.ui.window.Dialog
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
 
+/** a dialog showing a loading indicator / spinner */
 @Composable
 fun SimpleProgressDialog(
     @StringRes title: Int,

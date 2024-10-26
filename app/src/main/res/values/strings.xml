@@ -51,6 +51,7 @@
     <string name="errors">Errors</string>
     <string name="unknown_error">Unknown error</string>
     <string name="unexpected_error">Unexpected error</string>
+    <string name="unexpected_error_apology">An unexpected error occurred: we apologize for the inconvenience.</string>
     <string name="validation_error">Validation error</string>
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
@@ -237,6 +238,10 @@
 
     <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nIt lets you declare for each contact separately whether it should be shared with other apps or not.</string>
+
+    <string name="review_dialog_title">User Feedback</string>
+    <string name="review_dialog_text">If you enjoy using this app, we would be glad if you could support us by giving a 5 star review.\n\nThis not only helps us keep motivated to spend our free time extending this app, but also gives more people the opportunity to benefit from it.</string>
+    <string name="review_dialog_secondary_text">Is this a good time for a review?</string>
 
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>

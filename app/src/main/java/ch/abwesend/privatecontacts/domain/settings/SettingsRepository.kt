@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
@@ -46,4 +47,7 @@ interface SettingsRepository : ISettingsState {
     // Others
     override var sendErrorsToCrashlytics: Boolean
     override var currentVersion: Int
+    override var numberOfAppStarts: Int
+    override var latestUserPromptAtStartup: LocalDate
+    override var showReviewDialog: Boolean
 }

@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.time.LocalDate
 
 data class TestSettings(
     private val currentSettings: ISettingsState = SettingsState.defaultSettings,
@@ -33,6 +34,9 @@ data class TestSettings(
     override var authenticationRequired: Boolean = currentSettings.authenticationRequired
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
     override var currentVersion: Int = 0
+    override var numberOfAppStarts: Int = currentSettings.numberOfAppStarts
+    override var latestUserPromptAtStartup: LocalDate = currentSettings.latestUserPromptAtStartup
+    override var showReviewDialog: Boolean = currentSettings.showReviewDialog
     override var defaultExternalContactAccount: ContactAccount = currentSettings.defaultExternalContactAccount
     override var defaultVCardVersion: VCardVersion = currentSettings.defaultVCardVersion
     override var showExtraButtonsInEditScreen: Boolean = currentSettings.showExtraButtonsInEditScreen
