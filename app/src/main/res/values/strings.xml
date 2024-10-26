@@ -226,6 +226,7 @@
     <string name="contact_developers_title">Contact the Developers</string>
     <string name="contact_developers_text">We are always happy about feedback about how to improve the app further.</string>
     <string name="play_store_entry">PlayStore entry</string>
+    <string name="in_app_review">Rate the app</string>
     <string name="github_page">Github page</string>
     <string name="report_error_github">Report a bug on Github</string>
     <string name="report_error">Report a bug</string>
@@ -240,7 +241,7 @@
     <string name="app_introduction_description">Welcome to "Private Contacts".\n\nThe goal of this app is to allow you to store contacts which you do not want to share with the other apps on your device.\n\nIt lets you declare for each contact separately whether it should be shared with other apps or not.</string>
 
     <string name="review_dialog_title">User Feedback</string>
-    <string name="review_dialog_text">If you enjoy using this app, we would be glad if you could support us by giving a 5 star review.\n\nThis not only helps us keep motivated to spend our free time extending this app, but also gives more people the opportunity to benefit from it.</string>
+    <string name="review_dialog_text">If you enjoy using this app for free, we would be glad if you could support us by giving a 5 star review.</string>
     <string name="review_dialog_secondary_text">Is this a good time for a review?</string>
 
     <string name="light_theme">Light</string>

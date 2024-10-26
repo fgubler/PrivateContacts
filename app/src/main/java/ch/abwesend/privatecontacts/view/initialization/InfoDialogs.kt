@@ -7,14 +7,13 @@
 package ch.abwesend.privatecontacts.view.initialization
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDoNotShowAgainDialog
@@ -25,8 +24,9 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initi
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.ReviewDialog
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
-import com.google.android.play.core.review.ReviewException
-import com.google.android.play.core.review.ReviewManagerFactory
+import ch.abwesend.privatecontacts.view.util.showAndroidReview
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
 
@@ -69,6 +69,7 @@ private fun ReviewDialog(settings: ISettingsState, close: () -> Unit) {
         return
     }
 
+    val coroutineScope = rememberCoroutineScope()
     var showSpinner: Boolean by remember { mutableStateOf(false) }
 
     if (showSpinner) {
@@ -83,7 +84,7 @@ private fun ReviewDialog(settings: ISettingsState, close: () -> Unit) {
             secondaryTextBlock = R.string.review_dialog_secondary_text,
             onYes = {
                 showSpinner = true
-                showAndroidReview(activity, close)
+                showAndroidReview(activity, coroutineScope, close)
             },
             onNo = { doNotShowAgain ->
                 close()
@@ -102,24 +103,9 @@ private fun shouldShowDialog(settings: ISettingsState): Boolean {
         daysSinceLastUserPrompt > 35 // should not prompt more than once a month
 }
 
-// TODO could be rewritten to use suspend-functions
-private fun showAndroidReview(activity: Activity, close: () -> Unit) {
-    val reviewManager = ReviewManagerFactory.create(activity)
-    reviewManager.requestReviewFlow().addOnCompleteListener { preparationTask ->
-        if (preparationTask.isSuccessful && preparationTask.result != null) {
-            val reviewInfoResult = preparationTask.result
-            reviewManager.launchReviewFlow(activity, reviewInfoResult).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Settings.repository.showReviewDialog = false // already shown
-                    Toast.makeText(activity, R.string.thank_you, Toast.LENGTH_SHORT).show()
-                }
-                close()
-            }
-        } else {
-            val errorCode = (preparationTask.exception as? ReviewException)?.errorCode?.toString() ?: "[NO_ERROR_CODE]"
-            activity.logger.info("Failed request review flow: errorCode = '$errorCode'")
-            Toast.makeText(activity, R.string.unexpected_error_apology, Toast.LENGTH_SHORT).show()
-            close()
-        }
+private fun showAndroidReview(activity: Activity, coroutineScope: CoroutineScope, close: () -> Unit) {
+    coroutineScope.launch {
+        activity.showAndroidReview()
+        close()
     }
 }
