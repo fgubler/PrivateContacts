@@ -26,7 +26,10 @@ fun BulletPointList(elements: List<String>, modifier: Modifier = Modifier) {
 
 @Composable
 fun BulletPointListItem(content: @Composable () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)
+    ) {
         Circle(size = 5.dp, color = MaterialTheme.colors.onBackground)
         Surface(modifier = Modifier.padding(start = 10.dp)) {
             content()

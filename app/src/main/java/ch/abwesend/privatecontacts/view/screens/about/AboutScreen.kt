@@ -39,8 +39,10 @@ import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
+import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.openLink
 import ch.abwesend.privatecontacts.view.util.sendEmailMessage
+import ch.abwesend.privatecontacts.view.util.showAndroidReview
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 
@@ -66,6 +68,9 @@ object AboutScreen {
 
     @Composable
     private fun AboutTheApp(context: Context) {
+        val activity = getCurrentActivity()
+        val coroutineScope = rememberCoroutineScope()
+
         SectionTitle(titleRes = R.string.about_app_title, addTopPadding = false)
         Text(text = stringResource(id = R.string.about_app_description))
         Spacer(modifier = Modifier.height(5.dp))
@@ -76,6 +81,15 @@ object AboutScreen {
                         context,
                         "https://play.google.com/store/apps/details?id=ch.abwesend.privatecontacts"
                     )
+                }
+            }
+            activity?.let { activity ->
+                BulletPointListItem {
+                    LinkText(text = stringResource(id = R.string.in_app_review)) {
+                        coroutineScope.launch {
+                            activity.showAndroidReview()
+                        }
+                    }
                 }
             }
             BulletPointListItem {
