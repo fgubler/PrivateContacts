@@ -18,7 +18,7 @@ object LogCache {
         runCatching {
             latestLogs.add(level to message)
             while (latestLogs.size > MAX_LENGTH) {
-                latestLogs.removeFirst()
+                latestLogs.removeFirstOrNull()
             }
             true
         }.getOrNull() ?: false
