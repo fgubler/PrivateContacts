@@ -15,6 +15,7 @@ Additional features
 - Creating new contacts in the standard Android database
 - Moving contacts from Private Contacts back the the standard Android contact database (in case that is desired)
 - Support of Imports/Exports in vcf format
+- Protecting the app with biometric prompt
 
 ## What the app will be able to do in the future
 
