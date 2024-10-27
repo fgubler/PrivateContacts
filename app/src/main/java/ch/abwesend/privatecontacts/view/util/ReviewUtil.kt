@@ -16,6 +16,7 @@ import com.google.android.play.core.review.ReviewException
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManager
 import com.google.android.play.core.review.ReviewManagerFactory
+import java.time.LocalDate
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -26,7 +27,9 @@ import kotlin.coroutines.suspendCoroutine
  * @return true if the action was successful
  */
 suspend fun Activity.showAndroidReview(): Boolean {
+    Settings.repository.latestUserPromptAtStartup = LocalDate.now()
     val reviewManager = ReviewManagerFactory.create(this)
+
     return prepareReview(this, reviewManager)?.let { reviewInfo ->
         showReview(this, reviewManager, reviewInfo)
     } ?: false

@@ -104,7 +104,6 @@ private fun shouldShowDialog(settings: ISettingsState): Boolean {
 }
 
 private fun showAndroidReview(activity: Activity, coroutineScope: CoroutineScope, close: () -> Unit) {
-    Settings.repository.latestUserPromptAtStartup = LocalDate.now()
     coroutineScope.launch {
         activity.showAndroidReview()
         close()
