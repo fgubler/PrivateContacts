@@ -13,9 +13,11 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
 import ch.abwesend.privatecontacts.domain.settings.SettingsState.Companion.defaultSettings
+import java.time.LocalDate
 
 internal data class SettingsEntry<T>(val key: Preferences.Key<T>, val defaultValue: T)
 internal data class EnumSettingsEntry<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
+internal data class DateSettingsEntry(val key: Preferences.Key<String>, val defaultValue: LocalDate)
 
 internal val darkThemeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("appTheme"),
@@ -94,3 +96,23 @@ internal val currentVersionEntry = SettingsEntry(
     key = intPreferencesKey("currentVersion"),
     defaultValue = defaultSettings.currentVersion
 )
+
+internal val numberOfAppStartsEntry = SettingsEntry(
+    key = intPreferencesKey("numberOfAppStarts"),
+    defaultValue = defaultSettings.numberOfAppStarts
+)
+
+internal val latestUserPromptAtStartupEntry = DateSettingsEntry(
+    key = stringPreferencesKey("latestUserPromptAtStartup"),
+    defaultValue = defaultSettings.latestUserPromptAtStartup
+)
+
+internal val showReviewDialogEntry = SettingsEntry(
+    key = booleanPreferencesKey("showReviewDialog"),
+    defaultValue = defaultSettings.showReviewDialog
+)
+
+// ==========================================
+// When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
+// in DataStoreSettingsRepository.
+// ==========================================

@@ -9,19 +9,25 @@ package ch.abwesend.privatecontacts.view.initialization
 sealed interface InitializationState {
     fun next(): InitializationState
 
-    object InitialInfoDialog : InitializationState {
+    sealed interface InfoDialogState : InitializationState
+
+    data object InitialInfoDialog : InfoDialogState {
         override fun next(): InitializationState = NewFeaturesDialog
     }
 
-    object NewFeaturesDialog : InitializationState {
+    data object NewFeaturesDialog : InfoDialogState {
+        override fun next(): InitializationState = ReviewDialog
+    }
+
+    data object ReviewDialog : InfoDialogState {
         override fun next(): InitializationState = CallPermissionsDialog
     }
 
-    object CallPermissionsDialog : InitializationState {
+    data object CallPermissionsDialog : InitializationState {
         override fun next(): InitializationState = Initialized
     }
 
-    object Initialized : InitializationState {
+    data object Initialized : InitializationState {
         override fun next(): InitializationState = this
     }
 }

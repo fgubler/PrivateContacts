@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import java.time.LocalDate
 
 interface ISettingsState {
     // UX
@@ -58,6 +59,9 @@ interface ISettingsState {
     // Others
     val sendErrorsToCrashlytics: Boolean
     val currentVersion: Int
+    val numberOfAppStarts: Int
+    val latestUserPromptAtStartup: LocalDate
+    val showReviewDialog: Boolean
 }
 
 data class SettingsState(
@@ -86,6 +90,9 @@ data class SettingsState(
 
     override val sendErrorsToCrashlytics: Boolean,
     override val currentVersion: Int,
+    override val numberOfAppStarts: Int,
+    override val latestUserPromptAtStartup: LocalDate,
+    override val showReviewDialog: Boolean,
 ) : ISettingsState {
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
@@ -106,6 +113,9 @@ data class SettingsState(
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,
             currentVersion = BuildConfig.VERSION_CODE,
+            numberOfAppStarts = 0,
+            latestUserPromptAtStartup = LocalDate.MIN,
+            showReviewDialog = true,
         )
     }
 }

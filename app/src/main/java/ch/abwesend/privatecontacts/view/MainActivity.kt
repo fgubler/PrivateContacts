@@ -50,9 +50,8 @@ import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.InfoDialogState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFeaturesDialog
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.DENIED
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.ERROR
@@ -149,13 +148,13 @@ class MainActivity : AppCompatActivity() {
             )
 
             when (initializationState) {
-                InitialInfoDialog, NewFeaturesDialog -> InfoDialogs(initializationState, settings) { nextState() }
-                CallPermissionsDialog -> CallPermissionHandler(
+                is InfoDialogState -> InfoDialogs(initializationState, settings) { nextState() }
+                is CallPermissionsDialog -> CallPermissionHandler(
                     settings = settings,
                     permissionHelper = callPermissionHelper,
                     roleHelper = callScreeningRoleHelper,
                 ) { nextState() }
-                Initialized -> { /* nothing to do */ }
+                is Initialized -> { /* nothing to do */ }
             }
         }
     }
