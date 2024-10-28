@@ -42,11 +42,11 @@ fun Modifier.setTopBarSafeAreaPadding(
 ): Modifier {
     return background(MaterialTheme.colors.primarySurface)
         .padding(
-        top = if (invertTopAndBottomBars) 0.dp else getSafeAreaPaddingTop(safeArea),
-        start = getSafeAreaPaddingStart(safeArea),
-        end = getSafeAreaPaddingEnd(safeArea),
-        bottom = if (invertTopAndBottomBars) getSafeAreaPaddingBottom(safeArea) else 0.dp
-    )
+            top = if (invertTopAndBottomBars) 0.dp else getSafeAreaPaddingTop(safeArea),
+            start = getSafeAreaPaddingStart(safeArea),
+            end = getSafeAreaPaddingEnd(safeArea),
+            bottom = if (invertTopAndBottomBars) getSafeAreaPaddingBottom(safeArea) else 0.dp
+        )
 }
 
 @Composable
