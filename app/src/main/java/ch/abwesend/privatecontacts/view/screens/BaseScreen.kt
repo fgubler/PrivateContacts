@@ -53,8 +53,8 @@ fun BaseScreen(
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
             allowFullNavigation = allowFullNavigation && isGenericNavigationAllowed(screenContext),
+            invertTopAndBottomBars = invertTopAndBottomBars,
             actions = topBarActions,
-            modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars)
         )
     },
     floatingActionButton: @Composable () -> Unit = {},
@@ -95,7 +95,7 @@ private fun BaseTopBar(
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     allowFullNavigation: Boolean,
-    modifier: Modifier,
+    invertTopAndBottomBars: Boolean,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -107,7 +107,7 @@ private fun BaseTopBar(
                 MenuBackButton(onBackButtonClicked = screenContext::navigateUp)
             }
         },
-        modifier = modifier,
+        modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars),
         actions = actions,
     )
 }

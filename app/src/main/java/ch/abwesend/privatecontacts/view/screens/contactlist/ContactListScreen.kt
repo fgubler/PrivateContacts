@@ -61,7 +61,6 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
-import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.FlowPreview
@@ -91,7 +90,7 @@ object ContactListScreen {
                 ContactListTopBar(
                     viewModel = viewModel,
                     scaffoldState = scaffoldState,
-                    modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars)
+                    invertTopAndBottomBars = invertTopAndBottomBars,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
