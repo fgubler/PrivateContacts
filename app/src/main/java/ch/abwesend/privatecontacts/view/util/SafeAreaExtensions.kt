@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -39,7 +40,7 @@ fun Modifier.setTopBarSafeAreaPadding(
     invertTopAndBottomBars: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
-    return background(MaterialTheme.colors.primary)
+    return background(MaterialTheme.colors.primarySurface)
         .padding(
         top = if (invertTopAndBottomBars) 0.dp else getSafeAreaPaddingTop(safeArea),
         start = getSafeAreaPaddingStart(safeArea),
