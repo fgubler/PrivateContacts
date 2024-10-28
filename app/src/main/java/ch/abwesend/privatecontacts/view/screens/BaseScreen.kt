@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.view.screens
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -24,6 +23,8 @@ import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
+import ch.abwesend.privatecontacts.view.util.setMainContentSafeAreaPadding
+import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.ExperimentalContracts
 
@@ -47,6 +48,7 @@ fun BaseScreen(
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
             allowFullNavigation = allowFullNavigation && isGenericNavigationAllowed(screenContext),
+            invertTopAndBottomBars = invertTopAndBottomBars,
             actions = topBarActions,
         )
     },
@@ -57,7 +59,7 @@ fun BaseScreen(
         scaffoldState = scaffoldState,
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
-        modifier = Modifier.safeDrawingPadding(),
+        modifier = Modifier.setMainContentSafeAreaPadding(invertTopAndBottomBars),
         floatingActionButton = floatingActionButton,
         drawerContent = {
             if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {
@@ -79,6 +81,7 @@ private fun BaseTopBar(
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     allowFullNavigation: Boolean,
+    invertTopAndBottomBars: Boolean,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -90,6 +93,7 @@ private fun BaseTopBar(
                 MenuBackButton(onBackButtonClicked = screenContext::navigateUp)
             }
         },
+        modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars),
         actions = actions,
     )
 }

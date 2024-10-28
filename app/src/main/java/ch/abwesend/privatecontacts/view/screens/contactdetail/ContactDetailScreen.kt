@@ -63,6 +63,7 @@ import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
+import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
@@ -194,6 +195,7 @@ object ContactDetailScreen {
             navigationIcon = {
                 BackIconButton { screenContext.navigateUp() }
             },
+            modifier = Modifier.setTopBarSafeAreaPadding(screenContext.settings.invertTopAndBottomBars),
             actions = {
                 if (contact != null) {
                     EditIconButton {

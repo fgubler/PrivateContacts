@@ -54,6 +54,7 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
+import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -64,22 +65,28 @@ import kotlinx.coroutines.FlowPreview
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
     scaffoldState: ScaffoldState,
+    invertTopAndBottomBars: Boolean,
 ) {
     val screenStateState = viewModel.screenState
+    val modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars)
+
     when (val screenState = screenStateState.value) {
         is Normal -> NormalTopBar(
             scaffoldState = scaffoldState,
+            modifier = modifier,
             reloadContacts = { viewModel.reloadContacts() },
             showSearch = { viewModel.showSearch() }
         )
         is Search -> SearchTopBar(
             searchText = screenState.searchText,
+            modifier = modifier,
             changeSearchText = { viewModel.changeSearchQuery(it) },
             resetSearch = { viewModel.reloadContacts(resetSearch = true) }
         )
         is BulkMode -> BulkModeTopBar(
             viewModel = viewModel,
             selectedContacts = screenState.selectedContacts,
+            modifier = modifier,
             disableBulkMode = { viewModel.setBulkMode(enabled = false) }
         )
     }
@@ -90,11 +97,13 @@ private fun NormalTopBar(
     scaffoldState: ScaffoldState,
     reloadContacts: () -> Unit,
     showSearch: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
         navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
+        modifier = modifier,
         actions = {
             RefreshIconButton { reloadContacts() }
             SearchIconButton { showSearch() }
@@ -106,6 +115,7 @@ private fun NormalTopBar(
 @Composable
 private fun SearchTopBar(
     searchText: String,
+    modifier: Modifier = Modifier,
     changeSearchText: (String) -> Unit,
     resetSearch: () -> Unit
 ) {
@@ -114,6 +124,7 @@ private fun SearchTopBar(
         backgroundColor = backgroundColor,
         title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
+        modifier = modifier,
     )
     BackHandler { resetSearch() }
 }
@@ -123,6 +134,7 @@ private fun SearchTopBar(
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
     selectedContacts: Set<IContactBase>,
+    modifier: Modifier = Modifier,
     disableBulkMode: () -> Unit
 ) {
     var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
@@ -130,6 +142,7 @@ private fun BulkModeTopBar(
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
         navigationIcon = { CancelIconButton { disableBulkMode() } },
+        modifier = modifier,
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
             BulkModeActionsMenu(

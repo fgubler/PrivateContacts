@@ -76,6 +76,7 @@ object ContactListScreen {
         val scaffoldState = rememberScaffoldState()
         val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
+        val invertTopAndBottomBars: Boolean = screenContext.settings.invertTopAndBottomBars
         val permissionProvider = screenContext.permissionProvider
 
         LaunchedEffect(Unit) { initializeScreen(viewModel, settings) }
@@ -89,6 +90,7 @@ object ContactListScreen {
                 ContactListTopBar(
                     viewModel = viewModel,
                     scaffoldState = scaffoldState,
+                    invertTopAndBottomBars = invertTopAndBottomBars,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
