@@ -61,9 +61,10 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
+import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -76,6 +77,7 @@ object ContactListScreen {
         val scaffoldState = rememberScaffoldState()
         val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
+        val invertTopAndBottomBars: Boolean = screenContext.settings.invertTopAndBottomBars
         val permissionProvider = screenContext.permissionProvider
 
         LaunchedEffect(Unit) { initializeScreen(viewModel, settings) }
@@ -89,6 +91,7 @@ object ContactListScreen {
                 ContactListTopBar(
                     viewModel = viewModel,
                     scaffoldState = scaffoldState,
+                    modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars)
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
