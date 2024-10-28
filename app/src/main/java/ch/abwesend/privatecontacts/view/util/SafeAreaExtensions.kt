@@ -48,3 +48,16 @@ fun Modifier.setTopBarSafeAreaPadding(
         bottom = if (invertTopAndBottomBars) getSafeAreaPaddingBottom(safeArea) else 0.dp
     )
 }
+
+@Composable
+fun Modifier.setMainContentSafeAreaPadding(
+    invertTopAndBottomBars: Boolean,
+    safeArea: PaddingValues = getSafeAreaPadding()
+): Modifier {
+    return padding(
+        top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
+        start = getSafeAreaPaddingStart(safeArea),
+        end = getSafeAreaPaddingEnd(safeArea),
+        bottom = if (invertTopAndBottomBars) 0.dp else safeArea.calculateBottomPadding(),
+    )
+}
