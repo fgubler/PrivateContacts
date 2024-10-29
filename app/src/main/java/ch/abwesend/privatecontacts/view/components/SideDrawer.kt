@@ -25,7 +25,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -46,15 +45,13 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.routing.Screen
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
-fun SideDrawerContent(selectedScreen: Screen, scaffoldState: ScaffoldState, navigate: (Screen) -> Unit) {
+fun SideDrawerContent(selectedScreen: Screen, navigate: (Screen) -> Unit) {
     val scrollState = rememberScrollState()
     val clickListener = createElementClickListener(
         selectedScreen = selectedScreen,
         coroutineScope = rememberCoroutineScope(),
-        scaffoldState = scaffoldState,
         navigate = navigate,
     )
 
@@ -193,7 +190,6 @@ private fun SideDrawerElement(
 private fun createElementClickListener(
     selectedScreen: Screen,
     coroutineScope: CoroutineScope,
-    scaffoldState: ScaffoldState,
     navigate: (Screen) -> Unit,
 ): (Screen) -> Unit {
     val logger = selectedScreen.logger
@@ -203,7 +199,6 @@ private fun createElementClickListener(
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             navigate(screen)
-            coroutineScope.launch { scaffoldState.drawerState.close() }
         }
     }
 }

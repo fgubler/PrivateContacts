@@ -8,16 +8,19 @@ package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,6 +61,7 @@ import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.theme.primaryOnLight
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
@@ -65,8 +69,8 @@ import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -175,6 +179,7 @@ object ContactDetailScreen {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ContactDetailTopBar(
         screenContext: IContactDetailScreenContext,
@@ -185,6 +190,7 @@ object ContactDetailScreen {
         var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
         TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = primaryOnLight),
             title = {
                 Text(
                     text = contact?.displayName ?: stringResource(id = title),
@@ -195,7 +201,9 @@ object ContactDetailScreen {
             navigationIcon = {
                 BackIconButton { screenContext.navigateUp() }
             },
-            modifier = Modifier.setTopBarSafeAreaPadding(screenContext.settings.invertTopAndBottomBars),
+            modifier = Modifier.setTopBarSafeAreaPadding(screenContext.settings.invertTopAndBottomBars).background(
+                primaryOnLight
+            ),
             actions = {
                 if (contact != null) {
                     EditIconButton {

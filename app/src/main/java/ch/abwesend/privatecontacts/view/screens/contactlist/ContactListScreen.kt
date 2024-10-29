@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
@@ -62,8 +64,8 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
@@ -85,7 +87,6 @@ object ContactListScreen {
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
             allowFullNavigation = true,
-            scaffoldState = scaffoldState,
             topBar = {
                 ContactListTopBar(
                     viewModel = viewModel,
@@ -97,7 +98,7 @@ object ContactListScreen {
         ) { padding ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(padding)
+                modifier = Modifier.padding(padding).background(Color.White)
             ) {
                 if (settings.invertTopAndBottomBars) {
                     Surface(modifier = Modifier.weight(1.0f)) { // let the tabs get their space first

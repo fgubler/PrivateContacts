@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,7 +20,9 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,6 +56,7 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
+import ch.abwesend.privatecontacts.view.theme.primaryOnLight
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
@@ -92,6 +96,7 @@ fun ContactListTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NormalTopBar(
     scaffoldState: ScaffoldState,
@@ -101,9 +106,10 @@ private fun NormalTopBar(
 ) {
     val coroutineScope = rememberCoroutineScope()
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors().copy(containerColor = primaryOnLight),
         title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
-        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
-        modifier = modifier,
+        navigationIcon = { MenuButton(coroutineScope = coroutineScope) },
+        modifier = modifier.background(primaryOnLight),
         actions = {
             RefreshIconButton { reloadContacts() }
             SearchIconButton { showSearch() }
@@ -111,6 +117,7 @@ private fun NormalTopBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @Composable
 private fun SearchTopBar(
@@ -121,14 +128,14 @@ private fun SearchTopBar(
 ) {
     val backgroundColor = MaterialTheme.colors.background
     TopAppBar(
-        backgroundColor = backgroundColor,
         title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
-        modifier = modifier,
+        modifier = modifier.background(backgroundColor),
     )
     BackHandler { resetSearch() }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalMaterialApi
 @Composable
 private fun BulkModeTopBar(
@@ -142,7 +149,7 @@ private fun BulkModeTopBar(
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
         navigationIcon = { CancelIconButton { disableBulkMode() } },
-        modifier = modifier,
+        modifier = modifier.background(MaterialTheme.colors.primary),
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
             BulkModeActionsMenu(
