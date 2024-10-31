@@ -119,9 +119,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
-    implementation platform("com.google.firebase:firebase-bom:33.5.1")
-    implementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
-    implementation("com.google.firebase:firebase-analytics")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:33.5.1")
+    googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
+    googlePlayImplementation("com.google.firebase:firebase-analytics")
 
     // Android Room
     implementation "androidx.room:room-ktx:$roomVersion"

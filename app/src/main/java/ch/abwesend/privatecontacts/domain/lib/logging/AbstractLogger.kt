@@ -63,7 +63,7 @@ abstract class AbstractLogger : ILogger {
     override fun warning(messages: Collection<String>) {
         if (checkLogLevel(Log.WARN)) {
             warningImpl(messages)
-            if (logToCrashlytics()) {
+            if (logToCrashlytics() && BuildConfig.FLAVOR == "googlePlay") {
                 val message = messages.joinToString(separator = Constants.linebreak)
                 FirebaseCrashlytics.getInstance().log(message)
             }
@@ -91,7 +91,7 @@ abstract class AbstractLogger : ILogger {
         if (checkLogLevel(Log.WARN)) {
             warningImpl(listOf(warningMessage))
             if (logToCrashlytics()) {
-                FirebaseCrashlytics.getInstance().recordException(t)
+                logToCrashlytics(t)
             }
         }
     }
@@ -101,7 +101,7 @@ abstract class AbstractLogger : ILogger {
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
             if (logToCrashlytics()) {
-                FirebaseCrashlytics.getInstance().recordException(t)
+                logToCrashlytics(t)
             }
         }
     }
@@ -111,14 +111,16 @@ abstract class AbstractLogger : ILogger {
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
             if (logToCrashlytics()) {
-                FirebaseCrashlytics.getInstance().recordException(t)
+                logToCrashlytics(t)
             }
         }
     }
 
     /** always logs to crashlytics, independent of the settings */
     override fun logToCrashlytics(t: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(t)
+        if (BuildConfig.FLAVOR == "googlePlay") {
+            FirebaseCrashlytics.getInstance().recordException(t)
+        }
     }
 
     private fun createThrowableLogMessage(t: Throwable, message: String? = null): String {
