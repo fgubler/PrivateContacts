@@ -53,6 +53,13 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
+    flavorDimensions = ["appStore"]
+    productFlavors {
+        googlePlay { dimension "appStore" }
+        fdroid { dimension "appStore" }
+    }
+
     compileOptions {
 
         sourceCompatibility JavaVersion.VERSION_17
