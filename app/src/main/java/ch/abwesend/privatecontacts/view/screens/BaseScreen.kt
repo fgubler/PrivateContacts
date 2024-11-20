@@ -25,8 +25,8 @@ import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationA
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.setMainContentSafeAreaPadding
 import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
-import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.CoroutineScope
 
 private val hidden: @Composable () -> Unit = {}
 
@@ -48,7 +48,6 @@ fun BaseScreen(
             scaffoldState = scaffoldState,
             coroutineScope = coroutineScope,
             allowFullNavigation = allowFullNavigation && isGenericNavigationAllowed(screenContext),
-            invertTopAndBottomBars = invertTopAndBottomBars,
             actions = topBarActions,
         )
     },
@@ -59,7 +58,9 @@ fun BaseScreen(
         scaffoldState = scaffoldState,
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
-        modifier = Modifier.setMainContentSafeAreaPadding(invertTopAndBottomBars),
+        modifier = Modifier
+            .setTopBarSafeAreaPadding(invertTopAndBottomBars)
+            .setMainContentSafeAreaPadding(invertTopAndBottomBars),
         floatingActionButton = floatingActionButton,
         drawerContent = {
             if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {
@@ -81,7 +82,6 @@ private fun BaseTopBar(
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     allowFullNavigation: Boolean,
-    invertTopAndBottomBars: Boolean,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -93,7 +93,6 @@ private fun BaseTopBar(
                 MenuBackButton(onBackButtonClicked = screenContext::navigateUp)
             }
         },
-        modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars),
         actions = actions,
     )
 }
