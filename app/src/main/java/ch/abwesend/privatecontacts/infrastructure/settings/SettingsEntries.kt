@@ -23,8 +23,8 @@ internal val appThemeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("appTheme"),
     defaultValue = defaultSettings.appTheme
 )
-internal val addSafeAreaPaddingEntry = SettingsEntry(
-    key = booleanPreferencesKey("addSafeAreaPadding"),
+internal val addHorizontalSafeAreaPaddingEntry = SettingsEntry(
+    key = booleanPreferencesKey("addHorizontalSafeAreaPadding"),
     defaultValue = defaultSettings.orderByFirstName
 )
 internal val orderByFirstNameEntry = SettingsEntry(

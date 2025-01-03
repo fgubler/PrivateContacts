@@ -22,7 +22,7 @@ data class TestSettings(
     override val settings: Flow<ISettingsState> = flow { emit(currentSettings) },
 ) : SettingsRepository {
     override var appTheme: AppTheme = currentSettings.appTheme
-    override var addSafeAreaPadding: Boolean = currentSettings.addSafeAreaPadding
+    override var addHorizontalSafeAreaPadding: Boolean = currentSettings.addHorizontalSafeAreaPadding
     override var orderByFirstName: Boolean = currentSettings.orderByFirstName
     override var showContactTypeInList: Boolean = currentSettings.showContactTypeInList
     override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
