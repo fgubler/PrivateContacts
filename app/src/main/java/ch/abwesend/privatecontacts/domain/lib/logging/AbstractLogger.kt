@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.util.Constants
 
 abstract class AbstractLogger : ILogger {
-    private val remoteHelper: RemoteLoggingHelper = RemoteLoggingHelper();
+    private val remoteHelper: RemoteLoggingHelper = RemoteLoggingHelper()
 
     // ======== abstract methods ========
     protected abstract val loggingTag: String

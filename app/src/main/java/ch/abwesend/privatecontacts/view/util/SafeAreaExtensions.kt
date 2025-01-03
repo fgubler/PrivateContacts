@@ -62,9 +62,9 @@ fun Modifier.setMainContentSafeAreaPadding(
 
     return background(MaterialTheme.colors.background)
         .padding(
-        top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
-        start = getSafeAreaPaddingStart(safeArea),
-        end = getSafeAreaPaddingEnd(safeArea),
-        bottom = if (invertTopAndBottomBars) 0.dp else safeArea.calculateBottomPadding(),
-    )
+            top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
+            start = getSafeAreaPaddingStart(safeArea),
+            end = getSafeAreaPaddingEnd(safeArea),
+            bottom = if (invertTopAndBottomBars) 0.dp else safeArea.calculateBottomPadding(),
+        )
 }
