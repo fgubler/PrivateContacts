@@ -14,9 +14,11 @@ import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.BinaryFileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.repository.BinaryFileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileWriteResult
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
@@ -31,7 +33,7 @@ private const val MODE_WRITE_ONLY = "w"
 class FileAccessRepository(private val context: Context) : IFileAccessRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
 
-    override suspend fun readFileContent(fileUri: Uri, requestPermission: Boolean): FileReadResult =
+    override suspend fun readTextFileContent(fileUri: Uri, requestPermission: Boolean): FileReadResult =
         withContext(dispatchers.io) {
             try {
                 logger.debugLocally("Reading content from '${fileUri.path}'")
@@ -48,7 +50,7 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                         }
                     }
                 }.orEmpty()
-                val fileContent = FileContent(content)
+                val fileContent = TextFileContent(content)
 
                 logger.debug("Read ${fileContent.numberOfLines} lines from file")
                 SuccessResult(value = fileContent)
@@ -58,7 +60,30 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
             }
         }
 
-    override suspend fun writeFile(fileContent: FileContent, file: Uri, requestPermission: Boolean): FileWriteResult =
+    override suspend fun readBinaryFileContent(fileUri: Uri, requestPermission: Boolean): BinaryFileReadResult =
+        withContext(dispatchers.io) {
+            try {
+                logger.debugLocally("Reading content from '${fileUri.path}'")
+                val contentResolver = context.contentResolver
+
+                if (requestPermission) {
+                    requestReadPermission(contentResolver, fileUri)
+                }
+
+                val content = contentResolver.openFileDescriptor(fileUri, MODE_READ_ONLY)?.use { parcelDescriptor ->
+                    FileInputStream(parcelDescriptor.fileDescriptor).use { inputStream -> inputStream.readBytes() }
+                } ?: ByteArray(0)
+
+                val fileContent = BinaryFileContent(content)
+                logger.debug("Read binary file")
+                SuccessResult(value = fileContent)
+            } catch (e: Exception) {
+                logger.warning("Failed to read file content", e)
+                ErrorResult(error = e)
+            }
+        }
+
+    override suspend fun writeFile(fileContent: TextFileContent, file: Uri, requestPermission: Boolean): FileWriteResult =
         withContext(dispatchers.io) {
             try {
                 logger.debugLocally("Writing content to '${file.path}'")
