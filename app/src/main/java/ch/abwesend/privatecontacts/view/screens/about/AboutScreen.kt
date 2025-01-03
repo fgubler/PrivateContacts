@@ -172,7 +172,7 @@ object AboutScreen {
         if (text.isNotEmpty()) {
             val fullText = "Received user-feedback: $text"
             logger.warning(fullText)
-            logger.logToCrashlytics(UserFeedbackPseudoException(fullText))
+            logger.logToCrashlytics(UserFeedbackPseudoException(fullText), overridePreferences = true)
         }
     }
 

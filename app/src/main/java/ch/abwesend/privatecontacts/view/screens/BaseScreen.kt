@@ -25,8 +25,8 @@ import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationA
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.setMainContentSafeAreaPadding
 import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
-import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.CoroutineScope
+import kotlin.contracts.ExperimentalContracts
 
 private val hidden: @Composable () -> Unit = {}
 
@@ -59,8 +59,8 @@ fun BaseScreen(
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
         modifier = Modifier
-            .setTopBarSafeAreaPadding(invertTopAndBottomBars)
-            .setMainContentSafeAreaPadding(invertTopAndBottomBars),
+            .setTopBarSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addSafeAreaPadding)
+            .setMainContentSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addSafeAreaPadding),
         floatingActionButton = floatingActionButton,
         drawerContent = {
             if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {

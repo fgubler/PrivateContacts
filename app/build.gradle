@@ -33,8 +33,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 35
-        versionCode 70
-        versionName "4.1.1"
+        versionCode 71
+        versionName "4.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -53,6 +53,13 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
+    flavorDimensions = ["appStore"]
+    productFlavors {
+        googlePlay { dimension "appStore" }
+        fdroid { dimension "appStore" }
+    }
+
     compileOptions {
 
         sourceCompatibility JavaVersion.VERSION_17
@@ -112,9 +119,9 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
     // Firebase
-    implementation platform("com.google.firebase:firebase-bom:33.5.1")
-    implementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
-    implementation("com.google.firebase:firebase-analytics")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:33.5.1")
+    googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
+    googlePlayImplementation("com.google.firebase:firebase-analytics")
 
     // Android Room
     implementation "androidx.room:room-ktx:$roomVersion"
