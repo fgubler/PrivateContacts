@@ -261,6 +261,8 @@
     <string name="settings_info_dialog_android_contacts_permission">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
+    <string name="settings_entry_add_safe_area_padding">Use only safe areas</string>
+    <string name="settings_entry_add_safe_area_padding_description">Add borders around the app-content to make sure that all of it is both visible and clickable.</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
     <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
     <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
