@@ -38,16 +38,14 @@ fun getSafeAreaPaddingBottom(safeAreaPadding: PaddingValues = getSafeAreaPadding
 @Composable
 fun Modifier.setTopBarSafeAreaPadding(
     invertTopAndBottomBars: Boolean,
-    addSafeAreaPadding: Boolean,
+    addHorizontalPadding: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
-    if (!addSafeAreaPadding) return this
-
     return background(MaterialTheme.colors.primarySurface)
         .padding(
             top = if (invertTopAndBottomBars) 0.dp else getSafeAreaPaddingTop(safeArea),
-            start = getSafeAreaPaddingStart(safeArea),
-            end = getSafeAreaPaddingEnd(safeArea),
+            start = if (addHorizontalPadding) getSafeAreaPaddingStart(safeArea) else 0.dp,
+            end = if (addHorizontalPadding) getSafeAreaPaddingEnd(safeArea) else 0.dp,
             bottom = if (invertTopAndBottomBars) getSafeAreaPaddingBottom(safeArea) else 0.dp
         )
 }
@@ -55,16 +53,14 @@ fun Modifier.setTopBarSafeAreaPadding(
 @Composable
 fun Modifier.setMainContentSafeAreaPadding(
     invertTopAndBottomBars: Boolean,
-    addSafeAreaPadding: Boolean,
+    addHorizontalPadding: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
-    if (!addSafeAreaPadding) return this
-
     return background(MaterialTheme.colors.background)
         .padding(
             top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
-            start = getSafeAreaPaddingStart(safeArea),
-            end = getSafeAreaPaddingEnd(safeArea),
+            start = if (addHorizontalPadding) getSafeAreaPaddingStart(safeArea) else 0.dp,
+            end = if (addHorizontalPadding) getSafeAreaPaddingEnd(safeArea) else 0.dp,
             bottom = if (invertTopAndBottomBars) 0.dp else safeArea.calculateBottomPadding(),
         )
 }

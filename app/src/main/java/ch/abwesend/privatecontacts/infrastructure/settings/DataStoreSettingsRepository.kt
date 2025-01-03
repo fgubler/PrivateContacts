@@ -53,9 +53,9 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.appTheme
         set(value) = dataStore.setEnumValue(appThemeEntry, value)
 
-    override var addSafeAreaPadding: Boolean
-        get() = currentSettings.addSafeAreaPadding
-        set(value) = dataStore.setValue(addSafeAreaPaddingEntry, value)
+    override var addHorizontalSafeAreaPadding: Boolean
+        get() = currentSettings.addHorizontalSafeAreaPadding
+        set(value) = dataStore.setValue(addHorizontalSafeAreaPaddingEntry, value)
 
     override var orderByFirstName: Boolean
         get() = currentSettings.orderByFirstName

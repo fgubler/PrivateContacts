@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.service.ContactImageService
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
@@ -111,6 +112,7 @@ internal val koinModule = module {
     factory { CallPermissionHelper() } // should only ever be injected into MainActivity
     factory { CallScreeningRoleHelper() } // should only ever be injected into MainActivity
 
+    factory { ContactImageService() }
     factory { ContactImportService() }
     factory { ContactExportService() }
     single { ContactToVCardMapper() }

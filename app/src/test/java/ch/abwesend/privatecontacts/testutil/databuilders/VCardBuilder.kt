@@ -6,7 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType.Main
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData.CreatedVCards
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
-import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.toUid
 import ch.abwesend.privatecontacts.infrastructure.service.CUSTOM_RELATIONSHIP_TYPE_ORGANISATION
 import ezvcard.VCard
@@ -28,7 +28,7 @@ fun someUri(): Uri = mockk()
 
 fun someFileContent(
     content: String = "This is not a proper vcard content but let us try"
-): FileContent = FileContent(content)
+): TextFileContent = TextFileContent(content)
 
 fun someVCard(
     uid: UUID = UUID.randomUUID(),
@@ -130,6 +130,6 @@ fun someParsedData(
     ContactImportPartialData.ParsedData(successfulContacts, numberOfErrors)
 
 fun someCreatedVCards(
-    fileContent: FileContent = someFileContent(),
+    fileContent: TextFileContent = someFileContent(),
     failedContacts: List<IContactEditable> = emptyList(),
 ): CreatedVCards = CreatedVCards(fileContent, failedContacts)
