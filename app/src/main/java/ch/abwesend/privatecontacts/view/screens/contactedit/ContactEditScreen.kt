@@ -58,7 +58,6 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
-import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlin.contracts.ExperimentalContracts
 
@@ -183,7 +182,6 @@ object ContactEditScreen {
             navigationIcon = {
                 CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
             },
-            modifier = Modifier.setTopBarSafeAreaPadding(screenContext.settings.invertTopAndBottomBars),
             actions = {
                 SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
             }

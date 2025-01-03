@@ -54,7 +54,6 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
-import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
@@ -65,28 +64,23 @@ import kotlinx.coroutines.FlowPreview
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
     scaffoldState: ScaffoldState,
-    invertTopAndBottomBars: Boolean,
 ) {
     val screenStateState = viewModel.screenState
-    val modifier = Modifier.setTopBarSafeAreaPadding(invertTopAndBottomBars)
 
     when (val screenState = screenStateState.value) {
         is Normal -> NormalTopBar(
             scaffoldState = scaffoldState,
-            modifier = modifier,
             reloadContacts = { viewModel.reloadContacts() },
             showSearch = { viewModel.showSearch() }
         )
         is Search -> SearchTopBar(
             searchText = screenState.searchText,
-            modifier = modifier,
             changeSearchText = { viewModel.changeSearchQuery(it) },
             resetSearch = { viewModel.reloadContacts(resetSearch = true) }
         )
         is BulkMode -> BulkModeTopBar(
             viewModel = viewModel,
             selectedContacts = screenState.selectedContacts,
-            modifier = modifier,
             disableBulkMode = { viewModel.setBulkMode(enabled = false) }
         )
     }
