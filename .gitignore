@@ -2,6 +2,8 @@
 .gradle
 
 /app/release/
+/app/googlePlay/release
+/app/fdroid/release
 
 .idea/
 /.idea/caches

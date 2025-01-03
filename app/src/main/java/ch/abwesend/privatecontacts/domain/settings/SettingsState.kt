@@ -15,6 +15,8 @@ import java.time.LocalDate
 interface ISettingsState {
     // UX
     val appTheme: AppTheme
+    val addSafeAreaPadding: Boolean
+
     val orderByFirstName: Boolean
     val showContactTypeInList: Boolean
 
@@ -66,6 +68,8 @@ interface ISettingsState {
 
 data class SettingsState(
     override val appTheme: AppTheme,
+    override val addSafeAreaPadding: Boolean,
+
     override val orderByFirstName: Boolean,
     override val showContactTypeInList: Boolean,
 
@@ -97,6 +101,7 @@ data class SettingsState(
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
             appTheme = AppTheme.SYSTEM_SETTINGS,
+            addSafeAreaPadding = true,
             orderByFirstName = true,
             showContactTypeInList = true,
             showExtraButtonsInEditScreen = true,

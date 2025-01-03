@@ -19,9 +19,13 @@ internal data class SettingsEntry<T>(val key: Preferences.Key<T>, val defaultVal
 internal data class EnumSettingsEntry<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
 internal data class DateSettingsEntry(val key: Preferences.Key<String>, val defaultValue: LocalDate)
 
-internal val darkThemeEntry = EnumSettingsEntry(
+internal val appThemeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("appTheme"),
     defaultValue = defaultSettings.appTheme
+)
+internal val addSafeAreaPaddingEntry = SettingsEntry(
+    key = booleanPreferencesKey("addSafeAreaPadding"),
+    defaultValue = defaultSettings.orderByFirstName
 )
 internal val orderByFirstNameEntry = SettingsEntry(
     key = booleanPreferencesKey("orderByFirstName"),

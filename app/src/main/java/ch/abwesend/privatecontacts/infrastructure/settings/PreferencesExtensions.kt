@@ -22,7 +22,8 @@ import java.time.format.DateTimeFormatter
 private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
 internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
-    appTheme = tryGetEnumValue(darkThemeEntry),
+    appTheme = tryGetEnumValue(appThemeEntry),
+    addSafeAreaPadding = getValue(addSafeAreaPaddingEntry),
     orderByFirstName = getValue(orderByFirstNameEntry),
     showContactTypeInList = getValue(showContactTypeInListEntry),
     showExtraButtonsInEditScreen = getValue(showExtraButtonsInEditScreenEntry),
