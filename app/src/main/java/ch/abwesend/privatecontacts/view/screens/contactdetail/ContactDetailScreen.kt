@@ -58,6 +58,7 @@ import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactMenu
 import ch.abwesend.privatecontacts.view.components.contactmenu.DeleteContactsResultDialog
 import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsMenuItem
 import ch.abwesend.privatecontacts.view.components.contactmenu.ExportContactsResultDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
@@ -267,22 +268,39 @@ object ContactDetailScreen {
     ) {
         val launcher = rememberLauncherForActivityResult(PickVisualMedia()) { uri ->
             uri?.let { viewModel.selectContactImage(it, contact) }
-            onCloseMenu() // must not call this before the photo-picker ist finished
+            onCloseMenu() // must not call this before the photo-picker ist finished - otherwise this whole tree is deleted
         }
+        val hasFullImage = remember(contact) { contact.image.fullImage != null }
+        val changeButtonTextRes = remember(contact) { if (hasFullImage) R.string.change_contact_image else R.string.add_contact_image }
 
         DropdownMenuItem(
             onClick = { launcher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-            content = { Text(stringResource(id = R.string.select_contact_image)) },
+            content = { Text(stringResource(id = changeButtonTextRes)) },
         )
 
-        if (contact.image.fullImage != null) {
+        if (hasFullImage) {
+            var showConfirmationDialog: Boolean by remember { mutableStateOf(false) }
+
             DropdownMenuItem(
-                onClick = {
-                    viewModel.removeContactImage(contact)
-                    onCloseMenu()
-                },
+                onClick = { showConfirmationDialog = true },
                 content = { Text(stringResource(id = R.string.remove_contact_image)) },
             )
+
+            if (showConfirmationDialog) {
+                YesNoDialog(
+                    R.string.delete_contact_image_confirmation_title,
+                    R.string.delete_contact_image_confirmation_text,
+                    onYes = {
+                        viewModel.removeContactImage(contact)
+                        showConfirmationDialog = false
+                        onCloseMenu()
+                    },
+                    onNo = {
+                        showConfirmationDialog = false
+                        onCloseMenu()
+                    }
+                )
+            }
         }
     }
 

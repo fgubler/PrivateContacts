@@ -140,8 +140,11 @@
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 
-    <string name="select_contact_image">Select contact image</string>
+    <string name="add_contact_image">Add contact image</string>
+    <string name="change_contact_image">Change contact image</string>
     <string name="remove_contact_image">Remove contact image</string>
+    <string name="delete_contact_image_confirmation_title">Delete Contact Image</string>
+    <string name="delete_contact_image_confirmation_text">Are you sure that you want to remove this image from this contact?\n\nIt cannot be restored unless you still have the original image saved somewhere else.</string>
 
     <string name="contact_list_bulk_mode_title">%1$s items selected</string>
 
