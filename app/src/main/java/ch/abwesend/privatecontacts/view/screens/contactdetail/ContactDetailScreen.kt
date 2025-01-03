@@ -238,7 +238,6 @@ object ContactDetailScreen {
                 content = { Text(stringResource(id = R.string.refresh)) },
             )
 
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ContactImageMenuItems(viewModel, contact, onCloseMenu)
             }

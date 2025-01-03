@@ -50,18 +50,18 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
         }
 
     override suspend fun readBinaryFileContent(fileUri: Uri, requestPermission: Boolean): BinaryFileReadResult =
-            try {
-                val content = readFileContent(fileUri, requestPermission) { inputStream ->
-                    inputStream.readBytes()
-                } ?: ByteArray(0)
+        try {
+            val content = readFileContent(fileUri, requestPermission) { inputStream ->
+                inputStream.readBytes()
+            } ?: ByteArray(0)
 
-                val fileContent = BinaryFileContent(content)
-                logger.debug("Read binary file")
-                SuccessResult(value = fileContent)
-            } catch (e: Exception) {
-                logger.warning("Failed to read file content", e)
-                ErrorResult(error = e)
-            }
+            val fileContent = BinaryFileContent(content)
+            logger.debug("Read binary file")
+            SuccessResult(value = fileContent)
+        } catch (e: Exception) {
+            logger.warning("Failed to read file content", e)
+            ErrorResult(error = e)
+        }
 
     private suspend fun <T> readFileContent(fileUri: Uri, requestPermission: Boolean, readContent: suspend (FileInputStream) -> T): T? =
         withContext(dispatchers.io) {
