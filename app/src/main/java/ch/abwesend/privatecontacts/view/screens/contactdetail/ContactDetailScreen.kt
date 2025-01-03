@@ -6,6 +6,11 @@
 
 package ch.abwesend.privatecontacts.view.screens.contactdetail
 
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
@@ -33,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
@@ -63,6 +69,7 @@ import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
+import ch.abwesend.privatecontacts.view.util.getLogger
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.FlowPreview
@@ -83,8 +90,11 @@ object ContactDetailScreen {
             screenContext = screenContext,
             selectedScreen = Screen.ContactDetail,
             topBar = {
-                ContactDetailTopBar(screenContext = screenContext, contact = contactResource.valueOrNull)
-            }
+                ContactDetailTopBar(
+                    screenContext = screenContext,
+                    contact = contactResource.valueOrNull
+                )
+            },
         ) { padding ->
             LaunchedEffect(Unit) {
                 if (!ContactDetailInitializationWorkaround.hasOpenedContact) {
@@ -139,7 +149,7 @@ object ContactDetailScreen {
             validationErrors = validationErrors,
             errors = errors,
             numberOfAttemptedChanges = 1,
-            numberOfSuccessfulChanges = if (changeSuccessful) 1 else 0
+            numberOfSuccessfulChanges = if (changeSuccessful) 1 else 0,
         ) {
             validationErrors = emptyList()
             errors = emptyList()
@@ -205,10 +215,10 @@ object ContactDetailScreen {
                     ActionsMenu(
                         viewModel = screenContext.contactDetailViewModel,
                         contact = contact,
-                        expanded = dropDownMenuExpanded
+                        expanded = dropDownMenuExpanded,
                     ) { dropDownMenuExpanded = false }
                 }
-            }
+            },
         )
     }
 
@@ -226,8 +236,14 @@ object ContactDetailScreen {
                     viewModel.reloadContact(contact)
                     onCloseMenu()
                 },
-                content = { Text(stringResource(id = R.string.refresh)) }
+                content = { Text(stringResource(id = R.string.refresh)) },
             )
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ContactImageMenuItems(viewModel, contact, onCloseMenu)
+            }
+
             Divider()
             ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
@@ -245,6 +261,39 @@ object ContactDetailScreen {
     }
 
     @Composable
+    @RequiresApi(Build.VERSION_CODES.P)
+    private fun ContactImageMenuItems(
+        viewModel: ContactDetailViewModel,
+        contact: IContact,
+        onCloseMenu: () -> Unit,
+    ) {
+        val logger = getLogger()
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            // TODO somehow this is not called
+            logger.debugLocally("Selected image: $uri")
+            uri?.let { viewModel.selectContactImage(it, contact) }
+        }
+
+        DropdownMenuItem(
+            onClick = {
+                launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                onCloseMenu()
+            },
+            content = { Text(stringResource(id = R.string.select_contact_image)) },
+        )
+
+        if (contact.image.fullImage != null) {
+            DropdownMenuItem(
+                onClick = {
+                    viewModel.removeContactImage(contact)
+                    onCloseMenu()
+                },
+                content = { Text(stringResource(id = R.string.remove_contact_image)) },
+            )
+        }
+    }
+
+    @Composable
     private fun ChangeContactTypeMenuItem(
         viewModel: ContactDetailViewModel,
         contact: IContact,
@@ -258,7 +307,7 @@ object ContactDetailScreen {
             ChangeContactTypeMenuItem(
                 contacts = setOf(editableContact),
                 config = config,
-                enabled = enabled
+                enabled = enabled,
             ) { changeContact ->
                 if (changeContact) {
                     viewModel.changeContactType(editableContact, targetType)
@@ -290,8 +339,8 @@ object ContactDetailScreen {
             buttonConfig = ButtonConfig(
                 label = R.string.back,
                 icon = Icons.AutoMirrored.Default.ArrowBack,
-                onClick = navigateUp
-            )
+                onClick = navigateUp,
+            ),
         )
     }
 
@@ -305,7 +354,7 @@ object ContactDetailScreen {
                 icon = Icons.Default.Sync,
             ) {
                 viewModel.reloadContact()
-            }
+            },
         )
     }
 
@@ -321,7 +370,7 @@ object ContactDetailScreen {
             onExportContact = { targetFile, vCardVersion ->
                 viewModel.exportContact(targetFile, vCardVersion, contact)
                 onCloseMenu()
-            }
+            },
         )
     }
 }

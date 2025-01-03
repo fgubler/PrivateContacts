@@ -24,6 +24,8 @@ data class ContactImage(
             else fullImage == null && other.fullImage == null
     }
 
+    fun change(fullImage: ByteArray?): ContactImage = copy(fullImage = fullImage, modelStatus = ModelStatus.CHANGED)
+
     companion object {
         val empty: ContactImage
             get() = ContactImage(thumbnailUri = null, fullImage = null, modelStatus = UNCHANGED)
