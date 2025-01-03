@@ -9,9 +9,10 @@ package ch.abwesend.privatecontacts.domain.lib.logging
 import android.util.Log
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.util.Constants
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 abstract class AbstractLogger : ILogger {
+    private val remoteHelper: RemoteLoggingHelper = RemoteLoggingHelper();
+
     // ======== abstract methods ========
     protected abstract val loggingTag: String
     protected open val loggingActive: Boolean = true
@@ -63,10 +64,8 @@ abstract class AbstractLogger : ILogger {
     override fun warning(messages: Collection<String>) {
         if (checkLogLevel(Log.WARN)) {
             warningImpl(messages)
-            if (logToCrashlytics() && BuildConfig.FLAVOR == "googlePlay") {
-                val message = messages.joinToString(separator = Constants.linebreak)
-                FirebaseCrashlytics.getInstance().log(message)
-            }
+            val message = messages.joinToString(separator = Constants.linebreak)
+            remoteHelper.logMessageToCrashlytics(message)
         }
     }
 
@@ -90,9 +89,7 @@ abstract class AbstractLogger : ILogger {
         val warningMessage = createThrowableLogMessage(t, message)
         if (checkLogLevel(Log.WARN)) {
             warningImpl(listOf(warningMessage))
-            if (logToCrashlytics()) {
-                logToCrashlytics(t)
-            }
+            logToCrashlytics(t, overridePreferences = false)
         }
     }
 
@@ -100,9 +97,7 @@ abstract class AbstractLogger : ILogger {
         val logMessage = createThrowableLogMessage(t, message)
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
-            if (logToCrashlytics()) {
-                logToCrashlytics(t)
-            }
+            logToCrashlytics(t, overridePreferences = false)
         }
     }
 
@@ -110,16 +105,13 @@ abstract class AbstractLogger : ILogger {
         val logMessage = createThrowableLogMessage(t)
         if (checkLogLevel(Log.ERROR)) {
             errorImpl(listOf(logMessage))
-            if (logToCrashlytics()) {
-                logToCrashlytics(t)
-            }
+            logToCrashlytics(t, overridePreferences = false)
         }
     }
 
-    /** always logs to crashlytics, independent of the settings */
-    override fun logToCrashlytics(t: Throwable) {
-        if (BuildConfig.FLAVOR == "googlePlay") {
-            FirebaseCrashlytics.getInstance().recordException(t)
+    override fun logToCrashlytics(t: Throwable, overridePreferences: Boolean) {
+        if (overridePreferences || logToCrashlytics()) {
+            remoteHelper.logErrorToCrashlytics(t)
         }
     }
 
