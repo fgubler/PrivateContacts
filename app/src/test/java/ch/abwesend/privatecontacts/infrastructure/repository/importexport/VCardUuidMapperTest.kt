@@ -6,7 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository.importexport
 
-import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.PROTON_PREFIX
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.PROTON_AUTOSAVE_PREFIX
+import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.PROTON_WEB_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.toUid
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.toUuidOrNull
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
@@ -40,8 +41,16 @@ class VCardUuidMapperTest : RepositoryTestBase() {
     }
 
     @Test
-    fun `should create a UUID from a Proton-Uuid`() {
-        val uid = Uid(PROTON_PREFIX + UUID.randomUUID().toString())
+    fun `should create a UUID from a Proton-Web-Uuid`() {
+        val uid = Uid(PROTON_WEB_PREFIX + UUID.randomUUID().toString())
+
+        val uuid = uid.toUuidOrNull()
+
+        assertThat(uid.value).endsWith(uuid.toString())
+    }
+    @Test
+    fun `should create a UUID from a Proton-Autosave-Uuid`() {
+        val uid = Uid(PROTON_AUTOSAVE_PREFIX + UUID.randomUUID().toString())
 
         val uuid = uid.toUuidOrNull()
 
