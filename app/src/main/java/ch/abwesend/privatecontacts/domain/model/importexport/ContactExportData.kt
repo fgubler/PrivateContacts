@@ -15,7 +15,7 @@ data class ContactExportData(
 
 sealed interface ContactExportPartialData {
     data class CreatedVCards(
-        val fileContent: FileContent,
+        val fileContent: TextFileContent,
         val failedContacts: List<IContact>
     ) : ContactExportPartialData
 }

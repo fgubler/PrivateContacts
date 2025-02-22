@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
-import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -23,7 +23,7 @@ interface IVCardImportExportRepository {
      * the contacts are created as internal contacts
      * i.e. with internal IDs for the contacts and their data
      */
-    suspend fun parseContacts(fileContent: FileContent, targetType: ContactType): ContactParseResult
+    suspend fun parseContacts(fileContent: TextFileContent, targetType: ContactType): ContactParseResult
 }
 
 typealias ContactParseResult = BinaryResult<ContactImportPartialData.ParsedData, VCardParseError>

@@ -11,7 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
-import ch.abwesend.privatecontacts.domain.model.importexport.FileContent
+import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -49,7 +49,7 @@ class VCardImportExportRepository : IVCardImportExportRepository {
         }
     }
 
-    override suspend fun parseContacts(fileContent: FileContent, targetType: ContactType): ContactParseResult {
+    override suspend fun parseContacts(fileContent: TextFileContent, targetType: ContactType): ContactParseResult {
         val vCards = try {
             repository.importVCards(fileContent)
         } catch (e: Exception) {

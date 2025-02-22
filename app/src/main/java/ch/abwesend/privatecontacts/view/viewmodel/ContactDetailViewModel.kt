@@ -17,6 +17,9 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
+import ch.abwesend.privatecontacts.domain.model.contact.asEditable
+import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
+import ch.abwesend.privatecontacts.domain.model.importexport.BinaryFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -24,6 +27,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.service.ContactImageService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
@@ -38,6 +42,7 @@ class ContactDetailViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
     private val exportService: ContactExportService by injectAnywhere()
+    private val imageService: ContactImageService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
 
     private var latestSelectedContact: IContactBase? = null
@@ -68,6 +73,36 @@ class ContactDetailViewModel : ViewModel() {
 
     fun reloadContact(contact: IContactBase? = latestSelectedContact) {
         contact?.let { selectContact(it) }
+    }
+
+    fun selectContactImage(uri: Uri, contact: IContact) {
+        viewModelScope.launch {
+            val result = imageService.loadImageFromUri(uri)
+            result.getValueOrNull()?.let { newImage -> updateContactImage(contact, newImage) }
+        }
+    }
+
+    private suspend fun updateContactImage(contact: IContact, image: BinaryFileContent) {
+        val editableContact = contact.asEditable()
+        editableContact.image = editableContact.image.change(fullImage = image.content)
+        val saveResult = saveService.saveContact(editableContact)
+        reloadContact(editableContact)
+
+        when (saveResult) {
+            is ContactSaveResult.Success -> logger.debug("Successfully saved contact with new image")
+            is ContactSaveResult.ValidationFailure, is ContactSaveResult.Failure -> {
+                logger.warning("Failed to save contact image")
+            }
+        }
+    }
+
+    fun removeContactImage(contact: IContact) {
+        viewModelScope.launch {
+            val editableContact = contact.toContactEditable()
+            editableContact.image = editableContact.image.deleteFullImage()
+            saveService.saveContact(editableContact)
+            reloadContact(contact)
+        }
     }
 
     fun deleteContact(contact: IContactBase) {

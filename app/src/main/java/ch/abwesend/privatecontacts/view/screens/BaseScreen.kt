@@ -59,8 +59,8 @@ fun BaseScreen(
         topBar = if (invertTopAndBottomBars) hidden else topBar,
         bottomBar = if (invertTopAndBottomBars) topBar else hidden,
         modifier = Modifier
-            .setTopBarSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addSafeAreaPadding)
-            .setMainContentSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addSafeAreaPadding),
+            .setTopBarSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addHorizontalSafeAreaPadding)
+            .setMainContentSafeAreaPadding(invertTopAndBottomBars, screenContext.settings.addHorizontalSafeAreaPadding),
         floatingActionButton = floatingActionButton,
         drawerContent = {
             if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {

@@ -128,8 +128,8 @@ object SettingsScreen {
             SettingsCheckbox(
                 label = R.string.settings_entry_add_safe_area_padding,
                 description = R.string.settings_entry_add_safe_area_padding_description,
-                value = currentSettings.addSafeAreaPadding,
-                onValueChanged = { settingsRepository.addSafeAreaPadding = it }
+                value = currentSettings.addHorizontalSafeAreaPadding,
+                onValueChanged = { settingsRepository.addHorizontalSafeAreaPadding = it }
             )
 
             SettingsEntryDivider()

@@ -14,7 +14,7 @@ buildscript {
         composeMaterialVersion = "1.7.0"
         composeCompilerVersion = "1.7.0"
         coroutinesVersion = "1.8.0"
-        androidLifecycleVersion = "2.8.6"
+        androidLifecycleVersion = "2.8.7"
         androidReviewVersion = "2.0.2"
 
         kspVersion = '2.0.21-1.0.25'
