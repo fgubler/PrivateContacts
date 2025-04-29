@@ -34,7 +34,7 @@ class ContactExportViewModel : ViewModel() {
     private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
-    private val _vCardVersion: MutableState<VCardVersion> = mutableStateOf(VCardVersion.V3) // TODO add setting for default
+    private val _vCardVersion: MutableState<VCardVersion> = mutableStateOf(Settings.current.defaultVCardVersion)
     val vCardVersion: State<VCardVersion> = _vCardVersion
 
     /** implemented as a resource to show a loading-indicator during export */
