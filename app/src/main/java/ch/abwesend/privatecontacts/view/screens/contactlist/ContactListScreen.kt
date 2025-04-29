@@ -71,6 +71,8 @@ import kotlin.contracts.ExperimentalContracts
 @FlowPreview
 @ExperimentalContracts
 object ContactListScreen {
+    private const val ALPHABETIC_SCROLLBAR_WIDTH_DP = 24
+
     @Composable
     fun Screen(screenContext: IContactListScreenContext) {
         val scaffoldState = rememberScaffoldState()
@@ -172,7 +174,7 @@ object ContactListScreen {
     private fun AddContactButton(screenContext: IContactListScreenContext) {
         val verticalOffset = if (screenContext.settings.invertTopAndBottomBars) -45 else 0 // space for tab-headers
         FloatingActionButton(
-            modifier = Modifier.offset(y = verticalOffset.dp),
+            modifier = Modifier.offset(x = -ALPHABETIC_SCROLLBAR_WIDTH_DP.dp, y = verticalOffset.dp),
             onClick = { createContact(screenContext) },
         ) {
             Icon(
@@ -201,6 +203,7 @@ object ContactListScreen {
                 contacts = contacts,
                 selectedContacts = selectedContacts,
                 scrollingState = viewModel.scrollingState,
+                alphabeticScrollbarWidth = ALPHABETIC_SCROLLBAR_WIDTH_DP.dp,
                 showTypeIcons = showTypeIcons,
                 onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
                 onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
