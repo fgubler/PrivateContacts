@@ -63,7 +63,7 @@ test {
 // TODO try to replace some of the dependencies with kotlin coroutines?
 dependencies {
     implementation 'org.checkerframework:checker-qual:3.33.0'
-    implementation 'com.google.guava:guava:31.0.1-android'
+    implementation 'com.google.guava:guava:31.1-android'
     implementation "androidx.concurrent:concurrent-futures:1.2.0"
 
     /* Note that gradle will warn about this not being the same version as *

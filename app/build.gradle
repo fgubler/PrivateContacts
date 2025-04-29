@@ -33,8 +33,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 35
-        versionCode 72
-        versionName "4.2.0"
+        versionCode 73
+        versionName "4.3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -95,7 +95,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.13.1"
+    implementation "androidx.core:core-ktx:1.16.0"
     implementation "androidx.appcompat:appcompat:1.7.0"
     implementation "com.google.android.material:material:1.12.0"
 
@@ -112,14 +112,14 @@ dependencies {
     implementation "androidx.compose.material:material:${composeMaterialVersion}"
     implementation "androidx.compose.material:material-icons-extended:${composeMaterialVersion}"
     implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.9.3"
-    implementation "androidx.navigation:navigation-compose:2.8.5"
-    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.0"
+    implementation "androidx.activity:activity-compose:1.10.1"
+    implementation "androidx.navigation:navigation-compose:2.8.9"
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
     // Firebase
-    googlePlayImplementation platform("com.google.firebase:firebase-bom:33.5.1")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:33.13.0")
     googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
     googlePlayImplementation("com.google.firebase:firebase-analytics")
 
@@ -136,7 +136,7 @@ dependencies {
     // Others
     implementation "androidx.datastore:datastore-preferences:1.1.1"
 
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     implementation "androidx.biometric:biometric:1.1.0"
 
