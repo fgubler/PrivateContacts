@@ -9,7 +9,7 @@
 // compose versions: see https://developer.android.com/jetpack/androidx/releases/compose
 buildscript {
     ext {
-        kotlinVersion = "2.0.21"
+        kotlinVersion = "2.1.0"
         composeVersion = "1.7.0"
         composeMaterialVersion = "1.7.0"
         composeCompilerVersion = "1.7.0"
@@ -34,7 +34,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.9.1'
+        classpath 'com.android.tools.build:gradle:8.9.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${ktlintVersion}"
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1"
