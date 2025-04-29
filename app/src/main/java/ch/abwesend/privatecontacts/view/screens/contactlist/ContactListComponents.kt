@@ -91,6 +91,8 @@ private fun ListOfContacts(
     onContactLongClicked: (IContactBase) -> Unit,
 ) {
     val contactsWithSubtitle = contacts.withFirstLetterSubtitles()
+    val contactList = contactsWithSubtitle + (null to null)
+
     Row {
         LazyColumn(
             state = scrollingState,
@@ -100,18 +102,22 @@ private fun ListOfContacts(
                 .weight(1f)
         ) {
             items(
-                items = contactsWithSubtitle,
+                items = contactList,
                 contentType = { (subtitle, _) -> if (subtitle.isNullOrEmpty()) "Contact" else "Contact with Subtitle" },
                 itemContent = { (subtitle, contact) ->
-                    val selected = selectedContacts.contains(contact.id)
-                    subtitle?.let { Subtitle(text = it) }
-                    Contact(
-                        contact = contact,
-                        selected = selected,
-                        showTypeIcon = showTypeIcons,
-                        onClicked = onContactClicked,
-                        onLongClicked = onContactLongClicked,
-                    )
+                    if (contact == null) {
+                        Spacer(modifier = Modifier.height(50.dp)) // padding at the end for the action-button
+                    } else {
+                        val selected = selectedContacts.contains(contact.id)
+                        subtitle?.let { Subtitle(text = it) }
+                        Contact(
+                            contact = contact,
+                            selected = selected,
+                            showTypeIcon = showTypeIcons,
+                            onClicked = onContactClicked,
+                            onLongClicked = onContactLongClicked,
+                        )
+                    }
                 }
             )
         }
