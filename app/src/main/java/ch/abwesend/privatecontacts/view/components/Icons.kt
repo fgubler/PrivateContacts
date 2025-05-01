@@ -12,6 +12,7 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Done
@@ -126,5 +127,13 @@ fun CompressIcon() {
     Icon(
         imageVector = Icons.Default.Compress,
         contentDescription = stringResource(id = R.string.expand),
+    )
+}
+
+@Composable
+fun AddIcon() {
+    Icon(
+        imageVector = Icons.Default.Add,
+        contentDescription = stringResource(id = R.string.add),
     )
 }
