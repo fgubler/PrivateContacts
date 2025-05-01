@@ -90,7 +90,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
         return existenceByContactId
     }
 
-    suspend fun getAllContactGroups(): List<ContactGroup> =
+    override suspend fun getAllContactGroups(): List<ContactGroup> =
         contactLoadRepository.loadAllContactGroups().map { it.toContactGroup() }
 
     suspend fun getContactGroups(filterForAccount: ContactAccount): List<ContactGroup> =

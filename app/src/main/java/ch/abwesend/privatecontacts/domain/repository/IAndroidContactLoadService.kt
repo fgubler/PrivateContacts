@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 
 interface IAndroidContactLoadService {
@@ -17,4 +18,5 @@ interface IAndroidContactLoadService {
     suspend fun loadAllContactsFull(): List<IContact>
     suspend fun resolveContact(contactId: IContactIdExternal): IContact
     suspend fun resolveContacts(contactIds: Set<IContactIdExternal>): List<IContact>
+    suspend fun getAllContactGroups(): List<ContactGroup>
 }
