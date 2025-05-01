@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactGroupDao {
-    @Query("SELECT * FROM ContactGroupEntity")
+    @Query("SELECT * FROM ContactGroupEntity ORDER BY name ASC")
     fun getAllAsFlow(): Flow<List<ContactGroupEntity>>
 
     @Query("SELECT * FROM ContactGroupEntity WHERE name = :groupName")
