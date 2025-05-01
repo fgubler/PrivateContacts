@@ -29,6 +29,7 @@ import java.io.FileOutputStream
 
 private const val MODE_READ_ONLY = "r"
 private const val MODE_WRITE_ONLY = "w"
+private const val MAX_FILE_SIZE_IN_BYTES = 1024 * 1024 * 10 // 10 MB
 
 class FileAccessRepository(private val context: Context) : IFileAccessRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
@@ -54,6 +55,10 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
             val content = readFileContent(fileUri, requestPermission) { inputStream ->
                 inputStream.readBytes()
             } ?: ByteArray(0)
+
+            if (content.size > MAX_FILE_SIZE_IN_BYTES) {
+                throw IllegalArgumentException("File is too large: ${content.size / 1024 / 1024}MB!")
+            }
 
             val fileContent = BinaryFileContent(content)
             logger.debug("Read binary file")
