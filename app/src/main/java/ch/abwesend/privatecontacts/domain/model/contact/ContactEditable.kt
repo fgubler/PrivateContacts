@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.domain.model.contact
 
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
-import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.settings.Settings
 
@@ -23,7 +23,7 @@ interface IContactEditable : IContact, IContactBaseWithAccountInformation {
     override var image: ContactImage
     override val isNew: Boolean
     override val contactDataSet: MutableList<ContactData>
-    override val contactGroups: MutableList<ContactGroup>
+    override val contactGroups: MutableList<IContactGroup>
 
     fun wrap(): ContactEditableWrapper
     fun deepCopy(isContactNew: Boolean = isNew, replaceId: Boolean = false): IContactEditable
@@ -42,7 +42,7 @@ data class ContactEditable(
     override var notes: String,
     override var image: ContactImage,
     override val contactDataSet: MutableList<ContactData>,
-    override val contactGroups: MutableList<ContactGroup>,
+    override val contactGroups: MutableList<IContactGroup>,
     override var saveInAccount: ContactAccount,
     override val isNew: Boolean = false,
 ) : IContactEditable {

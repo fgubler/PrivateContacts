@@ -11,9 +11,13 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ContactGroupDao {
+    @Query("SELECT * FROM ContactGroupEntity")
+    fun getAllAsFlow(): Flow<List<ContactGroupEntity>>
+
     @Query("SELECT * FROM ContactGroupEntity WHERE name = :groupName")
     suspend fun getGroup(groupName: String): ContactGroupEntity
 

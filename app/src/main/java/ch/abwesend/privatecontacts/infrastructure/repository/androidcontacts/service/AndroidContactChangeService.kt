@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -185,7 +186,7 @@ class AndroidContactChangeService {
         }
     }
 
-    private fun ContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
+    private fun IContactGroup.getGroupNoOrNull(allContactGroupsByName: Map<String, ContactGroup>): Long? =
         id.groupNo ?: allContactGroupsByName[id.name]?.id?.groupNo
 
     private fun IAndroidContactMutable.updatePhoneNumbers(contactData: List<ContactData>) {
