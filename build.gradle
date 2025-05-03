@@ -17,7 +17,7 @@ buildscript {
         androidLifecycleVersion = "2.8.7"
         androidReviewVersion = "2.0.2"
 
-        kspVersion = '2.0.21-1.0.25'
+        kspVersion = '2.1.20-2.0.1'
         ktlintVersion = "11.3.1"
         koinVersion = "4.0.0"
         roomVersion = "2.7.1"
