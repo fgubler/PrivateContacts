@@ -73,9 +73,11 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             return
         }
 
-        val newRelations = contactGroups.map { contactGroup ->
-            ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
-        }
+        val newRelations = contactGroups
+            .filterNot { group -> group.modelStatus == ModelStatus.DELETED }
+            .map { contactGroup ->
+                ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
+            }
         deleteRelationsForContact(contactId.uuid)
         insertAll(newRelations)
     }
