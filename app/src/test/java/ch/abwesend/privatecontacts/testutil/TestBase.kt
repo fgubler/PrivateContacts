@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.testutil
 
+import android.os.Process
+import android.os.StrictMode
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
@@ -14,9 +16,12 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.mockkClass
+import io.mockk.mockkStatic
 import io.mockk.spyk
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -85,11 +90,19 @@ abstract class TestBase(
         every { loggerFactory.createDefault(any()) } returns spyk(testLogger)
         every { loggerFactory.createLogcat(any()) } returns spyk(testLogger)
 
+        mockkStatic(Process::class)
+        every { Process.myPid() } returns 12345
+        mockkStatic(StrictMode::class)
+        every { StrictMode.allowThreadDiskReads() } returns StrictMode.ThreadPolicy.LAX
+        justRun { StrictMode.setThreadPolicy(any()) }
+
         setup()
     }
 
     @AfterEach
     fun baseTearDown() {
+        unmockkStatic(Process::class)
+        unmockkStatic(StrictMode::class)
         tearDown()
     }
 

@@ -1,13 +1,18 @@
 package ch.abwesend.privatecontacts.domain.lib.logging
 
+import ch.abwesend.privatecontacts.BuildConfig
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class RemoteLoggingHelper {
     fun logErrorToCrashlytics(t: Throwable) {
-        FirebaseCrashlytics.getInstance().recordException(t)
+        if (!BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().recordException(t)
+        }
     }
 
     fun logMessageToCrashlytics(message: String) {
-        FirebaseCrashlytics.getInstance().log(message)
+        if (!BuildConfig.DEBUG) {
+            FirebaseCrashlytics.getInstance().log(message)
+        }
     }
 }
