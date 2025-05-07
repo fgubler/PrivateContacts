@@ -42,6 +42,7 @@ fun ContactGroupEditComponent(contactGroup: IContactGroup, groupValidity: Contac
         OutlinedTextField(
             label = { Text(stringResource(id = R.string.contact_group_name)) },
             value = contactGroup.id.name,
+            singleLine = true,
             onValueChange = { newValue ->
                 onChange(contactGroup.changeName(newValue))
                 dirty = true
@@ -60,8 +61,9 @@ fun ContactGroupEditComponent(contactGroup: IContactGroup, groupValidity: Contac
 
         if (dirty && groupValidity != ContactGroupValidity.VALID) {
             Spacer(modifier = Modifier.height(10.dp))
+            @Suppress("KotlinConstantConditions")
             val text = when (groupValidity) {
-                ContactGroupValidity.VALID -> "" // cannot happen
+                ContactGroupValidity.VALID -> "ERROR" // cannot happen but the compiler does not know that
                 ContactGroupValidity.EMPTY_NAME -> stringResource(id = R.string.contact_group_validation_name_empty)
                 ContactGroupValidity.DUPLICATE_NAME -> stringResource(id = R.string.contact_group_validation_name_duplicate)
             }
