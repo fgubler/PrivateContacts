@@ -137,7 +137,7 @@ class ContactTypeChangeService {
 
         contactGroups.replaceAll { contactGroup ->
             val newStatus = computeNewStatus(contactGroup.modelStatus)
-            contactGroup.copy(modelStatus = newStatus)
+            contactGroup.changeStatus(newStatus)
         }
 
         contactDataSet.replaceAll { contactData ->
@@ -147,7 +147,7 @@ class ContactTypeChangeService {
 
         contactGroups.replaceAll { contactGroup ->
             val newStatus = computeNewStatus(contactGroup.modelStatus)
-            contactGroup.copy(modelStatus = newStatus)
+            contactGroup.changeStatus(newStatus)
         }
     }
 

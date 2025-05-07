@@ -59,7 +59,6 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhysicalAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
-import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
@@ -70,6 +69,7 @@ import ch.abwesend.privatecontacts.view.screens.contactdetail.components.Contact
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
 import ch.abwesend.privatecontacts.view.util.color
 import ch.abwesend.privatecontacts.view.util.getFullBitmapImage
+import ch.abwesend.privatecontacts.view.util.joinFilteredGroupsToString
 import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 import ch.abwesend.privatecontacts.view.util.navigateToBrowser
 import ch.abwesend.privatecontacts.view.util.navigateToDial
@@ -319,13 +319,7 @@ object ContactDetailScreenContent {
     @Composable
     private fun ContactGroups(contact: IContact) {
         if (contact.contactGroups.isNotEmpty()) {
-            val groups = remember(contact) {
-                contact.contactGroups
-                    .map { it.id.name }
-                    .filter { it.isNotEmpty() }
-                    .sorted()
-                    .joinToString(separator = Constants.linebreak)
-            }
+            val groups = remember(contact) { contact.joinFilteredGroupsToString() }
             ContactCategoryWithHeader(
                 categoryTitle = R.string.contact_groups,
                 icon = Icons.Default.Groups,

@@ -43,13 +43,18 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             ContactSaveResult.Failure(UNABLE_TO_CREATE_CONTACT_GROUP)
         }
 
+    override suspend fun loadAllContactGroups(): List<IContactGroup> =
+        withDatabase { database ->
+            database.contactGroupDao().getAll().map { it.toContactGroup() }.toList()
+        }
+
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
         logger.debug("Creating missing contact groups")
         val uniqueGroups = contactGroups
             .filterShouldUpsert()
             .distinctBy { it.id }
             .map { it.toEntity() }
-        upsertAll(uniqueGroups)
+        insertMissing(uniqueGroups)
     }
 
     private suspend fun ContactGroupRelationDao.updateContactGroupRelations(
@@ -63,9 +68,11 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             return
         }
 
-        val newRelations = contactGroups.map { contactGroup ->
-            ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
-        }
+        val newRelations = contactGroups
+            .filterNot { group -> group.modelStatus == ModelStatus.DELETED }
+            .map { contactGroup ->
+                ContactGroupRelationEntity(contactId = contactId.uuid, contactGroupName = contactGroup.id.name)
+            }
         deleteRelationsForContact(contactId.uuid)
         insertAll(newRelations)
     }

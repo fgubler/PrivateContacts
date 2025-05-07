@@ -48,6 +48,7 @@ class VCardUuidMapperTest : RepositoryTestBase() {
 
         assertThat(uid.value).endsWith(uuid.toString())
     }
+
     @Test
     fun `should create a UUID from a Proton-Autosave-Uuid`() {
         val uid = Uid(PROTON_AUTOSAVE_PREFIX + UUID.randomUUID().toString())

@@ -11,4 +11,5 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 
 interface IContactGroupRepository {
     suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>): ContactSaveResult
+    suspend fun loadAllContactGroups(): List<IContactGroup>
 }

@@ -6,6 +6,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
+import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
@@ -151,7 +152,7 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
     override suspend fun createMissingContactGroups(
         account: ContactAccount,
-        groups: List<ContactGroup>,
+        groups: List<IContactGroup>,
     ): ContactSaveResult =
         try {
             val existingGroups = contactLoadService.getContactGroups(account)
@@ -165,9 +166,9 @@ class AndroidContactSaveService : IAndroidContactSaveService {
         }
 
     private fun filterForContactGroupsToCreate(
-        groups: List<ContactGroup>,
-        existingGroups: List<ContactGroup>
-    ): List<ContactGroup> {
+        groups: List<IContactGroup>,
+        existingGroups: List<IContactGroup>
+    ): List<IContactGroup> {
         val changedGroups = groups.filterShouldUpsert()
 
         val matchingGroupsById = changedGroups.filter { changedGroup ->

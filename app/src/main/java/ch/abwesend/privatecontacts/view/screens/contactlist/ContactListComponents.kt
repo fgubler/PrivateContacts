@@ -133,7 +133,7 @@ private fun ListOfContacts(
     val coroutineScope = rememberCoroutineScope()
     val scrollbarBackground = primaryOnLight.copy(alpha = 0.3f)
 
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxHeight()
             .width(scrollbarWidth)

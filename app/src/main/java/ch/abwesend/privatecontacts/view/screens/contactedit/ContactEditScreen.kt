@@ -26,6 +26,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -74,6 +75,10 @@ object ContactEditScreen {
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
+
+        selectedContact?.let {
+            LaunchedEffect(it.id) { viewModel.loadAllContactGroups(it.type) }
+        }
 
         viewModel.saveResult.collectWithEffect { result ->
             showDiscardConfirmationDialog = false

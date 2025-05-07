@@ -39,6 +39,7 @@
     <string name="more_actions">More actions</string>
     <string name="expand">Expand</string>
     <string name="compress">Compress</string>
+    <string name="add">Add</string>
     <string name="send">Send</string>
     <string name="success">Success</string>
     <string name="failure">Failure</string>
@@ -139,6 +140,18 @@
     <string name="events">Events</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
+
+    <string name="no_contact_groups_set">This contact is not part of any group.</string>
+    <string name="no_contact_groups_exist">No contact groups have been defined. Please create one.</string>
+    <string name="add_contact_to_groups_title">Add to Groups</string>
+    <string name="contact_groups_load_error">Failed to load contact groups: please try again.</string>
+    <string name="create_contact_group">Create Contact Group</string>
+    <string name="contact_group">Contact Group</string>
+    <string name="new_contact_group_title">New Contact Group</string>
+    <string name="contact_group_name">Group name / label</string>
+    <string name="contact_group_notes">Notes</string>
+    <string name="contact_group_validation_name_empty">Please enter a group name.</string>
+    <string name="contact_group_validation_name_duplicate">A group of this name already exists.</string>
 
     <string name="add_contact_image">Add contact image</string>
     <string name="change_contact_image">Change contact image</string>

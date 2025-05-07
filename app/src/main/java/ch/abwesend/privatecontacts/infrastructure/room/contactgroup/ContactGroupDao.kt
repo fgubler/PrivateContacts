@@ -14,14 +14,17 @@ import androidx.room.Query
 
 @Dao
 interface ContactGroupDao {
+    @Query("SELECT * FROM ContactGroupEntity ORDER BY name ASC")
+    fun getAll(): List<ContactGroupEntity>
+
     @Query("SELECT * FROM ContactGroupEntity WHERE name = :groupName")
     suspend fun getGroup(groupName: String): ContactGroupEntity
 
     @Query("SELECT * FROM ContactGroupEntity WHERE name in (:groupNames)")
     suspend fun getGroups(groupNames: List<String>): List<ContactGroupEntity>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertAll(data: List<ContactGroupEntity>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE) // must not replace existing groups because that would delete their relations
+    suspend fun insertMissing(data: List<ContactGroupEntity>)
 
     @Delete
     suspend fun delete(data: ContactGroupEntity)

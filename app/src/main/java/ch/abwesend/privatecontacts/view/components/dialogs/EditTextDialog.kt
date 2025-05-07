@@ -29,6 +29,7 @@ fun EditTextDialog(
     @StringRes title: Int,
     @StringRes label: Int,
     initialValue: String = "",
+    saveButtonEnabled: Boolean = true,
     onSave: (String) -> Unit,
     onCancel: () -> Unit,
 ) {
@@ -47,9 +48,11 @@ fun EditTextDialog(
         },
         onDismissRequest = onCancel,
         confirmButton = {
-            Button(onClick = { onSave(value) }) {
-                Text(stringResource(id = R.string.ok))
-            }
+            Button(
+                onClick = { onSave(value) },
+                enabled = saveButtonEnabled,
+                content = { Text(stringResource(id = R.string.ok)) },
+            )
         },
         dismissButton = {
             Button(onClick = onCancel) {
