@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.mapReady
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditableWrapper
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -28,7 +29,6 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.launch
 
 class ContactEditViewModel : ViewModel() {
@@ -79,8 +79,7 @@ class ContactEditViewModel : ViewModel() {
 
     fun loadAllContactGroups(contactType: ContactType) {
         viewModelScope.launch {
-            val contactGroups = loadService.loadAllContactGroupsAsFlow(contactType)
-            _allContactGroups.emitAll(contactGroups)
+            _allContactGroups.withLoadingState { loadService.loadAllContactGroups(contactType) }
         }
     }
 

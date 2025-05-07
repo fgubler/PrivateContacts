@@ -8,8 +8,6 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
-import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
-import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -122,13 +120,9 @@ class ContactLoadService {
         }
     }
 
-    suspend fun loadAllContactGroupsAsFlow(contactType: ContactType): ResourceFlow<List<IContactGroup>> =
+    suspend fun loadAllContactGroups(contactType: ContactType): List<IContactGroup> =
         when(contactType) {
             ContactType.SECRET -> contactGroupRepository.loadAllContactGroups()
-            ContactType.PUBLIC -> {
-                mutableResourceStateFlow<List<IContactGroup>>().also { flow ->
-                    flow.withLoadingState { androidContactService.getAllContactGroups() }
-                }
-            }
+            ContactType.PUBLIC -> androidContactService.getAllContactGroups()
         }
 }
