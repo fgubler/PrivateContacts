@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -66,9 +69,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroupId
-import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.AddIcon
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
@@ -406,23 +409,28 @@ object ContactEditScreenContent {
 
             if (showDialog) {
                 var groupsOfContact by remember { mutableStateOf(contact.contactGroups.toList()) }
+                val onGroupSelectionChanged: (group: IContactGroup, selected: Boolean) -> Unit =
+                    { group, selected ->
+                        val otherGroups = groupsOfContact.filterNot { it.id == group.id }
+                        val newStatus = if (selected) ModelStatus.NEW else ModelStatus.DELETED
+                        val changedGroup = group.changeStatus(newStatus)
+                        groupsOfContact = otherGroups + changedGroup
+                    }
 
                 SaveCancelDialog(
                     title = R.string.add_contact_to_groups_title,
                     content = @Composable {
-                        GroupsEditDialog(
+                        GroupRelationsEditComponent(
                             allContactGroups = allContactGroups,
                             selectedContactGroupIds = groupsOfContact
                                 .filterNot { it.modelStatus == ModelStatus.DELETED }
                                 .map { it.id }
                                 .toSet(),
-                            onCreateContactGroup = onCreateContactGroup,
-                            onGroupSelectionChanged = { group, selected ->
-                                val newSelectedGroups = groupsOfContact.filterNot { it.id == group.id }
-                                val newStatus = if (selected) ModelStatus.NEW else ModelStatus.DELETED
-                                val changedGroup = group.changeStatus(newStatus)
-                                groupsOfContact = newSelectedGroups + changedGroup
+                            onCreateContactGroup = { newGroup ->
+                                onCreateContactGroup(newGroup)
+                                onGroupSelectionChanged(newGroup, true)
                             },
+                            onGroupSelectionChanged = onGroupSelectionChanged,
                         )
                     },
                     onCancel = { showDialog = false },
@@ -439,7 +447,7 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun GroupsEditDialog(
+    private fun GroupRelationsEditComponent(
         allContactGroups: AsyncResource<List<IContactGroup>>,
         selectedContactGroupIds: Set<IContactGroupId>,
         onGroupSelectionChanged: (group: IContactGroup, selected: Boolean) -> Unit,
@@ -450,7 +458,7 @@ object ContactEditScreenContent {
             is LoadingResource<*> -> LoadingIndicatorFullScreen()
             is ReadyResource<List<IContactGroup>> -> {
                 Column(modifier = Modifier.padding(top = 30.dp, bottom = 10.dp)) {
-                    CreateGroupButton(onCreateContactGroup)
+                    CreateGroupButton(allContactGroups.value, onCreateContactGroup)
                     GroupsList(
                         allContactGroups = allContactGroups.value,
                         selectedContactGroupIds = selectedContactGroupIds,
@@ -462,10 +470,14 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun CreateGroupButton(onCreateContactGroup: (IContactGroup) -> Unit) {
+    private fun CreateGroupButton(
+        existingGroups: Collection<IContactGroup>,
+        onCreateContactGroup: (IContactGroup) -> Unit
+    ) {
+        var showDialog by remember { mutableStateOf(false) }
+
         TextButton (
-            onClick = { /* TODO implement*/ },
-            enabled = false, // TODO enable
+            onClick = { showDialog = true },
             content = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     AddIcon()
@@ -474,6 +486,50 @@ object ContactEditScreenContent {
                 }
             },
         )
+
+        if (showDialog) {
+            var contactGroup: IContactGroup by remember { mutableStateOf(ContactGroup.new("")) }
+
+            val validGroupName = contactGroup.id.name.isNotBlank() &&
+                    existingGroups.none { it.id.name.equals(contactGroup.id.name, ignoreCase = true) }
+
+            SaveCancelDialog(
+                title = R.string.new_contact_group_title,
+                content = @Composable {
+                    ContactGroupEditComponent(contactGroup) { contactGroup = it }
+                },
+                saveButtonEnabled = validGroupName,
+                onCancel = { showDialog = false },
+                onSave = {
+                    onCreateContactGroup(contactGroup)
+                    showDialog = false
+                }
+            )
+        }
+    }
+
+    @Composable
+    private fun ContactGroupEditComponent(contactGroup: IContactGroup, onChange: (IContactGroup) -> Unit) {
+        val focusRequester = remember { FocusRequester() }
+
+        Column {
+            OutlinedTextField(
+                label = { Text(stringResource(id = R.string.contact_group_name)) },
+                value = contactGroup.id.name,
+                onValueChange = { newValue -> onChange(contactGroup.changeName(newValue)) },
+                modifier = Modifier.focusRequester(focusRequester)
+            )
+
+            OutlinedTextField(
+                label = { Text(stringResource(id = R.string.contact_group_notes)) },
+                value = contactGroup.notes,
+                onValueChange = { newValue -> onChange(contactGroup.changeNotes(newValue)) },
+            )
+        }
+
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
     }
 
     @Composable
@@ -481,12 +537,11 @@ object ContactEditScreenContent {
         allContactGroups: List<IContactGroup>,
         selectedContactGroupIds: Set<IContactGroupId>,
         onGroupSelectionChanged: (group: IContactGroup, selected: Boolean) -> Unit,
-        modifier: Modifier = Modifier,
     ) {
         if (allContactGroups.isEmpty()) {
             Text(text = stringResource(R.string.no_contact_groups_exist))
         } else {
-            LazyColumn(modifier = modifier) {
+            LazyColumn {
                 items(allContactGroups, key = { it.id.name }) { group ->
                     val selected = selectedContactGroupIds.contains(group.id)
                     ContactGroupEntry(group.id.name, selected) {

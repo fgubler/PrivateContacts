@@ -16,12 +16,13 @@ fun SaveCancelDialog(
     content: @Composable () -> Unit,
     onSave: () -> Unit,
     onCancel: () -> Unit,
+    saveButtonEnabled: Boolean = true,
 ) = YesNoDialog(
     title = title,
     text = content,
-    yesButtonEnabled = true,
+    yesButtonEnabled = saveButtonEnabled,
     yesButtonLabel = R.string.save,
     noButtonLabel = R.string.cancel,
     onYes = onSave,
-    onNo = onCancel
+    onNo = onCancel,
 )

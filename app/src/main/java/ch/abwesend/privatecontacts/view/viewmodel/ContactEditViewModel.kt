@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.mapReady
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditableWrapper
@@ -83,7 +84,16 @@ class ContactEditViewModel : ViewModel() {
         }
     }
 
+    /**
+     * It is enough to add the group to the contact:
+     * once the contact is saved, the new group will be persisted automatically.
+     */
     fun createContactGroup(contactGroup: IContactGroup) {
-        // TODO implement
+        val newEmission = _allContactGroups.value
+            .mapReady { groups -> (groups + contactGroup).sortedBy { it.id.name } }
+
+        viewModelScope.launch {
+            _allContactGroups.emit(newEmission)
+        }
     }
 }
