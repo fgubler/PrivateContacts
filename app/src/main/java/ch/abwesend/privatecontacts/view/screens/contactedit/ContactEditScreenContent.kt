@@ -117,7 +117,7 @@ object ContactEditScreenContent {
             if (contactDataWaitingForCustomType != null) {
                 logger.warning(
                     "overwriting contact data waiting for custom type: " +
-                            "from $contactDataWaitingForCustomType to $contactData"
+                        "from $contactDataWaitingForCustomType to $contactData"
                 )
             }
             contactDataWaitingForCustomType = contactData
@@ -395,7 +395,7 @@ object ContactEditScreenContent {
 
             var showDialog by remember { mutableStateOf(false) }
 
-            Row(verticalAlignment = Alignment.CenterVertically)  {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = text,
                     fontStyle = FontStyle.Italic.takeIf { hasNoGroups },
@@ -475,7 +475,7 @@ object ContactEditScreenContent {
     ) {
         var showDialog by remember { mutableStateOf(false) }
 
-        TextButton (
+        TextButton(
             onClick = { showDialog = true },
             content = {
                 Row(verticalAlignment = Alignment.CenterVertically) {

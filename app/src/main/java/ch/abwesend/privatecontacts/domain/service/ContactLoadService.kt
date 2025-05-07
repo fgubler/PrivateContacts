@@ -121,7 +121,7 @@ class ContactLoadService {
     }
 
     suspend fun loadAllContactGroups(contactType: ContactType): List<IContactGroup> =
-        when(contactType) {
+        when (contactType) {
             ContactType.SECRET -> contactGroupRepository.loadAllContactGroups()
             ContactType.PUBLIC -> androidContactService.getAllContactGroups()
         }
