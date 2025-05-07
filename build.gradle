@@ -9,7 +9,7 @@
 // compose versions: see https://developer.android.com/jetpack/androidx/releases/compose
 buildscript {
     ext {
-        kotlinVersion = "2.1.10"
+        kotlinVersion = "2.1.20"
         composeVersion = "1.7.0"
         composeMaterialVersion = "1.7.0"
         composeCompilerVersion = "1.7.0"
