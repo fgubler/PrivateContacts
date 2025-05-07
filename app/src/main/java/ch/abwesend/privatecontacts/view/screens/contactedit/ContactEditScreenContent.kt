@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +45,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -87,6 +84,7 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDa
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Websites
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupEditComponent
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
@@ -505,30 +503,6 @@ object ContactEditScreenContent {
                     showDialog = false
                 }
             )
-        }
-    }
-
-    @Composable
-    private fun ContactGroupEditComponent(contactGroup: IContactGroup, onChange: (IContactGroup) -> Unit) {
-        val focusRequester = remember { FocusRequester() }
-
-        Column {
-            OutlinedTextField(
-                label = { Text(stringResource(id = R.string.contact_group_name)) },
-                value = contactGroup.id.name,
-                onValueChange = { newValue -> onChange(contactGroup.changeName(newValue)) },
-                modifier = Modifier.focusRequester(focusRequester)
-            )
-
-            OutlinedTextField(
-                label = { Text(stringResource(id = R.string.contact_group_notes)) },
-                value = contactGroup.notes,
-                onValueChange = { newValue -> onChange(contactGroup.changeNotes(newValue)) },
-            )
-        }
-
-        LaunchedEffect(Unit) {
-            focusRequester.requestFocus()
         }
     }
 
