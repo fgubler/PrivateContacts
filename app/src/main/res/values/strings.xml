@@ -150,6 +150,8 @@
     <string name="new_contact_group_title">New Contact Group</string>
     <string name="contact_group_name">Group name / label</string>
     <string name="contact_group_notes">Notes</string>
+    <string name="contact_group_validation_name_empty">Please enter a group name.</string>
+    <string name="contact_group_validation_name_duplicate">A group of this name already exists.</string>
 
     <string name="add_contact_image">Add contact image</string>
     <string name="change_contact_image">Change contact image</string>
