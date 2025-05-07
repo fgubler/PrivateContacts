@@ -24,7 +24,7 @@ interface ContactGroupDao {
     suspend fun getGroups(groupNames: List<String>): List<ContactGroupEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE) // must not replace existing groups because that would delete their relations
-    suspend fun upsertAll(data: List<ContactGroupEntity>)
+    suspend fun insertMissing(data: List<ContactGroupEntity>)
 
     @Delete
     suspend fun delete(data: ContactGroupEntity)

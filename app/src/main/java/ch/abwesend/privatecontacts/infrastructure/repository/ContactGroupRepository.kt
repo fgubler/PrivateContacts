@@ -54,7 +54,7 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             .filterShouldUpsert()
             .distinctBy { it.id }
             .map { it.toEntity() }
-        upsertAll(uniqueGroups)
+        insertMissing(uniqueGroups)
     }
 
     private suspend fun ContactGroupRelationDao.updateContactGroupRelations(
