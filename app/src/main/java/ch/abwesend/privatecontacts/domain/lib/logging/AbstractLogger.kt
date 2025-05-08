@@ -14,7 +14,6 @@ abstract class AbstractLogger(
     private val remoteHelper: IRemoteLoggingHelper = RemoteLoggingHelper()
 ) : ILogger {
 
-
     // ======== abstract methods ========
     protected abstract val loggingTag: String
     protected open val loggingActive: Boolean = true
