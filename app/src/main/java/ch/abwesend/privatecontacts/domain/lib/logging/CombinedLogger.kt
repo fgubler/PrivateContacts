@@ -12,7 +12,7 @@ class CombinedLogger(
 ) : AbstractLogger() {
     override fun verboseImpl(messages: Collection<String>) {
         subLoggers.forEach {
-            kotlin.runCatching { it.verbose(messages)  }
+            kotlin.runCatching { it.verbose(messages) }
         }
     }
 

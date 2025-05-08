@@ -11,7 +11,6 @@ import android.content.Context
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.component.KoinComponent
