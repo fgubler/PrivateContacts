@@ -54,15 +54,23 @@ fun SettingsActions(viewModel: SettingsViewModel) {
 
     MoreActionsIconButton { expanded = true }
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-        DropdownMenuItem(onClick = { showRestoreConfirmation = true }) {
-            Text(stringResource(id = R.string.settings_action_restore_default))
-        }
-        DropdownMenuItem(onClick = { showDatabaseResetConfirmation = true }) {
-            Text(stringResource(id = R.string.settings_action_reset_database))
-        }
+        DropdownMenuItem(
+            content = { Text(stringResource(id = R.string.settings_action_restore_default)) },
+            onClick = {
+                showRestoreConfirmation = true
+                expanded = false
+            },
+        )
+        DropdownMenuItem(
+            content = { Text(stringResource(id = R.string.settings_action_reset_database)) },
+            onClick = {
+                showDatabaseResetConfirmation = true
+                expanded = false
+            }
+        )
         Divider()
-        CopyLogToClipBoardEntry()
-        ExportLogFileEntry()
+        CopyLogToClipBoardEntry { expanded = false }
+        ExportLogFileEntry { expanded = false }
     }
 
     ConfirmationDialogs(
@@ -144,7 +152,7 @@ private fun DatabaseResetStateDialog(state: DatabaseResetState, changeState: (Da
 }
 
 @Composable
-private fun CopyLogToClipBoardEntry() {
+private fun CopyLogToClipBoardEntry(onCloseMenu: () -> Unit) {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
@@ -153,19 +161,23 @@ private fun CopyLogToClipBoardEntry() {
             val logs = LogCache.getLog()
             clipboardManager.setText(AnnotatedString(logs))
             Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
+            onCloseMenu()
         },
         content = { Text(stringResource(id = R.string.settings_action_copy_logs)) }
     )
 }
 
 @Composable
-private fun ExportLogFileEntry() {
+private fun ExportLogFileEntry(onCloseMenu: () -> Unit) {
     val context = LocalContext.current
 
     val launcher = CreateFileFilePickerLauncher.rememberCreateFileLauncher(
         mimeType = "text/plain",
         defaultFilename = "logfile_private_contacts.txt",
-        onFileSelected = { targetFile -> targetFile?.let { exportLogFile(context, it) } },
+        onFileSelected = { targetFile ->
+            targetFile?.let { exportLogFile(context, it) }
+            onCloseMenu()
+        },
     )
 
     DropdownMenuItem(
