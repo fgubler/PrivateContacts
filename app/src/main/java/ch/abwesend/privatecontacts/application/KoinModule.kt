@@ -137,7 +137,7 @@ internal val koinModule = module {
     single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
 
     // Factories
-    single<ILoggerFactory> { LoggerFactory() }
+    single<ILoggerFactory> { LoggerFactory(androidContext()) }
     single<IDatabaseFactory<AppDatabase>> { DatabaseFactory() }
 
     // Helpers

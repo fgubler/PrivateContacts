@@ -25,3 +25,9 @@ val Any.logger: ILogger
         val factory: ILoggerFactory = getAnywhere()
         return factory.createDefault(javaClass)
     }
+
+val Any.logcatLogger: ILogger
+    get() {
+        val factory: ILoggerFactory = getAnywhere()
+        return factory.createLogcat(javaClass)
+    }

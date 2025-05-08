@@ -305,6 +305,9 @@
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>
 
     <string name="settings_action_copy_logs">Copy logs to clipboard</string>
+    <string name="export_logfile_today">Export logs for today</string>
+    <string name="log_file_exported">The logs have been exported successfully.</string>
+    <string name="log_file_export_failed">Failed to export the logs.</string>
 
     <string name="settings_entry_enable_authentication">App authentication</string>
     <string name="settings_entry_enable_authentication_description">Require the user to authenticate before being able to use the app.</string>
@@ -369,7 +372,7 @@
     <string name="export_complete_title">Export complete</string>
     <string name="export_failed_contacts">Contacts which could not be exported</string>
 
-    <string name="failed_to_select_file">Failed to select file "%1$s"</string>
+    <string name="failed_to_select_file">Failed to select file</string>
     <string name="new_something">New</string>
 
     <string name="vcard_v3_label">Version 3</string>
