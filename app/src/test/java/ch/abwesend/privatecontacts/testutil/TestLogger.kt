@@ -7,8 +7,9 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.lib.logging.AbstractLogger
+import ch.abwesend.privatecontacts.domain.lib.logging.IRemoteLoggingHelper
 
-class TestLogger : AbstractLogger() {
+class TestLogger : AbstractLogger(TestRemoteLoggingHelper()) {
     override val loggingTag = "Test"
     override val logToCrashlytics = { false }
 
@@ -43,4 +44,15 @@ class TestLogger : AbstractLogger() {
     }
 
     override fun checkLogLevel(logLevel: Int): Boolean = true
+}
+
+class TestRemoteLoggingHelper : IRemoteLoggingHelper {
+    override fun logErrorToCrashlytics(t: Throwable) {
+        println("Test logging exception to crashlytics: ${t.message}")
+        t.printStackTrace()
+    }
+
+    override fun logMessageToCrashlytics(message: String) {
+        println("Test logging message to crashlytics: $message")
+    }
 }

@@ -10,8 +10,10 @@ import android.util.Log
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.util.Constants
 
-abstract class AbstractLogger : ILogger {
-    private val remoteHelper: RemoteLoggingHelper = RemoteLoggingHelper()
+abstract class AbstractLogger(
+    private val remoteHelper: IRemoteLoggingHelper = RemoteLoggingHelper()
+) : ILogger {
+
 
     // ======== abstract methods ========
     protected abstract val loggingTag: String
