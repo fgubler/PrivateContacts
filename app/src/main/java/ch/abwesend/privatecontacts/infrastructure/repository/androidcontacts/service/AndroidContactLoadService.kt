@@ -93,6 +93,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     override suspend fun getAllContactGroups(): List<ContactGroup> =
         contactLoadRepository.loadAllContactGroups()
             .map { it.toContactGroup() }
+            .distinctBy { it.id.name }
             .sortedBy { it.id.name }
 
     suspend fun getContactGroups(filterForAccount: ContactAccount): List<ContactGroup> =
