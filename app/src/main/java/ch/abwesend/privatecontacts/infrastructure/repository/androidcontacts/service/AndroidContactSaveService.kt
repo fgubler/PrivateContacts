@@ -81,6 +81,8 @@ class AndroidContactSaveService : IAndroidContactSaveService {
     }
 
     override suspend fun updateContact(contactId: IContactIdExternal, contact: IContact): ContactSaveResult {
+        logger.info("Updating android contact with ID $contactId")
+
         val originalContactRaw = try {
             contactLoadRepository.resolveContactRaw(contactId)
         } catch (e: IllegalArgumentException) {
