@@ -27,7 +27,6 @@ import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -70,7 +69,6 @@ class ContactEditViewModel : ViewModel() {
     fun saveContact(contact: IContactEditable) {
         viewModelScope.launch {
             val result = saveService.saveContact(contact)
-            delay(200) // a bit of a hack to make it more likely the contact can be re-loaded after bigger changes to its groups. // TODO find real fix
             _saveResult.emit(result)
         }
     }
