@@ -32,7 +32,9 @@ import java.util.UUID
 fun someContactId(): ContactIdInternal = someInternalContactId()
 fun someInternalContactId(): ContactIdInternal = ContactIdInternal.randomId()
 fun someContactImportId(): ContactImportId = ContactImportId(UUID.randomUUID())
-fun someExternalContactId(contactNo: Long = 442): ContactIdAndroid = ContactIdAndroid(contactNo = contactNo)
+
+fun someExternalContactId(contactNo: Long = 442, lookupKey: String = "Test"): ContactIdAndroid =
+    ContactIdAndroid(contactNo = contactNo, lookupKey = lookupKey)
 
 fun someImportId(uuid: UUID = UUID.randomUUID()): ContactImportId = ContactImportId(uuid)
 

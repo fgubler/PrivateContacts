@@ -81,7 +81,7 @@ class AndroidContactLoadServiceTest : TestBase() {
 
     @Test
     fun `should resolve an existing contact by ID`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = null)
         val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
         coEvery { contactLoadRepository.resolveContactRaw(any()) } returns contact
         coEvery { contactLoadRepository.loadContactGroups(any()) } returns emptyList()
@@ -94,7 +94,7 @@ class AndroidContactLoadServiceTest : TestBase() {
 
     @Test
     fun `resolving a contact should re-throw if the contact could not be mapped`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = "Test")
         val exception = IllegalStateException("Just some test exception")
         val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
         coEvery { contactLoadRepository.resolveContactRaw(any()) } returns contact
@@ -162,7 +162,7 @@ class AndroidContactLoadServiceTest : TestBase() {
 
     @Test
     fun `should interpret 'organization' as company`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = "Test")
         val organization = "The Company"
         val contact = someAndroidContact(contactId = contactId.contactNo, organisation = organization, relaxed = true)
         coEvery { contactLoadRepository.resolveContactRaw(any()) } returns contact
@@ -177,7 +177,7 @@ class AndroidContactLoadServiceTest : TestBase() {
 
     @Test
     fun `should avoid duplicates when interpreting 'organization' as company`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = "Test")
         val organization = "The Company"
         val companyPseudoRelation = someCompany(value = organization)
         val label = companyMappingService.encodeToPseudoRelationshipLabel(companyPseudoRelation.type)

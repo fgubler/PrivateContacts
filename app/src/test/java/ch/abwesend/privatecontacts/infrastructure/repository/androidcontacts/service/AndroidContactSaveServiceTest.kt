@@ -100,8 +100,8 @@ class AndroidContactSaveServiceTest : TestBase() {
     @Test
     fun `should delete contacts and return success`() {
         val contactIds = listOf(
-            ContactIdAndroid(contactNo = 123123),
-            ContactIdAndroid(contactNo = 345608),
+            ContactIdAndroid(contactNo = 123123, lookupKey = "Test"),
+            ContactIdAndroid(contactNo = 345608, lookupKey = "Test"),
         )
         coJustRun { saveRepository.deleteContacts(any()) }
         coEvery { loadService.doContactsExist(any()) } answers {
@@ -119,8 +119,8 @@ class AndroidContactSaveServiceTest : TestBase() {
     @Test
     fun `should delete contacts and return partial success`() {
         val contactIds = listOf(
-            ContactIdAndroid(contactNo = 123123),
-            ContactIdAndroid(contactNo = 345608),
+            ContactIdAndroid(contactNo = 123123, lookupKey = "Test"),
+            ContactIdAndroid(contactNo = 345608, lookupKey = "Test"),
         )
         coJustRun { saveRepository.deleteContacts(any()) }
         coEvery { loadService.doContactsExist(any()) } answers {
@@ -141,8 +141,8 @@ class AndroidContactSaveServiceTest : TestBase() {
     @Test
     fun `should delete contacts and look for partial success when an exception occurs`() {
         val contactIds = listOf(
-            ContactIdAndroid(contactNo = 123123),
-            ContactIdAndroid(contactNo = 345608),
+            ContactIdAndroid(contactNo = 123123, lookupKey = "Test"),
+            ContactIdAndroid(contactNo = 345608, lookupKey = "Test"),
         )
         coEvery { saveRepository.deleteContacts(any()) } throws IllegalStateException("Test")
         coEvery { loadService.doContactsExist(any()) } answers {

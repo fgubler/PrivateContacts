@@ -72,7 +72,7 @@ class AndroidContactLoadRepositoryTest : TestBase() {
 
     @Test
     fun `should resolve an existing contact by ID`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = "Test")
         val contact = someAndroidContact(contactId = contactId.contactNo, relaxed = true)
         every { permissionService.hasContactReadPermission() } returns true
         runBlocking { flow.emit(listOf(contact)) }
@@ -85,7 +85,7 @@ class AndroidContactLoadRepositoryTest : TestBase() {
 
     @Test
     fun `resolving a contact should throw if the contact could not be found`() {
-        val contactId = ContactIdAndroid(contactNo = 123123)
+        val contactId = ContactIdAndroid(contactNo = 123123, lookupKey = "Test")
         every { permissionService.hasContactReadPermission() } returns true
         // the flow has never emitted
 

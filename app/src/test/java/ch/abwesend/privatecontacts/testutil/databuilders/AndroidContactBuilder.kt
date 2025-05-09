@@ -13,6 +13,7 @@ import com.alexstyl.contactstore.ImageData
 import com.alexstyl.contactstore.InternetAccount
 import com.alexstyl.contactstore.Label
 import com.alexstyl.contactstore.LabeledValue
+import com.alexstyl.contactstore.LookupKey
 import com.alexstyl.contactstore.MailAddress
 import com.alexstyl.contactstore.Note
 import com.alexstyl.contactstore.PhoneNumber
@@ -28,6 +29,7 @@ import java.time.LocalDate
 
 fun someAndroidContact(
     contactId: Long = 123123,
+    lookupKey: String? = null,
     firstName: String = "Luke",
     middleName: String = "",
     lastName: String = "Skywalker",
@@ -53,6 +55,7 @@ fun someAndroidContact(
 
     mockkStatic(Contact::thumbnailUri)
     every { mock.contactId } returns contactId
+    every { mock.lookupKey } returns lookupKey?.let { LookupKey(it) }
     every { mock.firstName } returns firstName
     every { mock.lastName } returns lastName
     every { mock.middleName } returns middleName
