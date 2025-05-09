@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.combineResource
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -83,11 +84,13 @@ class ContactLoadService {
         contacts1 + contacts2
     }
 
-    suspend fun resolveContact(contactId: ContactId): IContact =
-        when (contactId) {
+    suspend fun resolveContact(contactId: ContactId): IContact {
+        logger.info("Resolving contact with id $contactId")
+        return when (contactId) {
             is IContactIdInternal -> contactRepository.resolveContact(contactId)
             is IContactIdExternal -> androidContactService.resolveContact(contactId)
         }
+    }
 
     suspend fun resolveContacts(contactIds: Collection<ContactId>): List<IContact> = coroutineScope {
         val internalContactIds = contactIds.filterIsInstance<IContactIdInternal>().toSet()
