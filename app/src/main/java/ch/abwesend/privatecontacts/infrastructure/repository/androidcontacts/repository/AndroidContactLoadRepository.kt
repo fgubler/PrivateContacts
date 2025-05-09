@@ -61,9 +61,11 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
         val newContactId = createContactsBaseFlow()
             .firstOrNull()
             .orEmpty()
+            .asSequence()
             .map { it.id }
             .filterIsInstance<IContactIdExternal>()
-            .singleOrNull { !it.lookupKey.isNullOrEmpty() && it.lookupKey == contactId.lookupKey } // enforce a unique match
+            .filterNot { it.lookupKey.isNullOrEmpty() }
+            .singleOrNull { it.lookupKey == contactId.lookupKey } // enforce a unique match
             ?: throw IllegalArgumentException("Contact $contactId not found on android")
         return resolveContactRaw(newContactId)
     }
