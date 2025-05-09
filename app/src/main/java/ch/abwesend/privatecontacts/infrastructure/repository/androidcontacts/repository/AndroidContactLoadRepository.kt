@@ -49,7 +49,22 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
                 .firstOrNull()
                 .also { logger.debug("Found ${it?.size} contacts matching $contactId") }
                 ?.firstOrNull()
-        } ?: throw IllegalArgumentException("Contact $contactId not found on android")
+        } ?: resolveContactRawByLookupKey(contactId)
+    }
+
+    /**
+     * For some reason, the contactNo can change sometimes, e.g. when updating a contact.
+     * => use the LookupKey as fallback.
+     */
+    private suspend fun resolveContactRawByLookupKey(contactId: IContactIdExternal): Contact {
+        val newContactId = createContactsBaseFlow()
+            .firstOrNull()
+            .orEmpty()
+            .map { it.id }
+            .filterIsInstance<IContactIdExternal>()
+            .singleOrNull { !it.lookupKey.isNullOrEmpty() && it.lookupKey == contactId.lookupKey } // enforce a unique match
+            ?: throw IllegalArgumentException("Contact $contactId not found on android")
+        return resolveContactRaw(newContactId)
     }
 
     suspend fun loadAllFullContactsRaw(): List<Contact> {

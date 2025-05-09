@@ -49,7 +49,7 @@ class AndroidContactLoadService : IAndroidContactLoadService {
     override suspend fun loadAllContactsFull(): List<IContact> {
         val contactsRaw = contactLoadRepository.loadAllFullContactsRaw()
         return contactsRaw.map { contactRaw ->
-            val contactId = ContactIdAndroid(contactNo = contactRaw.contactId)
+            val contactId = ContactIdAndroid(contactNo = contactRaw.contactId, lookupKey = contactRaw.lookupKey?.value)
             resolveContact(contactId, contactRaw)
         }
     }

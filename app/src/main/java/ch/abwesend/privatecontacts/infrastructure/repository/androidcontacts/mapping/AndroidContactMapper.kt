@@ -22,7 +22,7 @@ class AndroidContactMapper {
     fun toContactBase(contact: Contact, rethrowExceptions: Boolean): IContactBase? =
         try {
             ContactBase(
-                id = ContactIdAndroid(contactNo = contact.contactId),
+                id = ContactIdAndroid(contactNo = contact.contactId, lookupKey = contact.lookupKey?.value),
                 type = ContactType.PUBLIC,
                 displayName = contact.displayName,
             )
@@ -39,7 +39,7 @@ class AndroidContactMapper {
     ): IContact? = with(contact) {
         try {
             ContactEditable(
-                id = ContactIdAndroid(contactNo = contactId),
+                id = ContactIdAndroid(contactNo = contactId, lookupKey = lookupKey?.value),
                 importId = null,
                 type = ContactType.PUBLIC,
                 firstName = firstName,
