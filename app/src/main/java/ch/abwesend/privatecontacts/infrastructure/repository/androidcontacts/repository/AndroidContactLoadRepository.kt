@@ -57,6 +57,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
      * => use the LookupKey as fallback.
      */
     private suspend fun resolveContactRawByLookupKey(contactId: IContactIdExternal): Contact {
+        logger.info("Resolving contact for id $contactId by lookup-key as fallback.")
         val newContactId = createContactsBaseFlow()
             .firstOrNull()
             .orEmpty()
