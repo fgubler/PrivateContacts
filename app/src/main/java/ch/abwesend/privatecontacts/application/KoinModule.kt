@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.service.ContactGroupService
 import ch.abwesend.privatecontacts.domain.service.ContactImageService
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
@@ -84,29 +85,30 @@ import org.koin.dsl.module
 
 internal val koinModule = module {
     // Services
-    single { ContactLoadService() }
-    single { ContactValidationService() }
-    single { ContactSaveService() }
-    single { FullTextSearchService() }
-    single { IncomingCallService() }
-    single { ContactSanitizingService() }
-    single { EasterEggService() }
-    single { DatabaseService() }
-    single { ContactTypeChangeService() }
-    single { FileReadWriteService() }
-    single<TelephoneService> { AndroidTelephoneService(androidContext()) }
-    single<PermissionService> { AndroidPermissionService() }
-    single<AccountService> { AndroidAccountService(androidContext()) }
+    factory { ContactLoadService() }
+    factory { ContactGroupService() }
+    factory { ContactValidationService() }
+    factory { ContactSaveService() }
+    factory { FullTextSearchService() }
+    factory { IncomingCallService() }
+    factory { ContactSanitizingService() }
+    factory { EasterEggService() }
+    factory { DatabaseService() }
+    factory { ContactTypeChangeService() }
+    factory { FileReadWriteService() }
+    factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
+    factory<PermissionService> { AndroidPermissionService() }
+    factory<AccountService> { AndroidAccountService(androidContext()) }
 
-    single<IAndroidContactLoadService> { AndroidContactLoadService() }
-    single { AndroidContactLoadService() }
-    single<IAndroidContactSaveService> { AndroidContactSaveService() }
-    single<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
-    single { AndroidContactChangeService() }
-    single { AndroidContactAccountService() }
-    single { AndroidContactCompanyMappingService() }
-    single { AndroidContactMapper() }
-    single { AndroidContactDataMapper() }
+    factory<IAndroidContactLoadService> { AndroidContactLoadService() }
+    factory { AndroidContactLoadService() }
+    factory<IAndroidContactSaveService> { AndroidContactSaveService() }
+    factory<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
+    factory { AndroidContactChangeService() }
+    factory { AndroidContactAccountService() }
+    factory { AndroidContactCompanyMappingService() }
+    factory { AndroidContactMapper() }
+    factory { AndroidContactDataMapper() }
 
     factory { AndroidContactPermissionHelper() } // should only ever be injected into MainActivity
     factory { CallPermissionHelper() } // should only ever be injected into MainActivity
@@ -115,9 +117,9 @@ internal val koinModule = module {
     factory { ContactImageService() }
     factory { ContactImportService() }
     factory { ContactExportService() }
-    single { ContactToVCardMapper() }
-    single { VCardToContactMapper() }
-    single { ToPhysicalAddressMapper() }
+    factory { ContactToVCardMapper() }
+    factory { VCardToContactMapper() }
+    factory { ToPhysicalAddressMapper() }
 
     // Repositories
     single { AndroidContactLoadRepository() }
