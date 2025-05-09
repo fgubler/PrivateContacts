@@ -23,7 +23,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
-import ch.abwesend.privatecontacts.domain.service.ContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactGroupService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 
 class ContactEditViewModel : ViewModel() {
     private val saveService: ContactSaveService by injectAnywhere()
-    private val loadService: ContactLoadService by injectAnywhere()
+    private val groupService: ContactGroupService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
 
     var originalContact: IContact? = null
@@ -79,7 +79,7 @@ class ContactEditViewModel : ViewModel() {
 
     fun loadAllContactGroups(contactType: ContactType) {
         viewModelScope.launch {
-            _allContactGroups.withLoadingState { loadService.loadAllContactGroups(contactType) }
+            _allContactGroups.withLoadingState { groupService.loadAllContactGroups(contactType) }
         }
     }
 

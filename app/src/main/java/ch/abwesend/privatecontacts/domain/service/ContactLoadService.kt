@@ -17,11 +17,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountI
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.asEditable
-import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
-import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.async
@@ -29,7 +27,6 @@ import kotlinx.coroutines.coroutineScope
 
 class ContactLoadService {
     private val contactRepository: IContactRepository by injectAnywhere()
-    private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val androidContactService: IAndroidContactLoadService by injectAnywhere()
     private val easterEggService: EasterEggService by injectAnywhere()
 
@@ -122,10 +119,4 @@ class ContactLoadService {
             }
         }
     }
-
-    suspend fun loadAllContactGroups(contactType: ContactType): List<IContactGroup> =
-        when (contactType) {
-            ContactType.SECRET -> contactGroupRepository.loadAllContactGroups()
-            ContactType.PUBLIC -> androidContactService.getAllContactGroups()
-        }
 }
