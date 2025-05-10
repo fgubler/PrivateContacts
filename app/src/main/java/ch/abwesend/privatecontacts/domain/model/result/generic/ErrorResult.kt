@@ -19,8 +19,8 @@ data class ErrorResult<TValue, TError>(val error: TError) : BinaryResult<TValue,
         mapper: suspend (TValue) -> BinaryResult<T, TError>
     ): BinaryResult<T, TError> = ErrorResult(error)
 
-    override fun ifHasValue(block: (TValue) -> Unit) = this
-    override fun ifHasError(block: (TError) -> Unit): BinaryResult<TValue, TError> {
+    override suspend fun ifHasValue(block: suspend (TValue) -> Unit) = this
+    override suspend fun ifHasError(block: suspend (TError) -> Unit): BinaryResult<TValue, TError> {
         block(error)
         return this
     }

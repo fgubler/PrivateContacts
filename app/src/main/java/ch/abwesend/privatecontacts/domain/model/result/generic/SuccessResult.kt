@@ -21,9 +21,9 @@ data class SuccessResult<TValue, TError>(val value: TValue) : BinaryResult<TValu
         mapper: suspend (TValue) -> BinaryResult<T, TError>
     ): BinaryResult<T, TError> = mapper(value)
 
-    override fun ifHasValue(block: (TValue) -> Unit): BinaryResult<TValue, TError> {
+    override suspend fun ifHasValue(block: suspend (TValue) -> Unit): BinaryResult<TValue, TError> {
         block(value)
         return this
     }
-    override fun ifHasError(block: (TError) -> Unit) = this
+    override suspend fun ifHasError(block: suspend (TError) -> Unit) = this
 }

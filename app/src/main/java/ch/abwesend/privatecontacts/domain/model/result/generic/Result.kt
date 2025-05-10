@@ -15,14 +15,14 @@ sealed interface Result<TValue, TError> {
         mapper: suspend (TValue) -> BinaryResult<T, TError>
     ): BinaryResult<T, TError>
 
-    fun ifHasValue(block: (TValue) -> Unit): Result<TValue, TError>
-    fun ifHasError(block: (TError) -> Unit): Result<TValue, TError>
+    suspend fun ifHasValue(block: suspend (TValue) -> Unit): Result<TValue, TError>
+    suspend fun ifHasError(block: suspend (TError) -> Unit): Result<TValue, TError>
 }
 
 sealed interface BinaryResult<TValue, TError> : Result<TValue, TError> {
     override suspend fun <T> mapValue(mapper: suspend (TValue) -> T): BinaryResult<T, TError>
     override suspend fun <T> mapError(mapper: suspend (TError) -> T): BinaryResult<TValue, T>
 
-    override fun ifHasValue(block: (TValue) -> Unit): BinaryResult<TValue, TError>
-    override fun ifHasError(block: (TError) -> Unit): BinaryResult<TValue, TError>
+    override suspend fun ifHasValue(block: suspend (TValue) -> Unit): BinaryResult<TValue, TError>
+    override suspend fun ifHasError(block: suspend (TError) -> Unit): BinaryResult<TValue, TError>
 }
