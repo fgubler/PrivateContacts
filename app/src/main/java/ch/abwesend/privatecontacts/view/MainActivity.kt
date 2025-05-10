@@ -9,7 +9,6 @@ package ch.abwesend.privatecontacts.view
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -30,14 +29,10 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -47,16 +42,14 @@ import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.ImportContactsFromIntentComponents.ObserveVcfImportResult
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
-import ch.abwesend.privatecontacts.view.components.dialogs.SaveCancelDialog
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
@@ -69,7 +62,6 @@ import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.ERROR
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NO_DEVICE_AUTHENTICATION_REGISTERED
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
-import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContext
 import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
@@ -77,12 +69,8 @@ import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ProgressAndResultHandler
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ReplaceExistingContactsCheckBox
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.TargetTypeFields
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
-import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
@@ -91,7 +79,6 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.model.ParseVcfFromIntentResult
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
@@ -280,77 +267,5 @@ class MainActivity : AppCompatActivity() {
             exportViewModel = exportViewModel,
             importViewModel = importViewModel,
         )
-    }
-
-    @Composable
-    private fun ObserveVcfImportResult(viewModel: MainViewModel, screenContext: IScreenContext) {
-        val context = LocalContext.current
-
-        var importMultipleDialogData: ContactImportPartialData.ParsedData?
-            by remember { mutableStateOf(null) }
-
-        viewModel.vcfParsingResult.collectWithEffect { result ->
-            when (result) {
-                is ParseVcfFromIntentResult.Failure -> {
-                    Toast.makeText(context, R.string.failed_to_import_contacts, Toast.LENGTH_SHORT).show()
-                }
-                is ParseVcfFromIntentResult.MultipleContacts -> {
-                    importMultipleDialogData = result.parsedData
-                }
-                is ParseVcfFromIntentResult.SingleContact -> {
-                    screenContext.navigateToContactEditScreen(result.contact)
-                }
-            }
-        }
-
-        importMultipleDialogData?.let { parsedData ->
-            ImportMultipleContactsDialog(screenContext.settings, parsedData) { importMultipleDialogData = null }
-        }
-    }
-
-    @Composable
-    private fun ImportMultipleContactsDialog(
-        settings: ISettingsState,
-        parsedData: ContactImportPartialData.ParsedData,
-        onCloseDialog: () -> Unit,
-    ) {
-        var targetType by remember { mutableStateOf(settings.defaultContactType) }
-        var selectedAccount by remember { mutableStateOf(settings.defaultExternalContactAccount) }
-        var replaceExistingContacts by remember { mutableStateOf(false) }
-        var importStarted by remember { mutableStateOf(false) }
-
-        if (!importStarted) {
-            SaveCancelDialog(
-                title = R.string.import_contacts,
-                content = {
-                    Column {
-                        TargetTypeFields(
-                            targetType = targetType,
-                            selectedAccount = selectedAccount,
-                            onTargetTypeChanged = { targetType = it },
-                            onTargetAccountChanged = { selectedAccount = it }
-                        )
-
-                        if (targetType == ContactType.SECRET) {
-                            Spacer(modifier = Modifier.height(10.dp))
-                            ReplaceExistingContactsCheckBox(replaceExistingContacts) {
-                                replaceExistingContacts = !replaceExistingContacts
-                            }
-                        }
-                    }
-                },
-                onSave = {
-                    viewModel.importContacts(parsedData, targetType, selectedAccount, replaceExistingContacts)
-                    importStarted = true
-                },
-                onCancel = onCloseDialog,
-            )
-        }
-        ProgressAndResultHandler(viewModel.contactImportResult) {
-            viewModel.resetContactImportResult()
-            contactListViewModel.reloadContacts()
-            importStarted = false
-            onCloseDialog()
-        }
     }
 }
