@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.FILE_READING_FAILED
@@ -42,28 +43,41 @@ class ContactImportService {
         targetType: ContactType,
         targetAccount: ContactAccount,
         replaceExistingContacts: Boolean,
-    ): BinaryResult<ContactImportData, VCardParseError> = withContext(dispatchers.default) {
-        val fileContentResult = fileReadService.readFileContent(sourceFile)
-        val contactsToImport = fileContentResult
-            .mapError { FILE_READING_FAILED }
-            .mapValueToBinaryResult { fileContent ->
-                importExportRepository.parseContacts(fileContent, targetType)
-            }
-
-        contactsToImport.mapValue { parsedContacts ->
-            val contactsToSave = parsedContacts.successfulContacts
-            postProcessContacts(contactsToSave, targetType, targetAccount)
-
-            val savedData = saveImportedContacts(contactsToSave, replaceExistingContacts)
-
-            ContactImportData(
-                newImportedContacts = savedData.newImportedContacts,
-                replacedExistingContacts = savedData.replacedExistingContacts,
-                importFailures = savedData.importFailures,
-                importValidationFailures = savedData.importValidationFailures,
-                numberOfParsingFailures = parsedContacts.numberOfFailedContacts,
-            )
+    ): BinaryResult<ContactImportData, VCardParseError> {
+        val contactsToImport = loadContacts(sourceFile, targetType)
+        return contactsToImport.mapValue { parsedContacts ->
+            storeContacts(parsedContacts, targetType, targetAccount, replaceExistingContacts)
         }
+    }
+
+    suspend fun loadContacts(sourceFile: Uri, targetType: ContactType): BinaryResult<ParsedData, VCardParseError> =
+        withContext(dispatchers.default) {
+            val fileContentResult = fileReadService.readFileContent(sourceFile)
+            fileContentResult
+                .mapError { FILE_READING_FAILED }
+                .mapValueToBinaryResult { fileContent ->
+                    importExportRepository.parseContacts(fileContent, targetType)
+                }
+        }
+
+    suspend fun storeContacts(
+        parsedContacts: ParsedData,
+        targetType: ContactType,
+        targetAccount: ContactAccount,
+        replaceExistingContacts: Boolean,
+    ): ContactImportData = withContext(dispatchers.default) {
+        val contactsToSave = parsedContacts.successfulContacts
+        postProcessContacts(contactsToSave, targetType, targetAccount)
+
+        val savedData = saveImportedContacts(contactsToSave, replaceExistingContacts)
+
+        ContactImportData(
+            newImportedContacts = savedData.newImportedContacts,
+            replacedExistingContacts = savedData.replacedExistingContacts,
+            importFailures = savedData.importFailures,
+            importValidationFailures = savedData.importValidationFailures,
+            numberOfParsingFailures = parsedContacts.numberOfFailedContacts,
+        )
     }
 
     private fun postProcessContacts(
