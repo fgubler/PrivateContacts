@@ -125,13 +125,6 @@ object SettingsScreen {
                 onValueChanged = { settingsRepository.appTheme = it }
             )
 
-            SettingsCheckbox(
-                label = R.string.settings_entry_add_safe_area_padding,
-                description = R.string.settings_entry_add_safe_area_padding_description,
-                value = currentSettings.addHorizontalSafeAreaPadding,
-                onValueChanged = { settingsRepository.addHorizontalSafeAreaPadding = it }
-            )
-
             SettingsEntryDivider()
 
             SettingsCheckbox(

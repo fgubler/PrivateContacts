@@ -18,7 +18,6 @@ interface SettingsRepository : ISettingsState {
 
     // UX
     override var appTheme: AppTheme
-    override var addHorizontalSafeAreaPadding: Boolean
 
     override var orderByFirstName: Boolean
     override var showContactTypeInList: Boolean

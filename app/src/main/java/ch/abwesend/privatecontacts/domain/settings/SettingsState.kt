@@ -16,12 +16,6 @@ interface ISettingsState {
     // UX
     val appTheme: AppTheme
 
-    /**
-     * At least emulators sometimes seem to provide wrong (i.e. too high) horizontal padding).
-     * That looks really stupid. Therefore, an option to turn it off.
-     */
-    val addHorizontalSafeAreaPadding: Boolean
-
     val orderByFirstName: Boolean
     val showContactTypeInList: Boolean
 
@@ -73,7 +67,6 @@ interface ISettingsState {
 
 data class SettingsState(
     override val appTheme: AppTheme,
-    override val addHorizontalSafeAreaPadding: Boolean,
 
     override val orderByFirstName: Boolean,
     override val showContactTypeInList: Boolean,
@@ -106,7 +99,6 @@ data class SettingsState(
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
             appTheme = AppTheme.SYSTEM_SETTINGS,
-            addHorizontalSafeAreaPadding = true,
             orderByFirstName = true,
             showContactTypeInList = true,
             showExtraButtonsInEditScreen = true,
