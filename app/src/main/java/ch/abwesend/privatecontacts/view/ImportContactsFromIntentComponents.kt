@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,13 +35,18 @@ import ch.abwesend.privatecontacts.view.viewmodel.model.ParseVcfFromIntentResult
 @ExperimentalMaterialApi
 object ImportContactsFromIntentComponents {
     @Composable
-    fun ObserveVcfImportResult(viewModel: MainViewModel, screenContext: IScreenContext) {
+    fun ObserveVcfImportResult(
+        viewModel: MainViewModel,
+        screenContext: IScreenContext,
+        onRevokeFilePermission: (Uri) -> Unit
+    ) {
         val context = LocalContext.current
 
         var importMultipleDialogData: ContactImportPartialData.ParsedData?
             by remember { mutableStateOf(null) }
 
         viewModel.vcfParsingResult.collectWithEffect { result ->
+            onRevokeFilePermission(result.fileUri) // the parsing is done => permission can be revoked
             when (result) {
                 is ParseVcfFromIntentResult.Failure -> {
                     Toast.makeText(context, R.string.failed_to_import_contacts, Toast.LENGTH_SHORT).show()

@@ -82,6 +82,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
+private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @ExperimentalMaterialApi
@@ -135,6 +137,7 @@ class MainActivity : AppCompatActivity() {
         when (action) {
             Intent.ACTION_VIEW -> newIntent.data?.let {
                 logger.info("Opening vCard file: $it")
+                grantUriPermission(packageName, it, FILE_PERMISSION_FLAG)
                 viewModel.parseVcfFile(it)
             }
             Intent.ACTION_SEND -> IntentCompat.getParcelableExtra(newIntent, Intent.EXTRA_STREAM, Uri::class.java)?.let {
@@ -142,7 +145,6 @@ class MainActivity : AppCompatActivity() {
                 viewModel.parseVcfFile(it)
             }
         }
-        intent = null
     }
 
     @Composable
@@ -173,7 +175,9 @@ class MainActivity : AppCompatActivity() {
                 screenContext = screenContext,
             )
 
-            ObserveVcfImportResult(viewModel, screenContext)
+            ObserveVcfImportResult(viewModel, screenContext) {
+                revokeUriPermission(it, FILE_PERMISSION_FLAG)
+            }
 
             when (initializationState) {
                 is InfoDialogState -> InfoDialogs(initializationState, settings) { nextState() }

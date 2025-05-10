@@ -85,7 +85,7 @@ class MainViewModel : ViewModel() {
             val loadResult = importService.loadContacts(fileUri, Settings.current.defaultContactType)
             loadResult.ifHasError {
                 logger.warning("Failed to load contact(s) from VCF file: $it")
-                _vcfParsingResult.emit(ParseVcfFromIntentResult.Failure)
+                _vcfParsingResult.emit(ParseVcfFromIntentResult.Failure(fileUri))
             }.ifHasValue { data ->
                 val contacts = data.successfulContacts
                 logger.info(
@@ -93,11 +93,11 @@ class MainViewModel : ViewModel() {
                         "with ${data.numberOfFailedContacts} failures"
                 )
                 val result = if (contacts.size > 1) {
-                    ParseVcfFromIntentResult.MultipleContacts(data)
+                    ParseVcfFromIntentResult.MultipleContacts(fileUri, data)
                 } else if (contacts.size == 1) {
-                    ParseVcfFromIntentResult.SingleContact(contacts.first())
+                    ParseVcfFromIntentResult.SingleContact(fileUri, contacts.first())
                 } else {
-                    ParseVcfFromIntentResult.Failure
+                    ParseVcfFromIntentResult.Failure(fileUri)
                 }
                 _vcfParsingResult.emit(result)
             }
