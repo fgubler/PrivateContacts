@@ -19,7 +19,7 @@ class GenericRouter(private val navController: NavHostController) {
 
     private fun tryNavigate(screen: Screen, navOptions: NavOptions? = null): Boolean =
         try {
-            navController.navigate(screen.key)
+            navController.navigate(screen.key, navOptions)
             true
         } catch (e: IllegalArgumentException) {
             e.logger.warning("Cannot navigate to '${screen.key}': screen not found")

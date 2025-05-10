@@ -85,6 +85,6 @@ enum class Screen(
 
     companion object {
         val sideDrawerScreens: List<Screen> =
-            values().filter { it.showInSideDrawer && it.selfInitializing }
+            entries.filter { it.showInSideDrawer && it.selfInitializing }
     }
 }
