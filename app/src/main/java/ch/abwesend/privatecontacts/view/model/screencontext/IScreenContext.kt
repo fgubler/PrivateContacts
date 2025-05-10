@@ -46,7 +46,7 @@ interface IContactDetailScreenContext : IScreenContextBase {
 
 interface IContactEditScreenContext : IScreenContextBase {
     val contactEditViewModel: ContactEditViewModel
-    fun returnToContactDetailScreen(): Boolean
+    fun returnToContactDetailScreen(contact: IContactBase? = null): Boolean
 }
 
 interface ISettingsScreenContext : IScreenContextBase {

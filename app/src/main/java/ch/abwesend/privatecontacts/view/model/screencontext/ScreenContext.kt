@@ -65,8 +65,12 @@ data class ScreenContext(
     }
 
     /** from [IContactEditScreenContext] */
-    override fun returnToContactDetailScreen(): Boolean {
-        contactDetailViewModel.reloadContact()
+    override fun returnToContactDetailScreen(contact: IContactBase?): Boolean {
+        if (contact == null) {
+            contactDetailViewModel.reloadContact()
+        } else {
+            contactDetailViewModel.selectContact(contact)
+        }
         return genericRouter.navigateUp()
     }
 }

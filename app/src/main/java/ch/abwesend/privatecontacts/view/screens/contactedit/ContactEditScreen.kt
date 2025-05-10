@@ -84,7 +84,7 @@ object ContactEditScreen {
             showDiscardConfirmationDialog = false
             onSaveResult(
                 result = result,
-                onSuccess = { screenContext.returnToContactDetailScreen() },
+                onSuccess = { screenContext.returnToContactDetailScreen(selectedContact) },
                 setSavingErrors = { savingErrors = it },
                 setValidationErrors = { validationErrors = it },
             )

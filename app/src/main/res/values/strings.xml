@@ -13,6 +13,7 @@
     <string name="screen_about_the_app">About</string>
     <string name="screen_introduction">Introduction</string>
     <string name="screen_import_export">Import / Export</string>
+    <string name="screen_import_from_intent">Import Contacts</string>
     <string name="screen_contact_details">Contact Details</string>
     <string name="screen_contact_edit">Edit Contact</string>
     <string name="screen_contact_edit_create">Create Contact</string>
@@ -21,6 +22,7 @@
     <string name="data_loading_error">An error occurred while loading the data</string>
     <string name="no_contact_selected">No contact selected</string>
     <string name="no_contact_selected_error">Failed to load contact</string>
+    <string name="failed_to_import_contacts">Failed to import contact(s)</string>
 
     <string name="menu">Open menu</string>
     <string name="save">Save</string>
