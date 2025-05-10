@@ -9,12 +9,15 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import android.content.Context
 import android.os.Looper
 import android.widget.Toast
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.util.applicationScope
-import kotlinx.coroutines.Dispatchers
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.launch
 
 class ToastRepository {
+    private val dispatchers: IDispatchers by injectAnywhere()
+
     /**
      * Allows showing a toast from a background service.
      */
@@ -23,7 +26,7 @@ class ToastRepository {
         message: String,
         length: Int = Toast.LENGTH_LONG,
     ) {
-        applicationScope.launch(Dispatchers.Main.immediate) {
+        applicationScope.launch(dispatchers.mainImmediate) {
             try {
                 Toast.makeText(context.applicationContext, message, length).show()
             } catch (t: Throwable) {
