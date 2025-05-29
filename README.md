@@ -40,6 +40,39 @@ Additional features
 |------------|---------------|--------------|---------------|
 |![Contact List](https://user-images.githubusercontent.com/1478872/164909358-a0277229-c2c7-42bb-99a1-c5425b400946.jpg)|![Contact Details](https://user-images.githubusercontent.com/1478872/164909363-3ecbbcb0-5cb0-4284-943f-d5e4d42c71c3.jpg)|![Contact Edit 1](https://user-images.githubusercontent.com/1478872/164909371-c0cdbe58-ce72-4333-971b-125b1e64747c.jpg)|![Contact Edit 2](https://user-images.githubusercontent.com/1478872/164909374-ab98a2d4-945d-4775-a0a8-2c04054e7e95.jpg)|
 
+## User Guide
+### Settings
+This sections explains the meaning and workings of the settings-screen.
+
+#### Section "Display"
+- _App theme_: whether the app is displayed in light-theme, dark-theme or the system-default.
+- _Order by first name_: whether the contact-list should be ordered by first- or last-name.
+- _Show contact type in contact list_: whether the contact-type (public or secret) is depicted in the list of contacts using a lock-icon. The lock is closed and green for secret contacts. It is open and red for public contacts.
+- _Show additional save-button in the edit-screen_: this setting is about the screen which can edit contacts or create a new one. The primary save-button is in the navigation-bar, in the top-right of the screen. If this checkbox is set, another one will be added at the bottom for reasons of convenience.
+- _Show the navigation-bar at the bottom of the screen_: inverts the position of the navigation-bar, showing it at the bottom instead of the default top. This can be more convenient on large-screen phones.
+- _Show WhatsApp buttons_: if enabled, a buttons will be shown next to all phone-numbers on the detail-screen (with the overview over a contact). These buttons show the icon of WhatsApp and - when pressed - will open WhatsApp in a chat with this contact.
+  - This allows the user to start a new chat in WhatsApp with that contact, sharing only that single phone-number (no name no other information)
+  - As we cannot check if that phone-number is actually connected to a WhatsApp account without giving the number to WhatsApp (which is the last thing we want), this button is shown next to **all** phone-numbers independent of whether they are registered on WhatsApp or not.
+
+#### Section "Call detection"
+- _Match incoming calls with contacts_: whether the app should try to detect when a secret contact is calling them. See the technical section below for details.
+- _Show information on lock-screen_: whether the notification informing about a caller in the list of secret-contacts should be shown before the phone is unlocked.
+
+#### Section "Contact list"
+- _Show public contacts_: whether the app should just show you your secret contacts or also the public ones which are managed by your phone's standard contacts-app and the operating system. If this checkbox is set, the app will need the permission to access your phone's contacts. It will then populate a second tab showing both secret and public contacts.
+
+#### Section "Default values"
+All settings in this section define defaults which can be overridden by the user on the spot.
+- _Contact-type_: whether a newly created contact should be _public_ or _secret_ by default (can ofc be changed during creation).
+- _Contact account_: only relevant for public contacts, defines where they should be stored (e.g. phone-local or in your google account).
+- _VCF version_: VCF is the format in which contacts are exported and can be imported in other contacts apps. This format has a newer version 4 and an older version 3. The older version has fewer features but is more likely to be compatible with older contacts-apps.
+
+#### Security
+- _App authentication_: will add an authentication-step in the app startup. This means that the user will e.g. have to authenticate by fingerprint or face-id before seing the list of contacts. Disclaimer: the app does not implement any of the authentication-methods itself but uses the standard-authentication defined by the operating system (Google is better at this kind of thing).
+
+#### Privacy
+- _Send anonymous error reports_: if the app crashes or something goes wrong during its operation, we won't notice unless it happens on one of our phones. That is not satisfying because many bugs only appear under very specific circumstances (like only on one specific model or manufacturer). Therefore, we use Google's "Crashlytics" framework to get error-reports. We make sure that no sensitive information is written into these reports. However, you can ofc turn this off if it makes you uncomfortable. In that case, please let us know about bugs by email.
+
 ## Technical Background
 This chapter illustrates some technical background information to help users understand what happens behind the scenes.
 
