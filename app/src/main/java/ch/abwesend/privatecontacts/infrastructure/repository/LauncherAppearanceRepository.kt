@@ -9,14 +9,18 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.LauncherAppearance
 import ch.abwesend.privatecontacts.domain.repository.ILauncherAppearanceRepository
+import ch.abwesend.privatecontacts.view.MainActivityAliasCalculatorIcon
+import ch.abwesend.privatecontacts.view.MainActivityAliasDefaultIcon
 
 class LauncherAppearanceRepository(private val appContext: Context) : ILauncherAppearanceRepository {
     override fun setLauncherAppearance(launcherAppearance: LauncherAppearance) {
+        logger.info("Setting launcher appearance to $launcherAppearance")
         val packageManager = appContext.packageManager
-        val defaultAlias = ComponentName(appContext, "ch.abwesend.privatecontacts.DefaultIconAlias")
-        val calculatorAlias = ComponentName(appContext, "ch.abwesend.privatecontacts.CalculatorIconAlias")
+        val defaultAlias = ComponentName(appContext, MainActivityAliasDefaultIcon::class.java)
+        val calculatorAlias = ComponentName(appContext, MainActivityAliasCalculatorIcon::class.java)
 
         when (launcherAppearance) {
             LauncherAppearance.DEFAULT -> {

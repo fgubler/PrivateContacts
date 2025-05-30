@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -59,6 +61,7 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -104,7 +107,7 @@ object SettingsScreen {
                 SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                PrivacyCategory(settingsRepository, currentSettings)
+                PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }
@@ -402,8 +405,29 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun PrivacyCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun PrivacyCategory(
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel
+    ) {
+        val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
+            SettingsCheckbox(
+                label = R.string.settings_entry_use_alternative_icon_and_name,
+                description = R.string.settings_entry_use_alternative_icon_and_name_description, // TODO add info-dialog
+                value = false, // TODO fix
+                onValueChanged = {
+                    viewModel.changeLauncherAppearance(it)
+                    Toast.makeText(
+                        context,
+                        R.string.settings_use_alternative_icon_and_name_success_confirmation,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+
+            SettingsEntryDivider()
+
             SettingsCheckbox(
                 label = R.string.settings_entry_error_reports,
                 description = R.string.settings_entry_error_reports_description,

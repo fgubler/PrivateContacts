@@ -305,6 +305,9 @@
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
+    <string name="settings_entry_use_alternative_icon_and_name">Hide app name and icon</string>
+    <string name="settings_entry_use_alternative_icon_and_name_description">Use an alternative icon and name for the app to hide its purpose. The app will be called "Pocket Calculator" showing a calculator icon.\nChanging this value may close the app.</string>
+    <string name="settings_use_alternative_icon_and_name_success_confirmation">The icon and name of the app have been changed successfully</string>
 
     <string name="settings_entry_default_vcard_version">VCF Version</string>
     <string name="settings_entry_default_vcard_version_description">Contacts can be exported in VCF format.</string>

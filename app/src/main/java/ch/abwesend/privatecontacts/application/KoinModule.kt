@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FileReadWriteService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
+import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
@@ -122,6 +123,8 @@ internal val koinModule = module {
     factory { ContactToVCardMapper() }
     factory { VCardToContactMapper() }
     factory { ToPhysicalAddressMapper() }
+
+    factory { LauncherAppearanceService() }
 
     // Repositories
     single { AndroidContactLoadRepository() }
