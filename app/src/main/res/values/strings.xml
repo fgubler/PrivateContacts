@@ -6,6 +6,7 @@
 
 <resources>
     <string name="app_name">Private Contacts</string>
+    <string name="app_name_calculator">Pocket Calculator</string>
     <string name="greetings_from_the_developer">Greetings from the Developer, Florian.</string>
 
     <string name="screen_contact_list">Contacts</string>

@@ -51,6 +51,34 @@
                 <data android:mimeType="text/x-vcard" />
             </intent-filter>
         </activity>
+
+        <!-- use the aliases to change the icon and name of the app -->
+        <activity-alias
+            android:name=".DefaultIconAlias"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:targetActivity=".view.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <activity-alias
+            android:name=".CalculatorIconAlias"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_calculator"
+            android:label="@string/app_name_calculator"
+            android:targetActivity=".view.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <receiver
             android:name=".infrastructure.calldetection.PhoneStateReceiver"
             android:exported="false"
