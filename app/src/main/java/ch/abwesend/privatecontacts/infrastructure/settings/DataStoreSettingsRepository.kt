@@ -81,7 +81,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.authenticationRequired
         set(value) = dataStore.setValue(authenticationRequiredEntry, value)
 
-   override var showInitialAppInfoDialog: Boolean
+    override var showInitialAppInfoDialog: Boolean
         get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
 
