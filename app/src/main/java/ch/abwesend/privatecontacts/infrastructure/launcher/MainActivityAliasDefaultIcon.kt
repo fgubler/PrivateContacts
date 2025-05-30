@@ -6,5 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.launcher
 
-/** just a dummy because the activity-alias needs a representing class */
+/**
+ * A dummy because the activity-alias needs a representing class.
+ * Beware: this class will need a proguard-exception to survive a production build.
+ */
 class MainActivityAliasDefaultIcon

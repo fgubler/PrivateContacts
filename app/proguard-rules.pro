@@ -20,6 +20,9 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# make sure to keep the dummy-classes for the activity-aliases
+-keep class ch.abwesend.privatecontacts.infrastructure.launcher.MainActivityAliasDefaultIcon { *; }
+-keep class ch.abwesend.privatecontacts.infrastructure.launcher.MainActivityAliasCalculatorIcon { *; }
 
 # Keep all classes and resources from ezvcard: the library uses reflection in some cases
 # re-insterting those creates strange warnings => trying to go without, first
