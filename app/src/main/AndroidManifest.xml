@@ -51,7 +51,7 @@
 
         <!-- use the aliases to change the icon and name of the app -->
         <activity-alias
-            android:name=".view.MainActivityAliasDefaultIcon"
+            android:name=".infrastructure.launcherappearance.MainActivityAliasDefaultIcon"
             android:enabled="true"
             android:exported="true"
             android:icon="@mipmap/app_icon"
@@ -64,7 +64,7 @@
         </activity-alias>
 
         <activity-alias
-            android:name=".view.MainActivityAliasCalculatorIcon"
+            android:name=".infrastructure.launcherappearance.MainActivityAliasCalculatorIcon"
             android:enabled="false"
             android:exported="true"
             android:icon="@mipmap/app_icon_calculator"
