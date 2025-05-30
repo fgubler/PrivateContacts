@@ -42,6 +42,7 @@ import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
+import ch.abwesend.privatecontacts.infrastructure.launcher.LauncherAppearanceRepository
 import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactDataRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupRepository
@@ -49,7 +50,6 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.FileAccessRepository
-import ch.abwesend.privatecontacts.infrastructure.launcher.LauncherAppearanceRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.IAndroidContactMutableFactory

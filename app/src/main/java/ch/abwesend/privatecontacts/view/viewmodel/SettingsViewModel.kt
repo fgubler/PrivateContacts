@@ -33,7 +33,7 @@ class SettingsViewModel : ViewModel() {
                 launcherAppearanceService.useDefaultAppearance()
             }
             return true
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             logger.error("Failed to change launcher appearance", e)
             return false
         }
