@@ -57,8 +57,11 @@ interface ISettingsState {
     // Security
     val authenticationRequired: Boolean
 
-    // Others
+    // Privacy
+    val useAlternativeAppIcon: Boolean
     val sendErrorsToCrashlytics: Boolean
+
+    // Others
     val currentVersion: Int
     val numberOfAppStarts: Int
     val latestUserPromptAtStartup: LocalDate
@@ -90,7 +93,9 @@ data class SettingsState(
 
     override val authenticationRequired: Boolean,
 
+    override val useAlternativeAppIcon: Boolean,
     override val sendErrorsToCrashlytics: Boolean,
+
     override val currentVersion: Int,
     override val numberOfAppStarts: Int,
     override val latestUserPromptAtStartup: LocalDate,
@@ -110,6 +115,7 @@ data class SettingsState(
             observeIncomingCalls = true,
             showAndroidContacts = true,
             authenticationRequired = false,
+            useAlternativeAppIcon = false,
             sendErrorsToCrashlytics = true,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,

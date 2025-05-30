@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -338,7 +336,6 @@ object SettingsScreen {
 
     @Composable
     private fun AuthenticationField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
         var errorDialogTextRes: Int? by remember { mutableStateOf(null) }
         var fieldEnabled: Boolean by remember { mutableStateOf(true) }
 
@@ -398,19 +395,16 @@ object SettingsScreen {
         currentSettings: ISettingsState,
         viewModel: SettingsViewModel
     ) {
-        val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
-            SettingsCheckbox(
-                label = R.string.settings_entry_use_alternative_icon_and_name,
-                description = R.string.settings_entry_use_alternative_icon_and_name_description, // TODO add info-dialog
-                value = false, // TODO fix
+            SettingsCheckboxWithInfoButton(
+                label = R.string.settings_entry_use_alternative_icon,
+                description = R.string.settings_entry_use_alternative_icon_description,
+                infoDialogTitle = R.string.settings_entry_use_alternative_icon,
+                infoDialogText = R.string.settings_entry_use_alternative_icon_info_dialog_text,
+                value = currentSettings.useAlternativeAppIcon,
                 onValueChanged = {
+                    settingsRepository.useAlternativeAppIcon = it
                     viewModel.changeLauncherAppearance(it)
-                    Toast.makeText(
-                        context,
-                        R.string.settings_use_alternative_icon_and_name_success_confirmation,
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             )
 

@@ -67,6 +67,10 @@ internal val observeIncomingCallsEntry = SettingsEntry(
     key = booleanPreferencesKey("observeIncomingCalls"),
     defaultValue = defaultSettings.observeIncomingCalls
 )
+internal val useAlternativeAppIconEntry = SettingsEntry(
+    key = booleanPreferencesKey("useAlternativeAppIcon"),
+    defaultValue = defaultSettings.useAlternativeAppIcon
+)
 internal val sendErrorsToCrashlyticsEntry = SettingsEntry(
     key = booleanPreferencesKey("sendErrorsToCrashlytics"),
     defaultValue = defaultSettings.sendErrorsToCrashlytics

@@ -81,7 +81,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.authenticationRequired
         set(value) = dataStore.setValue(authenticationRequiredEntry, value)
 
-    override var showInitialAppInfoDialog: Boolean
+   override var showInitialAppInfoDialog: Boolean
         get() = currentSettings.showInitialAppInfoDialog
         set(value) = dataStore.setValue(initialInfoDialogEntry, value)
 
@@ -96,6 +96,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var observeIncomingCalls: Boolean
         get() = currentSettings.observeIncomingCalls
         set(value) = dataStore.setValue(observeIncomingCallsEntry, value)
+
+    override var useAlternativeAppIcon: Boolean
+        get() = currentSettings.useAlternativeAppIcon
+        set(value) = dataStore.setValue(useAlternativeAppIconEntry, value)
 
     override var sendErrorsToCrashlytics: Boolean
         get() = currentSettings.sendErrorsToCrashlytics
@@ -142,6 +146,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         showAndroidContacts = settings.showAndroidContacts
+        useAlternativeAppIcon = settings.useAlternativeAppIcon
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType
         defaultExternalContactAccount = settings.defaultExternalContactAccount

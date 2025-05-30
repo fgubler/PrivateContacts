@@ -45,8 +45,11 @@ interface SettingsRepository : ISettingsState {
     // Security
     override var authenticationRequired: Boolean
 
-    // Others
+    // Privacy
+    override var useAlternativeAppIcon: Boolean
     override var sendErrorsToCrashlytics: Boolean
+
+    // Others
     override var currentVersion: Int
     override var numberOfAppStarts: Int
     override var latestUserPromptAtStartup: LocalDate
