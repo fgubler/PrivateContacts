@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.view.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -24,11 +25,17 @@ class SettingsViewModel : ViewModel() {
         return result.await()
     }
 
-    fun changeLauncherAppearance(hideAppPurpose: Boolean) {
-        if (hideAppPurpose) {
-            launcherAppearanceService.useCalculatorAppearance()
-        } else {
-            launcherAppearanceService.useDefaultAppearance()
+    fun changeLauncherAppearance(hideAppPurpose: Boolean): Boolean {
+        try {
+            if (hideAppPurpose) {
+                launcherAppearanceService.useCalculatorAppearance()
+            } else {
+                launcherAppearanceService.useDefaultAppearance()
+            }
+            return true
+        } catch(e: Exception) {
+            logger.error("Failed to change launcher appearance", e)
+            return false
         }
     }
 }

@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -395,6 +398,7 @@ object SettingsScreen {
         currentSettings: ISettingsState,
         viewModel: SettingsViewModel
     ) {
+        val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
             SettingsCheckboxWithInfoButton(
                 label = R.string.settings_entry_use_alternative_icon,
@@ -404,7 +408,8 @@ object SettingsScreen {
                 value = currentSettings.useAlternativeAppIcon,
                 onValueChanged = {
                     settingsRepository.useAlternativeAppIcon = it
-                    viewModel.changeLauncherAppearance(it)
+                    val success = viewModel.changeLauncherAppearance(it)
+                    showAppearanceChangeResultToast(context, success)
                 }
             )
 
@@ -417,6 +422,12 @@ object SettingsScreen {
                 onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
             )
         }
+    }
+
+    private fun showAppearanceChangeResultToast(context: Context, success: Boolean) {
+        val message = if (success) R.string.settings_use_alternative_icon_and_name_success_confirmation
+        else R.string.settings_use_alternative_icon_and_name_failure_confirmation
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
 
