@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,6 +52,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Sentences
 import androidx.compose.ui.text.input.KeyboardCapitalization.Companion.Words
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
@@ -135,7 +135,7 @@ object ContactEditScreenContent {
 
         val scrollState = rememberScrollState()
         val hasWritePermission = remember { viewModel.hasContactWritePermission }
-        val allContactGroups by viewModel.allContactGroups.collectAsState(initial = InactiveResource())
+        val allContactGroups by viewModel.allContactGroups.collectAsStateWithLifecycle(initialValue = InactiveResource())
 
         Column(
             modifier = modifier.verticalScroll(scrollState)

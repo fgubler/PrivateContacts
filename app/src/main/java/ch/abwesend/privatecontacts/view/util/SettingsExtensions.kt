@@ -8,15 +8,15 @@ package ch.abwesend.privatecontacts.view.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 
 @Composable
 fun Settings.observeAsState(): State<ISettingsState> =
-    flow.collectAsState(initial = SettingsState.defaultSettings)
+    flow.collectAsStateWithLifecycle(initialValue = SettingsState.defaultSettings)
 
 @Composable
 fun Settings.observeAsNullableState(): State<ISettingsState?> =
-    flow.collectAsState(initial = null)
+    flow.collectAsStateWithLifecycle(initialValue = null)

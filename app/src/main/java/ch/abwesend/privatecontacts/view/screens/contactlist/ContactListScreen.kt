@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +33,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
@@ -188,7 +188,7 @@ object ContactListScreen {
     @Composable
     private fun ContactListContent(screenContext: IContactListScreenContext) {
         val viewModel = screenContext.contactListViewModel
-        val contactsResource = viewModel.contacts.collectAsState(initial = InactiveResource()).value
+        val contactsResource = viewModel.contacts.collectAsStateWithLifecycle(initialValue = InactiveResource()).value
 
         val screenState = viewModel.screenState.value
         val bulkMode = screenState is ContactListScreenState.BulkMode

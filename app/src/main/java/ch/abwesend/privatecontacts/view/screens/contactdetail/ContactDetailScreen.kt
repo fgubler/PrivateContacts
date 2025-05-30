@@ -25,7 +25,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +34,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
@@ -83,7 +83,7 @@ object ContactDetailScreen {
     @Composable
     fun Screen(screenContext: IContactDetailScreenContext) {
         val viewModel = screenContext.contactDetailViewModel
-        val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsState()
+        val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsStateWithLifecycle()
 
         BaseScreen(
             screenContext = screenContext,

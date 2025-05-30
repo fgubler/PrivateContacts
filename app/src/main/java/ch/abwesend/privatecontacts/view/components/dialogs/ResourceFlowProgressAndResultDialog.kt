@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.view.components.dialogs
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.lib.flow.InactiveResource
@@ -30,7 +30,7 @@ fun <T> ResourceFlowProgressAndResultDialog(
     },
     ResultDialog: @Composable (result: T, onCLose: () -> Unit) -> Unit,
 ) {
-    val resource = flow.collectAsState(initial = InactiveResource()).value
+    val resource = flow.collectAsStateWithLifecycle(initialValue = InactiveResource()).value
     flow.logger.debug("Received resource of type ${resource.javaClass.simpleName}")
 
     when (resource) {
