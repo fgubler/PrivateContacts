@@ -21,6 +21,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -172,5 +173,35 @@ object SettingsComponents {
             color = textColor,
             modifier = modifier,
         )
+    }
+
+    @Composable
+    fun SettingsCheckboxWithInfoButton(
+        @StringRes label: Int,
+        @StringRes description: Int?,
+        @StringRes infoDialogTitle: Int,
+        @StringRes infoDialogText: Int,
+        value: Boolean,
+        enabled: Boolean = true,
+        onValueChanged: (Boolean) -> Unit,
+    ) {
+        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Surface(modifier = Modifier.weight(1.0f)) {
+                SettingsCheckbox(
+                    label = label,
+                    description = description,
+                    enabled = enabled,
+                    value = value,
+                    onValueChanged = onValueChanged
+                )
+            }
+            InfoIconButton { showInfoDialog = true }
+        }
+
+        if (showInfoDialog) {
+            OkDialog(title = infoDialogTitle, text = infoDialogText,) { showInfoDialog = false }
+        }
     }
 }

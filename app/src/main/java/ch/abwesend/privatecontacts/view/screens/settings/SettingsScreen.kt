@@ -8,13 +8,11 @@ package ch.abwesend.privatecontacts.view.screens.settings
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -37,7 +34,6 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
@@ -56,6 +52,7 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategory
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategorySpacer
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckboxWithInfoButton
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
@@ -377,25 +374,16 @@ object SettingsScreen {
             }
         }
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.weight(1.0f)) {
-                SettingsCheckbox(
-                    label = R.string.settings_entry_enable_authentication,
-                    description = R.string.settings_entry_enable_authentication_description,
-                    enabled = fieldEnabled,
-                    value = currentSettings.authenticationRequired,
-                    onValueChanged = onValueChanged
-                )
-            }
-            InfoIconButton { showInfoDialog = true }
-        }
+        SettingsCheckboxWithInfoButton(
+            label = R.string.settings_entry_enable_authentication,
+            description = R.string.settings_entry_enable_authentication_description,
+            infoDialogTitle = R.string.settings_entry_enable_authentication,
+            infoDialogText = R.string.settings_entry_enable_authentication_info_dialog,
+            enabled = fieldEnabled,
+            value = currentSettings.authenticationRequired,
+            onValueChanged = onValueChanged
+        )
 
-        if (showInfoDialog) {
-            OkDialog(
-                title = R.string.settings_entry_enable_authentication,
-                text = R.string.settings_entry_enable_authentication_info_dialog,
-            ) { showInfoDialog = false }
-        }
         errorDialogTextRes?.let {
             OkDialog(
                 title = R.string.authentication_registration_failed_title,
