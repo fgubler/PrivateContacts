@@ -35,18 +35,18 @@ enum class Screen(
         showInSideDrawer = true,
     ),
 
-    Settings(
-        titleRes = R.string.screen_settings,
-        icon = Icons.Default.Settings,
-        key = "SettingsScreen",
-        selfInitializing = true,
-        showInSideDrawer = true,
-    ),
-
     ImportExport(
         titleRes = R.string.screen_import_export,
         icon = Icons.Default.Output,
         key = "ImportExportScreen",
+        selfInitializing = true,
+        showInSideDrawer = true,
+    ),
+
+    Settings(
+        titleRes = R.string.screen_settings,
+        icon = Icons.Default.Settings,
+        key = "SettingsScreen",
         selfInitializing = true,
         showInSideDrawer = true,
     ),
