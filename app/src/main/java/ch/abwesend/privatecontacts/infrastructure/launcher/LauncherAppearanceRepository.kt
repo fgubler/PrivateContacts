@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.launcherappearance
+package ch.abwesend.privatecontacts.infrastructure.launcher
 
 import android.content.ComponentName
 import android.content.Context
