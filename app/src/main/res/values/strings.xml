@@ -249,6 +249,8 @@
     <string name="play_store_entry">PlayStore entry</string>
     <string name="in_app_review">Rate the app</string>
     <string name="github_page">Github page</string>
+    <string name="user_guide">User Guide</string>
+    <string name="technical_explanations">Explanations of technical details</string>
     <string name="report_error_github">Report a bug on Github</string>
     <string name="report_error">Report a bug</string>
     <string name="write_email">Write an email</string>

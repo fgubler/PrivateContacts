@@ -98,6 +98,16 @@ object AboutScreen {
                 }
             }
             BulletPointListItem {
+                LinkText(text = stringResource(id = R.string.user_guide)) {
+                    openLink(context, "https://github.com/fgubler/PrivateContacts/blob/master/README.md#user-guide")
+                }
+            }
+            BulletPointListItem {
+                LinkText(text = stringResource(id = R.string.technical_explanations)) {
+                    openLink(context, "https://github.com/fgubler/PrivateContacts/blob/master/README.md#technical-background")
+                }
+            }
+            BulletPointListItem {
                 LinkText(text = stringResource(id = R.string.privacy_title)) {
                     openLink(context, "https://www.privacypolicies.com/live/f40e5368-c69c-4530-9abc-60fef967ef93")
                 }
