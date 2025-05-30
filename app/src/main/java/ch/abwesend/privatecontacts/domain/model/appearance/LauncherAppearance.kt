@@ -7,6 +7,6 @@
 package ch.abwesend.privatecontacts.domain.model.appearance
 
 enum class LauncherAppearance {
-    NORMAL,
+    DEFAULT,
     CALCULATOR
 }
