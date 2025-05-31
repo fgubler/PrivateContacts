@@ -16,13 +16,12 @@ Additional features
 - Moving contacts from Private Contacts back the the standard Android contact database (in case that is desired)
 - Support of Imports/Exports in vcf format
 - Protecting the app with biometric prompt
+- Hiding the app by changing the app-name and -icon to "Pocket Calculator" with a calculator-icon.
 
 ## What the app will be able to do in the future
 
 - Support of additional features of a contact app
-  - Profile images
   - Mark contacts as favorites
-  - Add contacts to groups/labels
 - Improvements of caller detection
 - Maybe an additional category of "Anonymized" contacts which are shared with other apps but under an alias.
 - Encryption and password protection
@@ -71,6 +70,9 @@ All settings in this section define defaults which can be overridden by the user
 - _App authentication_: will add an authentication-step in the app startup. This means that the user will e.g. have to authenticate by fingerprint or face-id before seing the list of contacts. Disclaimer: the app does not implement any of the authentication-methods itself but uses the standard-authentication defined by the operating system (Google is better at this kind of thing).
 
 #### Privacy
+- _Hide app name and icon_: changes the name and icon of the app on the home-screen and in the app-overview. The app pretends to be a simple calculator app named "Pocket Calculator" (the name was chosen to start with the same letter so the app can be more easily found in alphabetical sorting).
+  - However, in the system-settings the true name will still appear.
+  - Dependening on your phone, operating system and launcher, you will have to restart your phone to see the change - we appologize for the inconvenience but that is outside of our control.
 - _Send anonymous error reports_: if the app crashes or something goes wrong during its operation, we won't notice unless it happens on one of our phones. That is not satisfying because many bugs only appear under very specific circumstances (like only on one specific model or manufacturer). Therefore, we use Google's "Crashlytics" framework to get error-reports. We make sure that no sensitive information is written into these reports. However, you can ofc turn this off if it makes you uncomfortable. In that case, please let us know about bugs by email.
 
 ## Technical Background
