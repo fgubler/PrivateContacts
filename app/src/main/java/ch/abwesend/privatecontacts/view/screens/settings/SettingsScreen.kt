@@ -29,6 +29,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -224,11 +225,26 @@ object SettingsScreen {
             infoPopupText = R.string.settings_info_dialog_android_contacts_permission,
             hideInfoPopup = currentSettings.showAndroidContacts,
         ) {
+            val secondTabOptions = remember {
+                SecondTabMode.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
+            }
+
             SettingsCheckbox(
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
                 value = currentSettings.showAndroidContacts,
             ) { newValue -> onShowAndroidContactsChanged(permissionProvider, settingsRepository, newValue) }
+
+            SettingsEntryDivider()
+
+            SettingsDropDown(
+                label = R.string.settings_entry_second_tab,
+                description = R.string.settings_entry_second_tab_description,
+                value = currentSettings.secondTabMode,
+                options = secondTabOptions,
+                enabled = currentSettings.showAndroidContacts, // second tab is not shown, otherwise
+                onValueChanged = { settingsRepository.secondTabMode = it }
+            )
         }
     }
 

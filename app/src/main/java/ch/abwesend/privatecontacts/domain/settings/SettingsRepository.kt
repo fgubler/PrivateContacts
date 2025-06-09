@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.settings
 
+import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -28,6 +29,8 @@ interface SettingsRepository : ISettingsState {
     override var showInitialAppInfoDialog: Boolean // invisible
 
     override var showWhatsAppButtons: Boolean
+
+    override var secondTabMode: SecondTabMode
 
     // Defaults
     override var defaultContactType: ContactType

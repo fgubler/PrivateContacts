@@ -287,6 +287,8 @@
     <string name="settings_entry_app_theme">App theme</string>
     <string name="settings_entry_add_safe_area_padding">Use only safe areas</string>
     <string name="settings_entry_add_safe_area_padding_description">Add borders around the app-content to make sure that all of it is both visible and clickable.</string>
+    <string name="settings_entry_second_tab">Second tab</string>
+    <string name="settings_entry_second_tab_description">The first tab only shows secret contacts. This setting defines what the second tab shows.</string>
     <string name="settings_entry_order_by_first_name">Order by first name</string>
     <string name="settings_entry_show_contact_types_on_contact_list">Show contact type in contact list</string>
     <string name="settings_entry_show_extra_buttons_in_edit_screen">Show additional save button in the edit-screen</string>
@@ -337,6 +339,7 @@
 
     <string name="secret_contacts_tab_title">Secret Contacts</string>
     <string name="all_contacts_tab_title">All Contacts</string>
+    <string name="public_contacts_tab_title">Public Contacts</string>
 
     <string name="target_account">Target account</string>
     <string name="app_internal">Within this app</string>

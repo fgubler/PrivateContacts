@@ -39,7 +39,7 @@ class ContactLoadService {
     suspend fun loadSecretContacts(): ResourceFlow<List<IContactBase>> =
         contactRepository.loadContactsAsFlow(All)
 
-    private fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
+    fun loadAndroidContacts(): ResourceFlow<List<IContactBase>> =
         androidContactService.loadContactsAsFlow(All)
 
     suspend fun searchSecretContacts(query: String): ResourceFlow<List<IContactBase>> {
@@ -68,7 +68,7 @@ class ContactLoadService {
         combineContacts(secretContacts, androidContacts)
     }
 
-    private fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
+    fun searchAndroidContacts(query: String): ResourceFlow<List<IContactBase>> {
         easterEggService.checkSearchForEasterEggs(query)
         return if (query.isEmpty()) loadAndroidContacts()
         else androidContactService.loadContactsAsFlow(Query(query))
