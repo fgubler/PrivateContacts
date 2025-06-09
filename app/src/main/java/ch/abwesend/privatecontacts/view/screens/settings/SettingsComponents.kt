@@ -131,12 +131,11 @@ object SettingsComponents {
         val textColor = if (enabled) normalContentColor() else disabledContentColor()
 
         DropDownComponent(options = options, enabled = enabled, onValueChanged = onValueChanged) { _, modifier ->
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-
                 Column(
                     modifier = modifier
                         .heightIn(min = 45.dp)
