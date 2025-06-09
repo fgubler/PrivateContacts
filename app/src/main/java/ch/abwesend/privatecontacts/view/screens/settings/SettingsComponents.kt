@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.util.doIf
+import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
@@ -128,19 +129,28 @@ object SettingsComponents {
         val selectedOption = remember(value) { options.find { it.value == value } }
 
         DropDownComponent(options = options, onValueChanged = onValueChanged) { _, modifier ->
-            Column(
-                modifier = modifier
-                    .heightIn(min = 45.dp)
-                    .padding(top = 10.dp, bottom = 10.dp)
+            Row (
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                    SettingsLabel(labelRes = label)
-                    selectedOption?.let {
-                        Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+
+                Column(
+                    modifier = modifier
+                        .heightIn(min = 45.dp)
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .weight(1f)
+                ) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween,) {
+                        SettingsLabel(labelRes = label)
+                        selectedOption?.let {
+                            Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+                        }
                     }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    description?.let { SettingsDescription(descriptionRes = it) }
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-                description?.let { SettingsDescription(descriptionRes = it) }
+                EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
             }
         }
     }
