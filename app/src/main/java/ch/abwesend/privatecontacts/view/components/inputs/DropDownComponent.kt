@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.view.model.DropDownOption
 fun <T> DropDownComponent(
     options: List<DropDownOption<T>>,
     onValueChanged: (T) -> Unit,
+    enabled: Boolean = true,
     maxMenuItemWidth: Dp = Dp.Unspecified,
     content: @Composable (dropDownExpanded: Boolean, modifier: Modifier) -> Unit,
 ) {
@@ -45,7 +46,11 @@ fun <T> DropDownComponent(
 
     ExposedDropdownMenuBox(
         expanded = dropdownExpanded,
-        onExpandedChange = { dropdownExpanded = !dropdownExpanded },
+        onExpandedChange = {
+            if (enabled) {
+                dropdownExpanded = !dropdownExpanded
+            }
+        },
     ) {
         content(dropdownExpanded, Modifier.onFocusChanged { focused = it.isFocused })
         ExposedDropdownMenu(

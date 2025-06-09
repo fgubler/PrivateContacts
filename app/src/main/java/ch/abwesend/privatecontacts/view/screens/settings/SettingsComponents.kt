@@ -124,11 +124,13 @@ object SettingsComponents {
         @StringRes description: Int?,
         value: T,
         options: List<DropDownOption<T>>,
+        enabled: Boolean = true,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
+        val textColor = if (enabled) normalContentColor() else disabledContentColor()
 
-        DropDownComponent(options = options, onValueChanged = onValueChanged) { _, modifier ->
+        DropDownComponent(options = options, enabled = enabled, onValueChanged = onValueChanged) { _, modifier ->
             Row (
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -142,15 +144,17 @@ object SettingsComponents {
                         .weight(1f)
                 ) {
                     Row(horizontalArrangement = Arrangement.SpaceBetween,) {
-                        SettingsLabel(labelRes = label)
+                        SettingsLabel(labelRes = label, textColor = textColor)
                         selectedOption?.let {
-                            Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+                            Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
                         }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
-                    description?.let { SettingsDescription(descriptionRes = it) }
+                    description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
                 }
-                EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
+                if (enabled) {
+                    EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
+                }
             }
         }
     }
