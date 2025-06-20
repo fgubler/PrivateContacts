@@ -60,6 +60,7 @@ import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.PUBLIC_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
@@ -113,14 +114,22 @@ object ContactListScreen {
     }
 
     private fun initializeScreen(viewModel: ContactListViewModel, settings: ISettingsState) {
-        viewModel.reloadContacts()
+        val selectedTab = viewModel.selectedTab.value
 
-        when (viewModel.selectedTab.value) {
+        if (!selectedTab.isVisible(settings)) { // typically after a settings-change
+            viewModel.selectTab(ContactListTab.default)
+            return
+        }
+
+        when (selectedTab) {
             SECRET_CONTACTS -> { /* nothing to do */ }
-            ALL_CONTACTS -> if (!settings.showAndroidContacts) {
+            ALL_CONTACTS, PUBLIC_CONTACTS -> if (!settings.showAndroidContacts) {
                 viewModel.selectTab(ContactListTab.default)
+                return
             }
         }
+
+        viewModel.reloadContacts()
     }
 
     @Composable
@@ -132,7 +141,9 @@ object ContactListScreen {
 
             TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
-                    Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
+                    if (tab.isVisible(settings)) {
+                        Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
+                    }
                 }
             }
         }

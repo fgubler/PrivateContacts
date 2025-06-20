@@ -80,10 +80,11 @@ fun BackIcon() {
 }
 
 @Composable
-fun EditIcon() {
+fun EditIcon(modifier: Modifier = Modifier) {
     Icon(
         imageVector = Icons.Default.Edit,
-        contentDescription = stringResource(id = R.string.edit)
+        contentDescription = stringResource(id = R.string.edit),
+        modifier = modifier,
     )
 }
 

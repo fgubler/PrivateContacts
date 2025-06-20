@@ -59,6 +59,7 @@ This sections explains the meaning and workings of the settings-screen.
 
 #### Section "Contact list"
 - _Show public contacts_: whether the app should just show you your secret contacts or also the public ones which are managed by your phone's standard contacts-app and the operating system. If this checkbox is set, the app will need the permission to access your phone's contacts. It will then populate a second tab showing both secret and public contacts.
+- _Second tab_: the first tab will always show the list of _secret_ contacts. This setting allows the user to define what the second tab should show: either _all_ contacts or just the _public_ ones.
 
 #### Section "Default values"
 All settings in this section define defaults which can be overridden by the user on the spot.

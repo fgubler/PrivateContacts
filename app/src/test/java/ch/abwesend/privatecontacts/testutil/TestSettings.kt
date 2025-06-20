@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.testutil
 
+import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -26,6 +27,7 @@ data class TestSettings(
     override var showContactTypeInList: Boolean = currentSettings.showContactTypeInList
     override var showInitialAppInfoDialog: Boolean = currentSettings.showInitialAppInfoDialog
     override var showWhatsAppButtons: Boolean = currentSettings.showWhatsAppButtons
+    override var secondTabMode: SecondTabMode = currentSettings.secondTabMode
     override var defaultContactType: ContactType = currentSettings.defaultContactType
     override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions

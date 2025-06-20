@@ -59,6 +59,10 @@ internal val showWhatsAppButtonsEntry = SettingsEntry(
     key = booleanPreferencesKey("showWhatsAppButtons"),
     defaultValue = defaultSettings.showWhatsAppButtons
 )
+internal val secondTabModeEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("secondTabMode"),
+    defaultValue = defaultSettings.secondTabMode
+)
 internal val requestIncomingCallPermissionsEntry = SettingsEntry(
     key = booleanPreferencesKey("requestIncomingCallPermissions"),
     defaultValue = defaultSettings.requestIncomingCallPermissions

@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.util.doIf
+import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
@@ -123,24 +124,36 @@ object SettingsComponents {
         @StringRes description: Int?,
         value: T,
         options: List<DropDownOption<T>>,
+        enabled: Boolean = true,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
+        val textColor = if (enabled) normalContentColor() else disabledContentColor()
 
-        DropDownComponent(options = options, onValueChanged = onValueChanged) { _, modifier ->
-            Column(
-                modifier = modifier
-                    .heightIn(min = 45.dp)
-                    .padding(top = 10.dp, bottom = 10.dp)
+        DropDownComponent(options = options, enabled = enabled, onValueChanged = onValueChanged) { _, modifier ->
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Row(horizontalArrangement = Arrangement.SpaceBetween) {
-                    SettingsLabel(labelRes = label)
-                    selectedOption?.let {
-                        Text(it.getLabel(), modifier = Modifier.padding(start = 10.dp))
+                Column(
+                    modifier = modifier
+                        .heightIn(min = 45.dp)
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .weight(1f)
+                ) {
+                    Row(horizontalArrangement = Arrangement.SpaceBetween,) {
+                        SettingsLabel(labelRes = label, textColor = textColor)
+                        selectedOption?.let {
+                            Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
+                        }
                     }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-                description?.let { SettingsDescription(descriptionRes = it) }
+                if (enabled) {
+                    EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
+                }
             }
         }
     }

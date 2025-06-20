@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.settings
 
 import ch.abwesend.privatecontacts.BuildConfig
+import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -29,6 +30,9 @@ interface ISettingsState {
 
     /** shows a button to open a phone-number in WhatsApp */
     val showWhatsAppButtons: Boolean
+
+    /** what kind of contacts the second tab should show */
+    val secondTabMode: SecondTabMode
 
     // Defaults
     val defaultContactType: ContactType
@@ -80,6 +84,7 @@ data class SettingsState(
     override val showInitialAppInfoDialog: Boolean,
 
     override val showWhatsAppButtons: Boolean,
+    override val secondTabMode: SecondTabMode,
 
     override val defaultContactType: ContactType,
     override val defaultExternalContactAccount: ContactAccount,
@@ -111,6 +116,7 @@ data class SettingsState(
             showIncomingCallsOnLockScreen = true,
             showInitialAppInfoDialog = true,
             showWhatsAppButtons = true,
+            secondTabMode = SecondTabMode.ALL_CONTACTS,
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             showAndroidContacts = true,

@@ -42,6 +42,7 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.PUBLIC_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
 import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactDeleteResult
 import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactExportResult
@@ -154,6 +155,7 @@ class ContactListViewModel : ViewModel() {
         logger.debug("Loading contacts")
         return when (selectedTab.value) {
             SECRET_CONTACTS -> loadService.loadSecretContacts()
+            PUBLIC_CONTACTS -> loadService.loadAndroidContacts()
             ALL_CONTACTS -> loadService.loadAllContacts()
         }
     }
@@ -163,6 +165,7 @@ class ContactListViewModel : ViewModel() {
         logger.debug("Searching contacts with query '$query'")
         return when (selectedTab.value) {
             SECRET_CONTACTS -> loadService.searchSecretContacts(query)
+            PUBLIC_CONTACTS -> loadService.searchAndroidContacts(query)
             ALL_CONTACTS -> loadService.searchAllContacts(query)
         }
     }

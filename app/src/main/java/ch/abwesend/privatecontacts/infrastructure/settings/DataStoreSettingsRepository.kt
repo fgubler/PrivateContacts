@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
@@ -89,6 +90,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showWhatsAppButtons
         set(value) = dataStore.setValue(showWhatsAppButtonsEntry, value)
 
+    override var secondTabMode: SecondTabMode
+        get() = currentSettings.secondTabMode
+        set(value) = dataStore.setEnumValue(secondTabModeEntry, value)
+
     override var requestIncomingCallPermissions: Boolean
         get() = currentSettings.requestIncomingCallPermissions
         set(value) = dataStore.setValue(requestIncomingCallPermissionsEntry, value)
@@ -143,6 +148,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         showIncomingCallsOnLockScreen = settings.showIncomingCallsOnLockScreen
         showInitialAppInfoDialog = settings.showInitialAppInfoDialog
         showWhatsAppButtons = settings.showWhatsAppButtons
+        secondTabMode = settings.secondTabMode
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         showAndroidContacts = settings.showAndroidContacts
