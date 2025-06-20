@@ -30,7 +30,7 @@ fun PhoneNumber.tryNavigateToWhatsApp(context: Context, clickCounter: Int): What
         }
     }
 } catch (e: Exception) {
-    logger.error("Failed to send intent to whatsapp with click-counter $clickCounter", e)
+    logger.warning("Failed to send intent to whatsapp with click-counter $clickCounter", e)
     NAVIGATION_FAILED
 }
 
