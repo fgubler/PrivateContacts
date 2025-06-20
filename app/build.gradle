@@ -56,7 +56,10 @@ android {
 
     flavorDimensions = ["appStore"]
     productFlavors {
-        googlePlay { dimension "appStore" }
+        googlePlay {
+            dimension "appStore"
+            isDefault true
+        }
         fdroid { dimension "appStore" }
     }
 
