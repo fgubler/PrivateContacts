@@ -36,7 +36,8 @@ data class TestSettings(
     override var authenticationRequired: Boolean = currentSettings.authenticationRequired
     override var useAlternativeAppIcon: Boolean = currentSettings.useAlternativeAppIcon
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics
-    override var currentVersion: Int = 0
+    override var currentVersion: Int = currentSettings.currentVersion
+    override var previousVersion: Int = currentSettings.previousVersion
     override var numberOfAppStarts: Int = currentSettings.numberOfAppStarts
     override var latestUserPromptAtStartup: LocalDate = currentSettings.latestUserPromptAtStartup
     override var showReviewDialog: Boolean = currentSettings.showReviewDialog
@@ -44,6 +45,10 @@ data class TestSettings(
     override var defaultVCardVersion: VCardVersion = currentSettings.defaultVCardVersion
     override var showExtraButtonsInEditScreen: Boolean = currentSettings.showExtraButtonsInEditScreen
     override var invertTopAndBottomBars: Boolean = currentSettings.invertTopAndBottomBars
+
+    override suspend fun nextSettings(): ISettingsState {
+        return currentSettings
+    }
 
     override fun overrideSettingsWith(settings: ISettingsState) {
         // Do nothing
