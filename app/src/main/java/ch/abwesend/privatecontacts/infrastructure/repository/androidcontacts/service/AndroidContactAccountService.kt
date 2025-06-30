@@ -30,7 +30,7 @@ class AndroidContactAccountService {
             is ContactAccount.LocalPhoneContacts -> contact.saveInAccount
             is ContactAccount.None -> {
                 val accountFromGroups = contact.guessAccountFromContactGroups()
-                accountFromGroups ?: Settings.current.defaultExternalContactAccount
+                accountFromGroups ?: Settings.nextOrDefault().defaultExternalContactAccount
             }
         }
 

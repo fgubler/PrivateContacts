@@ -10,11 +10,12 @@ import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
-import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
+    suspend fun nextSettings(): ISettingsState?
     fun overrideSettingsWith(settings: ISettingsState)
 
     // UX
@@ -54,6 +55,7 @@ interface SettingsRepository : ISettingsState {
 
     // Others
     override var currentVersion: Int
+    override var previousVersion: Int
     override var numberOfAppStarts: Int
     override var latestUserPromptAtStartup: LocalDate
     override var showReviewDialog: Boolean

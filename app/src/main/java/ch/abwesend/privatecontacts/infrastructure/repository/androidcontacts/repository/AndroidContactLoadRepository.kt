@@ -104,7 +104,7 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
             }
         }
 
-        val displayNameStyle = if (Settings.current.orderByFirstName) Primary else Alternative
+        val displayNameStyle = if (Settings.nextOrDefault().orderByFirstName) Primary else Alternative
         val androidContacts = withContactStore { contactStore ->
             contactStore.fetchContacts(
                 predicate = predicate,

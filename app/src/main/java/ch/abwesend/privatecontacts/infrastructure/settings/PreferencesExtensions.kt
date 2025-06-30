@@ -41,6 +41,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     defaultExternalContactAccount = buildDefaultContactAccount(),
     defaultVCardVersion = tryGetEnumValue(defaultVCardVersionEntry),
     currentVersion = getValue(currentVersionEntry),
+    previousVersion = getValue(previousVersionEntry),
     numberOfAppStarts = getValue(numberOfAppStartsEntry),
     latestUserPromptAtStartup = tryGetDateValue(latestUserPromptAtStartupEntry),
     showReviewDialog = getValue(showReviewDialogEntry),
