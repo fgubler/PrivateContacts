@@ -120,7 +120,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         val phoneNumberQuery = searchService.prepareQueryForPhoneNumberSearch(config.query)
             .takeIf { searchService.isLongEnough(it) }.orEmpty()
 
-        return if (Settings.current.orderByFirstName) {
+        return if (Settings.nextOrDefault().orderByFirstName) {
             contactDao().searchPagedByFirstName(
                 query = config.query,
                 phoneNumberQuery = phoneNumberQuery,

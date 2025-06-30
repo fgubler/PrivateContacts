@@ -15,6 +15,7 @@ import java.time.LocalDate
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
+    suspend fun nextSettings(): ISettingsState?
     fun overrideSettingsWith(settings: ISettingsState)
 
     // UX

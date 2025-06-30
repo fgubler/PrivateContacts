@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -40,6 +41,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private var currentSettings: ISettingsState = SettingsState.defaultSettings
 
     override val settings: Flow<ISettingsState> = dataStore.data.map { it.createSettingsState() }
+
+    override suspend fun nextSettings(): ISettingsState? {
+        return settings.firstOrNull()
+    }
 
     init {
         coroutineScope.launch(dispatchers.io) {
