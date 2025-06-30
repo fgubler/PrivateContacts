@@ -269,7 +269,7 @@
     <string name="review_dialog_secondary_text">Is this a good time for a review?</string>
 
     <string name="release_notes_dialog_title">What\'s New</string>
-    <string name="release_notes_v84">• Added dialog for release-notes to inform about new features.</string>
+    <string name="release_notes_v84">Added dialog for release-notes to inform about new features.</string>
 
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
