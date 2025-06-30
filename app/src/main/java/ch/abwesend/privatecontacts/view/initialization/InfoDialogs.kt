@@ -37,10 +37,10 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFe
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.ReviewDialog
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.showAndroidReview
-import java.time.LocalDate
-import java.time.Period
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.Period
 
 @Composable
 fun InfoDialogs(

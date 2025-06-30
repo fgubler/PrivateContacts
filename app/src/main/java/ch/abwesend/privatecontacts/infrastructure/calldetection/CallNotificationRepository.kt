@@ -23,9 +23,9 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import java.util.UUID
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
 private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min

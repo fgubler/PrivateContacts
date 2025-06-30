@@ -78,8 +78,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.FlowPreview
+import kotlin.contracts.ExperimentalContracts
 
 private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
