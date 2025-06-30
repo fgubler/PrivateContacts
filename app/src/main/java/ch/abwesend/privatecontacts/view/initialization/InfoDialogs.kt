@@ -7,15 +7,23 @@
 package ch.abwesend.privatecontacts.view.initialization
 
 import android.app.Activity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDoNotShowAgainDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
@@ -25,10 +33,10 @@ import ch.abwesend.privatecontacts.view.initialization.InitializationState.NewFe
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.ReviewDialog
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.showAndroidReview
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.Period
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun InfoDialogs(
@@ -39,7 +47,7 @@ fun InfoDialogs(
     when (initializationState) {
         InitialInfoDialog -> InitialAppInfoDialog(settings, goToNextState)
         ReviewDialog -> ReviewDialog(settings, goToNextState)
-        NewFeaturesDialog -> goToNextState() // TODO implement
+        NewFeaturesDialog -> NewFeaturesDialog(settings, goToNextState)
     }
 }
 
@@ -107,5 +115,30 @@ private fun showAndroidReview(activity: Activity, coroutineScope: CoroutineScope
     coroutineScope.launch {
         activity.showAndroidReview()
         close()
+    }
+}
+
+@Composable
+private fun NewFeaturesDialog(settings: ISettingsState, close: () -> Unit) {
+    val previousVersion = remember { settings.previousVersion }
+    val currentVersion = remember { settings.currentVersion }
+    val releaseNotes = remember { ReleaseNotes.getReleaseNotesBetween(previousVersion, currentVersion) }
+
+    if (previousVersion >= currentVersion || previousVersion == 0 || releaseNotes.isEmpty()) {
+        close()
+        return
+    }
+
+    OkDialog(
+        title = R.string.release_notes_dialog_title,
+        onClose = close
+    ) {
+        // Display each release note with its text
+        Column {
+            releaseNotes.forEach { releaseNote ->
+                Text(text = stringResource(id = releaseNote.textResourceId))
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
     }
 }

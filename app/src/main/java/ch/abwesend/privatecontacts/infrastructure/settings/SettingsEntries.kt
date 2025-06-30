@@ -105,6 +105,11 @@ internal val currentVersionEntry = SettingsEntry(
     defaultValue = defaultSettings.currentVersion
 )
 
+internal val previousVersionEntry = SettingsEntry(
+    key = intPreferencesKey("previousVersion"),
+    defaultValue = defaultSettings.previousVersion
+)
+
 internal val numberOfAppStartsEntry = SettingsEntry(
     key = intPreferencesKey("numberOfAppStarts"),
     defaultValue = defaultSettings.numberOfAppStarts

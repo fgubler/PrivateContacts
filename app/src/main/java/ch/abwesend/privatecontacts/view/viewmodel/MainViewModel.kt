@@ -12,6 +12,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
@@ -27,6 +28,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
@@ -58,6 +60,15 @@ class MainViewModel : ViewModel() {
      */
     private val _contactImportResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
     val contactImportResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _contactImportResult
+
+    fun updateAppStatistics(settings: ISettingsState) {
+        // app starts
+        Settings.repository.numberOfAppStarts = settings.numberOfAppStarts + 1
+
+        // app version
+        Settings.repository.previousVersion = settings.currentVersion
+        Settings.repository.currentVersion = BuildConfig.VERSION_CODE
+    }
 
     fun goToNextState() {
         val oldState = _initializationState.value

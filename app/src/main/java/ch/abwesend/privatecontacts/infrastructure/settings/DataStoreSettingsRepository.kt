@@ -24,12 +24,12 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -118,12 +118,19 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
+
+    override var previousVersion: Int
+        get() = currentSettings.previousVersion
+        set(value) = dataStore.setValue(previousVersionEntry, value)
+
     override var numberOfAppStarts: Int
         get() = currentSettings.numberOfAppStarts
         set(value) = dataStore.setValue(numberOfAppStartsEntry, value)
+
     override var latestUserPromptAtStartup: LocalDate
         get() = currentSettings.latestUserPromptAtStartup
         set(value) = dataStore.setDateValue(latestUserPromptAtStartupEntry, value)
+
     override var showReviewDialog: Boolean
         get() = currentSettings.showReviewDialog
         set(value) = dataStore.setValue(showReviewDialogEntry, value)
@@ -166,6 +173,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         /*
            meta-data is not changed
                - currentVersion
+               - previousVersion
                - numberOfAppStarts
                - latestUserPromptAtStartup
          */

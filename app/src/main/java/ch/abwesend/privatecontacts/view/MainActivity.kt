@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.IntentCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -79,8 +78,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
@@ -110,7 +109,6 @@ class MainActivity : AppCompatActivity() {
         contactPermissionHelper.setupObservers(this)
         callScreeningRoleHelper.setupObserver(this)
 
-        Settings.repository.currentVersion = BuildConfig.VERSION_CODE
         handleIncomingIntent(intent)
 
         setContent {
@@ -120,6 +118,7 @@ class MainActivity : AppCompatActivity() {
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
+                    LaunchedEffect(Unit) { viewModel.updateAppStatistics(it) }
                     MainContent(initializationState, viewModel, it) { viewModel.goToNextState() }
                 } ?: InitialLoadingView()
             }
