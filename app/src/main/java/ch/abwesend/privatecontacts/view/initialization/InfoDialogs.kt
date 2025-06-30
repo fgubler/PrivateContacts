@@ -139,12 +139,14 @@ private fun ReleaseNotesDialog(settings: ISettingsState, close: () -> Unit) {
     ) {
         LazyColumn {
             items(releaseNotes) { releaseNote ->
-                Row(verticalAlignment = CenterVertically) {
-                    Text(text = "•")
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Text(text = stringResource(id = releaseNote.textResourceId))
+                releaseNote.textResourceIds.forEach { textResourceId ->
+                    Row(verticalAlignment = CenterVertically) {
+                        Text(text = "•")
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(text = stringResource(id = textResourceId))
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
                 }
-                Spacer(modifier = Modifier.height(5.dp))
             }
         }
     }

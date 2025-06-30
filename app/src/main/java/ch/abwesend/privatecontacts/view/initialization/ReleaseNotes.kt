@@ -1,6 +1,5 @@
 package ch.abwesend.privatecontacts.view.initialization
 
-import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R
 
 /**
@@ -15,12 +14,15 @@ object ReleaseNotes {
     }
 
     private val releaseNotes = listOf(
-        ReleaseNote(versionCode = 84, textResourceId = R.string.release_notes_v84),
+        ReleaseNote(
+            versionCode = 84,
+            textResourceIds = listOf(R.string.release_notes_v84_1, R.string.release_notes_v84_2)
+        ),
         // Add more release notes as needed
     )
 }
 
 data class ReleaseNote(
     val versionCode: Int,
-    @StringRes val textResourceId: Int
+    val textResourceIds: List<Int>
 )
