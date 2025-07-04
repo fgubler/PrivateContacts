@@ -37,7 +37,6 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
-import ch.abwesend.privatecontacts.domain.util.LocaleUtil
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
@@ -63,6 +62,7 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.flow.firstOrNull
@@ -150,7 +150,7 @@ object SettingsScreen {
                     options = appLanguageOptions,
                     onValueChanged = {
                         settingsRepository.appLanguage = it
-                        LocaleUtil.tryApplyLanguage(context = context, language = it)
+                        context.tryChangeAppLanguage(language = it)
                     }
                 )
             }
