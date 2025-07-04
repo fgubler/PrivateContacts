@@ -1,0 +1,165 @@
+<!--
+  ~ Private Contacts
+  ~ Copyright (c) 2022.
+  ~ Florian Gubler
+  -->
+
+<resources>
+    <string name="app_name">Contactos Privados</string>
+    <string name="app_name_calculator">Calculadora de Bolsillo</string>
+    <string name="greetings_from_the_developer">Saludos del desarrollador, Florian.</string>
+
+    <string name="screen_contact_list">Contactos</string>
+    <string name="screen_settings">Configuración</string>
+    <string name="screen_about_the_app">Acerca de</string>
+    <string name="screen_introduction">Introducción</string>
+    <string name="screen_import_export">Importar / Exportar</string>
+    <string name="screen_import_from_intent">Importar Contactos</string>
+    <string name="screen_contact_details">Detalles del Contacto</string>
+    <string name="screen_contact_edit">Editar Contacto</string>
+    <string name="screen_contact_edit_create">Crear Contacto</string>
+
+    <string name="no_contacts_found">No se encontraron contactos</string>
+    <string name="data_loading_error">Ocurrió un error al cargar los datos</string>
+    <string name="no_contact_selected">Ningún contacto seleccionado</string>
+    <string name="no_contact_selected_error">No se pudo cargar el contacto</string>
+    <string name="failed_to_import_contacts">No se pudieron importar los contactos</string>
+
+    <string name="menu">Abrir menú</string>
+    <string name="save">Guardar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="remove">Eliminar</string>
+    <string name="ok">OK</string>
+    <string name="close">Cerrar</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="search">Buscar</string>
+    <string name="info">Info</string>
+    <string name="back">Atrás</string>
+    <string name="edit">Editar</string>
+    <string name="done">Hecho</string>
+    <string name="important">Importante</string>
+    <string name="more_actions">Más acciones</string>
+    <string name="expand">Expandir</string>
+    <string name="compress">Comprimir</string>
+    <string name="add">Añadir</string>
+    <string name="send">Enviar</string>
+    <string name="success">Éxito</string>
+    <string name="failure">Fallo</string>
+    <string name="copied_to_clipboard">Copiado al portapapeles</string>
+    <string name="try_again">Intentar de nuevo</string>
+    <string name="refresh">Actualizar</string>
+    <string name="login">Iniciar sesión</string>
+
+    <string name="error">Error</string>
+    <string name="errors">Errores</string>
+    <string name="unknown_error">Error desconocido</string>
+    <string name="unexpected_error">Error inesperado</string>
+    <string name="unexpected_error_apology">Ha ocurrido un error inesperado: nos disculpamos por las molestias.</string>
+    <string name="validation_error">Error de validación</string>
+    <string name="validation_errors">Errores de validación</string>
+    <string name="unable_to_delete_contact">No se pudo eliminar el contacto</string>
+    <string name="unable_to_save_contact">No se pudo guardar el contacto</string>
+    <string name="unable_to_resolve_existing_contact">No se pudo resolver el contacto existente</string>
+    <string name="unable_to_resolve_contact">No se pudo cargar el contacto</string>
+    <string name="unable_to_create_contact_groups">No se pudieron añadir uno o más grupos de contactos.</string>
+    <string name="not_yet_implemented_for_external_error">Lo sentimos, esta función aún no está implementada para contactos Android "normales".</string>
+    <string name="not_yet_implemented_for_internal_error">Lo sentimos, esta función aún no está implementada para contactos secretos.</string>
+    <string name="error_report_sent_confirmation">Informe de error enviado a los desarrolladores</string>
+    <string name="feature_not_yet_implemented">Lo sentimos, esta función aún no está implementada.</string>
+    <string name="please_wait">Por favor espere</string>
+
+    <string name="do_not_show_again">No mostrar de nuevo</string>
+    <string name="thank_you">Gracias</string>
+
+    <string name="type">Tipo</string>
+    <string name="secret_contact">Secreto</string>
+    <string name="secret_contact_explanation">Los contactos secretos solo se almacenan dentro de esta aplicación y no se comparten con nadie.</string>
+    <string name="public_contact">Público</string>
+    <string name="public_contact_explanation">Los contactos públicos se almacenan en la base de datos de contactos estándar de Android y se comparten con otras aplicaciones en el teléfono.</string>
+    <string name="type_personal">Personal</string>
+    <string name="type_business">Trabajo</string>
+    <string name="type_mobile_business">Móvil Trabajo</string>
+    <string name="type_mobile">Móvil</string>
+    <string name="type_other">Otro</string>
+    <string name="type_custom">Personalizado</string>
+    <string name="type_birthday">Cumpleaños</string>
+    <string name="type_anniversary">Aniversario</string>
+    <string name="type_main">Principal</string>
+    <string name="type_relationship_sibling">Hermano/a</string>
+    <string name="type_relationship_brother">Hermano</string>
+    <string name="type_relationship_sister">Hermana</string>
+    <string name="type_relationship_parent">Padre/Madre</string>
+    <string name="type_relationship_father">Padre</string>
+    <string name="type_relationship_mother">Madre</string>
+    <string name="type_relationship_child">Hijo/a</string>
+    <string name="type_relationship_partner">Pareja</string>
+    <string name="type_relationship_relative">Pariente</string>
+    <string name="type_relationship_work">Trabajo</string>
+    <string name="type_relationship_friend">Amigo/a</string>
+    <string name="no_custom_label">Sin etiqueta</string>
+
+    <string name="create_contact">Crear Contacto</string>
+
+    <string name="define_custom_type">Definir tipo personalizado</string>
+
+    <string name="navigation">Navegación</string>
+    <string name="loading_contacts">Cargando contactos</string>
+    <string name="loading_contact">Cargando contacto</string>
+    <string name="reload_data">Recargar datos</string>
+    <string name="reload_contact">Recargar contacto</string>
+
+    <string name="personal_information">Información personal</string>
+    <string name="additional_information">Información adicional</string>
+    <string name="first_name">Nombre</string>
+    <string name="last_name">Apellido</string>
+    <string name="nickname">Apodo</string>
+    <string name="middle_name">Segundo nombre</string>
+    <string name="name_prefix">Prefijo</string>
+    <string name="name_suffix">Sufijo</string>
+    <string name="first_name_colon">Nombre:</string>
+    <string name="last_name_colon">Apellido:</string>
+    <string name="nickname_colon">Apodo:</string>
+    <string name="middle_name_colon">Segundo nombre:</string>
+    <string name="name_prefix_colon">Prefijo:</string>
+    <string name="name_suffix_colon">Sufijo:</string>
+    <string name="image">Imagen</string>
+    <string name="notes">Notas</string>
+    <string name="contact_groups">Grupos</string>
+    <string name="visibility">Visibilidad</string>
+    <string name="visibility_colon">Visibilidad:</string>
+
+    <string name="phone_number">Número de teléfono</string>
+    <string name="phone_numbers">Números de teléfono</string>
+    <string name="email_address">Dirección de correo</string>
+    <string name="email_addresses">Direcciones de correo</string>
+    <string name="physical_address">Dirección</string>
+    <string name="physical_addresses">Direcciones</string>
+    <string name="website">Sitio web</string>
+    <string name="websites">Sitios web</string>
+    <string name="relationship">Relación</string>
+    <string name="relationships">Relaciones</string>
+    <string name="event">Evento</string>
+    <string name="events">Eventos</string>
+    <string name="company">Empresa</string>
+    <string name="companies">Empresas</string>
+
+    <string name="secret_contacts_tab_title">Contactos Secretos</string>
+    <string name="all_contacts_tab_title">Todos los Contactos</string>
+    <string name="public_contacts_tab_title">Contactos Públicos</string>
+
+    <string name="settings_category_ux">Visualización</string>
+    <string name="settings_category_contacts">Lista de contactos</string>
+    <string name="settings_category_default_values">Valores predeterminados</string>
+    <string name="settings_category_miscellaneous">Misceláneos</string>
+    <string name="settings_category_security">Seguridad</string>
+    <string name="settings_category_privacy">Privacidad</string>
+
+    <string name="settings_entry_app_theme">Tema de la aplicación</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="system_default">Predeterminado del sistema</string>
+
+    <string name="import_title">Importar</string>
+    <string name="export_title">Exportar</string>
+</resources>
