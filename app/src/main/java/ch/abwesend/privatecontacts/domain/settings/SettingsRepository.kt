@@ -15,6 +15,7 @@ import java.time.LocalDate
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
+    suspend fun nextSettings(): ISettingsState?
     fun overrideSettingsWith(settings: ISettingsState)
 
     // UX
@@ -54,6 +55,7 @@ interface SettingsRepository : ISettingsState {
 
     // Others
     override var currentVersion: Int
+    override var previousVersion: Int
     override var numberOfAppStarts: Int
     override var latestUserPromptAtStartup: LocalDate
     override var showReviewDialog: Boolean

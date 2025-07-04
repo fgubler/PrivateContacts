@@ -7,15 +7,27 @@
 package ch.abwesend.privatecontacts.view.initialization
 
 import android.app.Activity
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDoNotShowAgainDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoNeverDialog
@@ -39,7 +51,7 @@ fun InfoDialogs(
     when (initializationState) {
         InitialInfoDialog -> InitialAppInfoDialog(settings, goToNextState)
         ReviewDialog -> ReviewDialog(settings, goToNextState)
-        NewFeaturesDialog -> goToNextState() // TODO implement
+        NewFeaturesDialog -> ReleaseNotesDialog(settings, goToNextState)
     }
 }
 
@@ -107,5 +119,35 @@ private fun showAndroidReview(activity: Activity, coroutineScope: CoroutineScope
     coroutineScope.launch {
         activity.showAndroidReview()
         close()
+    }
+}
+
+@Composable
+private fun ReleaseNotesDialog(settings: ISettingsState, close: () -> Unit) {
+    val previousVersion = remember { settings.previousVersion }
+    val currentVersion = remember { settings.currentVersion }
+    val releaseNotes = remember { ReleaseNotes.getReleaseNotesBetween(previousVersion, currentVersion) }
+
+    if (previousVersion >= currentVersion || previousVersion == 0 || releaseNotes.isEmpty()) {
+        close()
+        return
+    }
+
+    OkDialog(
+        title = R.string.release_notes_dialog_title,
+        onClose = close
+    ) {
+        LazyColumn {
+            items(releaseNotes) { releaseNote ->
+                releaseNote.textResourceIds.forEach { textResourceId ->
+                    Row(verticalAlignment = CenterVertically) {
+                        Text(text = "•")
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(text = stringResource(id = textResourceId))
+                    }
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+            }
+        }
     }
 }

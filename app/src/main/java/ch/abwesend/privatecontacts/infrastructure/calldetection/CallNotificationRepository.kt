@@ -53,7 +53,7 @@ class CallNotificationRepository {
     }
 
     @SuppressLint("MissingPermission") // it is actually checked...
-    fun showIncomingCallNotification(
+    suspend fun showIncomingCallNotification(
         context: Context,
         notificationText: String,
     ) {
@@ -65,9 +65,8 @@ class CallNotificationRepository {
         context.createNotificationChannel()
 
         val title = context.getString(R.string.incoming_call_title)
-        val visibility =
-            if (Settings.current.showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC
-            else VISIBILITY_SECRET
+        val showIncomingCallsOnLockScreen = Settings.nextOrDefault().showIncomingCallsOnLockScreen
+        val visibility = if (showIncomingCallsOnLockScreen) VISIBILITY_PUBLIC else VISIBILITY_SECRET
 
         val intent = navigateToCallScreenIntent
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)

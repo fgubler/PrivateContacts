@@ -67,6 +67,7 @@ interface ISettingsState {
 
     // Others
     val currentVersion: Int
+    val previousVersion: Int
     val numberOfAppStarts: Int
     val latestUserPromptAtStartup: LocalDate
     val showReviewDialog: Boolean
@@ -102,6 +103,7 @@ data class SettingsState(
     override val sendErrorsToCrashlytics: Boolean,
 
     override val currentVersion: Int,
+    override val previousVersion: Int,
     override val numberOfAppStarts: Int,
     override val latestUserPromptAtStartup: LocalDate,
     override val showReviewDialog: Boolean,
@@ -127,6 +129,7 @@ data class SettingsState(
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,
             currentVersion = BuildConfig.VERSION_CODE,
+            previousVersion = BuildConfig.VERSION_CODE,
             numberOfAppStarts = 0,
             latestUserPromptAtStartup = LocalDate.MIN,
             showReviewDialog = true,
