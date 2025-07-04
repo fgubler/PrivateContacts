@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.LocaleUtil
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
@@ -119,10 +121,6 @@ object SettingsScreen {
             AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
 
-        val appLanguageOptions = remember {
-            AppLanguage.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
-        }
-
         SettingsCategory(titleRes = R.string.settings_category_ux) {
             SettingsDropDown(
                 label = R.string.settings_entry_app_theme,
@@ -132,13 +130,30 @@ object SettingsScreen {
                 onValueChanged = { settingsRepository.appTheme = it }
             )
 
-            SettingsDropDown(
-                label = R.string.settings_entry_app_language,
-                description = null,
-                value = currentSettings.appLanguage,
-                options = appLanguageOptions,
-                onValueChanged = { settingsRepository.appLanguage = it }
-            )
+            val showAppLanguageField = remember { Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU }
+            if (showAppLanguageField) {
+                val context = LocalContext.current
+
+                val appLanguageOptions = remember {
+                    AppLanguage.entries.map {
+                        ResDropDownOption(
+                            labelRes = it.labelRes,
+                            value = it
+                        )
+                    }
+                }
+
+                SettingsDropDown(
+                    label = R.string.settings_entry_app_language,
+                    description = null,
+                    value = currentSettings.appLanguage,
+                    options = appLanguageOptions,
+                    onValueChanged = {
+                        settingsRepository.appLanguage = it
+                        LocaleUtil.tryApplyLanguage(context = context, language = it)
+                    }
+                )
+            }
 
             SettingsEntryDivider()
 

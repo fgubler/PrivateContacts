@@ -47,6 +47,10 @@ android {
         }
     }
 
+    androidResources {
+        generateLocaleConfig true
+    }
+
     buildTypes {
         release {
             minifyEnabled true

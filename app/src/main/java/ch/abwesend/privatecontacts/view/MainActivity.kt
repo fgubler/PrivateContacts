@@ -46,7 +46,7 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
-import ch.abwesend.privatecontacts.domain.util.LocaleUtils
+import ch.abwesend.privatecontacts.domain.util.LocaleUtil
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.ImportContactsFromIntentComponents.ObserveVcfImportResult
@@ -161,8 +161,7 @@ class MainActivity : AppCompatActivity() {
         val context = LocalContext.current
         LaunchedEffect(Unit) {
             viewModel.updateAppStatistics(settings)
-            val language = Settings.current.appLanguage
-            LocaleUtils.applyLanguage(context, language)
+            LocaleUtil.tryApplyLanguage(context, Settings.current.appLanguage)
         }
     }
 
