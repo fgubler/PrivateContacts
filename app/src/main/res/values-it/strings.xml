@@ -160,6 +160,14 @@
     <string name="dark_theme">Scuro</string>
     <string name="system_default">Predefinito di sistema</string>
 
+    <string name="language_english">Inglese</string>
+    <string name="language_german">Tedesco</string>
+    <string name="language_spanish">Spagnolo</string>
+    <string name="language_french">Francese</string>
+    <string name="language_italian">Italiano</string>
+
+    <string name="settings_entry_app_language">Lingua dell\'app</string>
+
     <string name="import_title">Importa</string>
     <string name="export_title">Esporta</string>
 </resources>

@@ -20,6 +20,7 @@ interface SettingsRepository : ISettingsState {
 
     // UX
     override var appTheme: AppTheme
+    override var appLanguage: AppLanguage
 
     override var orderByFirstName: Boolean
     override var showContactTypeInList: Boolean

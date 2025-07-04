@@ -276,6 +276,12 @@
     <string name="dark_theme">Dark</string>
     <string name="system_default">System default</string>
 
+    <string name="language_english">English</string>
+    <string name="language_german">German</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_french">French</string>
+    <string name="language_italian">Italian</string>
+
     <string name="settings_category_ux">Display</string>
     <string name="settings_category_contacts">Contact list</string>
     <string name="settings_category_default_values">Default values</string>
@@ -289,6 +295,7 @@
     <string name="settings_info_dialog_android_contacts_permission">If you have ever actively denied this permission in the Android permission-dialog, some versions of Android never ask you again but automatically deny subsequent requests for it.\n\nIn that case, you unfortunately need to go to system-settings, open the category "apps", select this app and explicitly grant us this permission there.\n\nWe apologize for any inconvenience caused.</string>
 
     <string name="settings_entry_app_theme">App theme</string>
+    <string name="settings_entry_app_language">App language</string>
     <string name="settings_entry_add_safe_area_padding">Use only safe areas</string>
     <string name="settings_entry_add_safe_area_padding_description">Add borders around the app-content to make sure that all of it is both visible and clickable.</string>
     <string name="settings_entry_second_tab">Second tab</string>

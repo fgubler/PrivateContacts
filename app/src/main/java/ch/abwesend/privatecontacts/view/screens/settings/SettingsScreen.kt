@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -61,9 +62,9 @@ import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -118,6 +119,10 @@ object SettingsScreen {
             AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
 
+        val appLanguageOptions = remember {
+            AppLanguage.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
+        }
+
         SettingsCategory(titleRes = R.string.settings_category_ux) {
             SettingsDropDown(
                 label = R.string.settings_entry_app_theme,
@@ -125,6 +130,14 @@ object SettingsScreen {
                 value = currentSettings.appTheme,
                 options = appThemeOptions,
                 onValueChanged = { settingsRepository.appTheme = it }
+            )
+
+            SettingsDropDown(
+                label = R.string.settings_entry_app_language,
+                description = null,
+                value = currentSettings.appLanguage,
+                options = appLanguageOptions,
+                onValueChanged = { settingsRepository.appLanguage = it }
             )
 
             SettingsEntryDivider()

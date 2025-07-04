@@ -160,6 +160,14 @@
     <string name="dark_theme">Dunkel</string>
     <string name="system_default">Systemstandard</string>
 
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Spanisch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_italian">Italienisch</string>
+
+    <string name="settings_entry_app_language">App-Sprache</string>
+
     <string name="import_title">Importieren</string>
     <string name="export_title">Exportieren</string>
 </resources>

@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
+import ch.abwesend.privatecontacts.domain.util.LocaleUtils
 import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.ImportContactsFromIntentComponents.ObserveVcfImportResult
@@ -78,8 +80,8 @@ import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.MainViewModel
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
+import kotlinx.coroutines.FlowPreview
 
 private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
             PrivateContactsTheme(isDarkTheme) {
                 settings?.let {
-                    LaunchedEffect(Unit) { viewModel.updateAppStatistics(it) }
+                    AppPreInitialization(it)
                     MainContent(initializationState, viewModel, it) { viewModel.goToNextState() }
                 } ?: InitialLoadingView()
             }
@@ -153,6 +155,16 @@ class MainActivity : AppCompatActivity() {
             AppTheme.DARK_MODE -> true
             AppTheme.SYSTEM_SETTINGS -> isSystemInDarkTheme()
         }
+
+    @Composable
+    private fun AppPreInitialization(settings: ISettingsState) {
+        val context = LocalContext.current
+        LaunchedEffect(Unit) {
+            viewModel.updateAppStatistics(settings)
+            val language = Settings.current.appLanguage
+            LocaleUtils.applyLanguage(context, language)
+        }
+    }
 
     @Composable
     private fun MainContent(
