@@ -170,4 +170,26 @@
 
     <string name="import_title">Importa</string>
     <string name="export_title">Esporta</string>
+    <string name="settings_action_reset_database_confirmation">Sei sicuro di voler eliminare tutti i contatti segreti? I contatti condivisi con altre applicazioni non saranno interessati, ma tutti i contatti segreti verranno eliminati.</string>
+    <string name="resetting_database">Reimpostazione del database</string>
+    <string name="resetting_database_successful">Il database è stato reimpostato con successo.</string>
+    <string name="resetting_database_failed">Impossibile reimpostare il database. Riprova o informa gli sviluppatori di questo errore. Se ciò non funziona, puoi anche andare nelle impostazioni di sistema e cancellare tutti i dati di questa applicazione. Questo eliminerà il database in modo sicuro.Ci scusiamo per l\'inconveniente.</string>
+    <string name="run_in_background">Esegui in background</string>
+    <string name="version">Versione</string>
+
+    <string name="target_account">Account di destinazione</string>
+    <string name="app_internal">All\'interno di questa applicazione</string>
+    <string name="local_phone_contacts">Contatti locali del telefono</string>
+
+    <string name="import_export_permission_required_title">Permesso richiesto</string>
+    <string name="import_export_permission_required_explanation">Questa azione richiede l\'autorizzazione per accedere ai contatti Android.</string>
+
+    <string name="import_contacts">Importa contatti</string>
+    <string name="replace_existing_contacts_label">Sostituisci contatti corrispondenti</string>
+    <string name="replace_existing_contacts_description">Sostituisci un contatto esistente se corrisponde a uno del file importato (stesso nome e ID).</string>
+    <string name="select_file_to_import">Seleziona file .vcf da importare</string>
+    <string name="import_contacts_as">Importa contatti come</string>
+    <string name="import_contacts_progress">Importazione dei contatti</string>
+    <string name="import_complete_title">Importazione completata</string>
+    <string name="import_failed_title">Importazione fallita</string>
 </resources>

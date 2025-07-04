@@ -170,4 +170,26 @@
 
     <string name="import_title">Importar</string>
     <string name="export_title">Exportar</string>
+    <string name="settings_action_reset_database_confirmation">¿Está seguro de que desea eliminar todos los contactos secretos? Los contactos compartidos con otras aplicaciones no se verán afectados, pero todos los contactos secretos serán eliminados.</string>
+    <string name="resetting_database">Restableciendo la base de datos</string>
+    <string name="resetting_database_successful">La base de datos se ha restablecido correctamente.</string>
+    <string name="resetting_database_failed">No se pudo restablecer la base de datos. Por favor, inténtelo de nuevo o informe a los desarrolladores sobre este error. Si esto no funciona, también puede ir a la configuración del sistema y borrar todos los datos de esta aplicación. Esto eliminará la base de datos de forma segura.Lamentamos las molestias.</string>
+    <string name="run_in_background">Ejecutar en segundo plano</string>
+    <string name="version">Versión</string>
+
+    <string name="target_account">Cuenta objetivo</string>
+    <string name="app_internal">Dentro de esta aplicación</string>
+    <string name="local_phone_contacts">Contactos locales del teléfono</string>
+
+    <string name="import_export_permission_required_title">Permiso requerido</string>
+    <string name="import_export_permission_required_explanation">Esta acción requiere permiso para acceder a los contactos de Android.</string>
+
+    <string name="import_contacts">Importar contactos</string>
+    <string name="replace_existing_contacts_label">Reemplazar contactos coincidentes</string>
+    <string name="replace_existing_contacts_description">Reemplace un contacto existente si coincide con uno del archivo importado (mismo nombre e ID).</string>
+    <string name="select_file_to_import">Seleccionar archivo .vcf para importar</string>
+    <string name="import_contacts_as">Importar contactos como</string>
+    <string name="import_contacts_progress">Importando contactos</string>
+    <string name="import_complete_title">Importación completada</string>
+    <string name="import_failed_title">Importación fallida</string>
 </resources>

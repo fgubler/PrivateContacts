@@ -170,4 +170,26 @@
 
     <string name="import_title">Importieren</string>
     <string name="export_title">Exportieren</string>
+    <string name="settings_action_reset_database_confirmation">Sind Sie sicher, dass Sie alle geheimen Kontakte löschen möchten? Kontakte, die mit anderen Apps geteilt werden, sind nicht betroffen, aber alle geheimen Kontakte werden gelöscht.</string>
+    <string name="resetting_database">Datenbank wird zurückgesetzt</string>
+    <string name="resetting_database_successful">Die Datenbank wurde erfolgreich zurückgesetzt.</string>
+    <string name="resetting_database_failed">Die Datenbank konnte nicht zurückgesetzt werden. Bitte versuchen Sie es erneut oder benachrichtigen Sie die Entwickler über diesen Fehler. Wenn dies nicht funktioniert, können Sie auch in die Systemeinstellungen gehen und alle Daten dieser App löschen. Dadurch wird die Datenbank sicher gelöscht.Wir entschuldigen uns für die Unannehmlichkeiten.</string>
+    <string name="run_in_background">Im Hintergrund ausführen</string>
+    <string name="version">Version</string>
+
+    <string name="target_account">Zielkonto</string>
+    <string name="app_internal">Innerhalb dieser App</string>
+    <string name="local_phone_contacts">Lokale Telefonkontakte</string>
+
+    <string name="import_export_permission_required_title">Berechtigung erforderlich</string>
+    <string name="import_export_permission_required_explanation">Diese Aktion erfordert die Berechtigung, auf Android-Kontakte zuzugreifen.</string>
+
+    <string name="import_contacts">Kontakte importieren</string>
+    <string name="replace_existing_contacts_label">Übereinstimmende Kontakte ersetzen</string>
+    <string name="replace_existing_contacts_description">Ersetzen Sie einen vorhandenen Kontakt, wenn er mit einem aus dem Import übereinstimmt (gleicher Name und ID).</string>
+    <string name="select_file_to_import">.vcf-Datei zum Importieren auswählen</string>
+    <string name="import_contacts_as">Kontakte importieren als</string>
+    <string name="import_contacts_progress">Kontakte werden importiert</string>
+    <string name="import_complete_title">Import abgeschlossen</string>
+    <string name="import_failed_title">Import fehlgeschlagen</string>
 </resources>

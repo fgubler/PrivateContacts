@@ -170,4 +170,26 @@
 
     <string name="import_title">Importer</string>
     <string name="export_title">Exporter</string>
+    <string name="settings_action_reset_database_confirmation">Êtes-vous sûr de vouloir supprimer tous les contacts secrets ? Les contacts partagés avec d\'autres applications ne seront pas affectés, mais tous les contacts secrets seront supprimés.</string>
+    <string name="resetting_database">Réinitialisation de la base de données</string>
+    <string name="resetting_database_successful">La base de données a été réinitialisée avec succès.</string>
+    <string name="resetting_database_failed">La base de données n\'a pas pu être réinitialisée. Veuillez réessayer ou informer les développeurs de cette erreur. Si cela ne fonctionne pas, vous pouvez également aller dans les paramètres système et supprimer toutes les données de cette application. Cela supprimera la base de données en toute sécurité.Nous nous excusons pour les désagréments.</string>
+    <string name="run_in_background">Exécuter en arrière-plan</string>
+    <string name="version">Version</string>
+
+    <string name="target_account">Compte cible</string>
+    <string name="app_internal">Dans cette application</string>
+    <string name="local_phone_contacts">Contacts locaux du téléphone</string>
+
+    <string name="import_export_permission_required_title">Permission requise</string>
+    <string name="import_export_permission_required_explanation">Cette action nécessite l\'autorisation d\'accéder aux contacts Android.</string>
+
+    <string name="import_contacts">Importer des contacts</string>
+    <string name="replace_existing_contacts_label">Remplacer les contacts correspondants</string>
+    <string name="replace_existing_contacts_description">Remplacez un contact existant s\'il correspond à un du fichier importé (même nom et ID).</string>
+    <string name="select_file_to_import">Sélectionner un fichier .vcf à importer</string>
+    <string name="import_contacts_as">Importer des contacts en tant que</string>
+    <string name="import_contacts_progress">Importation des contacts</string>
+    <string name="import_complete_title">Importation terminée</string>
+    <string name="import_failed_title">Échec de l\'importation</string>
 </resources>
