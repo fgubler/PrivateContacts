@@ -13,6 +13,9 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.provider.ContactsContract
+import ch.abwesend.privatecontacts.application.KoinInitializer
+import ch.abwesend.privatecontacts.application.PrivateContactsApplication
+import ch.abwesend.privatecontacts.domain.lib.logging.ILogger
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
@@ -24,10 +27,18 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.logging.LoggerFactory
 import kotlinx.coroutines.runBlocking
 
+/**
+ * This content-provider may be started outside of [PrivateContactsApplication]
+ * => cannot use Dependency-Injection (and therefore the logger) before Koin is initialized.
+ */
 class ContactsContentProvider : ContentProvider() {
     private val contactLoadService: ContactLoadService by injectAnywhere()
+    private val safeLogger: ILogger? by lazy {
+        context?.let { LoggerFactory(it).createDefault(javaClass) }
+    }
 
     private val uriMatcher = UriMatcher(UriMatcher.NO_MATCH).apply {
         addURI(AUTHORITY, "contacts", CONTACTS)
@@ -90,6 +101,9 @@ class ContactsContentProvider : ContentProvider() {
     }
 
     override fun onCreate(): Boolean {
+        safeLogger?.info("Creating ContactsContentProvider")
+        context?.let { KoinInitializer.initializeKoin(context = it) }
+        logger.info("Koin initialized for ContactsContentProvider")
         return true
     }
 
