@@ -93,7 +93,7 @@ object SettingsScreen {
                     .padding(10.dp)
                     .verticalScroll(scrollState)
             ) {
-                UxCategory(settingsRepository, currentSettings)
+                UxCategory(settingsRepository, currentSettings, screenContext::refreshSettingsScreen)
                 SettingsCategorySpacer()
 
                 if (callDetectionPossible) CallDetectionCategory(permissionProvider, settingsRepository, currentSettings)
@@ -116,7 +116,11 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun UxCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun UxCategory(
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        refreshScreen: () -> Unit,
+    ) {
         val appThemeOptions = remember {
             AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
@@ -151,6 +155,7 @@ object SettingsScreen {
                     onValueChanged = {
                         settingsRepository.appLanguage = it
                         context.tryChangeAppLanguage(language = it)
+                        refreshScreen()
                     }
                 )
             }
