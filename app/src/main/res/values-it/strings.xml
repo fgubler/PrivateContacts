@@ -265,10 +265,6 @@
     <string name="review_dialog_text">Se stai usando quest\'app gratuitamente e ti piace, lasciaci una recensione a 5 stelle!</string>
     <string name="review_dialog_secondary_text">È un buon momento per lasciare una valutazione?</string>
 
-    <string name="release_notes_dialog_title">Novità</string>
-    <string name="release_notes_v84_1">Aggiunto il dialogo per le note di rilascio.</string>
-    <string name="release_notes_v84_2">Correzioni di bug minori.</string>
-
     <string name="light_theme">Chiaro</string>
     <string name="dark_theme">Scuro</string>
     <string name="system_default">Predefinito del sistema</string>
@@ -423,4 +419,9 @@
     <string name="authentication_registration_failed_title">Errore nell\'attivazione dell\'autenticazione</string>
     <string name="authentication_registration_error_none_registered">Nessun meccanismo di autenticazione attivo sul dispositivo.\n\nAttiva il blocco biometrico o PIN/password nelle impostazioni di sistema.</string>
     <string name="authentication_registration_error_unknown">Impossibile attivare il blocco: riprova o contattaci.</string>
+
+    <string name="release_notes_dialog_title">Novità</string>
+    <string name="release_notes_v84_1">Aggiunto il dialogo per le note di rilascio.</string>
+    <string name="release_notes_v84_2">Correzioni di bug minori.</string>
+    <string name="release_notes_v85">Aggiunte le traduzioni per italiano, tedesco, spagnolo e francese.</string>
 </resources>

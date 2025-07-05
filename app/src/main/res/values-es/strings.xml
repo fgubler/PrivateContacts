@@ -265,10 +265,6 @@
     <string name="review_dialog_text">Si te gusta esta aplicación gratuita, te agradecemos mucho que nos apoyes con una valoración de 5 estrellas.</string>
     <string name="review_dialog_secondary_text">¿Es un buen momento para dejar una reseña?</string>
 
-    <string name="release_notes_dialog_title">Novedades</string>
-    <string name="release_notes_v84_1">Se ha añadido un cuadro de diálogo para notas de versión.</string>
-    <string name="release_notes_v84_2">Pequeñas correcciones de errores.</string>
-
     <string name="light_theme">Claro</string>
     <string name="dark_theme">Oscuro</string>
     <string name="system_default">Predeterminado del sistema</string>
@@ -423,4 +419,9 @@
     <string name="authentication_registration_failed_title">No se pudo activar la autenticación</string>
     <string name="authentication_registration_error_none_registered">No hay ningún sistema de autenticación configurado en este dispositivo.\n\nActiva el bloqueo por huella, PIN o contraseña desde los ajustes del sistema para usar esta función.</string>
     <string name="authentication_registration_error_unknown">No se pudo activar la autenticación del sistema. Intenta de nuevo o contáctanos.</string>
+
+    <string name="release_notes_dialog_title">Novedades</string>
+    <string name="release_notes_v84_1">Se ha añadido un cuadro de diálogo para notas de versión.</string>
+    <string name="release_notes_v84_2">Pequeñas correcciones de errores.</string>
+    <string name="release_notes_v85">Se han añadido traducciones al español, alemán, italiano y francés.</string>
 </resources>

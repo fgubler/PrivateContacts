@@ -268,10 +268,6 @@
     <string name="review_dialog_text">If you enjoy using this app for free, we would be glad if you could support us by giving a 5 star review.</string>
     <string name="review_dialog_secondary_text">Is this a good time for a review?</string>
 
-    <string name="release_notes_dialog_title">What\'s New</string>
-    <string name="release_notes_v84_1">Added dialog for release-notes to inform about new features.</string>
-    <string name="release_notes_v84_2">Small bugfixes.</string>
-
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
     <string name="system_default">System default</string>
@@ -428,4 +424,9 @@
     <string name="authentication_registration_failed_title">Failed to enable authentication</string>
     <string name="authentication_registration_error_none_registered">No authentication-mechanism is enabled on this device.\n\nPlease enable biometric authentication or a PIN or password in the system-settings to use this feature.</string>
     <string name="authentication_registration_error_unknown">Failed to enable device authentication: please try again or send us a message.</string>
+
+    <string name="release_notes_dialog_title">What\'s New</string>
+    <string name="release_notes_v84_1">Added dialog for release-notes to inform about new features.</string>
+    <string name="release_notes_v84_2">Small bugfixes.</string>
+    <string name="release_notes_v85">Added translations for German, Italian, Spanish and French.</string>
 </resources>

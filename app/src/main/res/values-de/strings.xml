@@ -265,10 +265,6 @@
     <string name="review_dialog_text">Wenn du diese App kostenlos nutzt und sie dir gefällt, würden wir uns über eine 5-Sterne-Bewertung freuen.</string>
     <string name="review_dialog_secondary_text">Ist das ein guter Zeitpunkt für eine Bewertung?</string>
 
-    <string name="release_notes_dialog_title">Was ist neu</string>
-    <string name="release_notes_v84_1">Dialog für Versionshinweise hinzugefügt.</string>
-    <string name="release_notes_v84_2">Kleine Fehlerbehebungen.</string>
-
     <string name="light_theme">Hell</string>
     <string name="dark_theme">Dunkel</string>
     <string name="system_default">Systemstandard</string>
@@ -423,4 +419,10 @@
     <string name="authentication_registration_failed_title">Authentifizierung konnte nicht aktiviert werden</string>
     <string name="authentication_registration_error_none_registered">Auf diesem Gerät ist kein Authentifizierungsmechanismus aktiviert.\n\nBitte aktiviere eine biometrische Sperre oder ein PIN-/Passwortsystem in den Systemeinstellungen.</string>
     <string name="authentication_registration_error_unknown">Aktivierung der Gerätesperre fehlgeschlagen: Bitte erneut versuchen oder kontaktiere uns.</string>
+
+    <string name="release_notes_dialog_title">Was ist neu</string>
+    <string name="release_notes_v84_1">Dialog für Versionshinweise hinzugefügt.</string>
+    <string name="release_notes_v84_2">Kleine Fehlerbehebungen.</string>
+    <string name="release_notes_v85">Übersetzungen für Deutsch, Französisch, Italienisch und Spanisch hinzugefügt.</string>
+
 </resources>

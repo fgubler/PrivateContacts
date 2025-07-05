@@ -265,10 +265,6 @@
     <string name="review_dialog_text">Si tu apprécies cette application gratuite, merci de nous soutenir avec une note 5 étoiles.</string>
     <string name="review_dialog_secondary_text">Est-ce un bon moment pour laisser un avis ?</string>
 
-    <string name="release_notes_dialog_title">Nouveautés</string>
-    <string name="release_notes_v84_1">Ajout d\'une boîte de dialogue pour les notes de version.</string>
-    <string name="release_notes_v84_2">Petites corrections de bugs.</string>
-
     <string name="light_theme">Clair</string>
     <string name="dark_theme">Sombre</string>
     <string name="system_default">Par défaut (système)</string>
@@ -423,4 +419,9 @@
     <string name="authentication_registration_failed_title">Échec de l\'activation de l\'authentification</string>
     <string name="authentication_registration_error_none_registered">Aucun système d\'authentification n\'est activé sur cet appareil.\n\nMerci d\'activer l\'authentification biométrique ou un code/PIN dans les paramètres système pour utiliser cette fonction.</string>
     <string name="authentication_registration_error_unknown">Échec de l\'activation de l\'authentification de l\'appareil : merci de réessayer ou de nous contacter.</string>
+
+    <string name="release_notes_dialog_title">Nouveautés</string>
+    <string name="release_notes_v84_1">Ajout d\'une boîte de dialogue pour les notes de version.</string>
+    <string name="release_notes_v84_2">Petites corrections de bugs.</string>
+    <string name="release_notes_v85">Ajout de traductions pour le français l\'allemand, l\'italien, et l\'espagnol.</string>
 </resources>
