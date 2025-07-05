@@ -257,6 +257,8 @@
     <string name="legal_disclaimer_text">Die Software wird wie gesehen zur Verfügung gestellt. Die Entwickler übernehmen keine Haftung für Schäden oder Verluste, die durch die Nutzung entstehen.</string>
     <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
     <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschließlich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, außer du klickst auf eine Schaltfläche zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschließlich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
+
+    <string name="permissions">Berechtigungen</string>
     <string name="app_introduction_description">Willkommen bei „Private Kontakte“.\n\nDiese App ermöglicht es dir, Kontakte zu speichern, die nicht mit anderen Apps auf deinem Gerät geteilt werden.\n\nDu kannst für jeden Kontakt einzeln festlegen, ob er geteilt werden soll oder nicht.</string>
 
     <string name="review_dialog_title">Benutzer-Feedback</string>

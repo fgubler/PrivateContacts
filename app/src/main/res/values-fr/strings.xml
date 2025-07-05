@@ -257,6 +257,8 @@
     <string name="legal_disclaimer_text">Le logiciel est fourni « tel quel ». Les développeurs déclinent toute responsabilité en cas de dommages ou pertes liés à son utilisation.</string>
     <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
     <string name="legal_disclaimer_whatsapp_text">Les développeurs ne sont en aucun cas affiliés à WhatsApp ni à sa maison mère. La fonction d\'ouverture de WhatsApp repose uniquement sur des API publiques fournies par WhatsApp.\n\nAucune donnée n\'est partagée avec WhatsApp, sauf si tu cliques sur un bouton pour ouvrir un numéro dans WhatsApp.\nDans ce cas, seul le numéro sera partagé — aucune autre information (nom, e-mail, notes, etc.) ne sera transmise.</string>
+
+    <string name="permissions">Permissions</string>
     <string name="app_introduction_description">Bienvenue dans « Contacts Privés ».\n\nLe but de cette application est de te permettre de stocker des contacts que tu ne souhaites pas partager avec d\'autres applications sur ton appareil.\n\nTu peux définir individuellement si un contact doit être partagé ou non.</string>
 
     <string name="review_dialog_title">Retour utilisateur</string>
