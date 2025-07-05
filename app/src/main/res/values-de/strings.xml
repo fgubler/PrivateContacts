@@ -13,7 +13,7 @@
 
     <string name="screen_contact_list">Kontakte</string>
     <string name="screen_settings">Einstellungen</string>
-    <string name="screen_about_the_app">Über</string>
+    <string name="screen_about_the_app">Über die App</string>
     <string name="screen_introduction">Einführung</string>
     <string name="screen_import_export">Import / Export</string>
     <string name="screen_import_from_intent">Kontakte importieren</string>
@@ -95,7 +95,7 @@
     <string name="type_relationship_mother">Mutter</string>
     <string name="type_relationship_child">Kind</string>
     <string name="type_relationship_partner">Partner</string>
-    <string name="type_relationship_relative">Verwandt</string>
+    <string name="type_relationship_relative">Verwandter</string>
     <string name="type_relationship_work">Arbeit</string>
     <string name="type_relationship_friend">Freund</string>
     <string name="no_custom_label">Kein Label</string>
@@ -256,7 +256,7 @@
     <string name="legal_disclaimer_title">Rechtlicher Hinweis</string>
     <string name="legal_disclaimer_text">Die Software wird wie gesehen zur Verfügung gestellt. Die Entwickler übernehmen keine Haftung für Schäden oder Verluste, die durch die Nutzung entstehen.</string>
     <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
-    <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschließlich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, außer du klickst auf eine Schaltfläche zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschließlich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
+    <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschließlich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, außer du klickst auf einen Button zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschließlich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
 
     <string name="permissions">Berechtigungen</string>
     <string name="app_introduction_description">Willkommen bei „Private Kontakte“.\n\nDiese App ermöglicht es dir, Kontakte zu speichern, die nicht mit anderen Apps auf deinem Gerät geteilt werden.\n\nDu kannst für jeden Kontakt einzeln festlegen, ob er geteilt werden soll oder nicht.</string>
@@ -284,20 +284,20 @@
     <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen außer Version 9. Wir bitten um Entschuldigung.</string>
     <string name="settings_category_privacy">Datenschutz</string>
 
-    <string name="settings_info_dialog_call_detection">Die Anruferkennung ist stark abhängig vom Gerätehersteller und der Android-Version.\n\nDaher erreicht sie möglicherweise nicht dieselbe Zuverlässigkeit wie andere Funktionen. Bitte melde uns ungewöhnliches Verhalten (siehe „Über“-Seite).\n\nWir bitten um Entschuldigung für etwaige Unannehmlichkeiten.</string>
+    <string name="settings_info_dialog_call_detection">Die Anruferkennung ist stark abhängig vom Gerätehersteller und der Android-Version.\n\nDaher erreicht sie möglicherweise nicht dieselbe Zuverlässigkeit wie andere Funktionen. Bitte melde uns ungewöhnliches Verhalten (siehe „Über die App“-Seite).\n\nWir bitten um Entschuldigung für etwaige Unannehmlichkeiten.</string>
     <string name="settings_info_dialog_android_contacts_permission">Falls du diese Berechtigung bereits einmal explizit verweigert hast, fragt Android in manchen Versionen nicht erneut, sondern verweigert automatisch.\n\nIn dem Fall musst du leider in den Systemeinstellungen unter „Apps“ diese App auswählen und dort die Berechtigung manuell erteilen.\n\nWir bitten um Entschuldigung für die Umstände.</string>
     <string name="settings_entry_app_theme">Design der App</string>
     <string name="settings_entry_app_language">Sprache der App</string>
     <string name="settings_entry_add_safe_area_padding">Nur sichere Bereiche nutzen</string>
     <string name="settings_entry_add_safe_area_padding_description">Fügt Ränder hinzu, um sicherzustellen, dass alle Inhalte sichtbar und anklickbar sind.</string>
     <string name="settings_entry_second_tab">Zweiter Reiter</string>
-    <string name="settings_entry_second_tab_description">Der erste Reiter zeigt nur geheime Kontakte. Dieser bestimmt die Anzeige im zweiten Reiter.</string>
+    <string name="settings_entry_second_tab_description">Der erste Reiter zeigt nur geheime Kontakte. Diese Einstellung bestimmt die Anzeige im zweiten Reiter.</string>
     <string name="settings_entry_order_by_first_name">Nach Vornamen sortieren</string>
     <string name="settings_entry_show_contact_types_on_contact_list">Kontakttyp in der Liste anzeigen</string>
-    <string name="settings_entry_show_extra_buttons_in_edit_screen">Zusätzliche Speichern-Schaltfläche anzeigen</string>
+    <string name="settings_entry_show_extra_buttons_in_edit_screen">Zusätzlichen Speichern-Button anzeigen</string>
     <string name="settings_entry_invert_top_and_bottom_bars">Navigationsleiste unten anzeigen</string>
-    <string name="settings_entry_show_whatsapp_buttons">WhatsApp-Schaltflächen anzeigen</string>
-    <string name="settings_entry_show_whatsapp_buttons_description">Fügt Schaltflächen in den Kontaktdetails hinzu, um einen Chat in WhatsApp zu starten.</string>
+    <string name="settings_entry_show_whatsapp_buttons">WhatsApp-Buttons anzeigen</string>
+    <string name="settings_entry_show_whatsapp_buttons_description">Fügt Buttons in den Kontaktdetails hinzu, um einen Chat in WhatsApp zu starten.</string>
     <string name="settings_entry_default_contact_type">Standard-Kontakttyp</string>
     <string name="settings_entry_default_external_contact_account">Kontaktkonto</string>
     <string name="settings_entry_default_contact_type_description">Öffentliche Kontakte werden mit anderen Apps geteilt. Geheime nicht.</string>
@@ -312,7 +312,7 @@
     <string name="settings_entry_error_reports_description">Ohne Berichte können wir keine Abstürze erkennen und beheben.</string>
     <string name="settings_entry_use_alternative_icon">App-Name und Icon verbergen</string>
     <string name="settings_entry_use_alternative_icon_description">Verwendet alternativen App-Namen und Icon (experimentell).</string>
-    <string name="settings_entry_use_alternative_icon_info_dialog_text">Zeigt einen anderen App-Namen und ein anderes Icon auf dem Startbildschirm an, um die Funktion zu verbergen. Hinweis: In den Systemeinstellungen erscheint weiterhin der echte Name und das echte Icon.\n\nDie App heißt dann „Taschenrechner“ mit passendem Icon.\n\nEin Wechsel dieser Einstellung kann zum Schließen der App führen.</string>
+    <string name="settings_entry_use_alternative_icon_info_dialog_text">Zeigt einen anderen App-Namen und ein anderes Icon auf dem Startbildschirm an, um die Funktion zu verbergen.\nHinweis: In den Systemeinstellungen erscheint weiterhin der echte Name und das echte Icon.\n\nDie App heißt dann „Taschenrechner“ mit passendem Icon.\n\nEin Wechsel dieser Einstellung kann zum Schließen der App führen.</string>
     <string name="settings_use_alternative_icon_and_name_success_confirmation">Icon und Name der App wurden erfolgreich geändert</string>
     <string name="settings_use_alternative_icon_and_name_failure_confirmation">Änderung von Icon und Name fehlgeschlagen</string>
     <string name="settings_entry_default_vcard_version">VCF-Version</string>
@@ -325,7 +325,7 @@
 
     <string name="settings_entry_enable_authentication">App-Sperre</string>
     <string name="settings_entry_enable_authentication_description">Benutzer muss sich authentifizieren, um die App zu verwenden.</string>
-    <string name="settings_entry_enable_authentication_info_dialog">Wenn diese Option aktiviert ist, wird die Bildschirmsperre von Android für die Authentifizierung verwendet.\n\nDiese Option ist nur verfügbar, wenn eine Sperrmethode in den Systemeinstellungen eingerichtet wurde.</string>
+    <string name="settings_entry_enable_authentication_info_dialog">Wenn diese Option aktiviert ist, wird die Bildschirmsperre von Android für die Authentifizierung verwendet.\n\nDiese Option ist nur verfügbar, wenn eine Bildschirm-Sperre in den Systemeinstellungen eingerichtet wurde.</string>
 
     <string name="settings_action_restore_default">Einstellungen zurücksetzen</string>
     <string name="settings_action_restore_default_confirmation">Möchtest du alle Einstellungen wirklich auf Standardwerte zurücksetzen?</string>
