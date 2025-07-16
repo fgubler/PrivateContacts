@@ -194,7 +194,7 @@
     <string name="delete_contacts_full_error">No se pudo eliminar ningún contacto</string>
     <string name="make_contact_secret">Hacer contacto “Secreto”</string>
     <string name="make_contact_secret_title">Hacer contacto “Secreto”</string>
-    <string name="make_contact_secret_text">Cambiar un contacto a “Secreto” lo copia dentro de esta app y lo elimina de la libreta de direcciones pública de Android.\n\nAsegúrate de que todos los datos relevantes estén presentes antes de proceder.</string>
+    <string name="make_contact_secret_text">Cambiar un contacto a “Secreto” lo copia dentro de esta app y lo elimina de la libreta de direcciones pública de Android.\n\nAsegúrate de que todos los datos relevantes estén presentes antes de proceder.\n\nTambién recomendamos crear primero una copia de seguridad con la aplicación de contactos nativa de tu teléfono, por si acaso.</string>
 
     <string name="make_contacts_secret">Hacer contactos “Secretos”</string>
     <string name="make_contacts_secret_title">Hacer contactos “Secretos”</string>

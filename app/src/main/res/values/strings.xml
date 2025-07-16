@@ -196,7 +196,7 @@
 
     <string name="make_contact_secret">Change contact to \'Secret\'</string>
     <string name="make_contact_secret_title">Change contact to \'Secret\'</string>
-    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.\n\nPlease make sure that no expected information is missing when checking the contact-details in this app before taking this step.</string>
+    <string name="make_contact_secret_text">Changing a contact to \'Secret\' means that it is copied to this app and afterwards deleted from the public contact-database of Android.\n\nPlease make sure that no expected information is missing when checking the contact-details in this app before taking this step.\n\nWe also recommend creating a backup with your phone\'s native contacts-app, first: just to be safe.</string>
 
     <string name="make_contacts_secret">Change contacts to \'Secret\'</string>
     <string name="make_contacts_secret_title">Change contacts to \'Secret\'</string>

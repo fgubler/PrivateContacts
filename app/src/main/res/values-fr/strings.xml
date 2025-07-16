@@ -194,7 +194,7 @@
     <string name="delete_contacts_full_error">Une erreur est survenue. Aucun contact n\'a pu être supprimé.</string>
     <string name="make_contact_secret">Rendre ce contact « Secret »</string>
     <string name="make_contact_secret_title">Rendre ce contact « Secret »</string>
-    <string name="make_contact_secret_text">Changer un contact en « Secret » signifie qu\'il est copié dans cette application puis supprimé de la base de données publique d\'Android.\n\nAssure-toi que toutes les informations importantes sont présentes avant de faire ce changement.</string>
+    <string name="make_contact_secret_text">Changer un contact en « Secret » signifie qu\'il est copié dans cette application puis supprimé de la base de données publique d\'Android.\n\nAssure-toi que toutes les informations importantes sont présentes avant de faire ce changement.\n\nNous vous recommandons également de créer une sauvegarde avec l\'application de contacts native de votre téléphone, juste pour être sûr.</string>
 
     <string name="make_contacts_secret">Rendre ces contacts « Secrets »</string>
     <string name="make_contacts_secret_title">Rendre ces contacts « Secrets »</string>

@@ -194,7 +194,7 @@
     <string name="delete_contacts_full_error">Errore: nessun contatto è stato eliminato.</string>
     <string name="make_contact_secret">Rendi il contatto “Segreto”</string>
     <string name="make_contact_secret_title">Rendi il contatto “Segreto”</string>
-    <string name="make_contact_secret_text">Un contatto reso “Segreto” verrà copiato all\'interno dell\'app e rimosso dalla rubrica pubblica di Android.\n\nAssicurati che tutte le informazioni importanti siano incluse prima di procedere.</string>
+    <string name="make_contact_secret_text">Un contatto reso “Segreto” verrà copiato all\'interno dell\'app e rimosso dalla rubrica pubblica di Android.\n\nAssicurati che tutte le informazioni importanti siano incluse prima di procedere.\n\nConsigliamo inoltre di creare prima un backup con l\'applicazione contatti nativa del telefono, per sicurezza.</string>
 
     <string name="make_contacts_secret">Rendi i contatti “Segreti”</string>
     <string name="make_contacts_secret_title">Rendi i contatti “Segreti”</string>

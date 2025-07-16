@@ -195,7 +195,7 @@
 
     <string name="make_contact_secret">Kontakt auf „Geheim“ ändern</string>
     <string name="make_contact_secret_title">Kontakt auf „Geheim“ ändern</string>
-    <string name="make_contact_secret_text">Wenn ein Kontakt auf „Geheim“ geändert wird, wird er in diese App kopiert und anschließend aus der öffentlichen Android-Kontaktdatenbank gelöscht.\n\nBitte stelle sicher, dass keine wichtigen Informationen fehlen, indem du die Kontaktdetails vorab überprüfst.</string>
+    <string name="make_contact_secret_text">Wenn ein Kontakt auf „Geheim“ geändert wird, wird er in diese App kopiert und anschließend aus der öffentlichen Android-Kontaktdatenbank gelöscht.\n\nBitte stelle sicher, dass keine wichtigen Informationen fehlen, indem du die Kontaktdetails vorab überprüfst.\n\nWir empfehlen außerdem, zunächst eine Sicherungskopie mit der nativen Kontakte-App Ihres Telefons zu erstellen, nur um sicherzugehen.</string>
 
     <string name="make_contacts_secret">Kontakte auf „Geheim“ ändern</string>
     <string name="make_contacts_secret_title">Kontakte auf „Geheim“ ändern</string>
