@@ -18,18 +18,19 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -58,6 +59,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var appTheme: AppTheme
         get() = currentSettings.appTheme
         set(value) = dataStore.setEnumValue(appThemeEntry, value)
+
+    override var appLanguage: AppLanguage
+        get() = currentSettings.appLanguage
+        set(value) = dataStore.setEnumValue(appLanguageEntry, value)
 
     override var orderByFirstName: Boolean
         get() = currentSettings.orderByFirstName
@@ -153,6 +158,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
 
     override fun overrideSettingsWith(settings: ISettingsState) {
         appTheme = settings.appTheme
+        appLanguage = settings.appLanguage
         orderByFirstName = settings.orderByFirstName
         showContactTypeInList = settings.showContactTypeInList
         showExtraButtonsInEditScreen = settings.showExtraButtonsInEditScreen
@@ -169,6 +175,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         defaultContactType = settings.defaultContactType
         defaultExternalContactAccount = settings.defaultExternalContactAccount
         showReviewDialog = settings.showReviewDialog
+        appLanguage = settings.appLanguage
 
         /*
            meta-data is not changed

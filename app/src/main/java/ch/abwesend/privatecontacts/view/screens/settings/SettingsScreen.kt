@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.screens.settings
 
 import android.content.Context
+import android.os.Build
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -60,10 +62,11 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -90,7 +93,7 @@ object SettingsScreen {
                     .padding(10.dp)
                     .verticalScroll(scrollState)
             ) {
-                UxCategory(settingsRepository, currentSettings)
+                UxCategory(settingsRepository, currentSettings, screenContext::refreshSettingsScreen)
                 SettingsCategorySpacer()
 
                 if (callDetectionPossible) CallDetectionCategory(permissionProvider, settingsRepository, currentSettings)
@@ -113,7 +116,11 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun UxCategory(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun UxCategory(
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        refreshScreen: () -> Unit,
+    ) {
         val appThemeOptions = remember {
             AppTheme.entries.map { ResDropDownOption(labelRes = it.labelRes, value = it) }
         }
@@ -126,6 +133,32 @@ object SettingsScreen {
                 options = appThemeOptions,
                 onValueChanged = { settingsRepository.appTheme = it }
             )
+
+            val showAppLanguageField = remember { Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU }
+            if (showAppLanguageField) {
+                val context = LocalContext.current
+
+                val appLanguageOptions = remember {
+                    AppLanguage.entries.map {
+                        ResDropDownOption(
+                            labelRes = it.labelRes,
+                            value = it
+                        )
+                    }
+                }
+
+                SettingsDropDown(
+                    label = R.string.settings_entry_app_language,
+                    description = null,
+                    value = currentSettings.appLanguage,
+                    options = appLanguageOptions,
+                    onValueChanged = {
+                        settingsRepository.appLanguage = it
+                        context.tryChangeAppLanguage(language = it)
+                        refreshScreen()
+                    }
+                )
+            }
 
             SettingsEntryDivider()
 

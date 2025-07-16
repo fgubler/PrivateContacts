@@ -23,6 +23,7 @@ private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
 internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     appTheme = tryGetEnumValue(appThemeEntry),
+    appLanguage = tryGetEnumValue(appLanguageEntry),
     orderByFirstName = getValue(orderByFirstNameEntry),
     showContactTypeInList = getValue(showContactTypeInListEntry),
     showExtraButtonsInEditScreen = getValue(showExtraButtonsInEditScreenEntry),

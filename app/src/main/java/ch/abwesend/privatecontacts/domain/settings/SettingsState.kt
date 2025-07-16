@@ -16,6 +16,7 @@ import java.time.LocalDate
 interface ISettingsState {
     // UX
     val appTheme: AppTheme
+    val appLanguage: AppLanguage
 
     val orderByFirstName: Boolean
     val showContactTypeInList: Boolean
@@ -75,6 +76,7 @@ interface ISettingsState {
 
 data class SettingsState(
     override val appTheme: AppTheme,
+    override val appLanguage: AppLanguage,
 
     override val orderByFirstName: Boolean,
     override val showContactTypeInList: Boolean,
@@ -111,6 +113,7 @@ data class SettingsState(
     companion object {
         val defaultSettings: ISettingsState = SettingsState(
             appTheme = AppTheme.SYSTEM_SETTINGS,
+            appLanguage = AppLanguage.SYSTEM_DEFAULT,
             orderByFirstName = true,
             showContactTypeInList = true,
             showExtraButtonsInEditScreen = true,

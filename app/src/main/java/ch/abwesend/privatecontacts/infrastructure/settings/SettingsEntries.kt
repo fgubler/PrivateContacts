@@ -23,6 +23,10 @@ internal val appThemeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("appTheme"),
     defaultValue = defaultSettings.appTheme
 )
+internal val appLanguageEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("appLanguage"),
+    defaultValue = defaultSettings.appLanguage
+)
 internal val orderByFirstNameEntry = SettingsEntry(
     key = booleanPreferencesKey("orderByFirstName"),
     defaultValue = defaultSettings.orderByFirstName

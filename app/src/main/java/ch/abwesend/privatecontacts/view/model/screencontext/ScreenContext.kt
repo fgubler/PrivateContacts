@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
+import androidx.navigation.NavOptions
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.error
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -72,5 +73,12 @@ data class ScreenContext(
             contactDetailViewModel.selectContact(contact)
         }
         return genericRouter.navigateUp()
+    }
+
+    override fun refreshSettingsScreen(): Boolean {
+        val navOptions = NavOptions.Builder()
+            .setPopUpTo(route = Screen.Settings.key, inclusive = true, saveState = false)
+            .build()
+        return genericRouter.navigateToScreen(Screen.Settings, navOptions)
     }
 }

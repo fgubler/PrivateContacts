@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  ~ Private Contacts
+  ~ Copyright (c) 2022.
+  ~ Florian Gubler
+  -->
+
+<resources>
+    <string name="app_name">Private Kontakte</string>
+    <string name="app_name_calculator">Taschenrechner</string>
+    <string name="greetings_from_the_developer">Grüße vom Entwickler, Florian.</string>
+
+    <string name="screen_contact_list">Kontakte</string>
+    <string name="screen_settings">Einstellungen</string>
+    <string name="screen_about_the_app">Über die App</string>
+    <string name="screen_introduction">Einführung</string>
+    <string name="screen_import_export">Import / Export</string>
+    <string name="screen_import_from_intent">Kontakte importieren</string>
+    <string name="screen_contact_details">Kontaktdetails</string>
+    <string name="screen_contact_edit">Kontakt bearbeiten</string>
+    <string name="screen_contact_edit_create">Kontakt erstellen</string>
+
+    <string name="no_contacts_found">Keine Kontakte gefunden</string>
+    <string name="data_loading_error">Fehler beim Laden der Daten</string>
+    <string name="no_contact_selected">Kein Kontakt ausgewählt</string>
+    <string name="no_contact_selected_error">Fehler beim Laden des Kontakts</string>
+    <string name="failed_to_import_contacts">Kontakte konnten nicht importiert werden</string>
+
+    <string name="menu">Menü öffnen</string>
+    <string name="save">Speichern</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="remove">Entfernen</string>
+    <string name="ok">OK</string>
+    <string name="close">Schließen</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="search">Suchen</string>
+    <string name="info">Info</string>
+    <string name="back">Zurück</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="done">Fertig</string>
+    <string name="important">Wichtig</string>
+    <string name="more_actions">Weitere Aktionen</string>
+    <string name="expand">Erweitern</string>
+    <string name="compress">Reduzieren</string>
+    <string name="add">Hinzufügen</string>
+    <string name="send">Senden</string>
+    <string name="success">Erfolg</string>
+    <string name="failure">Fehler</string>
+    <string name="copied_to_clipboard">In Zwischenablage kopiert</string>
+    <string name="try_again">Erneut versuchen</string>
+    <string name="refresh">Aktualisieren</string>
+    <string name="login">Anmelden</string>
+    <string name="error">Fehler</string>
+    <string name="errors">Fehler</string>
+    <string name="unknown_error">Unbekannter Fehler</string>
+    <string name="unexpected_error">Unerwarteter Fehler</string>
+    <string name="unexpected_error_apology">Ein unerwarteter Fehler ist aufgetreten: Wir entschuldigen uns für die Unannehmlichkeiten.</string>
+    <string name="validation_error">Validierungsfehler</string>
+    <string name="validation_errors">Validierungsfehler</string>
+    <string name="unable_to_delete_contact">Kontakt konnte nicht gelöscht werden</string>
+    <string name="unable_to_save_contact">Kontakt konnte nicht gespeichert werden</string>
+    <string name="unable_to_resolve_existing_contact">Der vorhandene Kontakt konnte nicht aufgelöst werden</string>
+    <string name="unable_to_resolve_contact">Kontakt konnte nicht geladen werden</string>
+    <string name="unable_to_create_contact_groups">Eine oder mehrere Kontaktgruppen konnten nicht hinzugefügt werden.</string>
+    <string name="not_yet_implemented_for_external_error">Diese Funktion ist für „normale“ Android-Kontakte noch nicht implementiert.</string>
+    <string name="not_yet_implemented_for_internal_error">Diese Funktion ist für geheime Kontakte noch nicht implementiert.</string>
+    <string name="error_report_sent_confirmation">Fehlermeldung an Entwickler gesendet</string>
+    <string name="feature_not_yet_implemented">Diese Funktion ist noch nicht implementiert.</string>
+    <string name="please_wait">Bitte warten</string>
+
+    <string name="do_not_show_again">Nicht mehr anzeigen</string>
+    <string name="thank_you">Danke</string>
+
+    <string name="type">Typ</string>
+    <string name="secret_contact">Geheim</string>
+    <string name="secret_contact_explanation">Geheime Kontakte werden nur innerhalb dieser App gespeichert und nicht weitergegeben.</string>
+    <string name="public_contact">Öffentlich</string>
+    <string name="public_contact_explanation">Öffentliche Kontakte werden in der Standard-Kontaktdatenbank von Android gespeichert und mit anderen Apps geteilt.</string>
+    <string name="type_personal">Privat</string>
+    <string name="type_business">Geschäftlich</string>
+    <string name="type_mobile_business">Mobil (geschäftlich)</string>
+    <string name="type_mobile">Mobil</string>
+    <string name="type_other">Sonstiges</string>
+    <string name="type_custom">Benutzerdefiniert</string>
+    <string name="type_birthday">Geburtstag</string>
+    <string name="type_anniversary">Jahrestag</string>
+    <string name="type_main">Haupt</string>
+    <string name="type_relationship_sibling">Geschwister</string>
+    <string name="type_relationship_brother">Bruder</string>
+    <string name="type_relationship_sister">Schwester</string>
+    <string name="type_relationship_parent">Elternteil</string>
+    <string name="type_relationship_father">Vater</string>
+    <string name="type_relationship_mother">Mutter</string>
+    <string name="type_relationship_child">Kind</string>
+    <string name="type_relationship_partner">Partner</string>
+    <string name="type_relationship_relative">Verwandter</string>
+    <string name="type_relationship_work">Arbeit</string>
+    <string name="type_relationship_friend">Freund</string>
+    <string name="no_custom_label">Kein Label</string>
+    <string name="create_contact">Kontakt erstellen</string>
+
+    <string name="define_custom_type">Benutzerdefinierten Typ festlegen</string>
+
+    <string name="navigation">Navigation</string>
+    <string name="loading_contacts">Kontakte werden geladen</string>
+    <string name="loading_contact">Kontakt wird geladen</string>
+    <string name="reload_data">Daten neu laden</string>
+    <string name="reload_contact">Kontakt neu laden</string>
+
+    <string name="personal_information">Persönliche Informationen</string>
+    <string name="additional_information">Zusätzliche Informationen</string>
+    <string name="first_name">Vorname</string>
+    <string name="last_name">Nachname</string>
+    <string name="nickname">Spitzname</string>
+    <string name="middle_name">Zweitname</string>
+    <string name="name_prefix">Namenspräfix</string>
+    <string name="name_suffix">Namenssuffix</string>
+    <string name="first_name_colon">Vorname:</string>
+    <string name="last_name_colon">Nachname:</string>
+    <string name="nickname_colon">Spitzname:</string>
+    <string name="middle_name_colon">Zweitname:</string>
+    <string name="name_prefix_colon">Namenspräfix:</string>
+    <string name="name_suffix_colon">Namenssuffix:</string>
+    <string name="image">Bild</string>
+    <string name="notes">Notizen</string>
+    <string name="contact_groups">Gruppen</string>
+    <string name="visibility">Sichtbarkeit</string>
+    <string name="visibility_colon">Sichtbarkeit:</string>
+
+    <string name="phone_number">Telefonnummer</string>
+    <string name="phone_numbers">Telefonnummern</string>
+    <string name="email_address">E-Mail-Adresse</string>
+    <string name="email_addresses">E-Mail-Adressen</string>
+    <string name="physical_address">Adresse</string>
+    <string name="physical_addresses">Adressen</string>
+    <string name="website">Webseite</string>
+    <string name="websites">Webseiten</string>
+    <string name="relationship">Beziehung</string>
+    <string name="relationships">Beziehungen</string>
+    <string name="event">Ereignis</string>
+    <string name="events">Ereignisse</string>
+    <string name="company">Firma</string>
+    <string name="companies">Firmen</string>
+
+    <string name="no_contact_groups_set">Dieser Kontakt gehört keiner Gruppe an.</string>
+    <string name="no_contact_groups_exist">Es wurden noch keine Gruppen erstellt. Bitte erstelle eine.</string>
+    <string name="add_contact_to_groups_title">Zu Gruppen hinzufügen</string>
+    <string name="contact_groups_load_error">Kontaktgruppen konnten nicht geladen werden: Bitte versuche es erneut.</string>
+    <string name="create_contact_group">Kontaktgruppe erstellen</string>
+    <string name="contact_group">Kontaktgruppe</string>
+    <string name="new_contact_group_title">Neue Kontaktgruppe</string>
+    <string name="contact_group_name">Gruppenname / Bezeichnung</string>
+    <string name="contact_group_notes">Notizen</string>
+    <string name="contact_group_validation_name_empty">Bitte gib einen Gruppennamen ein.</string>
+    <string name="contact_group_validation_name_duplicate">Eine Gruppe mit diesem Namen existiert bereits.</string>
+    <string name="add_contact_image">Kontaktbild hinzufügen</string>
+    <string name="change_contact_image">Kontaktbild ändern</string>
+    <string name="remove_contact_image">Kontaktbild entfernen</string>
+    <string name="delete_contact_image_confirmation_title">Kontaktbild löschen</string>
+    <string name="delete_contact_image_confirmation_text">Möchtest du dieses Bild wirklich von diesem Kontakt entfernen?\n\nEs kann nicht wiederhergestellt werden, es sei denn, du hast es noch irgendwo gespeichert.</string>
+
+    <string name="contact_list_bulk_mode_title">%1$s Elemente ausgewählt</string>
+
+    <string name="show_additional_fields">Zusätzliche Felder anzeigen</string>
+    <string name="whatsapp_confirmation_title">WhatsApp öffnen?</string>
+    <string name="whatsapp_confirmation_text">Möchtest du wirklich einen Chat in WhatsApp mit dieser Nummer starten?\n\nDabei wird die Telefonnummer mit WhatsApp geteilt.\n\nKeine weiteren Kontaktinformationen werden weitergegeben.</string>
+
+    <string name="generic_unknown_error">Etwas ist schiefgelaufen. Der gewünschte Vorgang konnte nicht korrekt ausgeführt werden.</string>
+
+    <string name="saving_data_error">Etwas ist schiefgelaufen:\n\n%1$s \n\nDie Daten konnten daher nicht gespeichert werden.</string>
+    <string name="data_validation_errors">Validierungsfehler</string>
+    <string name="contact_validation_error_name_empty">Entweder Vor- oder Nachname muss gesetzt sein.</string>
+    <string name="saving_data_error_change_to_new_contact">Der bestehende Kontakt konnte nicht aufgelöst werden und wurde daher nicht geändert. Möchtest du stattdessen einen neuen erstellen?</string>
+
+    <string name="discard_changes_title">Änderungen verwerfen</string>
+    <string name="discard_changes_text">Möchtest du wirklich alle nicht gespeicherten Änderungen verwerfen?</string>
+
+    <string name="select_all">Alle auswählen</string>
+    <string name="deselect_all">Alle abwählen</string>
+
+    <string name="delete_contact">Kontakt löschen</string>
+    <string name="delete_contact_title">Kontakt löschen</string>
+    <string name="delete_contact_text">Gelöschte Kontakte können nicht wiederhergestellt werden. Bist du sicher, dass du diesen Kontakt löschen möchtest?</string>
+    <string name="delete_contact_error">Etwas ist schiefgelaufen. Der Kontakt konnte nicht gelöscht werden.</string>
+    <string name="create_as_new_contact">Als neuen Kontakt erstellen</string>
+
+    <string name="delete_contacts">Kontakte löschen</string>
+    <string name="delete_contacts_title">Kontakte löschen</string>
+    <string name="delete_contacts_text">Gelöschte Kontakte können nicht wiederhergestellt werden. Bist du sicher, dass du diese %1$s Kontakte löschen möchtest?</string>
+    <string name="delete_contacts_progress">Kontakte werden gelöscht</string>
+    <string name="delete_contacts_partial_error">Etwas ist schiefgelaufen. %1$s von %2$s Kontakten konnten nicht gelöscht werden.</string>
+    <string name="delete_contacts_full_error">Etwas ist schiefgelaufen. Keine Kontakte konnten gelöscht werden.</string>
+
+    <string name="make_contact_secret">Kontakt auf „Geheim“ ändern</string>
+    <string name="make_contact_secret_title">Kontakt auf „Geheim“ ändern</string>
+    <string name="make_contact_secret_text">Wenn ein Kontakt auf „Geheim“ geändert wird, wird er in diese App kopiert und anschließend aus der öffentlichen Android-Kontaktdatenbank gelöscht.\n\nBitte stelle sicher, dass keine wichtigen Informationen fehlen, indem du die Kontaktdetails vorab überprüfst.</string>
+
+    <string name="make_contacts_secret">Kontakte auf „Geheim“ ändern</string>
+    <string name="make_contacts_secret_title">Kontakte auf „Geheim“ ändern</string>
+    <string name="make_contact_public">Kontakt auf „Öffentlich“ ändern</string>
+    <string name="make_contact_public_title">Kontakt auf „Öffentlich“ ändern</string>
+    <string name="make_contact_public_text">Wenn ein Kontakt auf „Öffentlich“ geändert wird, wird er in die öffentliche Android-Kontaktdatenbank kopiert und anschließend aus dieser App gelöscht.</string>
+
+    <string name="make_contacts_public">Kontakte auf „Öffentlich“ ändern</string>
+    <string name="make_contacts_public_title">Kontakte auf „Öffentlich“ ändern</string>
+
+    <string name="type_change_progress">Kontakt-Sichtbarkeit wird geändert</string>
+    <string name="type_change_partial_error">Etwas ist schiefgelaufen. %1$s von %2$s Kontakten konnten nicht geändert werden.</string>
+    <string name="type_change_full_error">Etwas ist schiefgelaufen. Keine Kontakte konnten geändert werden.</string>
+
+    <string name="type_change_create_new_contact_error">Der neue Kontakt konnte nicht erstellt werden. Daher wurde der alte Kontakt nicht gelöscht, um Datenverlust zu vermeiden.</string>
+    <string name="type_change_delete_old_contact_error">Der alte Kontakt konnte nicht gelöscht werden. Der neue Kontakt wurde jedoch erstellt. Du kannst den alten nun manuell löschen.</string>
+
+    <string name="type_change_error">Beim Ändern des Kontakt-Typs ist ein Fehler aufgetreten. Der ursprüngliche Kontakt wurde aus Sicherheitsgründen nicht verändert.</string>
+    <string name="type_change_batch_error">Beim Ändern der Typen von %1$s Kontakten schlug die Änderung bei %2$s fehl.\nDavon entfielen %3$s auf Validierungsfehler und %4$s auf andere Fehler.\n\nIm Fehlerfall wurde der ursprüngliche Kontakt nicht gelöscht, um Datenverlust zu vermeiden.</string>
+
+    <string name="send_sms">SMS senden</string>
+    <string name="send_whatsapp_message">WhatsApp-Nachricht senden</string>
+    <string name="deeplink_failed_no_appropriate_app">Keine passende App für diese Aktion gefunden.</string>
+
+    <string name="whatsapp_error_not_installed">WhatsApp scheint nicht installiert zu sein.</string>
+    <string name="whatsapp_error_number_format_invalid">Bitte gib die Telefonnummer im internationalen Format ein – z.B. +1 für USA.</string>
+    <string name="whatsapp_error_navigation_failed_title">Navigation fehlgeschlagen</string>
+    <string name="whatsapp_error_navigation_failed">Die Weiterleitung zu WhatsApp ist aus unbekannten Gründen fehlgeschlagen. Bitte versuche es erneut.</string>
+
+    <string name="show_caller_information_title">Anruferinformationen anzeigen?</string>
+    <string name="show_caller_information_text">Um während eines Anrufs Informationen zum Anrufer anzuzeigen, werden bestimmte Berechtigungen benötigt.\n\nDiese werden ausschließlich verwendet, um eingehende Nummern mit gespeicherten Kontakten abzugleichen.</string>
+    <string name="activate_feature">Möchtest du diese Funktion jetzt aktivieren?</string>
+
+    <string name="privacy_advertisement_id_title">Werbe-ID</string>
+    <string name="advertisement_id_information_text">Vielleicht hast du im Play Store gesehen, dass die App auf die Werbe-ID deines Geräts zugreift. Das mag unerwünscht erscheinen – gerade bei einer App mit Fokus auf Datenschutz.\n\nLeider benötigt das „Crashlytics“-Framework diese ID, um Fehlermeldungen zu erhalten. Ohne diese Berichte können wir keine Bugs beheben. Die ID wird zu keinem anderen Zweck genutzt: keine Werbung, kein Tracking.\n\nGenerell empfehlen wir, die Werbe-ID in den Systemeinstellungen zu löschen, um deine Privatsphäre zu verbessern.</string>
+    <string name="show_android_contacts">Öffentliche Kontakte anzeigen?</string>
+    <string name="show_android_contacts_text">Um auch Kontakte aus der „normalen“ Android-Kontakte-App zu verwalten, sind Berechtigungen erforderlich.\n\nWenn du die App nur für geheime Kontakte nutzt, sind diese Berechtigungen nicht notwendig.</string>
+
+    <string name="incoming_call_title">Eingehender Anruf</string>
+    <string name="incoming_call_text_single_match">„%1$s“ ruft an.</string>
+    <string name="incoming_call_text_multiple_matches">%1$s oder %2$s ruft an. Die Nummer %3$s gehört zu beiden Kontakten.</string>
+    <string name="incoming_call_channel_title">Eingehender Anruf</string>
+    <string name="incoming_call_channel_description">Benachrichtigungen über eingehende Anrufe, die mit gespeicherten Kontakten übereinstimmen.</string>
+
+    <string name="about_app_title">Über die App</string>
+    <string name="about_app_description">Diese App ermöglicht es, Kontakte zu speichern, die nicht mit anderen Apps geteilt werden sollen.</string>
+    <string name="contact_developers_title">Entwickler kontaktieren</string>
+    <string name="contact_developers_text">Wir freuen uns über jedes Feedback, um die App weiter zu verbessern.</string>
+    <string name="play_store_entry">PlayStore-Eintrag</string>
+    <string name="in_app_review">App bewerten</string>
+    <string name="github_page">Github-Seite</string>
+    <string name="user_guide">Benutzerhandbuch</string>
+    <string name="technical_explanations">Technische Erklärungen</string>
+    <string name="report_error_github">Fehler auf Github melden</string>
+    <string name="report_error">Fehler melden</string>
+    <string name="write_email">E-Mail schreiben</string>
+    <string name="privacy_title">Datenschutzerklärung</string>
+    <string name="legal_disclaimer_title">Rechtlicher Hinweis</string>
+    <string name="legal_disclaimer_text">Die Software wird wie gesehen zur Verfügung gestellt. Die Entwickler übernehmen keine Haftung für Schäden oder Verluste, die durch die Nutzung entstehen.</string>
+    <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
+    <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschließlich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, außer du klickst auf einen Button zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschließlich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
+
+    <string name="permissions">Berechtigungen</string>
+    <string name="app_introduction_description">Willkommen bei „Private Kontakte“.\n\nDiese App ermöglicht es dir, Kontakte zu speichern, die nicht mit anderen Apps auf deinem Gerät geteilt werden.\n\nDu kannst für jeden Kontakt einzeln festlegen, ob er geteilt werden soll oder nicht.</string>
+
+    <string name="review_dialog_title">Benutzer-Feedback</string>
+    <string name="review_dialog_text">Wenn du diese App kostenlos nutzt und sie dir gefällt, würden wir uns über eine 5-Sterne-Bewertung freuen.</string>
+    <string name="review_dialog_secondary_text">Ist das ein guter Zeitpunkt für eine Bewertung?</string>
+
+    <string name="light_theme">Hell</string>
+    <string name="dark_theme">Dunkel</string>
+    <string name="system_default">Systemstandard</string>
+
+    <string name="language_english">Englisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_spanish">Spanisch</string>
+    <string name="language_french">Französisch</string>
+    <string name="language_italian">Italienisch</string>
+
+    <string name="settings_category_ux">Anzeige</string>
+    <string name="settings_category_contacts">Kontaktliste</string>
+    <string name="settings_category_default_values">Standardwerte</string>
+    <string name="settings_category_miscellaneous">Verschiedenes</string>
+    <string name="settings_category_security">Sicherheit</string>
+    <string name="settings_category_call_detection">Anruferkennung</string>
+    <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen außer Version 9. Wir bitten um Entschuldigung.</string>
+    <string name="settings_category_privacy">Datenschutz</string>
+
+    <string name="settings_info_dialog_call_detection">Die Anruferkennung ist stark abhängig vom Gerätehersteller und der Android-Version.\n\nDaher erreicht sie möglicherweise nicht dieselbe Zuverlässigkeit wie andere Funktionen. Bitte melde uns ungewöhnliches Verhalten (siehe „Über die App“-Seite).\n\nWir bitten um Entschuldigung für etwaige Unannehmlichkeiten.</string>
+    <string name="settings_info_dialog_android_contacts_permission">Falls du diese Berechtigung bereits einmal explizit verweigert hast, fragt Android in manchen Versionen nicht erneut, sondern verweigert automatisch.\n\nIn dem Fall musst du leider in den Systemeinstellungen unter „Apps“ diese App auswählen und dort die Berechtigung manuell erteilen.\n\nWir bitten um Entschuldigung für die Umstände.</string>
+    <string name="settings_entry_app_theme">Design der App</string>
+    <string name="settings_entry_app_language">Sprache der App</string>
+    <string name="settings_entry_add_safe_area_padding">Nur sichere Bereiche nutzen</string>
+    <string name="settings_entry_add_safe_area_padding_description">Fügt Ränder hinzu, um sicherzustellen, dass alle Inhalte sichtbar und anklickbar sind.</string>
+    <string name="settings_entry_second_tab">Zweiter Reiter</string>
+    <string name="settings_entry_second_tab_description">Der erste Reiter zeigt nur geheime Kontakte. Diese Einstellung bestimmt die Anzeige im zweiten Reiter.</string>
+    <string name="settings_entry_order_by_first_name">Nach Vornamen sortieren</string>
+    <string name="settings_entry_show_contact_types_on_contact_list">Kontakttyp in der Liste anzeigen</string>
+    <string name="settings_entry_show_extra_buttons_in_edit_screen">Zusätzlichen Speichern-Button anzeigen</string>
+    <string name="settings_entry_invert_top_and_bottom_bars">Navigationsleiste unten anzeigen</string>
+    <string name="settings_entry_show_whatsapp_buttons">WhatsApp-Buttons anzeigen</string>
+    <string name="settings_entry_show_whatsapp_buttons_description">Fügt Buttons in den Kontaktdetails hinzu, um einen Chat in WhatsApp zu starten.</string>
+    <string name="settings_entry_default_contact_type">Standard-Kontakttyp</string>
+    <string name="settings_entry_default_external_contact_account">Kontaktkonto</string>
+    <string name="settings_entry_default_contact_type_description">Öffentliche Kontakte werden mit anderen Apps geteilt. Geheime nicht.</string>
+    <string name="settings_entry_default_external_contact_account_description">Öffentliche Kontakte können lokal oder z.B. im Google-Konto gespeichert werden.</string>
+    <string name="settings_entry_call_detection">Anrufe mit Kontakten abgleichen</string>
+    <string name="settings_entry_call_detection_description">Eingehende Anrufe mit gespeicherten Kontakten abgleichen und Benachrichtigung anzeigen.</string>
+    <string name="settings_entry_show_calls_on_lockscreen">Informationen auf Sperrbildschirm anzeigen</string>
+    <string name="settings_entry_show_calls_on_lockscreen_description">Kontaktdaten bei eingehendem Anruf auch auf dem Sperrbildschirm anzeigen.</string>
+    <string name="settings_entry_show_android_contacts">Öffentliche Kontakte anzeigen</string>
+    <string name="settings_entry_show_android_contacts_description">Zeigt auch Kontakte aus der Standard-Android-Kontaktliste an.</string>
+    <string name="settings_entry_error_reports">Anonyme Fehlermeldungen senden</string>
+    <string name="settings_entry_error_reports_description">Ohne Berichte können wir keine Abstürze erkennen und beheben.</string>
+    <string name="settings_entry_use_alternative_icon">App-Name und Icon verbergen</string>
+    <string name="settings_entry_use_alternative_icon_description">Verwendet alternativen App-Namen und Icon (experimentell).</string>
+    <string name="settings_entry_use_alternative_icon_info_dialog_text">Zeigt einen anderen App-Namen und ein anderes Icon auf dem Startbildschirm an, um die Funktion zu verbergen.\nHinweis: In den Systemeinstellungen erscheint weiterhin der echte Name und das echte Icon.\n\nDie App heißt dann „Taschenrechner“ mit passendem Icon.\n\nEin Wechsel dieser Einstellung kann zum Schließen der App führen.</string>
+    <string name="settings_use_alternative_icon_and_name_success_confirmation">Icon und Name der App wurden erfolgreich geändert</string>
+    <string name="settings_use_alternative_icon_and_name_failure_confirmation">Änderung von Icon und Name fehlgeschlagen</string>
+    <string name="settings_entry_default_vcard_version">VCF-Version</string>
+    <string name="settings_entry_default_vcard_version_description">Kontakte können im VCF-Format exportiert werden.</string>
+
+    <string name="settings_action_copy_logs">Logs in Zwischenablage kopieren</string>
+    <string name="export_logfile_today">Logs für heute exportieren</string>
+    <string name="log_file_exported">Logs wurden erfolgreich exportiert.</string>
+    <string name="log_file_export_failed">Export der Logs fehlgeschlagen.</string>
+
+    <string name="settings_entry_enable_authentication">App-Sperre</string>
+    <string name="settings_entry_enable_authentication_description">Benutzer muss sich authentifizieren, um die App zu verwenden.</string>
+    <string name="settings_entry_enable_authentication_info_dialog">Wenn diese Option aktiviert ist, wird die Bildschirmsperre von Android für die Authentifizierung verwendet.\n\nDiese Option ist nur verfügbar, wenn eine Bildschirm-Sperre in den Systemeinstellungen eingerichtet wurde.</string>
+
+    <string name="settings_action_restore_default">Einstellungen zurücksetzen</string>
+    <string name="settings_action_restore_default_confirmation">Möchtest du alle Einstellungen wirklich auf Standardwerte zurücksetzen?</string>
+
+    <string name="settings_action_reset_database">Kontaktdatenbank zurücksetzen</string>
+    <string name="settings_action_reset_database_confirmation">Möchtest du wirklich alle geheimen Kontakte löschen? Öffentliche Kontakte bleiben erhalten, aber alle geheimen werden entfernt.</string>
+
+    <string name="resetting_database">Datenbank wird zurückgesetzt</string>
+    <string name="resetting_database_successful">Datenbank wurde erfolgreich zurückgesetzt.</string>
+    <string name="resetting_database_failed">Zurücksetzen der Datenbank fehlgeschlagen. Bitte erneut versuchen oder die Entwickler kontaktieren. Alternativ kannst du auch in den Systemeinstellungen alle App-Daten löschen.\n\nWir entschuldigen uns für die Unannehmlichkeiten.</string>
+    <string name="run_in_background">Im Hintergrund ausführen</string>
+    <string name="version">Version</string>
+
+    <string name="secret_contacts_tab_title">Geheime Kontakte</string>
+    <string name="all_contacts_tab_title">Alle Kontakte</string>
+    <string name="public_contacts_tab_title">Öffentliche Kontakte</string>
+
+    <string name="target_account">Zielkonto</string>
+    <string name="app_internal">In dieser App</string>
+    <string name="local_phone_contacts">Lokale Telefonkontakte</string>
+
+    <string name="import_export_permission_required_title">Berechtigung erforderlich</string>
+    <string name="import_export_permission_required_explanation">Diese Aktion erfordert Zugriff auf Android-Kontakte.</string>
+
+    <string name="import_title">Importieren</string>
+    <string name="import_contacts">Kontakte importieren</string>
+    <string name="replace_existing_contacts_label">Übereinstimmende Kontakte ersetzen</string>
+    <string name="replace_existing_contacts_description">Einen bestehenden Kontakt ersetzen, wenn Name und ID übereinstimmen.</string>
+    <string name="select_file_to_import">.vcf-Datei zum Import auswählen</string>
+    <string name="import_contacts_as">Kontakte importieren als</string>
+    <string name="import_contacts_progress">Kontakte werden importiert</string>
+    <string name="import_complete_title">Import abgeschlossen</string>
+    <string name="import_failed_title">Import fehlgeschlagen</string>
+    <string name="file_reading_failed">Datei konnte nicht gelesen werden</string>
+    <string name="vcf_parsing_failed">VCF konnte aus Datei nicht gelesen werden</string>
+    <string name="newly_imported_contacts">Neu importierte Kontakte:</string>
+    <string name="replaced_existing_contacts">Ersetzte Kontakte:</string>
+    <string name="vcf_parsing_errors">VCF-Fehler:</string>
+    <string name="import_errors">Import-Fehler:</string>
+    <string name="import_validation_errors">Validierungsfehler beim Import:</string>
+    <string name="import_error_details_title">Fehlerdetails</string>
+    <string name="import_show_error_details">Fehlerdetails anzeigen</string>
+    <string name="import_show_result_overview">Ergebnisübersicht anzeigen</string>
+    <string name="import_failed_contacts">Kontakte, die nicht importiert werden konnten</string>
+
+    <string name="file_picker_error">Dateimanager konnte nicht geöffnet werden. Datei kann nicht ausgewählt werden.\nDein Gerät scheint diese Aktion nicht zu unterstützen. Wir bitten um Entschuldigung.</string>
+
+    <string name="export_title">Exportieren</string>
+    <string name="export_contact">Kontakt exportieren</string>
+    <string name="export_contacts">Kontakte exportieren</string>
+    <string name="select_file_to_export_to">.vcf-Datei für den Export auswählen</string>
+    <string name="contact_type_to_export">Kontakttyp für den Export</string>
+    <string name="export_file_selected">Export-Datei ausgewählt</string>
+    <string name="file_writing_failed">Datei konnte nicht geschrieben werden</string>
+    <string name="no_contacts_to_export">Keine Kontakte konnten exportiert werden</string>
+    <string name="export_failed_title">Export fehlgeschlagen</string>
+    <string name="vcf_serialization_failed">Kontakte konnten nicht als VCF gespeichert werden</string>
+    <string name="export_contacts_progress">Kontakte werden exportiert</string>
+    <string name="export_complete_title">Export abgeschlossen</string>
+    <string name="export_failed_contacts">Kontakte, die nicht exportiert werden konnten</string>
+
+    <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
+    <string name="new_something">Neu</string>
+
+    <string name="vcard_v3_label">Version 3</string>
+    <string name="vcard_v4_label">Version 4</string>
+    <string name="vcard_version_label">VCF-Version</string>
+    <string name="vcard_versions_label">VCF-Versionen</string>
+    <string name="vcard_v3_info_text">ist mit allen Kontakt-Apps kompatibel, unterstützt jedoch nicht alle Felder. Einige Daten gehen beim Export verloren.</string>
+    <string name="vcard_v3_info_text_relationships">- Beziehungen (z. B. „Schwester“)</string>
+    <string name="vcard_v3_info_text_events">- Ereignisse/Termine (z. B. „Jahrestag“)</string>
+    <string name="vcard_v4_info_text">unterstützt alle Felder: keine Daten gehen verloren, aber nicht alle Kontakt-Apps können sie lesen.</string>
+
+    <string name="exported_contacts">Exportierte Kontakte:</string>
+    <string name="failed_to_export_contacts">Fehlgeschlagene Kontakte:</string>
+    <string name="no_contact_name_fallback">[Kein Kontaktname]</string>
+
+    <string name="export_contact_title">Kontakt exportieren</string>
+    <string name="export_contacts_title">Kontakte exportieren</string>
+    <string name="selected_for_export">ausgewählt</string>
+    <string name="contact_export_success">Der Kontakt wurde erfolgreich exportiert.</string>
+    <string name="contacts_export_success">Die Kontakte wurden erfolgreich exportiert.</string>
+    <string name="export_contact_error">Etwas ist schiefgelaufen. Der Kontakt konnte nicht exportiert werden.</string>
+    <string name="export_contacts_partial_error">Etwas ist schiefgelaufen. %1$s von %2$s Kontakten konnten nicht exportiert werden.</string>
+    <string name="export_contacts_full_error">Etwas ist schiefgelaufen. Keine Kontakte konnten exportiert werden.</string>
+
+    <string name="authentication_required_prompt_description">Authentifizierung erforderlich, um auf diese App zuzugreifen.</string>
+    <string name="enable_authentication_confirmation_title">Authentifizierungseinstellungen ändern</string>
+    <string name="authentication_registration_prompt_description">Authentifizierung erforderlich, um diese Einstellungen zu ändern.</string>
+    <string name="authentication_failed">Authentifizierung fehlgeschlagen: Zugriff verweigert.</string>
+    <string name="authentication_registration_failed_title">Authentifizierung konnte nicht aktiviert werden</string>
+    <string name="authentication_registration_error_none_registered">Auf diesem Gerät ist kein Authentifizierungsmechanismus aktiviert.\n\nBitte aktiviere eine biometrische Sperre oder ein PIN-/Passwortsystem in den Systemeinstellungen.</string>
+    <string name="authentication_registration_error_unknown">Aktivierung der Gerätesperre fehlgeschlagen: Bitte erneut versuchen oder kontaktiere uns.</string>
+
+    <string name="release_notes_dialog_title">Was ist neu</string>
+    <string name="release_notes_v84_1">Dialog für Versionshinweise hinzugefügt.</string>
+    <string name="release_notes_v84_2">Kleine Fehlerbehebungen.</string>
+    <string name="release_notes_v85">Übersetzungen für Deutsch, Französisch, Italienisch und Spanisch hinzugefügt.</string>
+
+</resources>

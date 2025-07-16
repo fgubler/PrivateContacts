@@ -51,6 +51,7 @@ interface IContactEditScreenContext : IScreenContextBase {
 
 interface ISettingsScreenContext : IScreenContextBase {
     val settingsViewModel: SettingsViewModel
+    fun refreshSettingsScreen(): Boolean
 }
 
 interface IContactImportExportScreenContext : IScreenContextBase {
