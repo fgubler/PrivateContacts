@@ -64,9 +64,9 @@ import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
