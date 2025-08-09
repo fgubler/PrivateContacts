@@ -430,4 +430,6 @@
     <string name="release_notes_v84_1">Aggiunto il dialogo per le note di rilascio.</string>
     <string name="release_notes_v84_2">Correzioni di bug minori.</string>
     <string name="release_notes_v85">Aggiunte le traduzioni per italiano, tedesco, spagnolo e francese.</string>
+    <string name="release_notes_v87">Aggiunta l\'opzione per memorizzare i contatti pubblici in tutti gli account registrati sul dispositivo. In precedenza erano supportati solo gli account Google e i contatti telefonici locali.</string>
+
 </resources>

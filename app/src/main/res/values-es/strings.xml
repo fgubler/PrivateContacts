@@ -430,4 +430,6 @@
     <string name="release_notes_v84_1">Se ha añadido un cuadro de diálogo para notas de versión.</string>
     <string name="release_notes_v84_2">Pequeñas correcciones de errores.</string>
     <string name="release_notes_v85">Se han añadido traducciones al español, alemán, italiano y francés.</string>
+    <string name="release_notes_v87">Se ha añadido la opción de almacenar contactos públicos en todas las cuentas registradas en el dispositivo. Anteriormente, solo era posible hacerlo en las cuentas de Google y en los contactos locales del teléfono.</string>
+
 </resources>

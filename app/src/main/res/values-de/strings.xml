@@ -430,5 +430,6 @@
     <string name="release_notes_v84_1">Dialog für Versionshinweise hinzugefügt.</string>
     <string name="release_notes_v84_2">Kleine Fehlerbehebungen.</string>
     <string name="release_notes_v85">Übersetzungen für Deutsch, Französisch, Italienisch und Spanisch hinzugefügt.</string>
+    <string name="release_notes_v87">Es wurde die Option hinzugefügt, öffentliche Kontakte in allen auf dem Gerät registrierten Konten zu speichern. Bisher wurden nur Google-Konten und lokale Telefonkontakte unterstützt.</string>
 
 </resources>
