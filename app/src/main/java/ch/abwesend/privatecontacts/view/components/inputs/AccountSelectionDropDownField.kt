@@ -14,6 +14,8 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.view.components.inputs.helper.DropDownFieldProvider
 import ch.abwesend.privatecontacts.view.model.DropDownOption
@@ -38,10 +40,11 @@ fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChange
 @Composable
 fun AccountSelectionDropDownField(
     selectedAccount: ContactAccount,
+    settings: ISettingsState = Settings.current,
     onValueChanged: (ContactAccount) -> Unit,
     dropDownFieldProvider: ContactAccountDropDownFieldProvider,
 ) {
-    val options = remember { getAccountOptions() }
+    val options = settings.showThirdPartyContactAccounts.let { remember(it) { getAccountOptions(it) } }
     val selectedOption: DropDownOption<ContactAccount>? = options
         .firstOrNull { it.value == selectedAccount }
         ?: options.firstOrNull()?.also {
@@ -53,9 +56,9 @@ fun AccountSelectionDropDownField(
         ?: selectedAccount.logger.warning("No options found for account selection drop-down")
 }
 
-private fun getAccountOptions(): List<DropDownOption<ContactAccount>> {
+private fun getAccountOptions(showThirdPartyAccounts: Boolean): List<DropDownOption<ContactAccount>> {
     val accountService: AccountService = getAnywhere()
-    val accounts = accountService.loadAvailableAccounts()
+    val accounts = accountService.loadAvailableAccounts(showThirdPartyAccounts)
     return accounts.map {
         DynamicStringDropDownOption(
             labelProvider = {

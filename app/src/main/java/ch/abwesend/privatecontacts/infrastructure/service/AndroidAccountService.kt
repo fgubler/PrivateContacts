@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount.OnlineAcc
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService.Companion.ACCOUNT_PROVIDER_GOOGLE
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
-import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class AndroidAccountService(private val context: Context) : AccountService {
@@ -22,13 +21,12 @@ class AndroidAccountService(private val context: Context) : AccountService {
 
     private val knownAccountProviders: Set<String> = setOf(ACCOUNT_PROVIDER_GOOGLE) // TODO extend
 
-    override fun loadAvailableAccounts(): List<ContactAccount> {
+    override fun loadAvailableAccounts(showThirdPartyAccounts: Boolean): List<ContactAccount> {
         val onlineAccounts: List<ContactAccount> = if (!permissionService.hasReadAccountsPermission()) {
             logger.warning("Missing permission to load accounts: cannot suggest more than local-contacts.")
             emptyList()
         } else {
             val accounts = AccountManager.get(context).accounts
-            val showThirdPartyAccounts = Settings.current.showThirdPartyContactAccounts
 
             logger.debug(
                 "Loading accounts, ${if (showThirdPartyAccounts) "including" else "excluding"} third-party ones."

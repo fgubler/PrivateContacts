@@ -13,7 +13,7 @@ interface AccountService {
      * @return a list of the available accounts.
      * Will never (!) be empty: at least the local-phone-contacts will be there.
      */
-    fun loadAvailableAccounts(): List<ContactAccount>
+    fun loadAvailableAccounts(showThirdPartyAccounts: Boolean): List<ContactAccount>
 
     companion object {
         const val ACCOUNT_PROVIDER_GOOGLE = "com.google"
