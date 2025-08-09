@@ -22,9 +22,9 @@ class AndroidAccountService(private val context: Context) : AccountService {
     private val knownAccountProviders: Set<String> = setOf(ACCOUNT_PROVIDER_GOOGLE) // TODO extend
 
     override fun loadAvailableAccounts(showThirdPartyAccounts: Boolean): List<ContactAccount> {
-        val onlineAccounts: List<ContactAccount> = if (!permissionService.hasReadAccountsPermission()) {
+        return if (!permissionService.hasReadAccountsPermission()) {
             logger.warning("Missing permission to load accounts: cannot suggest more than local-contacts.")
-            emptyList()
+            listOf(ContactAccount.LocalPhoneContacts)
         } else {
             val accounts = AccountManager.get(context).accounts
 
@@ -32,16 +32,21 @@ class AndroidAccountService(private val context: Context) : AccountService {
                 "Loading accounts, ${if (showThirdPartyAccounts) "including" else "excluding"} third-party ones."
             )
 
-            accounts
+            val allOnlineAccounts = accounts
                 .map { OnlineAccount(username = it.name, accountProvider = it.type) }
                 .also { logger.debug("Found ${it.size} accounts") }
-                .filter { showThirdPartyAccounts || knownAccountProviders.contains(it.accountProvider) }
+                .sortedBy { it.username } // just to make sure the order is constant
+
+            val filteredOnlineAccounts = allOnlineAccounts
+                .filter { knownAccountProviders.contains(it.accountProvider) }
                 .also { logger.debug("Found ${it.size} accounts of known providers") }
-                .sortedBy {
-                    val prefix = if (knownAccountProviders.contains(it.accountProvider)) "A" else "B" // known ones first
-                    prefix + it.username
-                }
+
+            val knownAccounts = filteredOnlineAccounts + ContactAccount.LocalPhoneContacts
+            val otherAccounts = if (showThirdPartyAccounts) {
+                allOnlineAccounts.minus(filteredOnlineAccounts.toSet())
+            } else { emptyList() }
+
+            knownAccounts + otherAccounts
         }
-        return onlineAccounts + ContactAccount.LocalPhoneContacts
     }
 }
