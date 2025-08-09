@@ -37,7 +37,10 @@ class AndroidAccountService(private val context: Context) : AccountService {
                 .also { logger.debug("Found ${it.size} accounts") }
                 .filter { showThirdPartyAccounts || knownAccountProviders.contains(it.accountProvider) }
                 .also { logger.debug("Found ${it.size} accounts of known providers") }
-                .sortedBy { it.username } // just to make the order constant
+                .sortedBy {
+                    val prefix = if (knownAccountProviders.contains(it.accountProvider)) "A" else "B" // known ones first
+                    prefix + it.username
+                }
         }
         return onlineAccounts + ContactAccount.LocalPhoneContacts
     }
