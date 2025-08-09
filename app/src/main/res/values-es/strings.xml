@@ -309,7 +309,9 @@
     <string name="settings_entry_show_android_contacts">Mostrar contactos de Android</string>
     <string name="settings_entry_show_android_contacts_description">También muestra contactos guardados en la app estándar de contactos de Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostrar cuentas de contactos de terceros</string>
-    <string name="settings_entry_show_third_party_contact_accounts_description">FUNCIÓN EXPERIMENTAL PARA USUARIOS EXPERIMENTADOS: Muestra cuentas de contactos de proveedores de terceros. ¡ADVERTENCIA: Seleccionar una cuenta que no puede almacenar contactos resultará en pérdida de datos!</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">Función avanzada: Mostrar cuentas de contactos además de Google y los contactos locales.</string>
+    <string name="settings_entry_show_third_party_accounts_warning_dialog_title">Habilitar Cuentas de Contactos de Terceros</string>
+    <string name="settings_entry_show_third_party_accounts_warning_dialog_message">Cuidado: ¡esta configuración es peligrosa y solo debería habilitarse si sabes lo que estás haciendo!\n\nHabilitarla te permitirá elegir CUALQUIER cuenta como destino para almacenar contactos públicos.\n\nEl problema es que la aplicación no puede determinar de manera confiable si una cuenta es realmente capaz de almacenar tus contactos.\n\nSi intentas almacenar un contacto en una cuenta que no admite hacerlo, esto podría llevarte a perder tus datos.\n\n¿Quieres continuar?</string>
     <string name="settings_entry_error_reports">Enviar informes de error anónimos</string>
     <string name="settings_entry_error_reports_description">Sin estos informes, no se pueden detectar fallos ni solucionarlos.</string>
     <string name="settings_entry_use_alternative_icon">Ocultar nombre e ícono de la app</string>

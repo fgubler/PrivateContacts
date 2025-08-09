@@ -39,6 +39,7 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
@@ -253,6 +254,8 @@ object SettingsScreen {
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
     ) {
+        var showThirdPartyWarningDialog by remember { mutableStateOf(false) }
+
         SettingsCategory(
             titleRes = R.string.settings_category_contacts,
             infoPopupText = R.string.settings_info_dialog_android_contacts_permission,
@@ -275,7 +278,13 @@ object SettingsScreen {
                 description = R.string.settings_entry_show_third_party_contact_accounts_description,
                 value = currentSettings.showThirdPartyContactAccounts,
                 enabled = currentSettings.showAndroidContacts,
-            ) { newValue -> settingsRepository.showThirdPartyContactAccounts = newValue }
+            ) { newValue ->
+                if (newValue) {
+                    showThirdPartyWarningDialog = true
+                } else {
+                    settingsRepository.showThirdPartyContactAccounts = false
+                }
+            }
 
             SettingsEntryDivider()
 
@@ -286,6 +295,20 @@ object SettingsScreen {
                 options = secondTabOptions,
                 enabled = currentSettings.showAndroidContacts, // second tab is not shown, otherwise
                 onValueChanged = { settingsRepository.secondTabMode = it }
+            )
+        }
+
+        if (showThirdPartyWarningDialog) {
+            YesNoDialog(
+                title = R.string.settings_entry_show_third_party_accounts_warning_dialog_title,
+                text = R.string.settings_entry_show_third_party_accounts_warning_dialog_message,
+                onYes = {
+                    settingsRepository.showThirdPartyContactAccounts = true
+                    showThirdPartyWarningDialog = false
+                },
+                onNo = {
+                    showThirdPartyWarningDialog = false
+                }
             )
         }
     }
