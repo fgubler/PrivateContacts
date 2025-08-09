@@ -33,8 +33,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 36
-        versionCode 88
-        versionName "5.1.1"
+        versionCode 89
+        versionName "5.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
