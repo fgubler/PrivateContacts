@@ -309,7 +309,7 @@
     <string name="settings_entry_show_android_contacts">Mostra contatti Android</string>
     <string name="settings_entry_show_android_contacts_description">Mostra anche i contatti presenti nella rubrica predefinita Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostra account contatti di terze parti</string>
-    <string name="settings_entry_show_third_party_contact_accounts_description">Funzione avanzata: Mostra account aggiuntivi oltre a Google e quelli locali.</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">Mostrare account aggiuntivi oltre a Google e quelli locali.</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_title">Abilita Account Contatti di Terze Parti</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_message">Attenzione: questa impostazione è pericolosa e dovrebbe essere abilitata solo se sai cosa stai facendo!\n\nAbilitandola potrai scegliere QUALSIASI account come destinazione per memorizzare i contatti pubblici.\ n\nIl problema è che l\'app non è in grado di determinare con certezza se un account è effettivamente in grado di memorizzare i tuoi contatti.\n\nSe provi a memorizzare un contatto in un account che non supporta questa funzione, potresti perdere i tuoi dati.\n\nVuoi procedere?</string>
     <string name="settings_entry_show_third_party_accounts_info_dialog_title">Account Contatti di Terze Parti</string>

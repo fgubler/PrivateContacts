@@ -309,7 +309,7 @@
     <string name="settings_entry_show_android_contacts">Öffentliche Kontakte anzeigen</string>
     <string name="settings_entry_show_android_contacts_description">Zeigt auch Kontakte aus der Standard-Android-Kontaktliste an.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Drittanbieter-Konten anzeigen</string>
-    <string name="settings_entry_show_third_party_contact_accounts_description">Erweiterte Funktion: Zeige weitere Konten, zusätzlich zu Google und den lokalen Kontakten des Geräts.</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">Weitere Konten anzeigen, zusätzlich zu Google und den lokalen Kontakten des Geräts.</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_title">Drittanbieter-Konten aktivieren</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_message">Vorsicht: Diese Einstellung ist gefährlich und sollte nur aktiviert werden, wenn Sie wissen, was Sie tun!\n\nDurch die Aktivierung können Sie JEDES Konto als Ziel zum Speichern öffentlicher Kontakte auswählen.\n\nDas Problem ist, dass die App nicht zuverlässig bestimmen kann, ob ein Konto tatsächlich in der Lage ist, Ihre Kontakte zu speichern.\n\nWenn Sie versuchen, einen Kontakt in einem Konto zu speichern, das dies nicht unterstützt, könnte dies dazu führen, dass Sie Ihre Daten verlieren.\n\nMöchten Sie fortfahren?</string>
     <string name="settings_entry_show_third_party_accounts_info_dialog_title">Drittanbieter-Kontaktkonten</string>
