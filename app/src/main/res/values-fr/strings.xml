@@ -312,6 +312,8 @@
     <string name="settings_entry_show_third_party_contact_accounts_description">Fonctionnalité avancée : Affiche les comptes de contacts en plus de Google et des contacts locaux.</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_title">Activer les Comptes de Contacts Tiers</string>
     <string name="settings_entry_show_third_party_accounts_warning_dialog_message">Tous les comptes seront affichés car nous n\'avons aucun moyen de différencier ceux qui prennent en charge le stockage des contacts des autres. Par conséquent, vous devez faire attention à sélectionner un compte capable de stocker des contacts, sinon ils ne seront pas stockés.\n\nVoulez-vous continuer ?</string>
+    <string name="settings_entry_show_third_party_accounts_info_dialog_title">Comptes de Contacts Tiers</string>
+    <string name="settings_entry_show_third_party_accounts_info_dialog_message">Chaque fois que vous créez un contact public ou que vous modifiez un contact secret pour le rendre public, vous devez choisir le compte (par exemple Google) dans lequel vous souhaitez enregistrer le contact public.\n\nCette fonctionnalité avancée vous permet de sélectionner des comptes de contacts provenant de fournisseurs tiers, et pas seulement de Google et des contacts locaux du téléphone.</string>
     <string name="settings_entry_error_reports">Envoyer des rapports d\'erreurs anonymes</string>
     <string name="settings_entry_error_reports_description">Sans rapport d\'erreurs, il est impossible de détecter les crashs et de les corriger.</string>
     <string name="settings_entry_use_alternative_icon">Cacher le nom et l\'icône de l\'application</string>

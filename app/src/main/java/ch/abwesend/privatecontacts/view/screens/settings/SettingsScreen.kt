@@ -273,9 +273,11 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckbox(
+            SettingsCheckboxWithInfoButton(
                 label = R.string.settings_entry_show_third_party_contact_accounts,
                 description = R.string.settings_entry_show_third_party_contact_accounts_description,
+                infoDialogTitle = R.string.settings_entry_show_third_party_accounts_info_dialog_title,
+                infoDialogText = R.string.settings_entry_show_third_party_accounts_info_dialog_message,
                 value = currentSettings.showThirdPartyContactAccounts,
                 enabled = currentSettings.showAndroidContacts,
             ) { newValue ->
