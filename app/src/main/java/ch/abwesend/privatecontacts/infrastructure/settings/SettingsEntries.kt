@@ -51,6 +51,10 @@ internal val showAndroidContactsEntry = SettingsEntry(
     key = booleanPreferencesKey("showAndroidContacts"),
     defaultValue = defaultSettings.showAndroidContacts
 )
+internal val showThirdPartyContactAccountsEntry = SettingsEntry(
+    key = booleanPreferencesKey("showThirdPartyContactAccounts"),
+    defaultValue = defaultSettings.showThirdPartyContactAccounts
+)
 internal val authenticationRequiredEntry = SettingsEntry(
     key = booleanPreferencesKey("authenticationRequired"),
     defaultValue = defaultSettings.authenticationRequired

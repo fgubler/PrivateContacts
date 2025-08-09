@@ -35,6 +35,7 @@ data class TestSettings(
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
     override var showAndroidContacts: Boolean = currentSettings.showAndroidContacts
+    override var showThirdPartyContactAccounts: Boolean = currentSettings.showThirdPartyContactAccounts
     override var authenticationRequired: Boolean = currentSettings.authenticationRequired
     override var useAlternativeAppIcon: Boolean = currentSettings.useAlternativeAppIcon
     override var sendErrorsToCrashlytics: Boolean = currentSettings.sendErrorsToCrashlytics

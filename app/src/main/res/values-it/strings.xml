@@ -308,6 +308,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Mostra informazioni di contatto anche a schermo bloccato durante una chiamata.</string>
     <string name="settings_entry_show_android_contacts">Mostra contatti Android</string>
     <string name="settings_entry_show_android_contacts_description">Mostra anche i contatti presenti nella rubrica predefinita Android.</string>
+    <string name="settings_entry_show_third_party_contact_accounts">Mostra account contatti di terze parti</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">FUNZIONE SPERIMENTALE PER UTENTI ESPERTI: Mostra account contatti di fornitori di terze parti. ATTENZIONE: Selezionare un account che non può memorizzare contatti comporterà la perdita di dati!</string>
     <string name="settings_entry_error_reports">Invia segnalazioni di errore anonime</string>
     <string name="settings_entry_error_reports_description">Senza queste segnalazioni, non possiamo rilevare o risolvere eventuali problemi.</string>
     <string name="settings_entry_use_alternative_icon">Nascondi nome e icona dell\'app</string>

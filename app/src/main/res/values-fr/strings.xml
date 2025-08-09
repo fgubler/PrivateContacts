@@ -308,6 +308,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Affiche les infos du contact même quand l\'écran est verrouillé.</string>
     <string name="settings_entry_show_android_contacts">Afficher les contacts Android</string>
     <string name="settings_entry_show_android_contacts_description">Affiche aussi les contacts de l\'application Contacts standard d\'Android.</string>
+    <string name="settings_entry_show_third_party_contact_accounts">Afficher les comptes de contacts tiers</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">FONCTIONNALITÉ EXPÉRIMENTALE POUR UTILISATEURS EXPÉRIMENTÉS : Affiche les comptes de contacts de fournisseurs tiers. ATTENTION : Sélectionner un compte incapable de stocker des contacts entraînera une perte de données !</string>
     <string name="settings_entry_error_reports">Envoyer des rapports d\'erreurs anonymes</string>
     <string name="settings_entry_error_reports_description">Sans rapport d\'erreurs, il est impossible de détecter les crashs et de les corriger.</string>
     <string name="settings_entry_use_alternative_icon">Cacher le nom et l\'icône de l\'application</string>

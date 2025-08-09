@@ -88,6 +88,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.showAndroidContacts
         set(value) = dataStore.setValue(showAndroidContactsEntry, value)
 
+    override var showThirdPartyContactAccounts: Boolean
+        get() = currentSettings.showThirdPartyContactAccounts
+        set(value) = dataStore.setValue(showThirdPartyContactAccountsEntry, value)
+
     override var authenticationRequired: Boolean
         get() = currentSettings.authenticationRequired
         set(value) = dataStore.setValue(authenticationRequiredEntry, value)
@@ -170,6 +174,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         showAndroidContacts = settings.showAndroidContacts
+        showThirdPartyContactAccounts = settings.showThirdPartyContactAccounts
         useAlternativeAppIcon = settings.useAlternativeAppIcon
         sendErrorsToCrashlytics = settings.sendErrorsToCrashlytics
         defaultContactType = settings.defaultContactType

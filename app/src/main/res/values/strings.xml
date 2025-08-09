@@ -312,6 +312,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
     <string name="settings_entry_show_android_contacts">Show public contacts</string>
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
+    <string name="settings_entry_show_third_party_contact_accounts">Show third-party contact accounts</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">EXPERIMENTAL FEATURE FOR EXPERIENCED USERS: Show contact accounts from third-party providers. WARNING: Selecting an account that cannot store contacts will result in data loss!</string>
     <string name="settings_entry_error_reports">Send anonymous error reports</string>
     <string name="settings_entry_error_reports_description">Without error reports, we cannot find out if the app crashes. Therefore, we cannot fix these bugs.</string>
     <string name="settings_entry_use_alternative_icon">Hide app name and icon</string>

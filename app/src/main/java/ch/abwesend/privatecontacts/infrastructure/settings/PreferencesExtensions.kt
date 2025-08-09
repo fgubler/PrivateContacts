@@ -35,6 +35,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),
     observeIncomingCalls = getValue(observeIncomingCallsEntry),
     showAndroidContacts = getValue(showAndroidContactsEntry),
+    showThirdPartyContactAccounts = getValue(showThirdPartyContactAccountsEntry),
     authenticationRequired = getValue(authenticationRequiredEntry),
     useAlternativeAppIcon = getValue(useAlternativeAppIconEntry),
     sendErrorsToCrashlytics = getValue(sendErrorsToCrashlyticsEntry),

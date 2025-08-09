@@ -308,6 +308,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Kontaktdaten bei eingehendem Anruf auch auf dem Sperrbildschirm anzeigen.</string>
     <string name="settings_entry_show_android_contacts">Öffentliche Kontakte anzeigen</string>
     <string name="settings_entry_show_android_contacts_description">Zeigt auch Kontakte aus der Standard-Android-Kontaktliste an.</string>
+    <string name="settings_entry_show_third_party_contact_accounts">Drittanbieter-Kontaktkonten anzeigen</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">EXPERIMENTELLE FUNKTION FÜR ERFAHRENE BENUTZER: Zeigt Kontaktkonten von Drittanbietern an. WARNUNG: Die Auswahl eines Kontos, das keine Kontakte speichern kann, führt zu Datenverlust!</string>
     <string name="settings_entry_error_reports">Anonyme Fehlermeldungen senden</string>
     <string name="settings_entry_error_reports_description">Ohne Berichte können wir keine Abstürze erkennen und beheben.</string>
     <string name="settings_entry_use_alternative_icon">App-Name und Icon verbergen</string>

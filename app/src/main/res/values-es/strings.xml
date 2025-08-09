@@ -308,6 +308,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Muestra información de llamadas incluso cuando la pantalla está bloqueada.</string>
     <string name="settings_entry_show_android_contacts">Mostrar contactos de Android</string>
     <string name="settings_entry_show_android_contacts_description">También muestra contactos guardados en la app estándar de contactos de Android.</string>
+    <string name="settings_entry_show_third_party_contact_accounts">Mostrar cuentas de contactos de terceros</string>
+    <string name="settings_entry_show_third_party_contact_accounts_description">FUNCIÓN EXPERIMENTAL PARA USUARIOS EXPERIMENTADOS: Muestra cuentas de contactos de proveedores de terceros. ¡ADVERTENCIA: Seleccionar una cuenta que no puede almacenar contactos resultará en pérdida de datos!</string>
     <string name="settings_entry_error_reports">Enviar informes de error anónimos</string>
     <string name="settings_entry_error_reports_description">Sin estos informes, no se pueden detectar fallos ni solucionarlos.</string>
     <string name="settings_entry_use_alternative_icon">Ocultar nombre e ícono de la app</string>

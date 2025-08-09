@@ -270,6 +270,15 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
+            SettingsCheckbox(
+                label = R.string.settings_entry_show_third_party_contact_accounts,
+                description = R.string.settings_entry_show_third_party_contact_accounts_description,
+                value = currentSettings.showThirdPartyContactAccounts,
+                enabled = currentSettings.showAndroidContacts,
+            ) { newValue -> settingsRepository.showThirdPartyContactAccounts = newValue }
+
+            SettingsEntryDivider()
+
             SettingsDropDown(
                 label = R.string.settings_entry_second_tab,
                 description = R.string.settings_entry_second_tab_description,

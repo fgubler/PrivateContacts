@@ -58,6 +58,7 @@ interface ISettingsState {
 
     // Android Contacts
     val showAndroidContacts: Boolean
+    val showThirdPartyContactAccounts: Boolean
 
     // Security
     val authenticationRequired: Boolean
@@ -98,6 +99,7 @@ data class SettingsState(
     override val showIncomingCallsOnLockScreen: Boolean,
 
     override val showAndroidContacts: Boolean,
+    override val showThirdPartyContactAccounts: Boolean,
 
     override val authenticationRequired: Boolean,
 
@@ -125,6 +127,7 @@ data class SettingsState(
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             showAndroidContacts = true,
+            showThirdPartyContactAccounts = false,
             authenticationRequired = false,
             useAlternativeAppIcon = false,
             sendErrorsToCrashlytics = true,

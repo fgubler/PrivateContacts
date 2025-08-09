@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount.OnlineAcc
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService.Companion.ACCOUNT_PROVIDER_GOOGLE
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
+import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class AndroidAccountService(private val context: Context) : AccountService {
@@ -27,10 +28,16 @@ class AndroidAccountService(private val context: Context) : AccountService {
             emptyList()
         } else {
             val accounts = AccountManager.get(context).accounts
+            val showThirdPartyAccounts = Settings.current.showThirdPartyContactAccounts
+
+            logger.debug(
+                "Loading accounts, ${if (showThirdPartyAccounts) "including" else "excluding"} third-party ones."
+            )
+
             accounts
                 .map { OnlineAccount(username = it.name, accountProvider = it.type) }
                 .also { logger.debug("Found ${it.size} accounts") }
-                .filter { knownAccountProviders.contains(it.accountProvider) }
+                .filter { showThirdPartyAccounts || knownAccountProviders.contains(it.accountProvider) }
                 .also { logger.debug("Found ${it.size} accounts of known providers") }
                 .sortedBy { it.username } // just to make the order constant
         }

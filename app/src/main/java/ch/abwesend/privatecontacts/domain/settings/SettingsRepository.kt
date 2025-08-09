@@ -46,6 +46,7 @@ interface SettingsRepository : ISettingsState {
 
     // Android Contacts
     override var showAndroidContacts: Boolean
+    override var showThirdPartyContactAccounts: Boolean
 
     // Security
     override var authenticationRequired: Boolean
