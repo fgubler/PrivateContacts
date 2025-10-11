@@ -133,6 +133,21 @@ internal val showReviewDialogEntry = SettingsEntry(
     defaultValue = defaultSettings.showReviewDialog
 )
 
+internal val backupFrequencyEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("backupFrequency"),
+    defaultValue = defaultSettings.backupFrequency
+)
+
+internal val backupScopeEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("backupScope"),
+    defaultValue = defaultSettings.backupScope
+)
+
+internal val backupFolderUriEntry = SettingsEntry(
+    key = stringPreferencesKey("backupFolderUri"),
+    defaultValue = defaultSettings.backupFolderUri
+)
+
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.

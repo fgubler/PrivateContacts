@@ -13,6 +13,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
@@ -160,6 +162,18 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.defaultVCardVersion
         set(value) = dataStore.setEnumValue(defaultVCardVersionEntry, value)
 
+    override var backupFrequency: BackupFrequency
+        get() = currentSettings.backupFrequency
+        set(value) = dataStore.setEnumValue(backupFrequencyEntry, value)
+
+    override var backupScope: BackupScope
+        get() = currentSettings.backupScope
+        set(value) = dataStore.setEnumValue(backupScopeEntry, value)
+
+    override var backupFolderUri: String
+        get() = currentSettings.backupFolderUri
+        set(value) = dataStore.setValue(backupFolderUriEntry, value)
+
     override fun overrideSettingsWith(settings: ISettingsState) {
         appTheme = settings.appTheme
         appLanguage = settings.appLanguage
@@ -180,6 +194,9 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         defaultContactType = settings.defaultContactType
         defaultExternalContactAccount = settings.defaultExternalContactAccount
         showReviewDialog = settings.showReviewDialog
+        backupFrequency = settings.backupFrequency
+        backupScope = settings.backupScope
+        backupFolderUri = settings.backupFolderUri
         appLanguage = settings.appLanguage
 
         /*
