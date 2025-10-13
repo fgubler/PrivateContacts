@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
+import ch.abwesend.privatecontacts.view.screens.importexport.BackupCategoryComponent.BackupCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ExportCategoryComponent.ExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportCategoryComponent.ImportCategory
 import kotlin.contracts.ExperimentalContracts
@@ -25,6 +26,7 @@ object ContactImportExportScreen {
             Column(modifier = Modifier.padding(padding).verticalScroll(scrollState)) {
                 ImportCategory(screenContext.importViewModel, screenContext.permissionProvider)
                 ExportCategory(screenContext.exportViewModel, screenContext.permissionProvider)
+                BackupCategory()
             }
         }
     }

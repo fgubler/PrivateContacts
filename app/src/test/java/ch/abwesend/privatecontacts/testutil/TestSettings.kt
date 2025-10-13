@@ -7,6 +7,8 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
@@ -48,6 +50,9 @@ data class TestSettings(
     override var defaultVCardVersion: VCardVersion = currentSettings.defaultVCardVersion
     override var showExtraButtonsInEditScreen: Boolean = currentSettings.showExtraButtonsInEditScreen
     override var invertTopAndBottomBars: Boolean = currentSettings.invertTopAndBottomBars
+    override var backupFrequency: BackupFrequency = currentSettings.backupFrequency
+    override var backupScope: BackupScope = currentSettings.backupScope
+    override var backupFolderUri: String = currentSettings.backupFolderUri
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings

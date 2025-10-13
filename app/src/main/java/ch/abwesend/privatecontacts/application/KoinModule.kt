@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.repository.ILauncherAppearanceRepository
+import ch.abwesend.privatecontacts.domain.service.BackupSchedulerService
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.service.ContactGroupService
 import ch.abwesend.privatecontacts.domain.service.ContactImageService
@@ -99,6 +100,7 @@ internal val koinModule = module {
     factory { DatabaseService() }
     factory { ContactTypeChangeService() }
     factory { FileReadWriteService() }
+    factory { BackupSchedulerService(androidContext()) }
     factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
     factory<PermissionService> { AndroidPermissionService() }
     factory<AccountService> { AndroidAccountService(androidContext()) }
