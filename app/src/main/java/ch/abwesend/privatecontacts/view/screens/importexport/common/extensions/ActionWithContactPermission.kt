@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport.extensions
+package ch.abwesend.privatecontacts.view.screens.importexport.common.extensions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.AndroidPermissionDeniedDialog
+import ch.abwesend.privatecontacts.view.screens.importexport.common.ImportExportScreenComponents
 
 /**
  * A helper to check for Android Contacts permissions
@@ -28,7 +28,9 @@ class ActionWithContactPermission private constructor(private val permissionProv
     @Composable
     fun VisibleComponent() {
         if (showPermissionDeniedDialog) {
-            AndroidPermissionDeniedDialog { showPermissionDeniedDialog = false }
+            ImportExportScreenComponents.AndroidPermissionDeniedDialog {
+                showPermissionDeniedDialog = false
+            }
         }
     }
 

@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.import
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -26,12 +26,12 @@ import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ProgressAndResultHandler
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ReplaceExistingContactsCheckBox
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.TargetTypeFields
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.common.ImportExportScreenComponents.ImportExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.common.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
+import ch.abwesend.privatecontacts.view.screens.importexport.common.extensions.ImportExportConstants.VCF_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.ProgressAndResultHandler
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.ReplaceExistingContactsCheckBox
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.TargetTypeFields
 import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import kotlin.contracts.ExperimentalContracts
 

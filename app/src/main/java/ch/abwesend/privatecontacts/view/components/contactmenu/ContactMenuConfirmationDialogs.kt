@@ -20,7 +20,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
+import ch.abwesend.privatecontacts.view.screens.importexport.common.extensions.ImportExportConstants
 import java.time.LocalDate
 
 @Composable

@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2023.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.export
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,13 +33,11 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
-import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher
+import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.common.ImportExportScreenComponents
+import ch.abwesend.privatecontacts.view.screens.importexport.common.extensions.ActionWithContactPermission
+import ch.abwesend.privatecontacts.view.screens.importexport.common.extensions.ImportExportConstants
 import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
 import java.time.LocalDate
 import kotlin.contracts.ExperimentalContracts
@@ -55,7 +47,7 @@ import kotlin.contracts.ExperimentalContracts
 object ExportCategoryComponent {
     @Composable
     fun ExportCategory(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
-        ImportExportCategory(title = R.string.export_title) {
+        ImportExportScreenComponents.ImportExportCategory(title = R.string.export_title) {
             ExportCategoryContent(viewModel = viewModel, permissionProvider = permissionProvider)
         }
 
@@ -72,13 +64,13 @@ object ExportCategoryComponent {
             showInfoButton = false,
         ) { newType -> viewModel.selectSourceType(newType) }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.Companion.height(10.dp))
 
         VCardVersionField(selectedVersion = viewModel.vCardVersion.value) { newVersion ->
             viewModel.selectVCardVersion(newVersion)
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.Companion.height(10.dp))
 
         ExportButton(viewModel, permissionProvider)
     }
@@ -89,13 +81,22 @@ object ExportCategoryComponent {
         val vCardVersion = viewModel.vCardVersion.value
 
         val defaultFileName = createDefaultFileName(sourceType = sourceType, vCardVersion)
-        val exportAction = rememberActionWithContactPermission(permissionProvider)
+        val exportAction =
+            ActionWithContactPermission.Companion.rememberActionWithContactPermission(
+                permissionProvider
+            )
         var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
 
-        val launcher = rememberCreateFileLauncher(
-            mimeType = VCF_MAIN_MIME_TYPE,
+        val launcher = CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher(
+            mimeType = ImportExportConstants.VCF_MAIN_MIME_TYPE,
             defaultFilename = defaultFileName,
-            onFileSelected = { targetFile -> viewModel.exportContacts(targetFile, sourceType, vCardVersion) },
+            onFileSelected = { targetFile ->
+                viewModel.exportContacts(
+                    targetFile,
+                    sourceType,
+                    vCardVersion
+                )
+            },
         )
 
         exportAction.VisibleComponent()
@@ -109,7 +110,7 @@ object ExportCategoryComponent {
             content = {
                 Text(
                     text = stringResource(id = R.string.export_contacts),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Companion.Center
                 )
             },
         )
@@ -126,7 +127,7 @@ object ExportCategoryComponent {
         val datePrefix = LocalDate.now().toString()
         val versionInfix = vCardVersion.name
         val typePostfix = stringResource(id = sourceType.label)
-        val extension = VCF_FILE_EXTENSION
+        val extension = ImportExportConstants.VCF_FILE_EXTENSION
         return "${datePrefix}_${versionInfix}_$typePostfix.$extension"
     }
 
@@ -142,7 +143,10 @@ object ExportCategoryComponent {
 
     @Composable
     private fun ProgressDialog() {
-        SimpleProgressDialog(title = R.string.export_contacts_progress, allowRunningInBackground = false)
+        SimpleProgressDialog(
+            title = R.string.export_contacts_progress,
+            allowRunningInBackground = false
+        )
     }
 
     @Composable
@@ -167,7 +171,7 @@ object ExportCategoryComponent {
         val hasErrorDetails = data.failedContacts.isNotEmpty()
 
         if (showOverview) {
-            ImportExportSuccessDialog(
+            ImportExportScreenComponents.ImportExportSuccessDialog(
                 title = R.string.export_complete_title,
                 secondButtonText = R.string.import_show_error_details,
                 secondButtonVisible = hasErrorDetails,
@@ -175,7 +179,7 @@ object ExportCategoryComponent {
                 onClose = onClose
             ) { SuccessResultOverview(data = data) }
         } else {
-            ImportExportSuccessDialog(
+            ImportExportScreenComponents.ImportExportSuccessDialog(
                 title = R.string.import_error_details_title,
                 secondButtonText = R.string.import_show_result_overview,
                 secondButtonVisible = true,
@@ -189,15 +193,21 @@ object ExportCategoryComponent {
     private fun SuccessResultOverview(data: ContactExportData) {
         val scrollState = rememberScrollState()
 
-        Column(modifier = Modifier.verticalScroll(scrollState)) {
+        Column(modifier = Modifier.Companion.verticalScroll(scrollState)) {
             Row {
-                Text(text = stringResource(id = R.string.exported_contacts), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = stringResource(id = R.string.exported_contacts),
+                    fontWeight = FontWeight.Companion.Bold
+                )
+                Spacer(modifier = Modifier.Companion.width(5.dp))
                 Text(text = data.successfulContacts.size.toString())
             }
             Row {
-                Text(text = stringResource(id = R.string.failed_to_export_contacts), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = stringResource(id = R.string.failed_to_export_contacts),
+                    fontWeight = FontWeight.Companion.Bold
+                )
+                Spacer(modifier = Modifier.Companion.width(5.dp))
                 Text(text = data.failedContacts.size.toString())
             }
         }
@@ -210,11 +220,14 @@ object ExportCategoryComponent {
             exportData.failedContacts.map { it.displayName }.sorted()
         }
 
-        Column(modifier = Modifier.verticalScroll(scrollState)) {
-            Spacer(modifier = Modifier.height(20.dp))
+        Column(modifier = Modifier.Companion.verticalScroll(scrollState)) {
+            Spacer(modifier = Modifier.Companion.height(20.dp))
             Row {
-                Text(text = stringResource(id = R.string.export_failed_contacts), fontWeight = FontWeight.Bold)
-                Spacer(modifier = Modifier.width(5.dp))
+                Text(
+                    text = stringResource(id = R.string.export_failed_contacts),
+                    fontWeight = FontWeight.Companion.Bold
+                )
+                Spacer(modifier = Modifier.Companion.width(5.dp))
                 Text(text = exportData.failedContacts.size.toString())
             }
             failedContactNames.forEach { Text(text = " - $it") }

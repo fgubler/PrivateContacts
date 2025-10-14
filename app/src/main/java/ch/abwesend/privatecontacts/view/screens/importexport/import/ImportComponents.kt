@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.import
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +46,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
+import ch.abwesend.privatecontacts.view.screens.importexport.common.ImportExportScreenComponents.ImportExportSuccessDialog
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 
 object ImportComponents {

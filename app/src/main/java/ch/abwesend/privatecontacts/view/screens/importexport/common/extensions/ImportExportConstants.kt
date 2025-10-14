@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport.extensions
+package ch.abwesend.privatecontacts.view.screens.importexport.common.extensions
 
 object ImportExportConstants {
     const val VCF_MAIN_MIME_TYPE = "text/x-vcard"

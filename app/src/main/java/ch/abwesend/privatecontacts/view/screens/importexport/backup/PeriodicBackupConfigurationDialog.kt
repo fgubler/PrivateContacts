@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.backup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

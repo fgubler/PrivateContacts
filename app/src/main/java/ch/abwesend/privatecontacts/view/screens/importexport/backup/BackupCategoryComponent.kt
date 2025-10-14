@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.backup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,11 +23,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
 import ch.abwesend.privatecontacts.domain.service.BackupSchedulerService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.common.ImportExportScreenComponents.ImportExportCategory
 
 @ExperimentalMaterialApi
 object BackupCategoryComponent {
@@ -86,7 +87,7 @@ object BackupCategoryComponent {
     @Composable
     private fun BackupStatusDisplay(
         frequency: BackupFrequency,
-        scope: ch.abwesend.privatecontacts.domain.model.backup.BackupScope,
+        scope: BackupScope,
         folderUri: String
     ) {
         val statusText = if (frequency == BackupFrequency.DISABLED) {

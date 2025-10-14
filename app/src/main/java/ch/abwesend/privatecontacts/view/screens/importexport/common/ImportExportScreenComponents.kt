@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.common
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
