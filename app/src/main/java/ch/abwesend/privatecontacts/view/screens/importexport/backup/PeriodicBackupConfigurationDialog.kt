@@ -7,28 +7,20 @@
 package ch.abwesend.privatecontacts.view.screens.importexport.backup
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
-import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
@@ -88,53 +80,9 @@ fun PeriodicBackupConfigurationDialog(
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    FolderSelectionField(
-                        currentFolderUri = selectedFolderUri,
-                        onFolderSelected = { selectedFolderUri = it }
-                    )
+                    // TODO replace the folder-picker field completely! Open the folder-picker when the user presses the OK-button
                 }
             }
         },
     )
-}
-
-@Composable
-private fun FolderSelectionField(
-    currentFolderUri: String,
-    onFolderSelected: (String) -> Unit
-) {
-    Column {
-        Text(
-            text = stringResource(R.string.backup_folder),
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = if (currentFolderUri.isEmpty()) {
-                    stringResource(R.string.backup_folder_not_selected)
-                } else {
-                    // Extract folder name from URI for display
-                    currentFolderUri.substringAfterLast("/").ifEmpty { currentFolderUri }
-                },
-                modifier = Modifier.weight(1f)
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            SecondaryButton(
-                onClick = {
-                    // TODO: Implement folder picker
-                    // For now, just set a placeholder
-                    onFolderSelected("/storage/emulated/0/Documents/Backups")
-                }
-            ) {
-                Text(stringResource(R.string.backup_folder_select))
-            }
-        }
-    }
 }
