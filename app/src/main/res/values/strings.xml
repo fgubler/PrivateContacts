@@ -434,8 +434,8 @@
     <string name="backup_frequency_monthly">Monthly</string>
     <string name="backup_scope">Backup Scope</string>
     <string name="backup_scope_all">All Contacts</string>
-    <string name="backup_scope_secret">Secret Contacts Only</string>
-    <string name="backup_scope_public">Public Contacts Only</string>
+    <string name="backup_scope_secret">Secret Contacts</string>
+    <string name="backup_scope_public">Public Contacts</string>
     <string name="backup_folder">Backup Folder</string>
     <string name="backup_folder_select">Select Folder</string>
     <string name="backup_folder_not_selected">No folder selected</string>

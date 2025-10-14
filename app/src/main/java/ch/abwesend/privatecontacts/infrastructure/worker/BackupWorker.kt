@@ -7,15 +7,21 @@
 package ch.abwesend.privatecontacts.infrastructure.worker
 
 import android.content.Context
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import java.time.LocalDate
@@ -24,10 +30,10 @@ import java.time.format.DateTimeFormatter
 
 class BackupWorker(
     context: Context,
-    params: WorkerParameters
+    params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
-
     private val exportService: ContactExportService by injectAnywhere()
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
 
     override suspend fun doWork(): Result {
         logger.debug("BackupWorker: Starting backup check")
@@ -91,26 +97,22 @@ class BackupWorker(
         }
     }
 
-    private suspend fun createBackup(settings: ch.abwesend.privatecontacts.domain.settings.ISettingsState): ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult<ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData, ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError> {
-        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"))
+    private suspend fun createBackup(settings: ISettingsState): BinaryResult<ContactExportData, VCardCreateError> {
+        val timestamp = LocalDateTime.now().format(dateTimeFormatter)
         val scopeText = when (settings.backupScope) {
-            ch.abwesend.privatecontacts.domain.model.backup.BackupScope.ALL -> "all"
-            ch.abwesend.privatecontacts.domain.model.backup.BackupScope.SECRET_ONLY -> "secret"
-            ch.abwesend.privatecontacts.domain.model.backup.BackupScope.PUBLIC_ONLY -> "public"
+            BackupScope.ALL -> "all"
+            BackupScope.SECRET_ONLY -> "secret"
+            BackupScope.PUBLIC_ONLY -> "public"
         }
 
         val fileName = "backup_${scopeText}_${timestamp}.vcf"
-        val backupUri = Uri.parse("${settings.backupFolderUri}/$fileName")
+        val backupUri = "${settings.backupFolderUri}/$fileName".toUri()
 
-        val contactType = settings.backupScope.toContactType()
-
-        return if (contactType != null) {
-            // Backup specific contact type
-            exportService.exportContacts(backupUri, contactType, VCardVersion.V4)
-        } else {
-            // Backup all contacts - we need to implement this differently
-            // For now, let's backup secret contacts as the default
-            exportService.exportContacts(backupUri, ch.abwesend.privatecontacts.domain.model.contact.ContactType.SECRET, VCardVersion.V4)
+        // TODO allow VCF version selection
+        return when (settings.backupScope) {
+            BackupScope.ALL -> exportService.exportAllContacts(backupUri, VCardVersion.V4)
+            BackupScope.SECRET_ONLY -> exportService.exportContacts(backupUri, ContactType.SECRET, VCardVersion.V4)
+            BackupScope.PUBLIC_ONLY -> exportService.exportContacts(backupUri, ContactType.PUBLIC, VCardVersion.V4)
         }
     }
 

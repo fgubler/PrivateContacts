@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -25,6 +26,17 @@ class ContactExportService {
     private val loadService: ContactLoadService by injectAnywhere()
     private val fileWriteService: FileReadWriteService by injectAnywhere()
     private val importExportRepository: IVCardImportExportRepository by injectAnywhere()
+
+    suspend fun exportAllContacts(
+        targetFile: Uri,
+        vCardVersion: VCardVersion,
+    ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
+        val contacts = ContactType.entries.mapAsync {
+            loadService.loadFullContactsByType(it)
+        }.flatten()
+
+        exportContacts(targetFile, vCardVersion, contacts)
+    }
 
     suspend fun exportContacts(
         targetFile: Uri,
