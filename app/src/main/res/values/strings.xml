@@ -440,6 +440,7 @@
     <string name="backup_folder_select">Select Folder</string>
     <string name="backup_folder_not_selected">No folder selected</string>
     <string name="backup_status_disabled">No periodic backup configured</string>
+    <string name="plan_periodic_backup">Plan Backup</string>
     <string name="backup_status_enabled">Backup: %1$s to %2$s</string>
     <string name="backup_dialog_title">Configure Periodic Backup</string>
     <string name="backup_dialog_description">Configure automatic periodic backups of your contacts.</string>

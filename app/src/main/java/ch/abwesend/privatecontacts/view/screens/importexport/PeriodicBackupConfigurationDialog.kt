@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,13 +29,14 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.BackupScope
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
+import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 
 @ExperimentalMaterialApi
 @Composable
-fun BackupConfigurationDialog(
-    currentFrequency: BackupFrequency,
+fun PeriodicBackupConfigurationDialog(
+    currentFrequency: BackupFrequency, // TODO rename or change these argument
     currentScope: BackupScope,
     currentFolderUri: String,
     onSave: (BackupFrequency, BackupScope, String) -> Unit,
@@ -47,26 +46,21 @@ fun BackupConfigurationDialog(
     var selectedScope by remember { mutableStateOf(currentScope) }
     var selectedFolderUri by remember { mutableStateOf(currentFolderUri) }
 
-    AlertDialog(
-        onDismissRequest = onCancel,
-        title = { Text(stringResource(R.string.backup_dialog_title)) },
+    YesNoDialog(
+        title = R.string.backup_dialog_title,
+        yesButtonLabel = R.string.plan_periodic_backup,
+        onYes = { onSave(selectedFrequency, selectedScope, selectedFolderUri) },
+        onNo = onCancel,
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = stringResource(R.string.backup_dialog_description),
-                    modifier = Modifier.padding(bottom = 16.dp)
-                )
-
-                // Backup Frequency Dropdown
-                val frequencyOptions = BackupFrequency.entries.map {
-                    ResDropDownOption(labelRes = it.label, value = it)
+                val frequencyOptions = remember {
+                    BackupFrequency.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
                 }
-                val selectedFrequencyOption = ResDropDownOption(
-                    labelRes = selectedFrequency.label,
-                    value = selectedFrequency
-                )
+                val selectedFrequencyOption = remember(selectedFrequency) {
+                    ResDropDownOption(labelRes = selectedFrequency.label, value = selectedFrequency)
+                }
 
                 DropDownField(
                     labelRes = R.string.backup_frequency,
@@ -75,17 +69,15 @@ fun BackupConfigurationDialog(
                     onValueChanged = { selectedFrequency = it }
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-                // Backup Scope Dropdown (only show if frequency is not disabled)
                 if (selectedFrequency != BackupFrequency.DISABLED) {
-                    val scopeOptions = BackupScope.entries.map {
-                        ResDropDownOption(labelRes = it.label, value = it)
+                    val scopeOptions = remember {
+                        BackupScope.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
                     }
-                    val selectedScopeOption = ResDropDownOption(
-                        labelRes = selectedScope.label,
-                        value = selectedScope
-                    )
+                    val selectedScopeOption = remember(selectedScope){
+                        ResDropDownOption(labelRes = selectedScope.label, value = selectedScope)
+                    }
 
                     DropDownField(
                         labelRes = R.string.backup_scope,
@@ -94,9 +86,8 @@ fun BackupConfigurationDialog(
                         onValueChanged = { selectedScope = it }
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                    // Folder Selection
                     FolderSelectionField(
                         currentFolderUri = selectedFolderUri,
                         onFolderSelected = { selectedFolderUri = it }
@@ -104,20 +95,6 @@ fun BackupConfigurationDialog(
                 }
             }
         },
-        confirmButton = {
-            Button(
-                onClick = { onSave(selectedFrequency, selectedScope, selectedFolderUri) }
-            ) {
-                Text(stringResource(R.string.save))
-            }
-        },
-        dismissButton = {
-            SecondaryButton(
-                onClick = onCancel
-            ) {
-                Text(stringResource(R.string.cancel))
-            }
-        }
     )
 }
 

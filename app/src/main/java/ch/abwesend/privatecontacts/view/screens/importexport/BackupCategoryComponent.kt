@@ -67,7 +67,7 @@ object BackupCategoryComponent {
 
         // Configuration dialog
         if (showConfigDialog) {
-            BackupConfigurationDialog(
+            PeriodicBackupConfigurationDialog(
                 currentFrequency = settings.backupFrequency,
                 currentScope = settings.backupScope,
                 currentFolderUri = settings.backupFolderUri,
