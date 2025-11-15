@@ -239,6 +239,8 @@
     <string name="incoming_call_text_multiple_matches">%1$s oder %2$s ruft an. Die Nummer %3$s gehört zu beiden Kontakten.</string>
     <string name="incoming_call_channel_title">Eingehender Anruf</string>
     <string name="incoming_call_channel_description">Benachrichtigungen über eingehende Anrufe, die mit gespeicherten Kontakten übereinstimmen.</string>
+    <string name="blocked_call_title">Eingehender Anruf blockiert</string>
+    <string name="blocked_call_text">Ein Anruf von %1$s wurde blockiert, weil die Nummer nicht in deinen Kontakten hinterlegt ist.</string>
 
     <string name="about_app_title">Über die App</string>
     <string name="about_app_description">Diese App ermöglicht es, Kontakte zu speichern, die nicht mit anderen Apps geteilt werden sollen.</string>

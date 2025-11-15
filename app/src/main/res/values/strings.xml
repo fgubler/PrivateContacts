@@ -242,6 +242,8 @@
     <string name="incoming_call_text_multiple_matches">%1$s or %2$s is calling you. The number %3$s matches all of those contacts.</string>
     <string name="incoming_call_channel_title">Incoming call</string>
     <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
+    <string name="blocked_call_title">Blocked incoming call</string>
+    <string name="blocked_call_text">Call from %1$s has been blocked because the number is not in your contacts.</string>
 
     <string name="about_app_title">About the App</string>
     <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>

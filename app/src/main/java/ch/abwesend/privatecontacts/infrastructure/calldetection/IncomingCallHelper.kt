@@ -8,11 +8,14 @@ package ch.abwesend.privatecontacts.infrastructure.calldetection
 
 import android.content.Context
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
+import kotlinx.coroutines.launch
 
 class IncomingCallHelper {
     private val incomingCallService: IncomingCallService by injectAnywhere()
@@ -69,7 +72,16 @@ class IncomingCallHelper {
             )
         }
 
-    fun handleBlockedCall() {
-        // TODO implement
+    fun handleBlockedCall(
+        context: Context,
+        phoneNumber: String,
+    ) {
+        applicationScope.launch {
+            val formattedNumber = telephoneService.formatPhoneNumberForDisplay(phoneNumber)
+            val notificationText = context.getString(R.string.blocked_call_text, formattedNumber)
+
+            logger.debugLocally("Showing notification for blocked call from $formattedNumber")
+            notificationRepository.showIncomingCallNotification(context, notificationText)
+        }
     }
 }

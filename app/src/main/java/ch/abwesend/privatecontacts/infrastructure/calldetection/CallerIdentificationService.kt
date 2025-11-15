@@ -6,8 +6,8 @@
 
 package ch.abwesend.privatecontacts.infrastructure.calldetection
 
+import android.content.Context
 import android.os.Build
-import android.telecom.Call
 import android.telecom.Call.Details
 import android.telecom.CallScreeningService
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 
 class CallerIdentificationService : CallScreeningService() {
     private val incomingCallHelper: IncomingCallHelper by injectAnywhere()
+    private val context: Context = this
 
     override fun onScreenCall(callDetails: Details) {
         logger.debug("Receiving incoming call")
@@ -30,7 +31,7 @@ class CallerIdentificationService : CallScreeningService() {
         }
     }
 
-    private fun shouldHandleCall(callDetails: Call.Details): Boolean {
+    private fun shouldHandleCall(callDetails: Details): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             callDetails.callDirection == Details.DIRECTION_INCOMING
         } else true
@@ -68,6 +69,8 @@ class CallerIdentificationService : CallScreeningService() {
         }
 
         respondToCall(callDetails, responseBuilder.build())
-        incomingCallHelper.handleBlockedCall()
+        phoneNumber?.let {
+            incomingCallHelper.handleBlockedCall(context, phoneNumber)
+        }
     }
 }
