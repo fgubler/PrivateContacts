@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -18,14 +19,23 @@ private const val CONSIDER_MATCHING_CONTACTS = 5 // showing more does not make m
 class IncomingCallService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val telephoneService: TelephoneService by injectAnywhere()
+    private val androidContactLoadService: IAndroidContactLoadService by injectAnywhere()
 
     /**
      * Load contacts corresponding to the given [phoneNumber].
      * Could be several (multiple contacts living together have the same number...)
      */
-    suspend fun findCorrespondingContacts(phoneNumber: String): List<ContactWithPhoneNumbers> {
+    suspend fun findCorrespondingContacts(
+        phoneNumber: String,
+        considerPublicContacts: Boolean = false,
+    ): List<ContactWithPhoneNumbers> {
         val ending = phoneNumber.takeLast(CONSIDER_LAST_DIGITS)
-        val contactCandidates = contactRepository.findContactsWithNumberEndingOn(ending)
+        val secretContactCandidates = contactRepository.findContactsWithNumberEndingOn(ending)
+
+        val contactCandidates = if (considerPublicContacts) {
+            val publicContactCandidates = androidContactLoadService.findContactsWithPhoneNumber(phoneNumber)
+            secretContactCandidates + publicContactCandidates
+        } else secretContactCandidates
 
         logger.debug("Found ${contactCandidates.size} candidate(s) for calling phone-number")
 
