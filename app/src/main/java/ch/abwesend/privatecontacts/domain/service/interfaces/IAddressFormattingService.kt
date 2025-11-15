@@ -8,5 +8,6 @@ interface IAddressFormattingService {
         city: String,
         region: String,
         country: String,
+        useFallbackForEmptyAddress: Boolean = true,
     ): String
 }
