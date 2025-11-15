@@ -93,8 +93,6 @@ android {
 }
 
 dependencies {
-    implementation project(':google_address_lib')
-
     // Kotlin Core
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
