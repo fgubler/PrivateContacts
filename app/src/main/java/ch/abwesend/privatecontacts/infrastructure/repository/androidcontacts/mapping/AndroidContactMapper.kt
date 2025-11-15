@@ -40,7 +40,7 @@ class AndroidContactMapper {
             val phoneNumbers = contactDataFactory.getContactPhoneNumbers(contact)
                 .map { PhoneNumberValue(it.value) }
             contactBase?.let { ContactWithPhoneNumbers(contactBase, phoneNumbers) }
-        } catch(t: Throwable) {
+        } catch (t: Throwable) {
             logger.warning("Failed to map android contact with id = ${contact.contactId}", t)
             if (rethrowExceptions) throw t
             else null

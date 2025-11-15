@@ -43,8 +43,8 @@ class CallerIdentificationService : CallScreeningService() {
 
         val blockCallsFromUnknownNumbers = Settings.nextOrDefault().blockIncomingCallsFromUnknownNumbers
         val shouldBlockCall = phoneNumber != null &&
-                blockCallsFromUnknownNumbers &&
-                !incomingCallHelper.matchesAnyKnownContact(phoneNumber)
+            blockCallsFromUnknownNumbers &&
+            !incomingCallHelper.matchesAnyKnownContact(phoneNumber)
 
         if (shouldBlockCall) {
             blockCall(callDetails, phoneNumber)
