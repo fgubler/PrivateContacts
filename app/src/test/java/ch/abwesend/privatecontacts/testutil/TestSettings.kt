@@ -34,6 +34,7 @@ data class TestSettings(
     override var observeIncomingCalls: Boolean = currentSettings.observeIncomingCalls
     override var requestIncomingCallPermissions: Boolean = currentSettings.requestIncomingCallPermissions
     override var showIncomingCallsOnLockScreen: Boolean = currentSettings.showIncomingCallsOnLockScreen
+    override var blockIncomingCallsFromUnknownNumbers: Boolean = currentSettings.blockIncomingCallsFromUnknownNumbers
     override var showAndroidContacts: Boolean = currentSettings.showAndroidContacts
     override var showThirdPartyContactAccounts: Boolean = currentSettings.showThirdPartyContactAccounts
     override var authenticationRequired: Boolean = currentSettings.authenticationRequired
