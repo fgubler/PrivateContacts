@@ -34,6 +34,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     secondTabMode = tryGetEnumValue(secondTabModeEntry),
     requestIncomingCallPermissions = getValue(requestIncomingCallPermissionsEntry),
     observeIncomingCalls = getValue(observeIncomingCallsEntry),
+    blockIncomingCallsFromUnknownNumbers = getValue(blockIncomingCallsFromUnknownNumbersEntry),
     showAndroidContacts = getValue(showAndroidContactsEntry),
     showThirdPartyContactAccounts = getValue(showThirdPartyContactAccountsEntry),
     authenticationRequired = getValue(authenticationRequiredEntry),

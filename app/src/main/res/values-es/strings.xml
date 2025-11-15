@@ -306,6 +306,8 @@
     <string name="settings_entry_call_detection_description">Vincula llamadas entrantes con contactos y muestra una notificación si hay coincidencia.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Mostrar en pantalla de bloqueo</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Muestra información de llamadas incluso cuando la pantalla está bloqueada.</string>
+    <string name="settings_entry_block_unknown_calls">Bloquear llamadas de números desconocidos</string>
+    <string name="settings_entry_block_unknown_calls_description">Bloquea llamadas entrantes de números que no están en tus contactos.</string>
     <string name="settings_entry_show_android_contacts">Mostrar contactos de Android</string>
     <string name="settings_entry_show_android_contacts_description">También muestra contactos guardados en la app estándar de contactos de Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostrar cuentas de contactos de terceros</string>

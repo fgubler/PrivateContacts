@@ -228,6 +228,15 @@ object SettingsScreen {
                 value = currentSettings.observeIncomingCalls && currentSettings.showIncomingCallsOnLockScreen,
                 enabled = currentSettings.observeIncomingCalls
             ) { settingsRepository.showIncomingCallsOnLockScreen = it }
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_block_unknown_calls,
+                description = R.string.settings_entry_block_unknown_calls_description,
+                value = currentSettings.observeIncomingCalls && currentSettings.blockIncomingCallsFromUnknownNumbers,
+                enabled = currentSettings.observeIncomingCalls
+            ) { settingsRepository.blockIncomingCallsFromUnknownNumbers = it }
         }
 
         if (requestPermissions) {

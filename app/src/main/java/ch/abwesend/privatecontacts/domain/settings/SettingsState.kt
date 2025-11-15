@@ -56,6 +56,12 @@ interface ISettingsState {
      */
     val showIncomingCallsOnLockScreen: Boolean
 
+    /**
+     * Whether to block incoming calls from unknown numbers.
+     * Depends on [observeIncomingCalls]
+     */
+    val blockIncomingCallsFromUnknownNumbers: Boolean
+
     // Android Contacts
     val showAndroidContacts: Boolean
     val showThirdPartyContactAccounts: Boolean
@@ -97,6 +103,7 @@ data class SettingsState(
     override val requestIncomingCallPermissions: Boolean,
     override val observeIncomingCalls: Boolean,
     override val showIncomingCallsOnLockScreen: Boolean,
+    override val blockIncomingCallsFromUnknownNumbers: Boolean,
 
     override val showAndroidContacts: Boolean,
     override val showThirdPartyContactAccounts: Boolean,
@@ -126,6 +133,7 @@ data class SettingsState(
             secondTabMode = SecondTabMode.ALL_CONTACTS,
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
+            blockIncomingCallsFromUnknownNumbers = false,
             showAndroidContacts = true,
             showThirdPartyContactAccounts = false,
             authenticationRequired = false,

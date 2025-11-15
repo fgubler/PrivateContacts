@@ -310,6 +310,8 @@
     <string name="settings_entry_call_detection_description">Incoming calls will be matched with stored contacts to show a notification with the.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Show information on lock-screen</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
+    <string name="settings_entry_block_unknown_calls">Block calls from unknown numbers</string>
+    <string name="settings_entry_block_unknown_calls_description">Block incoming calls from numbers that are not in your contacts.</string>
     <string name="settings_entry_show_android_contacts">Show public contacts</string>
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Show third-party contact accounts</string>
