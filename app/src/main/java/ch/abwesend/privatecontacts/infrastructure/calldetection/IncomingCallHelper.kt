@@ -78,7 +78,7 @@ class IncomingCallHelper {
     ) {
         applicationScope.launch {
             val formattedNumber = telephoneService.formatPhoneNumberForDisplay(phoneNumber)
-            val notificationText = context.getString(R.string.blocked_call_text, formattedNumber)
+            val notificationText = context.getString(R.string.blocked_call_notification_text, formattedNumber)
 
             logger.debugLocally("Showing notification for blocked call from $formattedNumber")
             notificationRepository.showIncomingCallNotification(context, notificationText)

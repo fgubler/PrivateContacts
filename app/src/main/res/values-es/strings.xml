@@ -239,8 +239,8 @@
     <string name="incoming_call_text_multiple_matches">%1$s o %2$s te llama. El número %3$s coincide con estos contactos.</string>
     <string name="incoming_call_channel_title">Llamada entrante</string>
     <string name="incoming_call_channel_description">Notificaciones para llamadas que coinciden con contactos almacenados.</string>
-    <string name="blocked_call_title">Llamada bloqueada</string>
-    <string name="blocked_call_text">La llamada de %1$s ha sido bloqueada porque el número no está en tus contactos.</string>
+    <string name="blocked_call_notification_title">Llamada bloqueada</string>
+    <string name="blocked_call_notification_text">La llamada de %1$s ha sido bloqueada porque el número no está en tus contactos.\nSe tienen en cuenta tanto los contactos públicos como los secretos.</string>
 
     <string name="about_app_title">Acerca de la app</string>
     <string name="about_app_description">Esta app está diseñada para guardar contactos que no deben ser compartidos con otras apps de tu teléfono.</string>
