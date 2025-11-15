@@ -42,6 +42,9 @@ class AndroidContactDataMapper {
             getCompanies()
     }
 
+    fun getContactPhoneNumbers(contact: Contact): List<PhoneNumber> =
+        contact.getPhoneNumbers()
+
     private fun Contact.getPhoneNumbers(): List<PhoneNumber> =
         phones.mapIndexed { index, phone ->
             val contactDataId = phone.toContactDataId()

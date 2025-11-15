@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -20,6 +21,8 @@ import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.All
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig.Query
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
+import ch.abwesend.privatecontacts.domain.service.ContactValidationService
+import ch.abwesend.privatecontacts.domain.service.valid
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.toContactAccount
@@ -38,6 +41,7 @@ import kotlin.system.measureTimeMillis
 class AndroidContactLoadService : IAndroidContactLoadService {
     private val contactLoadRepository: AndroidContactLoadRepository by injectAnywhere()
     private val contactFactory: AndroidContactMapper by injectAnywhere()
+    private val validationService: ContactValidationService by injectAnywhere()
 
     override fun loadContactsAsFlow(searchConfig: ContactSearchConfig): ResourceFlow<List<IContactBase>> =
         when (searchConfig) {
@@ -95,6 +99,13 @@ class AndroidContactLoadService : IAndroidContactLoadService {
             .map { it.toContactGroup() }
             .distinctBy { it.id.name }
             .sortedBy { it.id.name }
+
+    override suspend fun findContactsWithPhoneNumber(phoneNumber: String): List<ContactWithPhoneNumbers> {
+        val androidContacts = contactLoadRepository.findContactsWithPhoneNumber(phoneNumber)
+        return androidContacts
+            .mapNotNull { contactFactory.toContactWithPhoneNumbers(it, rethrowExceptions = false) }
+            .filter { validationService.validateContactBase(it).valid }
+    }
 
     suspend fun getContactGroups(filterForAccount: ContactAccount): List<ContactGroup> =
         contactLoadRepository.loadAllContactGroups()

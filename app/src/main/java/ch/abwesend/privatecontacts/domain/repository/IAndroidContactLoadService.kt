@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.repository
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -19,4 +20,6 @@ interface IAndroidContactLoadService {
     suspend fun resolveContact(contactId: IContactIdExternal): IContact
     suspend fun resolveContacts(contactIds: Set<IContactIdExternal>): List<IContact>
     suspend fun getAllContactGroups(): List<ContactGroup>
+
+    suspend fun findContactsWithPhoneNumber(phoneNumber: String): List<ContactWithPhoneNumbers>
 }

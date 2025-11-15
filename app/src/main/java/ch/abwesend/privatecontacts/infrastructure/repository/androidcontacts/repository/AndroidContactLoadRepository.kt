@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.repository
 
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdExternal
@@ -15,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.mapping.AndroidContactMapper
 import com.alexstyl.contactstore.Contact
+import com.alexstyl.contactstore.ContactColumn
 import com.alexstyl.contactstore.ContactGroup
 import com.alexstyl.contactstore.ContactPredicate
 import com.alexstyl.contactstore.ContactPredicate.ContactIdLookup
@@ -76,6 +78,21 @@ class AndroidContactLoadRepository : AndroidContactRepositoryBase() {
 
         return withContactStore { contactStore ->
             contactStore.fetchContacts(columnsToFetch = allContactColumns()).asFlow()
+                .flowOn(dispatchers.io)
+                .firstOrNull()
+                .also { logger.debug("Found ${it?.size} contacts") }
+        }.orEmpty()
+    }
+
+    suspend fun findContactsWithPhoneNumber(phoneNumber: String): List<Contact> {
+        logger.debugLocally("Loading all contacts with phone-number $phoneNumber")
+        checkContactReadPermission { exception -> throw exception }
+        val columns = listOf(ContactColumn.Phones, ContactColumn.Names)
+        return withContactStore { contactStore ->
+            contactStore.fetchContacts(
+                columnsToFetch = columns,
+                predicate = ContactPredicate.PhoneLookup(phoneNumber)
+            ).asFlow()
                 .flowOn(dispatchers.io)
                 .firstOrNull()
                 .also { logger.debug("Found ${it?.size} contacts") }
