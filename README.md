@@ -56,6 +56,7 @@ This sections explains the meaning and workings of the settings-screen.
 #### Section "Call detection"
 - _Match incoming calls with contacts_: whether the app should try to detect when a secret contact is calling them. See the technical section below for details.
 - _Show information on lock-screen_: whether the notification informing about a caller in the list of secret-contacts should be shown before the phone is unlocked.
+- _Block calls from unknown numbers_: whether the app should block all incoming calls from numbers which are not stored in your contacts (either secret or public). This feature only works with Android 10 or newer.
 
 #### Section "Contact list"
 - _Show public contacts_: whether the app should just show you your secret contacts or also the public ones which are managed by your phone's standard contacts-app and the operating system. If this checkbox is set, the app will need the permission to access your phone's contacts. It will then populate a second tab showing both secret and public contacts.
