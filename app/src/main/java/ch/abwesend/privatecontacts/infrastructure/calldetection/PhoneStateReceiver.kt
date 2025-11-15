@@ -13,8 +13,10 @@ import android.telecom.CallScreeningService
 import android.telephony.TelephonyManager
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.canReadCallingNumberFromPhoneState
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.launch
 
 /**
  * Handle an incoming call via broadcast-receiver.
@@ -58,7 +60,11 @@ class PhoneStateReceiver : BroadcastReceiver() {
         if (canReadCallingNumberFromPhoneState) {
             val incomingNumber = intent.getStringExtra(TelephonyManager.EXTRA_INCOMING_NUMBER)
             logger.debug("Receiving a call from $incomingNumber")
-            incomingNumber?.let { incomingCallHelper.handleIncomingCall(context, it) }
+            incomingNumber?.let {
+                applicationScope.launch {
+                    incomingCallHelper.handleIncomingCall(context, it)
+                }
+            }
         }
     }
 

@@ -43,6 +43,7 @@ interface SettingsRepository : ISettingsState {
     override var observeIncomingCalls: Boolean
     override var requestIncomingCallPermissions: Boolean // invisible
     override var showIncomingCallsOnLockScreen: Boolean
+    override var blockIncomingCallsFromUnknownNumbers: Boolean
 
     // Android Contacts
     override var showAndroidContacts: Boolean

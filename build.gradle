@@ -9,24 +9,24 @@
 // compose versions: see https://developer.android.com/jetpack/androidx/releases/compose
 buildscript {
     ext {
-        kotlinVersion = "2.1.20"
+        kotlinVersion = "2.2.20"
         composeVersion = "1.7.0"
         composeMaterialVersion = "1.7.0"
         composeCompilerVersion = "1.7.0"
-        coroutinesVersion = "1.8.0"
-        androidLifecycleVersion = "2.9.1"
+        coroutinesVersion = "1.10.2"
+        androidLifecycleVersion = "2.9.4"
         androidReviewVersion = "2.0.2"
 
         kspVersion = '2.1.20-2.0.1'
         ktlintVersion = "11.3.1"
-        koinVersion = "4.0.0"
-        roomVersion = "2.7.1"
+        koinVersion = "4.1.1"
+        roomVersion = "2.8.3"
         pagingVersion = "3.3.2"
         contactStoreVersion = "1.7.0"
 
-        junitJupiterVersion = "5.10.1"
-        junit5AndroidVersion = "1.4.0"
-        archUnitVersion = "1.2.1"
+        junitJupiterVersion = "6.0.1"
+        junit5AndroidVersion = "1.9.0"
+        archUnitVersion = "1.4.1"
         mockkVersion = "1.13.4" // version 1.13.9 introduces strange bugs with IContactIdInternal
     }
     repositories {
@@ -34,13 +34,13 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.10.1'
+        classpath 'com.android.tools.build:gradle:8.11.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
         classpath "org.jlleitschuh.gradle:ktlint-gradle:${ktlintVersion}"
-        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.8.2.1"
+        classpath "de.mannodermaus.gradle.plugins:android-junit5:1.14.0.0"
 
-        classpath "com.google.gms:google-services:4.4.2"
-        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.3'
+        classpath "com.google.gms:google-services:4.4.4"
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:3.0.6'
 
         classpath "androidx.room:room-gradle-plugin:${roomVersion}"
 

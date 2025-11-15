@@ -239,6 +239,8 @@
     <string name="incoming_call_text_multiple_matches">%1$s o %2$s sta chiamando. Il numero %3$s è associato a più contatti.</string>
     <string name="incoming_call_channel_title">Chiamata in arrivo</string>
     <string name="incoming_call_channel_description">Notifiche per chiamate in arrivo che corrispondono a contatti salvati.</string>
+    <string name="blocked_call_notification_title">Chiamata bloccata</string>
+    <string name="blocked_call_notification_text">La chiamata da %1$s è stata bloccata perché il numero non è presente nei tuoi contatti.</string>
 
     <string name="about_app_title">Informazioni sull\'app</string>
     <string name="about_app_description">Questa app consente di salvare contatti che non devono essere condivisi con altre applicazioni.</string>
@@ -306,6 +308,8 @@
     <string name="settings_entry_call_detection_description">Confronta le chiamate entranti con i contatti salvati e mostra una notifica.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Mostra dati su schermata di blocco</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Mostra informazioni di contatto anche a schermo bloccato durante una chiamata.</string>
+    <string name="settings_entry_block_unknown_calls">Blocca chiamate da numeri sconosciuti</string>
+    <string name="settings_entry_block_unknown_calls_description">Blocca le chiamate in entrata da numeri non presenti nei tuoi contatti.\nVengono presi in considerazione sia i contatti pubblici che quelli segreti.</string>
     <string name="settings_entry_show_android_contacts">Mostra contatti Android</string>
     <string name="settings_entry_show_android_contacts_description">Mostra anche i contatti presenti nella rubrica predefinita Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostra account contatti di terze parti</string>

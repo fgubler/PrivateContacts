@@ -6,12 +6,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdAndroid
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.Company
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.ContactGroup
@@ -27,6 +29,18 @@ class AndroidContactMapper {
                 displayName = contact.displayName,
             )
         } catch (t: Throwable) {
+            logger.warning("Failed to map android contact with id = ${contact.contactId}", t)
+            if (rethrowExceptions) throw t
+            else null
+        }
+
+    fun toContactWithPhoneNumbers(contact: Contact, rethrowExceptions: Boolean): ContactWithPhoneNumbers? =
+        try {
+            val contactBase = toContactBase(contact = contact, rethrowExceptions = rethrowExceptions)
+            val phoneNumbers = contactDataFactory.getContactPhoneNumbers(contact)
+                .map { PhoneNumberValue(it.value) }
+            contactBase?.let { ContactWithPhoneNumbers(contactBase, phoneNumbers) }
+        } catch(t: Throwable) {
             logger.warning("Failed to map android contact with id = ${contact.contactId}", t)
             if (rethrowExceptions) throw t
             else null

@@ -116,6 +116,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.observeIncomingCalls
         set(value) = dataStore.setValue(observeIncomingCallsEntry, value)
 
+    override var blockIncomingCallsFromUnknownNumbers: Boolean
+        get() = currentSettings.blockIncomingCallsFromUnknownNumbers
+        set(value) = dataStore.setValue(blockIncomingCallsFromUnknownNumbersEntry, value)
+
     override var useAlternativeAppIcon: Boolean
         get() = currentSettings.useAlternativeAppIcon
         set(value) = dataStore.setValue(useAlternativeAppIconEntry, value)
@@ -173,6 +177,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         secondTabMode = settings.secondTabMode
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
+        blockIncomingCallsFromUnknownNumbers = settings.blockIncomingCallsFromUnknownNumbers
         showAndroidContacts = settings.showAndroidContacts
         showThirdPartyContactAccounts = settings.showThirdPartyContactAccounts
         useAlternativeAppIcon = settings.useAlternativeAppIcon

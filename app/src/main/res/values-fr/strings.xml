@@ -239,6 +239,8 @@
     <string name="incoming_call_text_multiple_matches">%1$s ou %2$s t\'appelle. Le numéro %3$s correspond à ces contacts.</string>
     <string name="incoming_call_channel_title">Appel entrant</string>
     <string name="incoming_call_channel_description">Notifications pour signaler les correspondances entre les appels entrants et les contacts enregistrés.</string>
+    <string name="blocked_call_notification_title">Appel bloqué</string>
+    <string name="blocked_call_notification_text">L\'appel de %1$s a été bloqué car le numéro n\'est pas dans tes contacts.</string>
 
     <string name="about_app_title">À propos de l\'application</string>
     <string name="about_app_description">Cette application a pour but de stocker des contacts qui ne doivent pas être partagés avec d\'autres applications du téléphone.</string>
@@ -306,6 +308,8 @@
     <string name="settings_entry_call_detection_description">Associe les appels entrants aux contacts enregistrés et affiche une notification si correspondance.</string>
     <string name="settings_entry_show_calls_on_lockscreen">Afficher sur l\'écran de verrouillage</string>
     <string name="settings_entry_show_calls_on_lockscreen_description">Affiche les infos du contact même quand l\'écran est verrouillé.</string>
+    <string name="settings_entry_block_unknown_calls">Bloquer les appels de numéros inconnus</string>
+    <string name="settings_entry_block_unknown_calls_description">Bloque les appels entrants de numéros qui ne sont pas dans tes contacts.\nLes contacts publics et secrets sont pris en compte.</string>
     <string name="settings_entry_show_android_contacts">Afficher les contacts Android</string>
     <string name="settings_entry_show_android_contacts_description">Affiche aussi les contacts de l\'application Contacts standard d\'Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Afficher les comptes de contacts tiers</string>

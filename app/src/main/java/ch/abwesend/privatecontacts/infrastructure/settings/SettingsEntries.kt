@@ -79,6 +79,10 @@ internal val observeIncomingCallsEntry = SettingsEntry(
     key = booleanPreferencesKey("observeIncomingCalls"),
     defaultValue = defaultSettings.observeIncomingCalls
 )
+internal val blockIncomingCallsFromUnknownNumbersEntry = SettingsEntry(
+    key = booleanPreferencesKey("blockIncomingCallsFromUnknownNumbers"),
+    defaultValue = defaultSettings.blockIncomingCallsFromUnknownNumbers
+)
 internal val useAlternativeAppIconEntry = SettingsEntry(
     key = booleanPreferencesKey("useAlternativeAppIcon"),
     defaultValue = defaultSettings.useAlternativeAppIcon

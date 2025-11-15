@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.calldetection
 
 import android.content.Context
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
@@ -22,25 +23,32 @@ class IncomingCallHelper {
     private val notificationRepository: CallNotificationRepository by injectAnywhere()
     private val toastRepository: ToastRepository by injectAnywhere()
 
-    fun handleIncomingCall(
+    suspend fun matchesAnyKnownContact(phoneNumber: String): Boolean {
+        val matchingContacts = incomingCallService.findCorrespondingContacts(
+            phoneNumber = phoneNumber,
+            considerPublicContacts = true,
+        )
+        logger.debug("Found ${matchingContacts.size} matching contacts")
+        return matchingContacts.isNotEmpty()
+    }
+
+    suspend fun handleIncomingCall(
         context: Context,
         phoneNumber: String,
     ) {
-        applicationScope.launch {
-            val correspondingContacts = incomingCallService
-                .findCorrespondingContacts(phoneNumber)
-                .map { it.displayName }
-                .distinct()
+        val correspondingContacts = incomingCallService
+            .findCorrespondingContacts(phoneNumber)
+            .map { it.displayName }
+            .distinct()
 
-            logger.debug("Found corresponding contacts: $correspondingContacts")
-            val formattedNumber = telephoneService.formatPhoneNumberForDisplay(phoneNumber)
-            val notificationText = createNotificationText(context, formattedNumber, correspondingContacts)
+        logger.debug("Found corresponding contacts: $correspondingContacts")
+        val formattedNumber = telephoneService.formatPhoneNumberForDisplay(phoneNumber)
+        val notificationText = createNotificationText(context, formattedNumber, correspondingContacts)
 
-            notificationText?.let { text ->
-                notificationRepository.showIncomingCallNotification(context, text)
-                toastRepository.showToastNotification(context, text)
-            } ?: logger.debug("No notification text: don't show notification")
-        }
+        notificationText?.let { text ->
+            notificationRepository.showIncomingCallNotification(context, text)
+            toastRepository.showToastNotification(context, text)
+        } ?: logger.debug("No notification text: don't show notification")
     }
 
     private fun createNotificationText(
@@ -63,4 +71,17 @@ class IncomingCallHelper {
                 callerNumber,
             )
         }
+
+    fun handleBlockedCall(
+        context: Context,
+        phoneNumber: String,
+    ) {
+        applicationScope.launch {
+            val formattedNumber = telephoneService.formatPhoneNumberForDisplay(phoneNumber)
+            val notificationText = context.getString(R.string.blocked_call_notification_text, formattedNumber)
+
+            logger.debugLocally("Showing notification for blocked call from $formattedNumber")
+            notificationRepository.showIncomingCallNotification(context, notificationText)
+        }
+    }
 }

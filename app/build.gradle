@@ -33,8 +33,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 36
-        versionCode 89
-        versionName "5.1.2"
+        versionCode 90
+        versionName "5.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -102,9 +102,9 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.16.0"
+    implementation "androidx.core:core-ktx:1.17.0"
     implementation "androidx.appcompat:appcompat:1.7.1"
-    implementation "com.google.android.material:material:1.12.0"
+    implementation "com.google.android.material:material:1.13.0"
 
     // Android Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:${androidLifecycleVersion}"
@@ -122,12 +122,12 @@ dependencies {
     implementation "androidx.compose.runtime:runtime:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.10.1"
-    implementation "androidx.navigation:navigation-compose:2.9.0"
+    implementation "androidx.activity:activity-compose:1.11.0"
+    implementation "androidx.navigation:navigation-compose:2.9.6"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
     // Firebase
-    googlePlayImplementation platform("com.google.firebase:firebase-bom:33.13.0")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:34.6.0")
     googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
     googlePlayImplementation("com.google.firebase:firebase-analytics")
 
@@ -160,7 +160,7 @@ dependencies {
     // ===== Testing =====
     // Unit Tests
     testImplementation "junit:junit:4.13.2"
-    testImplementation "org.assertj:assertj-core:3.21.0"
+    testImplementation "org.assertj:assertj-core:3.27.6"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutinesVersion}"
 
@@ -182,9 +182,9 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     // Instrumented Tests
-    androidTestImplementation "org.assertj:assertj-core:3.21.0"
-    androidTestImplementation "androidx.test.ext:junit:1.2.1"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.6.1"
+    androidTestImplementation "org.assertj:assertj-core:3.27.6"
+    androidTestImplementation "androidx.test.ext:junit:1.3.0"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.7.0"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:${composeVersion}"
 
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
