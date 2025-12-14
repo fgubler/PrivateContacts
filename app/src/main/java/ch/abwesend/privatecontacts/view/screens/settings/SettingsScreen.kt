@@ -17,6 +17,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -83,6 +84,10 @@ object SettingsScreen {
 
         val callDetectionPossible = remember { callIdentificationPossible }
 
+        LaunchedEffect(Unit) {
+            screenContext.settingsViewModel.initialize()
+        }
+
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = SettingsScreen,
@@ -97,11 +102,21 @@ object SettingsScreen {
                 UxCategory(settingsRepository, currentSettings, screenContext::refreshSettingsScreen)
                 SettingsCategorySpacer()
 
-                if (callDetectionPossible) CallDetectionCategory(permissionProvider, settingsRepository, currentSettings)
+                if (callDetectionPossible) CallDetectionCategory(
+                    permissionProvider = permissionProvider,
+                    settingsRepository = settingsRepository,
+                    viewModel = screenContext.settingsViewModel,
+                    currentSettings = currentSettings
+                )
                 else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
 
-                AndroidContactsCategory(permissionProvider, settingsRepository, currentSettings)
+                AndroidContactsCategory(
+                    permissionProvider = permissionProvider,
+                    settingsRepository = settingsRepository,
+                    viewModel = screenContext.settingsViewModel,
+                    currentSettings = currentSettings
+                )
                 SettingsCategorySpacer()
 
                 DefaultValuesCategory(permissionProvider, settingsRepository, currentSettings)
@@ -206,7 +221,12 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun CallDetectionCategory(permissionProvider: IPermissionProvider, settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun CallDetectionCategory(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        viewModel: SettingsViewModel,
+        currentSettings: ISettingsState
+    ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
         SettingsCategory(titleRes = R.string.settings_category_call_detection, infoPopupText = R.string.settings_info_dialog_call_detection) {
@@ -235,8 +255,17 @@ object SettingsScreen {
                 label = R.string.settings_entry_block_unknown_calls,
                 description = R.string.settings_entry_block_unknown_calls_description,
                 value = currentSettings.observeIncomingCalls && currentSettings.blockIncomingCallsFromUnknownNumbers,
-                enabled = currentSettings.observeIncomingCalls
-            ) { settingsRepository.blockIncomingCallsFromUnknownNumbers = it }
+                enabled = currentSettings.observeIncomingCalls && viewModel.hasAndroidContactsReadPermission.value
+            ) { newValue ->
+                if (newValue) {
+                    permissionProvider.contactPermissionHelper.requestAndroidContactPermissions { result ->
+                        logger.debug("Android contact permissions: $result")
+                        settingsRepository.blockIncomingCallsFromUnknownNumbers = result.usable
+                    }
+                } else {
+                    settingsRepository.blockIncomingCallsFromUnknownNumbers = false
+                }
+            }
         }
 
         if (requestPermissions) {
@@ -261,6 +290,7 @@ object SettingsScreen {
     private fun AndroidContactsCategory(
         permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
+        viewModel: SettingsViewModel,
         currentSettings: ISettingsState,
     ) {
         var showThirdPartyWarningDialog by remember { mutableStateOf(false) }
@@ -277,7 +307,7 @@ object SettingsScreen {
             SettingsCheckbox(
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
-                value = currentSettings.showAndroidContacts,
+                value = currentSettings.showAndroidContacts && viewModel.hasAndroidContactsReadPermission.value,
             ) { newValue -> onShowAndroidContactsChanged(permissionProvider, settingsRepository, newValue) }
 
             SettingsEntryDivider()
@@ -382,6 +412,7 @@ object SettingsScreen {
         val targetType = requestPermissionsFor
         if (targetType != null) {
             permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                logger.debug("Android contact permissions: $it")
                 requestPermissionsFor = null
                 if (it.usable) {
                     settingsRepository.defaultContactType = targetType
