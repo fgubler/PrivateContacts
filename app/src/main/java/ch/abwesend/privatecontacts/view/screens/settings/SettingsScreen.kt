@@ -85,7 +85,7 @@ object SettingsScreen {
         val callDetectionPossible = remember { callIdentificationPossible }
 
         LaunchedEffect(Unit) {
-            screenContext.settingsViewModel.initialize()
+            screenContext.settingsViewModel.initialize(settingsRepository)
         }
 
         BaseScreen(
@@ -105,7 +105,6 @@ object SettingsScreen {
                 if (callDetectionPossible) CallDetectionCategory(
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    viewModel = screenContext.settingsViewModel,
                     currentSettings = currentSettings
                 )
                 else CallDetectionCategoryDummy()
@@ -114,7 +113,6 @@ object SettingsScreen {
                 AndroidContactsCategory(
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    viewModel = screenContext.settingsViewModel,
                     currentSettings = currentSettings
                 )
                 SettingsCategorySpacer()
@@ -224,7 +222,6 @@ object SettingsScreen {
     private fun CallDetectionCategory(
         permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
-        viewModel: SettingsViewModel,
         currentSettings: ISettingsState
     ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
@@ -256,8 +253,9 @@ object SettingsScreen {
                 description = R.string.settings_entry_block_unknown_calls_description,
                 infoDialogTitle = R.string.settings_entry_block_unknown_calls_info_dialog_title,
                 infoDialogText = R.string.settings_entry_block_unknown_calls_info_dialog_message,
-                value = currentSettings.observeIncomingCalls && currentSettings.blockIncomingCallsFromUnknownNumbers,
-                enabled = currentSettings.observeIncomingCalls && viewModel.hasAndroidContactsReadPermission.value
+                value = currentSettings.observeIncomingCalls &&
+                        currentSettings.blockIncomingCallsFromUnknownNumbers,
+                enabled = currentSettings.observeIncomingCalls,
             ) { newValue ->
                 if (newValue) {
                     permissionProvider.contactPermissionHelper.requestAndroidContactPermissions { result ->
@@ -292,7 +290,6 @@ object SettingsScreen {
     private fun AndroidContactsCategory(
         permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
-        viewModel: SettingsViewModel,
         currentSettings: ISettingsState,
     ) {
         var showThirdPartyWarningDialog by remember { mutableStateOf(false) }
@@ -309,7 +306,7 @@ object SettingsScreen {
             SettingsCheckbox(
                 label = R.string.settings_entry_show_android_contacts,
                 description = R.string.settings_entry_show_android_contacts_description,
-                value = currentSettings.showAndroidContacts && viewModel.hasAndroidContactsReadPermission.value,
+                value = currentSettings.showAndroidContacts,
             ) { newValue -> onShowAndroidContactsChanged(permissionProvider, settingsRepository, newValue) }
 
             SettingsEntryDivider()
