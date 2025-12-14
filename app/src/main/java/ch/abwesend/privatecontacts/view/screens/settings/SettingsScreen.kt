@@ -251,9 +251,11 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckbox(
+            SettingsCheckboxWithInfoButton(
                 label = R.string.settings_entry_block_unknown_calls,
                 description = R.string.settings_entry_block_unknown_calls_description,
+                infoDialogTitle = R.string.settings_entry_block_unknown_calls_info_dialog_title,
+                infoDialogText = R.string.settings_entry_block_unknown_calls_info_dialog_message,
                 value = currentSettings.observeIncomingCalls && currentSettings.blockIncomingCallsFromUnknownNumbers,
                 enabled = currentSettings.observeIncomingCalls && viewModel.hasAndroidContactsReadPermission.value
             ) { newValue ->

@@ -310,6 +310,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Kontaktdaten bei eingehendem Anruf auch auf dem Sperrbildschirm anzeigen.</string>
     <string name="settings_entry_block_unknown_calls">Anrufe von unbekannten Nummern blockieren</string>
     <string name="settings_entry_block_unknown_calls_description">Eingehende Anrufe von Nummern blockieren, die nicht in deinen Kontakten hinterlegt sind.\nSowohl öffentliche als auch geheime Kontakte werden berücksichtigt.</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_title">Unbekannte Anrufe blockieren</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_message">Um Anrufe von unbekannten Nummern zu blockieren, muss die App die sowohl deine geheimen also auch deine öffentlichen Kontakten berücksichtigen.\n\nDafür benötigen wir die Berechtigung, deine Telefonkontakte zu lesen. Sonst können wir nicht zuverlässig feststellen, ob eine Nummer bekannt ist, und könnten zu viele Anrufe blockieren.\n\nAus diesem Grund ist diese Funktion nur verfügbar, wenn du sie erteilst. Wir entschuldigen uns für die Unannehmlichkeiten.</string>
     <string name="settings_entry_show_android_contacts">Öffentliche Kontakte anzeigen</string>
     <string name="settings_entry_show_android_contacts_description">Zeigt auch Kontakte aus der Standard-Android-Kontaktliste an.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Drittanbieter-Konten anzeigen</string>

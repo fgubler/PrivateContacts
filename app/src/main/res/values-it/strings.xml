@@ -310,6 +310,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Mostra informazioni di contatto anche a schermo bloccato durante una chiamata.</string>
     <string name="settings_entry_block_unknown_calls">Blocca chiamate da numeri sconosciuti</string>
     <string name="settings_entry_block_unknown_calls_description">Blocca le chiamate in entrata da numeri non presenti nei tuoi contatti.\nVengono presi in considerazione sia i contatti pubblici che quelli segreti.</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_title">Blocco delle chiamate sconosciute</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_message">Per bloccare le chiamate da numeri sconosciuti, l\'app deve considerare sia i tuoi contatti segreti sia i quelli pubblici.\n\nPer questo abbiamo bisogno dell\'autorizzazione di leggere i contatti del tuo telefono. Senza questa autorizzazione non possiamo stabilire in modo affidabile se un numero è sconosciuto e potremmo bloccare troppe chiamate.\n\nPer questo motivo, questa funzione è disponibile solo se la concedi. Ci scusiamo per l\'inconveniente.</string>
     <string name="settings_entry_show_android_contacts">Mostra contatti Android</string>
     <string name="settings_entry_show_android_contacts_description">Mostra anche i contatti presenti nella rubrica predefinita Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostra account contatti di terze parti</string>

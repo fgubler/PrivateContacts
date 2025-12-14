@@ -310,6 +310,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Affiche les infos du contact même quand l\'écran est verrouillé.</string>
     <string name="settings_entry_block_unknown_calls">Bloquer les appels de numéros inconnus</string>
     <string name="settings_entry_block_unknown_calls_description">Bloque les appels entrants de numéros qui ne sont pas dans tes contacts.\nLes contacts publics et secrets sont pris en compte.</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_title">Blocage des appels inconnus</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_message">Pour bloquer les appels provenant de numéros inconnus, l\'application doit prendre en compte à la fois tes contacts secrets et tes contacts publics.\n\nPour cela, nous avons besoin de l\'autorisation de lire les contacts de ton téléphone. Sans cette autorisation, nous ne pouvons pas déterminer de manière fiable si un numéro est connu et nous pourrions bloquer trop d\'appels.\n\nPour cette raison, cette fonctionnalité n\'est disponible que si tu l\'accordes. Nous sommes désolés pour le désagrément.</string>
     <string name="settings_entry_show_android_contacts">Afficher les contacts Android</string>
     <string name="settings_entry_show_android_contacts_description">Affiche aussi les contacts de l\'application Contacts standard d\'Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Afficher les comptes de contacts tiers</string>

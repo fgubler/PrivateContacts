@@ -314,6 +314,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Show contact-information about the caller also on the lock-screen.</string>
     <string name="settings_entry_block_unknown_calls">Block calls from unknown numbers</string>
     <string name="settings_entry_block_unknown_calls_description">Block incoming calls from numbers that are not in your contacts.\nBoth public and secret contacts are considered.</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_title">Blocking Unknown Calls</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_message">To block calls from unknown numbers, the app must consider numbers stored in both your secret and your public contacts.\n\nFor this, we need the permission to read your phone contacts. Without it, we cannot reliably determine whether a number is known, and might block too many calls.\n\nFor that reason, this feature is only available if you grant it. We apologize for the inconvenience.</string>
     <string name="settings_entry_show_android_contacts">Show public contacts</string>
     <string name="settings_entry_show_android_contacts_description">Show contacts from the normal Android contacts app as well.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Show third-party contact accounts</string>

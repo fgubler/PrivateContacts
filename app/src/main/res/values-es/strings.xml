@@ -310,6 +310,8 @@
     <string name="settings_entry_show_calls_on_lockscreen_description">Muestra información de llamadas incluso cuando la pantalla está bloqueada.</string>
     <string name="settings_entry_block_unknown_calls">Bloquear llamadas de números desconocidos</string>
     <string name="settings_entry_block_unknown_calls_description">Bloquea llamadas entrantes de números que no están en tus contactos.</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_title">Bloqueo de llamadas desconocidas</string>
+    <string name="settings_entry_block_unknown_calls_info_dialog_message">Para bloquear llamadas de números desconocidos, la app debe tener en cuenta los números guardados tanto en tus contactos secretos como en tus contactos públicos.\n\nPara ello necesitamos el permiso para leer los contactos de tu teléfono. Sin este permiso no podemos determinar de forma fiable si un número es desconocido y podríamos bloquear demasiadas llamadas.\n\nPor ese motivo, esta función solo está disponible si concedes ese permiso. Lamentamos las molestias.</string>
     <string name="settings_entry_show_android_contacts">Mostrar contactos de Android</string>
     <string name="settings_entry_show_android_contacts_description">También muestra contactos guardados en la app estándar de contactos de Android.</string>
     <string name="settings_entry_show_third_party_contact_accounts">Mostrar cuentas de contactos de terceros</string>
