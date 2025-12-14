@@ -294,6 +294,8 @@ object SettingsScreen {
     ) {
         var showThirdPartyWarningDialog by remember { mutableStateOf(false) }
 
+        // TODO this will be automatically set to true in some cases when the user grants the permission
+        //   probably that is not desired in some/most cases...
         SettingsCategory(
             titleRes = R.string.settings_category_contacts,
             infoPopupText = R.string.settings_info_dialog_android_contacts_permission,
