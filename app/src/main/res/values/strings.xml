@@ -442,4 +442,5 @@
     <string name="release_notes_v84_2">Small bugfixes.</string>
     <string name="release_notes_v85">Added translations for German, Italian, Spanish and French.</string>
     <string name="release_notes_v87">Added the option to store public contacts in all accounts which are registered on the device. Previously, only Google-Accounts and the local phone contacts were possible.</string>
+    <string name="release_notes_v90">Added the option to block all incoming calls from unknown numbers. Both private and public contacts are considered for this.</string>
 </resources>

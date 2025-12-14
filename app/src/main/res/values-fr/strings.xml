@@ -437,5 +437,6 @@
     <string name="release_notes_v84_2">Petites corrections de bugs.</string>
     <string name="release_notes_v85">Ajout de traductions pour le français l\'allemand, l\'italien, et l\'espagnol.</string>
     <string name="release_notes_v87">Ajout de l\'option permettant de stocker les contacts publics dans tous les comptes enregistrés sur l\'appareil. Auparavant, seuls les comptes Google et les contacts téléphoniques locaux étaient pris en charge.</string>
+    <string name="release_notes_v90">Ajout d\'une option permettant de bloquer tous les appels entrants provenant de numéros inconnus. Les contacts privés et publics sont pris en compte pour cette decision.</string>
 
 </resources>
