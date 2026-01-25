@@ -13,9 +13,12 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class ToastRepository {
+    private val delayBetweenToasts = 3500.milliseconds
     private val dispatchers: IDispatchers by injectAnywhere()
 
     /**
@@ -25,10 +28,14 @@ class ToastRepository {
         context: Context,
         message: String,
         length: Int = Toast.LENGTH_LONG,
+        numberOfRepetitions: Int = 1,
     ) {
         applicationScope.launch(dispatchers.mainImmediate) {
             try {
-                Toast.makeText(context.applicationContext, message, length).show()
+                repeat(numberOfRepetitions) {
+                    Toast.makeText(context.applicationContext, message, length).show()
+                    delay(delayBetweenToasts)
+                }
             } catch (t: Throwable) {
                 logger.warning("Failed to show toast message for incoming call. Try with java-style.", t)
                 showToastNotificationJavaStyle(context, message, length)

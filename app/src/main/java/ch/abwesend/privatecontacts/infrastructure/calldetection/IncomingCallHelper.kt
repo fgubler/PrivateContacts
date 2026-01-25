@@ -47,7 +47,7 @@ class IncomingCallHelper {
 
         notificationText?.let { text ->
             notificationRepository.showIncomingCallNotification(context, text)
-            toastRepository.showToastNotification(context, text)
+            toastRepository.showToastNotification(context, text, numberOfRepetitions = 5)
         } ?: logger.debug("No notification text: don't show notification")
     }
 
