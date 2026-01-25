@@ -254,7 +254,7 @@ object SettingsScreen {
                 infoDialogTitle = R.string.settings_entry_block_unknown_calls_info_dialog_title,
                 infoDialogText = R.string.settings_entry_block_unknown_calls_info_dialog_message,
                 value = currentSettings.observeIncomingCalls &&
-                        currentSettings.blockIncomingCallsFromUnknownNumbers,
+                    currentSettings.blockIncomingCallsFromUnknownNumbers,
                 enabled = currentSettings.observeIncomingCalls,
             ) { newValue ->
                 if (newValue) {

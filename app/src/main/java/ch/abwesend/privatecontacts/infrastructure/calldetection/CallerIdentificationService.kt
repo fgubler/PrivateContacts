@@ -12,10 +12,10 @@ import android.telecom.Call.Details
 import android.telecom.CallScreeningService
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import kotlinx.coroutines.launch
 
 class CallerIdentificationService : CallScreeningService() {
