@@ -26,19 +26,22 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 private const val CHANNEL_ID = "ch.abwesend.privatecontacts.IncomingCallNotificationChannel"
-private const val MAX_NOTIFICATION_TIMEOUT_MS = 120000L // 2min
-private const val NOTIFICATION_CLOSE_TIMEOUT_MS = 30000L
 
 class CallNotificationRepository {
+    private val maxNotificationTimeout = 2.minutes
+    private val notificationClosingTimeout = 30.seconds
+
     private val permissionService: PermissionService by injectAnywhere()
     private var potentiallyActiveNotifications = mutableSetOf<Int>()
 
     fun cancelNotifications(context: Context) {
         applicationScope.launch {
-            logger.debug("will cancel notifications in $NOTIFICATION_CLOSE_TIMEOUT_MS ms")
-            delay(NOTIFICATION_CLOSE_TIMEOUT_MS)
+            logger.debug("will cancel notifications in $notificationClosingTimeout ms")
+            delay(notificationClosingTimeout)
             logger.debug("cancel notifications now")
             try {
                 // cancelAll may be expensive: do not call if clearly unnecessary
@@ -78,7 +81,7 @@ class CallNotificationRepository {
             .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(visibility)
-            .setTimeoutAfter(MAX_NOTIFICATION_TIMEOUT_MS)
+            .setTimeoutAfter(maxNotificationTimeout.inWholeMilliseconds)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
