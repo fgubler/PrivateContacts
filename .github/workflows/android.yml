@@ -88,10 +88,40 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
+      - name: List APK output directory
+        run: |
+          echo "Listing APK output directories:"
+          find ./app/build/outputs/apk -name "*.apk" -type f || echo "No APK files found"
+          echo ""
+          echo "Directory structure:"
+          ls -la ./app/build/outputs/apk/ || echo "APK output directory not found"
+          ls -la ./app/build/outputs/apk/*/ || echo "No flavor directories found"
+          ls -la ./app/build/outputs/apk/*/release/ || echo "No release directories found"
+          echo ""
+          echo "All APK files found:"
+          find ./app/build/outputs/apk -name "*.apk" -type f -exec ls -la {} \; || echo "No APK files to list"
+
       - name: Get version name
         run: |
           VERSION_NAME=$(grep "versionName" app/build.gradle | awk -F'"' '{print $2}')
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+
+      - name: Verify APK files exist
+        run: |
+          echo "Checking if APK files exist at expected paths:"
+          if [ -f "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk" ]; then
+            echo "✓ Google Play APK found"
+            ls -la "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk"
+          else
+            echo "✗ Google Play APK NOT found at expected path"
+          fi
+
+          if [ -f "./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk" ]; then
+            echo "✓ F-Droid APK found"
+            ls -la "./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk"
+          else
+            echo "✗ F-Droid APK NOT found at expected path"
+          fi
 
       - name: Create Draft Release with APKs
         uses: softprops/action-gh-release@v1
@@ -104,10 +134,9 @@ jobs:
             Built on: ${{ env.date_today }}
 
             ## APK Files
-            - Google Play variant: app-googlePlay-release.apk
-            - F-Droid variant: app-fdroid-release.apk
+            This release contains APK files for both Google Play and F-Droid variants.
           draft: true
           prerelease: false
           files: |
-            ./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk
-            ./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk
+            ./app/build/outputs/apk/googlePlay/release/*.apk
+            ./app/build/outputs/apk/fdroid/release/*.apk
