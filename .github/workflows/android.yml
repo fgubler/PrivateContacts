@@ -1,5 +1,9 @@
 name: Android CI
 
+# Explicitly grant only the permissions this workflow needs
+permissions:
+  contents: read  # Required to checkout repository code
+
 env:
   main_project_module: app
 
@@ -51,6 +55,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    # Release job needs specific permissions for creating releases
+    permissions:
+      contents: write  # Required to create tags (tag_name creates a git tag if it doesn't exist)
+      # Note: GitHub doesn't have a separate 'releases: write' permission
+      # Creating releases requires 'contents: write' because:
+      # 1. The action creates a git tag if tag_name doesn't exist
+      # 2. Releases are considered part of repository contents in GitHub's permission model
 
     steps:
       - uses: actions/checkout@v3
