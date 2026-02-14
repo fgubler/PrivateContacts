@@ -46,3 +46,56 @@ jobs:
 
       - name: Build gradle project
         run: ./gradlew build
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set Current Date As Env Variable
+      - name: Set current date as env variable
+        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      # Set Repository Name As Env Variable
+      - name: Set repository name as env variable
+        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+
+      - name: Set Up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Get version name
+        run: |
+          VERSION_NAME=$(grep "versionName" app/build.gradle | awk -F'"' '{print $2}')
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+
+      - name: Create Draft Release with APKs
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION_NAME }}-${{ env.date_today }}
+          name: Release v${{ env.VERSION_NAME }}
+          body: |
+            Automated release for version ${{ env.VERSION_NAME }}
+
+            Built on: ${{ env.date_today }}
+
+            ## APK Files
+            - Google Play variant: app-googlePlay-release.apk
+            - F-Droid variant: app-fdroid-release.apk
+          draft: true
+          prerelease: false
+          files: |
+            ./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk
+            ./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk
