@@ -112,6 +112,9 @@ jobs:
           if [ -f "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk" ]; then
             echo "✓ Google Play APK found"
             ls -la "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release.apk"
+          elif [ -f "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release-unsigned.apk" ]; then
+            echo "✓ Google Play APK found (unsigned)"
+            ls -la "./app/build/outputs/apk/googlePlay/release/app-googlePlay-release-unsigned.apk"
           else
             echo "✗ Google Play APK NOT found at expected path"
           fi
@@ -119,6 +122,9 @@ jobs:
           if [ -f "./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk" ]; then
             echo "✓ F-Droid APK found"
             ls -la "./app/build/outputs/apk/fdroid/release/app-fdroid-release.apk"
+          elif [ -f "./app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk" ]; then
+            echo "✓ F-Droid APK found (unsigned)"
+            ls -la "./app/build/outputs/apk/fdroid/release/app-fdroid-release-unsigned.apk"
           else
             echo "✗ F-Droid APK NOT found at expected path"
           fi
@@ -127,7 +133,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION_NAME }}-${{ env.date_today }}
-          name: Automated Release for v${{ env.VERSION_NAME }} ${{ env.date_today }}
+          name: Automated Release for v${{ env.VERSION_NAME }} on ${{ env.date_today }}
           body: |
             Automated release for version ${{ env.VERSION_NAME }}
 
