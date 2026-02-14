@@ -97,7 +97,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION_NAME }}-${{ env.date_today }}
-          name: Automated Release v${{ env.VERSION_NAME }} ${{ env.date_today }}
+          name: Automated Release for v${{ env.VERSION_NAME }} ${{ env.date_today }}
           body: |
             Automated release for version ${{ env.VERSION_NAME }}
 
