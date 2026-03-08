@@ -6,11 +6,14 @@
 
 package ch.abwesend.privatecontacts.infrastructure.backup
 
+import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
@@ -67,14 +70,14 @@ class ContactBackupWorker(
 
             when (settings.backupContactScope) {
                 BackupContactScope.ALL -> {
-                    exportToBackupFile(documentFolder, "backup_secret_$dateString.vcf", ContactType.SECRET, vCardVersion)
-                    exportToBackupFile(documentFolder, "backup_public_$dateString.vcf", ContactType.PUBLIC, vCardVersion)
+                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
+                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
                 }
                 BackupContactScope.SECRET -> {
-                    exportToBackupFile(documentFolder, "backup_secret_$dateString.vcf", ContactType.SECRET, vCardVersion)
+                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
                 }
                 BackupContactScope.PUBLIC -> {
-                    exportToBackupFile(documentFolder, "backup_public_$dateString.vcf", ContactType.PUBLIC, vCardVersion)
+                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
                 }
             }
 
@@ -87,6 +90,36 @@ class ContactBackupWorker(
             Result.failure()
         }
     }
+
+    private suspend fun exportContacts(
+        type: ContactType,
+        dateString: String,
+        vCardVersion: VCardVersion,
+        documentFolder: DocumentFile,
+    ): Boolean {
+        if (type == ContactType.PUBLIC && !hasAndroidContactsPermission()) {
+            logger.warning("Skipping backup of public contacts: READ_CONTACTS permission not granted")
+            return false
+        }
+
+        val fileName = when (type) {
+            ContactType.SECRET -> "backup_secret_$dateString.vcf"
+            ContactType.PUBLIC -> "backup_public_$dateString.vcf"
+        }
+
+        return exportToBackupFile(
+            folder = documentFolder,
+            fileName = fileName,
+            contactType = type,
+            vCardVersion = vCardVersion
+        )
+    }
+
+    private fun hasAndroidContactsPermission(): Boolean {
+        val response = ContextCompat.checkSelfPermission(applicationContext, READ_CONTACTS)
+        return response == PackageManager.PERMISSION_GRANTED
+    }
+
 
     private suspend fun exportToBackupFile(
         folder: DocumentFile,
