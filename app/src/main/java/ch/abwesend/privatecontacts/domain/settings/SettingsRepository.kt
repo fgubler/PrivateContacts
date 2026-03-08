@@ -9,6 +9,8 @@ package ch.abwesend.privatecontacts.domain.settings
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -55,6 +57,11 @@ interface SettingsRepository : ISettingsState {
     // Privacy
     override var useAlternativeAppIcon: Boolean
     override var sendErrorsToCrashlytics: Boolean
+
+    // Periodic Backup
+    override var backupFrequency: BackupFrequency
+    override var backupContactScope: BackupContactScope
+    override var backupFolder: String
 
     // Others
     override var currentVersion: Int

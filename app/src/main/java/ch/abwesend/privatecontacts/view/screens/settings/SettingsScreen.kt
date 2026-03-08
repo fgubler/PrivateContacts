@@ -9,12 +9,18 @@ package ch.abwesend.privatecontacts.view.screens.settings
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,22 +29,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import android.content.Intent
+import android.net.Uri
+import android.provider.DocumentsContract
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
@@ -70,6 +87,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
+import androidx.core.net.toUri
 
 @ExperimentalMaterialApi
 @ExperimentalContracts
@@ -91,13 +109,13 @@ object SettingsScreen {
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = SettingsScreen,
-            topBarActions = { SettingsActions(screenContext.settingsViewModel) }
+            topBarActions = { SettingsActions(screenContext.settingsViewModel) },
         ) { padding ->
             Column(
                 modifier = Modifier
                     .padding(padding)
                     .padding(10.dp)
-                    .verticalScroll(scrollState)
+                    .verticalScroll(scrollState),
             ) {
                 UxCategory(settingsRepository, currentSettings, screenContext::refreshSettingsScreen)
                 SettingsCategorySpacer()
@@ -105,7 +123,7 @@ object SettingsScreen {
                 if (callDetectionPossible) CallDetectionCategory(
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    currentSettings = currentSettings
+                    currentSettings = currentSettings,
                 )
                 else CallDetectionCategoryDummy()
                 SettingsCategorySpacer()
@@ -113,7 +131,7 @@ object SettingsScreen {
                 AndroidContactsCategory(
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    currentSettings = currentSettings
+                    currentSettings = currentSettings,
                 )
                 SettingsCategorySpacer()
 
@@ -121,6 +139,9 @@ object SettingsScreen {
                 SettingsCategorySpacer()
 
                 SecurityCategory(settingsRepository, currentSettings)
+                SettingsCategorySpacer()
+
+                PeriodicBackupCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
                 PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
@@ -145,7 +166,7 @@ object SettingsScreen {
                 description = null,
                 value = currentSettings.appTheme,
                 options = appThemeOptions,
-                onValueChanged = { settingsRepository.appTheme = it }
+                onValueChanged = { settingsRepository.appTheme = it },
             )
 
             val showAppLanguageField = remember { Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU }
@@ -156,7 +177,7 @@ object SettingsScreen {
                     AppLanguage.entries.map {
                         ResDropDownOption(
                             labelRes = it.labelRes,
-                            value = it
+                            value = it,
                         )
                     }
                 }
@@ -170,7 +191,7 @@ object SettingsScreen {
                         settingsRepository.appLanguage = it
                         context.tryChangeAppLanguage(language = it)
                         refreshScreen()
-                    }
+                    },
                 )
             }
 
@@ -180,13 +201,13 @@ object SettingsScreen {
                 label = R.string.settings_entry_order_by_first_name,
                 description = null,
                 value = currentSettings.orderByFirstName,
-                onValueChanged = { settingsRepository.orderByFirstName = it }
+                onValueChanged = { settingsRepository.orderByFirstName = it },
             )
             SettingsCheckbox(
                 label = R.string.settings_entry_show_contact_types_on_contact_list,
                 description = null,
                 value = currentSettings.showContactTypeInList,
-                onValueChanged = { settingsRepository.showContactTypeInList = it }
+                onValueChanged = { settingsRepository.showContactTypeInList = it },
             )
 
             SettingsEntryDivider()
@@ -195,7 +216,7 @@ object SettingsScreen {
                 label = R.string.settings_entry_show_extra_buttons_in_edit_screen,
                 description = null,
                 value = currentSettings.showExtraButtonsInEditScreen,
-                onValueChanged = { settingsRepository.showExtraButtonsInEditScreen = it }
+                onValueChanged = { settingsRepository.showExtraButtonsInEditScreen = it },
             )
             SettingsCheckbox(
                 label = R.string.settings_entry_invert_top_and_bottom_bars,
@@ -204,7 +225,7 @@ object SettingsScreen {
                 onValueChanged = {
                     settingsRepository.invertTopAndBottomBars = it
                     settingsRepository.showExtraButtonsInEditScreen = !it // the buttons don't make sense if true
-                }
+                },
             )
 
             SettingsEntryDivider()
@@ -213,7 +234,7 @@ object SettingsScreen {
                 label = R.string.settings_entry_show_whatsapp_buttons,
                 description = R.string.settings_entry_show_whatsapp_buttons_description,
                 value = currentSettings.showWhatsAppButtons,
-                onValueChanged = { settingsRepository.showWhatsAppButtons = it }
+                onValueChanged = { settingsRepository.showWhatsAppButtons = it },
             )
         }
     }
@@ -222,7 +243,7 @@ object SettingsScreen {
     private fun CallDetectionCategory(
         permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
-        currentSettings: ISettingsState
+        currentSettings: ISettingsState,
     ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
@@ -243,7 +264,7 @@ object SettingsScreen {
                 label = R.string.settings_entry_show_calls_on_lockscreen,
                 description = R.string.settings_entry_show_calls_on_lockscreen_description,
                 value = currentSettings.observeIncomingCalls && currentSettings.showIncomingCallsOnLockScreen,
-                enabled = currentSettings.observeIncomingCalls
+                enabled = currentSettings.observeIncomingCalls,
             ) { settingsRepository.showIncomingCallsOnLockScreen = it }
 
             SettingsEntryDivider()
@@ -336,7 +357,7 @@ object SettingsScreen {
                 value = currentSettings.secondTabMode,
                 options = secondTabOptions,
                 enabled = currentSettings.showAndroidContacts, // second tab is not shown, otherwise
-                onValueChanged = { settingsRepository.secondTabMode = it }
+                onValueChanged = { settingsRepository.secondTabMode = it },
             )
         }
 
@@ -350,7 +371,7 @@ object SettingsScreen {
                 },
                 onNo = {
                     showThirdPartyWarningDialog = false
-                }
+                },
             )
         }
     }
@@ -374,7 +395,7 @@ object SettingsScreen {
     private fun DefaultValuesCategory(
         permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
-        currentSettings: ISettingsState
+        currentSettings: ISettingsState,
     ) {
         SettingsCategory(titleRes = R.string.settings_category_default_values) {
             DefaultContactTypeField(permissionProvider, settingsRepository, currentSettings)
@@ -407,7 +428,7 @@ object SettingsScreen {
                 } else {
                     requestPermissionsFor = it
                 }
-            }
+            },
         )
 
         val targetType = requestPermissionsFor
@@ -427,14 +448,14 @@ object SettingsScreen {
         AccountSelectionDropDownField(
             settings = settingsRepository,
             selectedAccount = currentSettings.defaultExternalContactAccount,
-            onValueChanged = { settingsRepository.defaultExternalContactAccount = it }
+            onValueChanged = { settingsRepository.defaultExternalContactAccount = it },
         ) { options, selectedOption, onOptionSelected ->
             SettingsDropDown(
                 label = R.string.settings_entry_default_external_contact_account,
                 description = R.string.settings_entry_default_external_contact_account_description,
                 value = selectedOption.value,
                 options = options,
-                onValueChanged = onOptionSelected
+                onValueChanged = onOptionSelected,
             )
         }
     }
@@ -450,7 +471,7 @@ object SettingsScreen {
                 description = R.string.settings_entry_default_vcard_version_description,
                 value = selectedOption.value,
                 options = options,
-                onValueChanged = onOptionSelected
+                onValueChanged = onOptionSelected,
             )
         }
     }
@@ -486,7 +507,7 @@ object SettingsScreen {
                 val authenticationStatus = authenticateWithBiometrics(
                     activity,
                     confirmationTitle,
-                    confirmationDescription
+                    confirmationDescription,
                 ).firstOrNull()
 
                 if (authenticationStatus == null) {
@@ -506,7 +527,7 @@ object SettingsScreen {
             infoDialogText = R.string.settings_entry_enable_authentication_info_dialog,
             enabled = fieldEnabled,
             value = currentSettings.authenticationRequired,
-            onValueChanged = onValueChanged
+            onValueChanged = onValueChanged,
         )
 
         errorDialogTextRes?.let {
@@ -518,10 +539,92 @@ object SettingsScreen {
     }
 
     @Composable
+    private fun PeriodicBackupCategory(
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+    ) {
+        val frequencyOptions = remember {
+            BackupFrequency.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+        }
+
+        SettingsCategory(titleRes = R.string.settings_category_periodic_backup) {
+            SettingsDropDown(
+                label = R.string.backup_frequency_label,
+                description = null,
+                value = currentSettings.backupFrequency,
+                options = frequencyOptions,
+                onValueChanged = { settingsRepository.backupFrequency = it },
+            )
+
+            if (currentSettings.backupFrequency != BackupFrequency.DISABLED) {
+                val contactScopeOptions = remember {
+                    BackupContactScope.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+                }
+
+                SettingsDropDown(
+                    label = R.string.backup_contact_type_label,
+                    description = null,
+                    value = currentSettings.backupContactScope,
+                    options = contactScopeOptions,
+                    onValueChanged = { settingsRepository.backupContactScope = it },
+                )
+
+                BackupFolderField(settingsRepository, currentSettings.backupFolder)
+            }
+        }
+    }
+
+    @Composable
+    private fun BackupFolderField(settingsRepository: SettingsRepository, currentFolder: String) {
+        val context = LocalContext.current
+
+        val folderPickerLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.OpenDocumentTree(),
+        ) { uri: Uri? ->
+            uri?.let {
+                context.contentResolver.takePersistableUriPermission(
+                    it,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                )
+                settingsRepository.backupFolder = it.toString()
+            }
+        }
+
+        val currentFolderUri = remember(currentFolder) {
+            currentFolder.takeUnless { it.isEmpty() }?.toUri()
+        }
+        val folderDisplayName = remember(currentFolder) {
+            currentFolderUri?.let { getFileOrFolderName(it) ?: currentFolder }
+        } ?: stringResource(id = R.string.backup_folder_not_selected)
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(id = R.string.backup_folder_label),
+                    fontWeight = FontWeight.SemiBold,
+                    style = MaterialTheme.typography.body1,
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = folderDisplayName,
+                    fontStyle = FontStyle.Italic,
+                    style = MaterialTheme.typography.body2,
+                )
+            }
+
+            EditIconButton { folderPickerLauncher.launch(currentFolderUri) }
+        }
+    }
+
+    @Composable
     private fun PrivacyCategory(
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
-        viewModel: SettingsViewModel
+        viewModel: SettingsViewModel,
     ) {
         val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
@@ -535,7 +638,7 @@ object SettingsScreen {
                     settingsRepository.useAlternativeAppIcon = it
                     val success = viewModel.changeLauncherAppearance(it)
                     showAppearanceChangeResultToast(context, success)
-                }
+                },
             )
 
             SettingsEntryDivider()
@@ -544,7 +647,7 @@ object SettingsScreen {
                 label = R.string.settings_entry_error_reports,
                 description = R.string.settings_entry_error_reports_description,
                 value = currentSettings.sendErrorsToCrashlytics,
-                onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it }
+                onValueChanged = { settingsRepository.sendErrorsToCrashlytics = it },
             )
         }
     }
@@ -570,3 +673,6 @@ private val AuthenticationStatus.authenticationErrorTextRes: Int?
         DENIED -> R.string.authentication_failed
         NOT_AUTHENTICATED, ERROR -> R.string.authentication_registration_error_unknown
     }
+
+private fun getFileOrFolderName(uri: Uri): String? =
+    uri.lastPathSegment?.replaceFirst("primary:", "")

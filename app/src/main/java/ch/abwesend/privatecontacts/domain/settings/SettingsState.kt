@@ -10,6 +10,8 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import java.time.LocalDate
 
@@ -73,6 +75,11 @@ interface ISettingsState {
     val useAlternativeAppIcon: Boolean
     val sendErrorsToCrashlytics: Boolean
 
+    // Periodic Backup
+    val backupFrequency: BackupFrequency
+    val backupContactScope: BackupContactScope
+    val backupFolder: String
+
     // Others
     val currentVersion: Int
     val previousVersion: Int
@@ -113,6 +120,10 @@ data class SettingsState(
     override val useAlternativeAppIcon: Boolean,
     override val sendErrorsToCrashlytics: Boolean,
 
+    override val backupFrequency: BackupFrequency,
+    override val backupContactScope: BackupContactScope,
+    override val backupFolder: String,
+
     override val currentVersion: Int,
     override val previousVersion: Int,
     override val numberOfAppStarts: Int,
@@ -139,6 +150,9 @@ data class SettingsState(
             authenticationRequired = false,
             useAlternativeAppIcon = false,
             sendErrorsToCrashlytics = true,
+            backupFrequency = BackupFrequency.default,
+            backupContactScope = BackupContactScope.default,
+            backupFolder = "",
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,
