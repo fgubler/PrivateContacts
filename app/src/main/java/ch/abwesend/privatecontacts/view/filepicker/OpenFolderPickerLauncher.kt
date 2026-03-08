@@ -6,8 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.filepicker
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult

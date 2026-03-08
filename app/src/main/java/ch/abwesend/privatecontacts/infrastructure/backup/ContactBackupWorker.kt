@@ -8,12 +8,12 @@ package ch.abwesend.privatecontacts.infrastructure.backup
 
 import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
@@ -128,7 +128,6 @@ class ContactBackupWorker(
         val response = ContextCompat.checkSelfPermission(applicationContext, READ_CONTACTS)
         return response == PackageManager.PERMISSION_GRANTED
     }
-
 
     private suspend fun exportToBackupFile(
         folder: DocumentFile,
