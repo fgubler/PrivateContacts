@@ -52,7 +52,7 @@ class ContactBackupWorker(
             val backupFolder = settings.backupFolder
             if (backupFolder.isEmpty()) {
                 logger.warning("Backup folder not configured, skipping backup")
-                return Result.success()
+                return Result.failure()
             }
 
             if (!isBackupDue(settings.backupFrequency, settings.lastBackupDate)) {
