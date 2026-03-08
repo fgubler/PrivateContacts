@@ -48,6 +48,10 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     numberOfAppStarts = getValue(numberOfAppStartsEntry),
     latestUserPromptAtStartup = tryGetDateValue(latestUserPromptAtStartupEntry),
     showReviewDialog = getValue(showReviewDialogEntry),
+    backupFrequency = tryGetEnumValue(backupFrequencyEntry),
+    backupContactScope = tryGetEnumValue(backupContactScopeEntry),
+    backupFolder = getValue(backupFolderEntry),
+    lastBackupDate = tryGetDateValue(lastBackupDateEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =

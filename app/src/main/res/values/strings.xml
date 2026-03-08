@@ -285,6 +285,7 @@
     <string name="settings_category_default_values">Default values</string>
     <string name="settings_category_miscellaneous">Miscellaneous</string>
     <string name="settings_category_security">Security</string>
+    <string name="settings_category_periodic_backup">Periodic Backup</string>
     <string name="settings_category_call_detection">Call detection</string>
     <string name="settings_category_call_detection_excuse">Unfortunately, call detection is not available for Android version 9. Long story short, Google made a mess with the necessary permissions. As a result, the feature works for all versions of Android except 9. We apologize for the inconvenience.</string>
     <string name="settings_category_privacy">Privacy</string>
@@ -404,6 +405,20 @@
     <string name="export_complete_title">Export complete</string>
     <string name="export_failed_contacts">Contacts which could not be exported</string>
 
+    <string name="backup_title">Periodic Backup</string>
+    <string name="backup_frequency_label">Backup frequency</string>
+    <string name="backup_frequency_disabled">Disabled</string>
+    <string name="backup_frequency_daily">Daily</string>
+    <string name="backup_frequency_weekly">Weekly</string>
+    <string name="backup_frequency_monthly">Monthly</string>
+    <string name="backup_contact_type_label">Contacts to back up</string>
+    <string name="backup_contact_type_all">All (in separate files)</string>
+    <string name="backup_contact_type_secret">Secret only</string>
+    <string name="backup_contact_type_public">Public only</string>
+    <string name="backup_folder_label">Backup folder</string>
+    <string name="backup_folder_not_selected">No folder selected</string>
+    <string name="backup_folder_select">Select folder</string>
+
     <string name="failed_to_select_file">Failed to select file</string>
     <string name="new_something">New</string>
 
@@ -443,4 +458,5 @@
     <string name="release_notes_v85">Added translations for German, Italian, Spanish and French.</string>
     <string name="release_notes_v87">Added the option to store public contacts in all accounts which are registered on the device. Previously, only Google-Accounts and the local phone contacts were possible.</string>
     <string name="release_notes_v90">Added the option to block all incoming calls from unknown numbers. Both private and public contacts are considered for this.</string>
+    <string name="release_notes_v93">Added the option of automatic, periodic backups in the settings.</string>
 </resources>

@@ -11,6 +11,7 @@ import android.content.Context
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
+import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.component.KoinComponent
@@ -23,6 +24,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
         initializeKoin()
         ContactDetailInitializationWorkaround.hasOpenedContact = false
         FileLogger.tryCleanOldLogFilesAsync(applicationContext)
+        BackupScheduler.schedulePeriodicBackup(applicationContext)
     }
 
     private fun initializeKoin() {

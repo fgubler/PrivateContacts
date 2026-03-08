@@ -27,8 +27,8 @@ object ReleaseNotes {
             textResourceIds = listOf(R.string.release_notes_v87)
         ),
         ReleaseNote(
-            versionCode = 90,
-            textResourceIds = listOf(R.string.release_notes_v90)
+            versionCode = 93,
+            textResourceIds = listOf(R.string.release_notes_v93)
         ),
         // Add more release notes as needed
     )

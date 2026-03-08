@@ -14,6 +14,11 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 interface IFileAccessRepository {
     suspend fun readTextFileContent(fileUri: Uri, requestPermission: Boolean = true): FileReadResult
     suspend fun readBinaryFileContent(fileUri: Uri, requestPermission: Boolean = true): BinaryFileReadResult
+
+    /**
+     * @param requestPermission: no need to request permission on file-level,
+     *  if the file is located in a folder where we do not need or already have permission
+     */
     suspend fun writeFile(fileContent: TextFileContent, file: Uri, requestPermission: Boolean = true): FileWriteResult
 }
 

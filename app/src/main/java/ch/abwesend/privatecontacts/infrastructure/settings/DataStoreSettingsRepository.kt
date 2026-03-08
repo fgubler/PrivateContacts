@@ -17,6 +17,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -128,6 +130,24 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.sendErrorsToCrashlytics
         set(value) = dataStore.setValue(sendErrorsToCrashlyticsEntry, value)
 
+    override var backupFrequency: BackupFrequency
+        get() = currentSettings.backupFrequency
+        set(value) = dataStore.setEnumValue(backupFrequencyEntry, value)
+
+    override var backupContactScope: BackupContactScope
+        get() = currentSettings.backupContactScope
+        set(value) = dataStore.setEnumValue(backupContactScopeEntry, value)
+
+    override var backupFolder: String
+        get() = currentSettings.backupFolder
+        set(value) = dataStore.setValue(backupFolderEntry, value)
+
+    override var lastBackupDate: LocalDate
+        get() = currentSettings.lastBackupDate
+        set(value) {
+            dataStore.setDateValue(lastBackupDateEntry, value)
+        }
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -185,6 +205,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         defaultContactType = settings.defaultContactType
         defaultExternalContactAccount = settings.defaultExternalContactAccount
         showReviewDialog = settings.showReviewDialog
+        backupFrequency = settings.backupFrequency
+        backupContactScope = settings.backupContactScope
+        backupFolder = settings.backupFolder
+        lastBackupDate = settings.lastBackupDate
         appLanguage = settings.appLanguage
 
         /*
