@@ -282,6 +282,7 @@
     <string name="settings_category_default_values">Valeurs par défaut</string>
     <string name="settings_category_miscellaneous">Divers</string>
     <string name="settings_category_security">Sécurité</string>
+    <string name="settings_category_periodic_backup">Sauvegarde périodique</string>
     <string name="settings_category_call_detection">Détection d\'appel</string>
     <string name="settings_category_call_detection_excuse">Malheureusement, la détection des appels n\'est pas disponible sur Android 9. Google a compliqué la gestion des permissions. Résultat : la fonctionnalité fonctionne sur toutes les versions sauf Android 9. Veuillez nous excuser pour ce désagrément.</string>
     <string name="settings_category_privacy">Confidentialité</string>
@@ -398,6 +399,20 @@
     <string name="export_contacts_progress">Exportation des contacts en cours</string>
     <string name="export_complete_title">Export terminé</string>
     <string name="export_failed_contacts">Contacts n\'ayant pas pu être exportés</string>
+
+    <string name="backup_title">Sauvegarde périodique</string>
+    <string name="backup_frequency_label">Fréquence de sauvegarde</string>
+    <string name="backup_frequency_disabled">Désactivée</string>
+    <string name="backup_frequency_daily">Quotidienne</string>
+    <string name="backup_frequency_weekly">Hebdomadaire</string>
+    <string name="backup_frequency_monthly">Mensuelle</string>
+    <string name="backup_contact_type_label">Contacts à sauvegarder</string>
+    <string name="backup_contact_type_all">Tous (fichiers séparés)</string>
+    <string name="backup_contact_type_secret">Secrets uniquement</string>
+    <string name="backup_contact_type_public">Publics uniquement</string>
+    <string name="backup_folder_label">Dossier de sauvegarde</string>
+    <string name="backup_folder_not_selected">Aucun dossier sélectionné</string>
+    <string name="backup_folder_select">Sélectionner un dossier</string>
 
     <string name="failed_to_select_file">Échec de la sélection du fichier</string>
     <string name="new_something">Nouveau</string>

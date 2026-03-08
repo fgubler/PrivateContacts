@@ -282,6 +282,7 @@
     <string name="settings_category_default_values">Standardwerte</string>
     <string name="settings_category_miscellaneous">Verschiedenes</string>
     <string name="settings_category_security">Sicherheit</string>
+    <string name="settings_category_periodic_backup">Regelmässige Backups</string>
     <string name="settings_category_call_detection">Anruferkennung</string>
     <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen außer Version 9. Wir bitten um Entschuldigung.</string>
     <string name="settings_category_privacy">Datenschutz</string>
@@ -398,6 +399,20 @@
     <string name="export_contacts_progress">Kontakte werden exportiert</string>
     <string name="export_complete_title">Export abgeschlossen</string>
     <string name="export_failed_contacts">Kontakte, die nicht exportiert werden konnten</string>
+
+    <string name="backup_title">Regelmässiges Backup</string>
+    <string name="backup_frequency_label">Backup-Häufigkeit</string>
+    <string name="backup_frequency_disabled">Deaktiviert</string>
+    <string name="backup_frequency_daily">Täglich</string>
+    <string name="backup_frequency_weekly">Wöchentlich</string>
+    <string name="backup_frequency_monthly">Monatlich</string>
+    <string name="backup_contact_type_label">Zu sichernde Kontakte</string>
+    <string name="backup_contact_type_all">Alle (in separaten Dateien)</string>
+    <string name="backup_contact_type_secret">Nur geheime</string>
+    <string name="backup_contact_type_public">Nur öffentliche</string>
+    <string name="backup_folder_label">Sicherungsordner</string>
+    <string name="backup_folder_not_selected">Kein Ordner ausgewählt</string>
+    <string name="backup_folder_select">Ordner auswählen</string>
 
     <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
     <string name="new_something">Neu</string>

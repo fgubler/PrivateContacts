@@ -282,6 +282,7 @@
     <string name="settings_category_default_values">Valores predeterminados</string>
     <string name="settings_category_miscellaneous">Varios</string>
     <string name="settings_category_security">Seguridad</string>
+    <string name="settings_category_periodic_backup">Copia de seguridad periódica</string>
     <string name="settings_category_call_detection">Detección de llamadas</string>
     <string name="settings_category_call_detection_excuse">Lamentablemente, la detección de llamadas no está disponible en Android 9 debido a las restricciones impuestas por Google. Esta función funciona en otras versiones. Lamentamos el inconveniente.</string>
     <string name="settings_category_privacy">Privacidad</string>
@@ -398,6 +399,20 @@
     <string name="export_contacts_progress">Exportando contactos</string>
     <string name="export_complete_title">Exportación completada</string>
     <string name="export_failed_contacts">Contactos no exportados:</string>
+
+    <string name="backup_title">Copia de seguridad periódica</string>
+    <string name="backup_frequency_label">Frecuencia de copia de seguridad</string>
+    <string name="backup_frequency_disabled">Desactivada</string>
+    <string name="backup_frequency_daily">Diaria</string>
+    <string name="backup_frequency_weekly">Semanal</string>
+    <string name="backup_frequency_monthly">Mensual</string>
+    <string name="backup_contact_type_label">Contactos a respaldar</string>
+    <string name="backup_contact_type_all">Todos (en archivos separados)</string>
+    <string name="backup_contact_type_secret">Solo secretos</string>
+    <string name="backup_contact_type_public">Solo públicos</string>
+    <string name="backup_folder_label">Carpeta de copia de seguridad</string>
+    <string name="backup_folder_not_selected">Ninguna carpeta seleccionada</string>
+    <string name="backup_folder_select">Seleccionar carpeta</string>
 
     <string name="failed_to_select_file">No se pudo seleccionar el archivo</string>
     <string name="new_something">Nuevo</string>
