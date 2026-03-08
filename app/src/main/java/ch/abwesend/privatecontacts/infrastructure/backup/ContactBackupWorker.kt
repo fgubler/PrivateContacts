@@ -161,9 +161,7 @@ class ContactBackupWorker(
         }
     }
 
-    private fun isBackupDue(frequency: BackupFrequency, lastBackupDate: LocalDate?): Boolean {
-        if (lastBackupDate == null) return true
-
+    private fun isBackupDue(frequency: BackupFrequency, lastBackupDate: LocalDate): Boolean {
         val today = LocalDate.now()
 
         return when (frequency) {
