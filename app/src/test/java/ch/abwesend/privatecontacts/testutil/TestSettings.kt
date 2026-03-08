@@ -54,6 +54,7 @@ data class TestSettings(
     override var backupFrequency: BackupFrequency = currentSettings.backupFrequency
     override var backupContactScope: BackupContactScope = currentSettings.backupContactScope
     override var backupFolder: String = currentSettings.backupFolder
+    override var lastBackupDate: LocalDate = currentSettings.lastBackupDate
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings

@@ -142,6 +142,12 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.backupFolder
         set(value) = dataStore.setValue(backupFolderEntry, value)
 
+    override var lastBackupDate: LocalDate
+        get() = currentSettings.lastBackupDate
+        set(value) {
+            dataStore.setDateValue(lastBackupDateEntry, value)
+        }
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -202,6 +208,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         backupFrequency = settings.backupFrequency
         backupContactScope = settings.backupContactScope
         backupFolder = settings.backupFolder
+        lastBackupDate = settings.lastBackupDate
         appLanguage = settings.appLanguage
 
         /*

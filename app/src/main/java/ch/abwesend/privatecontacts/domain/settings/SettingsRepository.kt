@@ -62,6 +62,7 @@ interface SettingsRepository : ISettingsState {
     override var backupFrequency: BackupFrequency
     override var backupContactScope: BackupContactScope
     override var backupFolder: String
+    override var lastBackupDate: LocalDate
 
     // Others
     override var currentVersion: Int

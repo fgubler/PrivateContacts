@@ -149,6 +149,10 @@ internal val backupFolderEntry = SettingsEntry(
     key = stringPreferencesKey("backupFolder"),
     defaultValue = defaultSettings.backupFolder
 )
+internal val lastBackupDateEntry = DateSettingsEntry(
+    key = stringPreferencesKey("lastBackupDate"),
+    defaultValue = LocalDate.MIN
+)
 
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`

@@ -79,6 +79,7 @@ interface ISettingsState {
     val backupFrequency: BackupFrequency
     val backupContactScope: BackupContactScope
     val backupFolder: String
+    val lastBackupDate: LocalDate
 
     // Others
     val currentVersion: Int
@@ -123,6 +124,7 @@ data class SettingsState(
     override val backupFrequency: BackupFrequency,
     override val backupContactScope: BackupContactScope,
     override val backupFolder: String,
+    override val lastBackupDate: LocalDate,
 
     override val currentVersion: Int,
     override val previousVersion: Int,
@@ -153,6 +155,7 @@ data class SettingsState(
             backupFrequency = BackupFrequency.default,
             backupContactScope = BackupContactScope.default,
             backupFolder = "",
+            lastBackupDate = LocalDate.MIN,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,
