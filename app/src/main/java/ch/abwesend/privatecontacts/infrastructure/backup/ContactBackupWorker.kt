@@ -26,6 +26,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
+// TODO add some kind of error-message queue to show to the user on next launch
 class ContactBackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,
