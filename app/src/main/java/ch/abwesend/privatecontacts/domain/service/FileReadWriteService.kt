@@ -19,6 +19,9 @@ class FileReadWriteService {
     suspend fun readFileContent(fileUri: Uri): FileReadResult =
         repository.readTextFileContent(fileUri)
 
-    suspend fun writeContentToFile(content: TextFileContent, fileUri: Uri): FileWriteResult =
-        repository.writeFile(content, fileUri)
+    suspend fun writeContentToFile(
+        content: TextFileContent,
+        fileUri: Uri,
+        requestPermission: Boolean = true
+    ): FileWriteResult = repository.writeFile(content, fileUri, requestPermission)
 }

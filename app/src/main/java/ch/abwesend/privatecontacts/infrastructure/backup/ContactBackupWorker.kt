@@ -106,7 +106,8 @@ class ContactBackupWorker(
         val result = exportService.exportContacts(
             targetFile = file.uri,
             sourceType = contactType,
-            vCardVersion = vCardVersion
+            vCardVersion = vCardVersion,
+            requestPermission = false, // we already have permission for the folder
         )
 
         return when (result) {

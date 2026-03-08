@@ -30,21 +30,23 @@ class ContactExportService {
         targetFile: Uri,
         sourceType: ContactType,
         vCardVersion: VCardVersion,
+        requestPermission: Boolean = true,
     ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
         val contacts = loadService.loadFullContactsByType(sourceType)
-        exportContacts(targetFile, vCardVersion, contacts)
+        exportContacts(targetFile, vCardVersion, contacts, requestPermission)
     }
 
     suspend fun exportContacts(
         targetFile: Uri,
         vCardVersion: VCardVersion,
         contacts: List<IContact>,
+        requestPermission: Boolean = true,
     ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
         val vCardResult = importExportRepository.exportContacts(contacts, vCardVersion)
             .ifHasError { logger.warning("Failed to create vCards for contacts: $it") }
 
         val fileWriteResult = vCardResult.mapValueToBinaryResult { createdVCards ->
-            fileWriteService.writeContentToFile(createdVCards.fileContent, targetFile)
+            fileWriteService.writeContentToFile(createdVCards.fileContent, targetFile, requestPermission)
                 .mapValue {
                     val failedContacts = createdVCards.failedContacts
                     val successfulContacts = contacts.minus(failedContacts.toSet())
