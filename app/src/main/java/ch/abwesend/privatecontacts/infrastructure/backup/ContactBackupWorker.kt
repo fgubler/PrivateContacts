@@ -25,6 +25,8 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -68,10 +70,17 @@ class ContactBackupWorker(
             val vCardVersion = settings.defaultVCardVersion
             val dateString = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
-            when (settings.backupContactScope) {
+            val success = when (settings.backupContactScope) {
                 BackupContactScope.ALL -> {
-                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
-                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
+                    coroutineScope {
+                        val secretSuccess = async {
+                            exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
+                        }
+                        val publicSuccess = async {
+                            exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
+                        }
+                        secretSuccess.await() && publicSuccess.await()
+                    }
                 }
                 BackupContactScope.SECRET -> {
                     exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
@@ -83,7 +92,7 @@ class ContactBackupWorker(
 
             Settings.repository.lastBackupDate = LocalDate.now()
 
-            logger.debug("Periodic backup completed successfully")
+            logger.debug("Periodic backup completed successfully: $success")
             Result.success()
         } catch (e: Exception) {
             logger.error("Periodic backup failed", e)
