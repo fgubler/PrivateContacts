@@ -413,6 +413,8 @@
     <string name="backup_folder_label">Dossier de sauvegarde</string>
     <string name="backup_folder_not_selected">Aucun dossier sélectionné</string>
     <string name="backup_folder_select">Sélectionner un dossier</string>
+    <string name="backup_trigger_once_label">Sauvegarder maintenant</string>
+    <string name="backup_trigger_once_announcement">La sauvegarde sera lancée dans 10s</string>
 
     <string name="failed_to_select_file">Échec de la sélection du fichier</string>
     <string name="new_something">Nouveau</string>

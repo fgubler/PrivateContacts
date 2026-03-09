@@ -418,6 +418,8 @@
     <string name="backup_folder_label">Backup folder</string>
     <string name="backup_folder_not_selected">No folder selected</string>
     <string name="backup_folder_select">Select folder</string>
+    <string name="backup_trigger_once_label">Backup now (with 10s delay)</string>
+    <string name="backup_trigger_once_announcement">Backup will be triggered in 10s</string>
 
     <string name="failed_to_select_file">Failed to select file</string>
     <string name="new_something">New</string>

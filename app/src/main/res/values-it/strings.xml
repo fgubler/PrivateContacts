@@ -413,6 +413,8 @@
     <string name="backup_folder_label">Cartella di backup</string>
     <string name="backup_folder_not_selected">Nessuna cartella selezionata</string>
     <string name="backup_folder_select">Seleziona cartella</string>
+    <string name="backup_trigger_once_label">Eseguire un backup adesso</string>
+    <string name="backup_trigger_once_announcement">Il backup verrà avviato tra 10s</string>
 
     <string name="failed_to_select_file">Selezione file non riuscita</string>
     <string name="new_something">Nuovo</string>

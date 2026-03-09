@@ -413,6 +413,8 @@
     <string name="backup_folder_label">Sicherungsordner</string>
     <string name="backup_folder_not_selected">Kein Ordner ausgewählt</string>
     <string name="backup_folder_select">Ordner auswählen</string>
+    <string name="backup_trigger_once_label">Jetzt sichern</string>
+    <string name="backup_trigger_once_announcement">Sicherung wird in 10s gestartet</string>
 
     <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
     <string name="new_something">Neu</string>
