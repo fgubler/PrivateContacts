@@ -82,7 +82,7 @@ android {
         buildConfig true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion composeCompilerVersion
+        kotlinCompilerExtensionVersion
     }
     packagingOptions {
         resources {
@@ -115,16 +115,18 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:${androidLifecycleVersion}"
 
     // Android Jetpack Compose
-    implementation "androidx.compose.ui:ui:${composeVersion}"
-    implementation "androidx.compose.material:material:${composeMaterialVersion}"
-    implementation "androidx.compose.material:material-icons-extended:${composeMaterialVersion}"
-    implementation "androidx.compose.ui:ui-tooling-preview:${composeVersion}"
-    implementation "androidx.compose.runtime:runtime:${composeVersion}"
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
+    Dependency composeBom = platform('androidx.compose:compose-bom:2026.02.01')
+    implementation composeBom
+    implementation "androidx.compose.ui:ui"
+    implementation "androidx.compose.material:material"
+    implementation "androidx.compose.material:material-icons-extended"
+    implementation "androidx.compose.ui:ui-tooling-preview"
+    implementation "androidx.compose.runtime:runtime"
     implementation "androidx.activity:activity-compose:1.12.4"
     implementation "androidx.navigation:navigation-compose:2.9.7"
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
+    debugImplementation "androidx.compose.ui:ui-tooling"
 
     // Firebase
     googlePlayImplementation platform("com.google.firebase:firebase-bom:34.10.0")
@@ -187,7 +189,7 @@ dependencies {
     androidTestImplementation "org.assertj:assertj-core:3.27.7"
     androidTestImplementation "androidx.test.ext:junit:1.3.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.7.0"
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:${composeVersion}"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4"
 
     androidTestImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     androidTestImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
