@@ -122,12 +122,12 @@ dependencies {
     implementation "androidx.compose.runtime:runtime:${composeVersion}"
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     debugImplementation "androidx.compose.ui:ui-tooling:${composeVersion}"
-    implementation "androidx.activity:activity-compose:1.11.0"
-    implementation "androidx.navigation:navigation-compose:2.9.6"
+    implementation "androidx.activity:activity-compose:1.12.4"
+    implementation "androidx.navigation:navigation-compose:2.9.7"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
 
     // Firebase
-    googlePlayImplementation platform("com.google.firebase:firebase-bom:34.6.0")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:34.10.0")
     googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
     googlePlayImplementation("com.google.firebase:firebase-analytics")
 
@@ -162,7 +162,7 @@ dependencies {
     // ===== Testing =====
     // Unit Tests
     testImplementation "junit:junit:4.13.2"
-    testImplementation "org.assertj:assertj-core:3.27.6"
+    testImplementation "org.assertj:assertj-core:3.27.7"
 
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutinesVersion}"
 
@@ -184,7 +184,7 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
     // Instrumented Tests
-    androidTestImplementation "org.assertj:assertj-core:3.27.6"
+    androidTestImplementation "org.assertj:assertj-core:3.27.7"
     androidTestImplementation "androidx.test.ext:junit:1.3.0"
     androidTestImplementation "androidx.test.espresso:espresso-core:3.7.0"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:${composeVersion}"
