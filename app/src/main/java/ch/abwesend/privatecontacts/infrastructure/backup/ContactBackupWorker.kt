@@ -25,11 +25,11 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 
 // TODO add some kind of error-message queue to show to the user on next launch
 class ContactBackupWorker(
