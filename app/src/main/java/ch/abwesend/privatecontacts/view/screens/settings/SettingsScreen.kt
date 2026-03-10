@@ -26,6 +26,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +56,8 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
+import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
+import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
@@ -83,9 +86,9 @@ import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import kotlin.contracts.ExperimentalContracts
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalMaterialApi
@@ -557,7 +560,12 @@ object SettingsScreen {
 
             if (currentSettings.backupFrequency != BackupFrequency.DISABLED) {
                 val contactScopeOptions = remember {
-                    BackupContactScope.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+                    BackupContactScope.entries.map {
+                        ResDropDownOption(
+                            labelRes = it.label,
+                            value = it
+                        )
+                    }
                 }
 
                 SettingsDropDown(
@@ -569,6 +577,29 @@ object SettingsScreen {
                 )
 
                 BackupFolderField(settingsRepository, currentSettings.backupFolder)
+
+                Spacer(Modifier.height(10.dp))
+
+                val context = LocalContext.current
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    TextButton(
+                        onClick = {
+                            BackupScheduler.triggerOneTimeBackup(context)
+                            Toast.makeText(
+                                context,
+                                R.string.backup_trigger_once_announcement,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    ) {
+                        RefreshIcon()
+                        Spacer(modifier = Modifier.padding(end = 5.dp))
+                        Text(text = stringResource(id = R.string.backup_trigger_once_label))
+                    }
+                }
             }
         }
     }

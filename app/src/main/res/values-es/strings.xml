@@ -413,6 +413,8 @@
     <string name="backup_folder_label">Carpeta de copia de seguridad</string>
     <string name="backup_folder_not_selected">Ninguna carpeta seleccionada</string>
     <string name="backup_folder_select">Seleccionar carpeta</string>
+    <string name="backup_trigger_once_label">Copia de seguridad ahora</string>
+    <string name="backup_trigger_once_announcement">La copia de seguridad se iniciará en 10s</string>
 
     <string name="failed_to_select_file">No se pudo seleccionar el archivo</string>
     <string name="new_something">Nuevo</string>

@@ -25,11 +25,11 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 // TODO add some kind of error-message queue to show to the user on next launch
 class ContactBackupWorker(
@@ -39,10 +39,15 @@ class ContactBackupWorker(
 
     private val exportService: ContactExportService by injectAnywhere()
 
+    companion object {
+        const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
+    }
+
     override suspend fun doWork(): Result {
         return try {
             logger.debug("Starting periodic backup")
             val settings = Settings.nextOrDefault()
+            val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
 
             if (settings.backupFrequency == BackupFrequency.DISABLED) {
                 logger.debug("Periodic backup is disabled, skipping")
@@ -55,7 +60,7 @@ class ContactBackupWorker(
                 return Result.failure()
             }
 
-            if (!isBackupDue(settings.backupFrequency, settings.lastBackupDate)) {
+            if (!overrideFrequency && !isBackupDue(settings.backupFrequency, settings.lastBackupDate)) {
                 logger.debug("Backup not yet due, skipping")
                 return Result.success()
             }
