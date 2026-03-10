@@ -19,6 +19,8 @@
 .externalNativeBuild
 .cxx
 
+.kotlin/kotlin-compiler*.saliva
+
 # Local properties
 /local.properties
 local.properties
