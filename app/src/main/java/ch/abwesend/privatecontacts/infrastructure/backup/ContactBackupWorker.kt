@@ -25,6 +25,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
@@ -36,11 +37,12 @@ class ContactBackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
-
     private val exportService: ContactExportService by injectAnywhere()
+    private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
+        private const val MAX_RETRY_COUNT = 5
     }
 
     override suspend fun doWork(): Result {
@@ -99,6 +101,17 @@ class ContactBackupWorker(
 
             logger.debug("Periodic backup completed successfully: $success")
             if (success) Result.success() else Result.failure()
+        } catch (e: CancellationException) {
+            logger.debug("Periodic backup cancelled", e)
+            retryCounter++
+            if (retryCounter > MAX_RETRY_COUNT) {
+                logger.error("Periodic backup failed due to cancellation", e)
+                retryCounter = 0
+                Result.failure()
+            } else {
+                logger.warning("Periodic backup cancelled: re-trying")
+                Result.retry()
+            }
         } catch (e: Exception) {
             logger.error("Periodic backup failed", e)
             Result.failure()
