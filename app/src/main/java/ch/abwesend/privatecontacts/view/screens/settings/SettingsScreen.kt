@@ -144,6 +144,7 @@ object SettingsScreen {
                 SettingsCategorySpacer()
 
                 PeriodicBackupCategory(
+                    permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
                     currentSettings = currentSettings,
                     viewModel = screenContext.settingsViewModel,
@@ -546,6 +547,7 @@ object SettingsScreen {
 
     @Composable
     private fun PeriodicBackupCategory(
+        permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
         viewModel: SettingsViewModel,
@@ -572,14 +574,32 @@ object SettingsScreen {
                         )
                     }
                 }
+                var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
 
                 SettingsDropDown(
                     label = R.string.backup_contact_type_label,
                     description = null,
                     value = currentSettings.backupContactScope,
                     options = contactScopeOptions,
-                    onValueChanged = { settingsRepository.backupContactScope = it },
+                    onValueChanged = {
+                        if (!it.permissionRequired) {
+                            settingsRepository.backupContactScope = it
+                        } else {
+                            requestPermissionsFor = it
+                        }
+                    },
                 )
+
+                val targetScope = requestPermissionsFor
+                if (targetScope != null) {
+                    permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                        logger.debug("Android contact permission result: $it")
+                        requestPermissionsFor = null
+                        if (it.usable) {
+                            settingsRepository.backupContactScope = targetScope
+                        }
+                    }
+                }
 
                 BackupFolderField(settingsRepository, currentSettings.backupFolder)
 
