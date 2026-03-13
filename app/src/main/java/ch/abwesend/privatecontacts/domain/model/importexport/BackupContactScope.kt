@@ -15,6 +15,6 @@ enum class BackupContactScope(@param:StringRes val label: Int) {
     PUBLIC(label = R.string.backup_contact_type_public);
 
     companion object {
-        val default: BackupContactScope = ALL
+        val default: BackupContactScope = SECRET
     }
 }
