@@ -72,7 +72,7 @@ class ContactBackupWorker(
                 return Result.failure()
             }
 
-            val vCardVersion = settings.defaultVCardVersion
+            val vCardVersion = VCardVersion.V4 // always use v4 for backups (no loss)
             val dateString = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
 
             val success = when (settings.backupContactScope) {
