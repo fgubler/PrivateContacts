@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
+import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -22,6 +23,7 @@ class SettingsViewModel : ViewModel() {
     private val databaseService: DatabaseService by injectAnywhere()
     private val launcherAppearanceService: LauncherAppearanceService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
+    private val backupScheduler: IBackupScheduler by injectAnywhere()
 
     fun initialize(settingsRepository: SettingsRepository) {
         if (!permissionService.hasContactReadPermission()) {
@@ -49,5 +51,9 @@ class SettingsViewModel : ViewModel() {
             logger.error("Failed to change launcher appearance", e)
             return false
         }
+    }
+
+    fun triggerOneTimeBackup() {
+        backupScheduler.triggerOneTimeBackup()
     }
 }

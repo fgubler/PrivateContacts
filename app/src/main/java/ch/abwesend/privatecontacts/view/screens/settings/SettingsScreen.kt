@@ -56,7 +56,6 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
@@ -143,7 +142,11 @@ object SettingsScreen {
                 SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                PeriodicBackupCategory(settingsRepository, currentSettings)
+                PeriodicBackupCategory(
+                    settingsRepository = settingsRepository,
+                    currentSettings = currentSettings,
+                    viewModel = screenContext.settingsViewModel,
+                )
                 SettingsCategorySpacer()
 
                 PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
@@ -544,6 +547,7 @@ object SettingsScreen {
     private fun PeriodicBackupCategory(
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
     ) {
         val frequencyOptions = remember {
             BackupFrequency.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
@@ -587,7 +591,7 @@ object SettingsScreen {
                 ) {
                     TextButton(
                         onClick = {
-                            BackupScheduler.triggerOneTimeBackup(context)
+                            viewModel.triggerOneTimeBackup()
                             Toast.makeText(
                                 context,
                                 R.string.backup_trigger_once_announcement,
