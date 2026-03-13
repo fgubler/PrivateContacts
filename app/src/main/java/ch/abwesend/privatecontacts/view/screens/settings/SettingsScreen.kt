@@ -585,11 +585,16 @@ object SettingsScreen {
                 Spacer(Modifier.height(10.dp))
 
                 val context = LocalContext.current
+                val backupFolderSelected = remember(currentSettings.backupFolder) {
+                    currentSettings.backupFolder.isNotBlank()
+                }
+
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     TextButton(
+                        enabled = backupFolderSelected,
                         onClick = {
                             viewModel.triggerOneTimeBackup()
                             Toast.makeText(
