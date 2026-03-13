@@ -61,7 +61,7 @@ class ContactBackupWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            setForeground(notificationRepository.createForegroundInfo(applicationContext))
+            startAsForegroundService()
             logger.debug("Starting periodic backup")
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
@@ -149,6 +149,14 @@ class ContactBackupWorker(
             Result.failure()
         } finally {
             notificationRepository.dismissNotification(applicationContext)
+        }
+    }
+
+    private suspend fun startAsForegroundService() {
+        try {
+            setForeground(notificationRepository.createForegroundInfo(applicationContext))
+        } catch (e: Exception) {
+            logger.warning("Could not start backup as foreground service, run in background", e)
         }
     }
 
