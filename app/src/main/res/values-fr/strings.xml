@@ -418,7 +418,7 @@
     <string name="backup_messages_dialog_title">Notifications de sauvegarde</string>
     <string name="backup_folder_not_configured_warning">Sauvegarde automatique ignorée : aucun dossier de sauvegarde configuré.</string>
     <string name="backup_folder_not_writable_error">Sauvegarde automatique échouée : impossible d\'écrire dans le dossier de sauvegarde.</string>
-    <string name="backup_export_failed_error">Sauvegarde automatique échouée lors de l\'exportation des contacts du type "%1$s".</string>
+    <string name="backup_export_failed_error">Sauvegarde automatique échouée lors de l\'exportation des contacts du type \"%1$s\".</string>
     <string name="backup_completed_with_failures_warning">Sauvegarde automatique terminée, mais certains contacts n\'ont pas pu être exportés.</string>
     <string name="backup_permission_missing_warning">Sauvegarde automatique ignorée pour les contacts publics : permission de lecture des contacts manquante.</string>
     <string name="backup_file_creation_failed_error">Sauvegarde automatique échouée : impossible de créer le fichier de sauvegarde.</string>
