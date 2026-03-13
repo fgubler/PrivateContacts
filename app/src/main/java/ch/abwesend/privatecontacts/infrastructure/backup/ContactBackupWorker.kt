@@ -208,8 +208,9 @@ class ContactBackupWorker(
             is SuccessResult -> true
             is ErrorResult -> {
                 logger.warning("Failed to export $contactType contacts for backup: ${result.error}")
+                val contactTypeLabel = applicationContext.getString(contactType.label)
                 addErrorMessage(
-                    text = applicationContext.getString(R.string.backup_export_failed_error, contactType.name),
+                    text = applicationContext.getString(R.string.backup_export_failed_error, contactTypeLabel),
                     severity = BackupMessageSeverity.ERROR
                 )
                 false
