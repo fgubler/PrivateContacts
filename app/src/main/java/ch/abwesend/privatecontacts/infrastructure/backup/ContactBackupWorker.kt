@@ -136,7 +136,7 @@ class ContactBackupWorker(
                 retryCounter = 0
                 Result.failure()
             } else {
-                logger.warning("Periodic backup cancelled: re-trying")
+                logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
                 Result.retry()
             }
         } catch (e: Exception) {
