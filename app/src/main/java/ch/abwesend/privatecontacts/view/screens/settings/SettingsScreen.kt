@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -80,9 +79,11 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckboxWithInfoButton
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsLabel
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -636,20 +637,22 @@ object SettingsScreen {
             currentFolderUri?.let { getFileOrFolderName(it) ?: currentFolder }
         } ?: stringResource(id = R.string.backup_folder_not_selected)
 
+        val textColor = if (currentFolder.isNotBlank()) normalContentColor() else MaterialTheme.colors.error
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(id = R.string.backup_folder_label),
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.body1,
+                SettingsLabel(
+                    labelRes = R.string.backup_folder_label,
+                    textColor = textColor,
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = folderDisplayName,
+                    color = textColor,
                     fontStyle = FontStyle.Italic,
                     style = MaterialTheme.typography.body2,
                 )

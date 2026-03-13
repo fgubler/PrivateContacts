@@ -159,7 +159,7 @@ object SettingsComponents {
     }
 
     @Composable
-    private fun SettingsLabel(
+    fun SettingsLabel(
         @StringRes labelRes: Int,
         modifier: Modifier = Modifier,
         textColor: Color = normalContentColor(),
