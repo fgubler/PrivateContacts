@@ -50,9 +50,11 @@ import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.ImportContactsFromIntentComponents.ObserveVcfImportResult
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
+import ch.abwesend.privatecontacts.view.initialization.BackupMessagesDialog
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.initialization.InfoDialogs
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
+import ch.abwesend.privatecontacts.view.initialization.InitializationState.BackupMessagesDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.CallPermissionsDialog
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.InfoDialogState
 import ch.abwesend.privatecontacts.view.initialization.InitializationState.Initialized
@@ -190,6 +192,16 @@ class MainActivity : AppCompatActivity() {
             }
 
             when (initializationState) {
+                is InitializationState.InitialState -> {
+                    LaunchedEffect(Unit) { nextState() }
+                }
+                is BackupMessagesDialog -> {
+                    if (initializationState.messages.isEmpty()) {
+                        nextState()
+                    } else {
+                        BackupMessagesDialog(initializationState.messages) { nextState() }
+                    }
+                }
                 is InfoDialogState -> InfoDialogs(initializationState, settings) { nextState() }
                 is CallPermissionsDialog -> CallPermissionHandler(
                     settings = settings,

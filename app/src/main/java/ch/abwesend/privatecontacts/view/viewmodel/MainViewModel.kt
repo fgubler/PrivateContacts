@@ -20,6 +20,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
 import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
@@ -30,9 +31,9 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
-import ch.abwesend.privatecontacts.view.initialization.InitializationState.InitialInfoDialog
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
@@ -44,8 +45,15 @@ import kotlinx.coroutines.launch
 class MainViewModel : ViewModel() {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val importService: ContactImportService by injectAnywhere()
+    private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
 
-    private val _initializationState: MutableState<InitializationState> = mutableStateOf(InitialInfoDialog)
+    private val _initializationState: MutableState<InitializationState> = mutableStateOf(
+        InitializationState.InitialState {
+            val backupMessages = loadBackupMessages()
+            InitializationState.BackupMessagesDialog(backupMessages)
+        }
+    )
+
     val initializationState: State<InitializationState> = _initializationState
 
     private val _authenticationStatus: MutableState<AuthenticationStatus> = mutableStateOf(NOT_AUTHENTICATED)
@@ -71,12 +79,14 @@ class MainViewModel : ViewModel() {
     }
 
     fun goToNextState() {
-        val oldState = _initializationState.value
-        _initializationState.value = _initializationState.value.next()
-        logger.debug(
-            "Changed initializationState from ${oldState::class.java.simpleName} " +
-                "to ${_initializationState.value::class.java.simpleName}"
-        )
+        viewModelScope.launch {
+            val oldState = _initializationState.value
+            _initializationState.value = _initializationState.value.next()
+            logger.debug(
+                "Changed initializationState from ${oldState::class.java.simpleName} " +
+                        "to ${_initializationState.value::class.java.simpleName}"
+            )
+        }
     }
 
     fun handleAuthenticationResult(authenticationFlow: Flow<AuthenticationStatus>) {
@@ -140,5 +150,11 @@ class MainViewModel : ViewModel() {
 
     fun resetContactImportResult() {
         viewModelScope.launch { _contactImportResult.emitInactive() }
+    }
+
+    private suspend fun loadBackupMessages(): List<BackupMessage> {
+        logger.debug("Loading backup messages")
+        return backupMessageRepository.getAndClearMessages()
+            .also { logger.debug("Loaded ${it.size} backup messages") }
     }
 }

@@ -415,6 +415,13 @@
     <string name="backup_folder_select">Ordner auswählen</string>
     <string name="backup_trigger_once_label">Jetzt sichern</string>
     <string name="backup_trigger_once_announcement">Sicherung wird in 10s gestartet</string>
+    <string name="backup_messages_dialog_title">Backup-Benachrichtigungen</string>
+    <string name="backup_folder_not_configured_warning">Automatisches Backup übersprungen: kein Sicherungsordner konfiguriert.</string>
+    <string name="backup_folder_not_writable_error">Automatisches Backup fehlgeschlagen: Sicherungsordner ist nicht beschreibbar.</string>
+    <string name="backup_export_failed_error">Automatisches Backup fehlgeschlagen beim Exportieren von %1$s-Kontakten.</string>
+    <string name="backup_completed_with_failures_warning">Automatisches Backup abgeschlossen, aber einige Kontakte konnten nicht exportiert werden.</string>
+    <string name="backup_permission_missing_warning">Automatisches Backup für öffentliche Kontakte übersprungen: Berechtigung zum Lesen von Kontakten fehlt.</string>
+    <string name="backup_file_creation_failed_error">Automatisches Backup fehlgeschlagen: Sicherungsdatei konnte nicht erstellt werden.</string>
 
     <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
     <string name="new_something">Neu</string>

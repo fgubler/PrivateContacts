@@ -14,13 +14,17 @@ import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
+import ch.abwesend.privatecontacts.domain.model.backup.BackupMessageSeverity
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -32,17 +36,23 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-// TODO add some kind of error-message queue to show to the user on next launch
 class ContactBackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
     private val exportService: ContactExportService by injectAnywhere()
+    private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+
     private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
         private const val MAX_RETRY_COUNT = 5
+    }
+
+    /** Consider caching them before persisting all at once - however, if we fail that might not work. */
+    private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
+        backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
     }
 
     override suspend fun doWork(): Result {
@@ -59,6 +69,10 @@ class ContactBackupWorker(
             val backupFolder = settings.backupFolder
             if (backupFolder.isEmpty()) {
                 logger.warning("Backup folder not configured, skipping backup")
+                addErrorMessage(
+                    text = applicationContext.getString(R.string.backup_folder_not_configured_warning),
+                    severity = BackupMessageSeverity.WARNING
+                )
                 return Result.failure()
             }
 
@@ -71,6 +85,10 @@ class ContactBackupWorker(
             val documentFolder = DocumentFile.fromTreeUri(applicationContext, folderUri)
             if (documentFolder == null || !documentFolder.canWrite()) {
                 logger.warning("Cannot write to backup folder: $backupFolder")
+                addErrorMessage(
+                    text = applicationContext.getString(R.string.backup_folder_not_writable_error),
+                    severity = BackupMessageSeverity.WARNING
+                )
                 return Result.failure()
             }
 
@@ -104,6 +122,10 @@ class ContactBackupWorker(
                 Result.success()
             } else {
                 logger.warning("Periodic backup completed with failures")
+                addErrorMessage(
+                    text = applicationContext.getString(R.string.backup_completed_with_failures_warning),
+                    severity = BackupMessageSeverity.ERROR
+                )
                 Result.failure()
             }
         } catch (e: CancellationException) {
@@ -131,6 +153,10 @@ class ContactBackupWorker(
     ): Boolean {
         if (type == ContactType.PUBLIC && !hasAndroidContactsPermission()) {
             logger.warning("Skipping backup of public contacts: READ_CONTACTS permission not granted")
+            addErrorMessage(
+                text = applicationContext.getString(R.string.backup_permission_missing_warning),
+                severity = BackupMessageSeverity.WARNING
+            )
             return false
         }
 
@@ -164,6 +190,10 @@ class ContactBackupWorker(
         val file = folder.createFile(ImportExportConstants.VCF_MAIN_MIME_TYPE, fileName)
         if (file == null) {
             logger.warning("Failed to create backup file: $fileName")
+            addErrorMessage(
+                text = applicationContext.getString(R.string.backup_file_creation_failed_error),
+                severity = BackupMessageSeverity.ERROR
+            )
             return false
         }
 
@@ -178,6 +208,10 @@ class ContactBackupWorker(
             is SuccessResult -> true
             is ErrorResult -> {
                 logger.warning("Failed to export $contactType contacts for backup: ${result.error}")
+                addErrorMessage(
+                    text = applicationContext.getString(R.string.backup_export_failed_error, contactType.name),
+                    severity = BackupMessageSeverity.ERROR
+                )
                 false
             }
         }
