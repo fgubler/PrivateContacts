@@ -9,7 +9,7 @@
 <resources>
     <string name="app_name">Private Kontakte</string>
     <string name="app_name_calculator">Taschenrechner</string>
-    <string name="greetings_from_the_developer">Grüße vom Entwickler, Florian.</string>
+    <string name="greetings_from_the_developer">Grüsse vom Entwickler, Florian.</string>
 
     <string name="screen_contact_list">Kontakte</string>
     <string name="screen_settings">Einstellungen</string>
@@ -32,7 +32,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="remove">Entfernen</string>
     <string name="ok">OK</string>
-    <string name="close">Schließen</string>
+    <string name="close">Schliessen</string>
     <string name="yes">Ja</string>
     <string name="no">Nein</string>
     <string name="search">Suchen</string>
@@ -195,13 +195,13 @@
 
     <string name="make_contact_secret">Kontakt auf „Geheim“ ändern</string>
     <string name="make_contact_secret_title">Kontakt auf „Geheim“ ändern</string>
-    <string name="make_contact_secret_text">Wenn ein Kontakt auf „Geheim“ geändert wird, wird er in diese App kopiert und anschließend aus der öffentlichen Android-Kontaktdatenbank gelöscht.\n\nBitte stelle sicher, dass keine wichtigen Informationen fehlen, indem du die Kontaktdetails vorab überprüfst.\n\nWir empfehlen außerdem, zunächst eine Sicherungskopie mit der nativen Kontakte-App Ihres Telefons zu erstellen, nur um sicherzugehen.</string>
+    <string name="make_contact_secret_text">Wenn ein Kontakt auf „Geheim“ geändert wird, wird er in diese App kopiert und anschliessend aus der öffentlichen Android-Kontaktdatenbank gelöscht.\n\nBitte stelle sicher, dass keine wichtigen Informationen fehlen, indem du die Kontaktdetails vorab überprüfst.\n\nWir empfehlen ausserdem, zunächst eine Sicherungskopie mit der nativen Kontakte-App Ihres Telefons zu erstellen, nur um sicherzugehen.</string>
 
     <string name="make_contacts_secret">Kontakte auf „Geheim“ ändern</string>
     <string name="make_contacts_secret_title">Kontakte auf „Geheim“ ändern</string>
     <string name="make_contact_public">Kontakt auf „Öffentlich“ ändern</string>
     <string name="make_contact_public_title">Kontakt auf „Öffentlich“ ändern</string>
-    <string name="make_contact_public_text">Wenn ein Kontakt auf „Öffentlich“ geändert wird, wird er in die öffentliche Android-Kontaktdatenbank kopiert und anschließend aus dieser App gelöscht.</string>
+    <string name="make_contact_public_text">Wenn ein Kontakt auf „Öffentlich“ geändert wird, wird er in die öffentliche Android-Kontaktdatenbank kopiert und anschliessend aus dieser App gelöscht.</string>
 
     <string name="make_contacts_public">Kontakte auf „Öffentlich“ ändern</string>
     <string name="make_contacts_public_title">Kontakte auf „Öffentlich“ ändern</string>
@@ -226,7 +226,7 @@
     <string name="whatsapp_error_navigation_failed">Die Weiterleitung zu WhatsApp ist aus unbekannten Gründen fehlgeschlagen. Bitte versuche es erneut.</string>
 
     <string name="show_caller_information_title">Anruferinformationen anzeigen?</string>
-    <string name="show_caller_information_text">Um während eines Anrufs Informationen zum Anrufer anzuzeigen, werden bestimmte Berechtigungen benötigt.\n\nDiese werden ausschließlich verwendet, um eingehende Nummern mit gespeicherten Kontakten abzugleichen.</string>
+    <string name="show_caller_information_text">Um während eines Anrufs Informationen zum Anrufer anzuzeigen, werden bestimmte Berechtigungen benötigt.\n\nDiese werden ausschliesslich verwendet, um eingehende Nummern mit gespeicherten Kontakten abzugleichen.</string>
     <string name="activate_feature">Möchtest du diese Funktion jetzt aktivieren?</string>
 
     <string name="privacy_advertisement_id_title">Werbe-ID</string>
@@ -258,7 +258,7 @@
     <string name="legal_disclaimer_title">Rechtlicher Hinweis</string>
     <string name="legal_disclaimer_text">Die Software wird wie gesehen zur Verfügung gestellt. Die Entwickler übernehmen keine Haftung für Schäden oder Verluste, die durch die Nutzung entstehen.</string>
     <string name="legal_disclaimer_whatsapp_title">WhatsApp</string>
-    <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschließlich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, außer du klickst auf einen Button zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschließlich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
+    <string name="legal_disclaimer_whatsapp_text">Die Entwickler stehen in keiner Verbindung zu WhatsApp oder dessen Muttergesellschaft. Die WhatsApp-Funktion basiert ausschliesslich auf öffentlich zugänglichen APIs.\n\nEs werden keine Daten mit WhatsApp geteilt, ausser du klickst auf einen Button zur Weiterleitung einer Telefonnummer.\nSelbst dann wird ausschliesslich die Nummer übermittelt – keine weiteren Kontaktinformationen wie Name, E-Mail oder Notizen.</string>
 
     <string name="permissions">Berechtigungen</string>
     <string name="app_introduction_description">Willkommen bei „Private Kontakte“.\n\nDiese App ermöglicht es dir, Kontakte zu speichern, die nicht mit anderen Apps auf deinem Gerät geteilt werden.\n\nDu kannst für jeden Kontakt einzeln festlegen, ob er geteilt werden soll oder nicht.</string>
@@ -284,7 +284,7 @@
     <string name="settings_category_security">Sicherheit</string>
     <string name="settings_category_periodic_backup">Regelmässige Backups</string>
     <string name="settings_category_call_detection">Anruferkennung</string>
-    <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen außer Version 9. Wir bitten um Entschuldigung.</string>
+    <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen ausser Version 9. Wir bitten um Entschuldigung.</string>
     <string name="settings_category_privacy">Datenschutz</string>
 
     <string name="settings_info_dialog_call_detection">Die Anruferkennung ist stark abhängig vom Gerätehersteller und der Android-Version.\n\nDaher erreicht sie möglicherweise nicht dieselbe Zuverlässigkeit wie andere Funktionen. Bitte melde uns ungewöhnliches Verhalten (siehe „Über die App“-Seite).\n\nWir bitten um Entschuldigung für etwaige Unannehmlichkeiten.</string>
@@ -325,7 +325,7 @@
     <string name="settings_entry_error_reports_description">Ohne Berichte können wir keine Abstürze erkennen und beheben.</string>
     <string name="settings_entry_use_alternative_icon">App-Name und Icon verbergen</string>
     <string name="settings_entry_use_alternative_icon_description">Verwendet alternativen App-Namen und Icon (experimentell).</string>
-    <string name="settings_entry_use_alternative_icon_info_dialog_text">Zeigt einen anderen App-Namen und ein anderes Icon auf dem Startbildschirm an, um die Funktion zu verbergen.\nHinweis: In den Systemeinstellungen erscheint weiterhin der echte Name und das echte Icon.\n\nDie App heißt dann „Taschenrechner“ mit passendem Icon.\n\nEin Wechsel dieser Einstellung kann zum Schließen der App führen.</string>
+    <string name="settings_entry_use_alternative_icon_info_dialog_text">Zeigt einen anderen App-Namen und ein anderes Icon auf dem Startbildschirm an, um die Funktion zu verbergen.\nHinweis: In den Systemeinstellungen erscheint weiterhin der echte Name und das echte Icon.\n\nDie App heisst dann „Taschenrechner“ mit passendem Icon.\n\nEin Wechsel dieser Einstellung kann zum Schliessen der App führen.</string>
     <string name="settings_use_alternative_icon_and_name_success_confirmation">Icon und Name der App wurden erfolgreich geändert</string>
     <string name="settings_use_alternative_icon_and_name_failure_confirmation">Änderung von Icon und Name fehlgeschlagen</string>
     <string name="settings_entry_default_vcard_version">VCF-Version</string>
