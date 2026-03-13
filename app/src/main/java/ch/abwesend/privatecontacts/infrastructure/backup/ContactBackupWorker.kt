@@ -99,8 +99,13 @@ class ContactBackupWorker(
 
             Settings.repository.lastBackupDate = LocalDate.now()
 
-            logger.debug("Periodic backup completed successfully: $success")
-            if (success) Result.success() else Result.failure()
+            if (success) {
+                logger.debug("Periodic backup completed successfully")
+                Result.success()
+            } else {
+                logger.warning("Periodic backup completed with failures")
+                Result.failure()
+            }
         } catch (e: CancellationException) {
             logger.debug("Periodic backup cancelled", e)
             retryCounter++
