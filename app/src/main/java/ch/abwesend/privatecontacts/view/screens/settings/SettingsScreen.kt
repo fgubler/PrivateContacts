@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
@@ -56,7 +55,6 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
@@ -81,9 +79,11 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.Sett
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckboxWithInfoButton
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsLabel
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
+import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.firstOrNull
@@ -143,7 +143,12 @@ object SettingsScreen {
                 SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
 
-                PeriodicBackupCategory(settingsRepository, currentSettings)
+                PeriodicBackupCategory(
+                    permissionProvider = permissionProvider,
+                    settingsRepository = settingsRepository,
+                    currentSettings = currentSettings,
+                    viewModel = screenContext.settingsViewModel,
+                )
                 SettingsCategorySpacer()
 
                 PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
@@ -542,8 +547,10 @@ object SettingsScreen {
 
     @Composable
     private fun PeriodicBackupCategory(
+        permissionProvider: IPermissionProvider,
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
     ) {
         val frequencyOptions = remember {
             BackupFrequency.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
@@ -567,27 +574,50 @@ object SettingsScreen {
                         )
                     }
                 }
+                var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
 
                 SettingsDropDown(
                     label = R.string.backup_contact_type_label,
                     description = null,
                     value = currentSettings.backupContactScope,
                     options = contactScopeOptions,
-                    onValueChanged = { settingsRepository.backupContactScope = it },
+                    onValueChanged = {
+                        if (!it.permissionRequired) {
+                            settingsRepository.backupContactScope = it
+                        } else {
+                            requestPermissionsFor = it
+                        }
+                    },
                 )
+
+                val targetScope = requestPermissionsFor
+                if (targetScope != null) {
+                    permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                        logger.debug("Android contact permission result: $it")
+                        requestPermissionsFor = null
+                        if (it.usable) {
+                            settingsRepository.backupContactScope = targetScope
+                        }
+                    }
+                }
 
                 BackupFolderField(settingsRepository, currentSettings.backupFolder)
 
                 Spacer(Modifier.height(10.dp))
 
                 val context = LocalContext.current
+                val backupFolderSelected = remember(currentSettings.backupFolder) {
+                    currentSettings.backupFolder.isNotBlank()
+                }
+
                 Row(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     TextButton(
+                        enabled = backupFolderSelected,
                         onClick = {
-                            BackupScheduler.triggerOneTimeBackup(context)
+                            viewModel.triggerOneTimeBackup()
                             Toast.makeText(
                                 context,
                                 R.string.backup_trigger_once_announcement,
@@ -627,20 +657,22 @@ object SettingsScreen {
             currentFolderUri?.let { getFileOrFolderName(it) ?: currentFolder }
         } ?: stringResource(id = R.string.backup_folder_not_selected)
 
+        val textColor = if (currentFolder.isNotBlank()) normalContentColor() else MaterialTheme.colors.error
+
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = stringResource(id = R.string.backup_folder_label),
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.body1,
+                SettingsLabel(
+                    labelRes = R.string.backup_folder_label,
+                    textColor = textColor,
                 )
                 Spacer(modifier = Modifier.height(5.dp))
                 Text(
                     text = folderDisplayName,
+                    color = textColor,
                     fontStyle = FontStyle.Italic,
                     style = MaterialTheme.typography.body2,
                 )

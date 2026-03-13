@@ -12,6 +12,7 @@ plugins {
     id 'com.google.devtools.ksp' version "${kspVersion}"
     id 'androidx.room'
     id 'org.jetbrains.kotlin.plugin.compose'
+    id 'org.jetbrains.kotlin.plugin.serialization' version "${kotlinVersion}"
 
     id "com.google.gms.google-services"
     id "com.google.firebase.crashlytics"
@@ -33,8 +34,8 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 36
-        versionCode 94
-        versionName "5.4.1"
+        versionCode 95
+        versionName "5.5.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -100,6 +101,8 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${coroutinesVersion}"
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
 
     // Android Core
     implementation "androidx.core:core-ktx:1.17.0"

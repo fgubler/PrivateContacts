@@ -15,14 +15,17 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-object BackupScheduler {
-    private const val WORK_NAME = "periodic_contact_backup_v1"
-    private const val ONE_TIME_WORK_NAME = "one_time_contact_backup"
+class BackupScheduler(private val context: Context) : IBackupScheduler {
+    private companion object {
+        const val WORK_NAME = "periodic_contact_backup_v1"
+        const val ONE_TIME_WORK_NAME = "one_time_contact_backup"
+    }
 
-    fun schedulePeriodicBackup(context: Context) {
+    override fun schedulePeriodicBackup() {
         try {
             val constraints = Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
@@ -61,7 +64,7 @@ object BackupScheduler {
         }
     }
 
-    fun triggerOneTimeBackup(context: Context) {
+    override fun triggerOneTimeBackup() {
         try {
             val inputData = workDataOf(ContactBackupWorker.OVERRIDE_BACKUP_FREQUENCY to true)
 

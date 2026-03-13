@@ -6,28 +6,38 @@
 
 package ch.abwesend.privatecontacts.view.initialization
 
+import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
+
 sealed interface InitializationState {
-    fun next(): InitializationState
+    suspend fun next(): InitializationState
 
     sealed interface InfoDialogState : InitializationState
 
+    data class InitialState(val initialize: suspend () -> InitializationState) : InitializationState {
+        override suspend fun next(): InitializationState = initialize()
+    }
+
+    data class BackupMessagesDialog(val messages: List<BackupMessage>) : InitializationState {
+        override suspend fun next(): InitializationState = InitialInfoDialog
+    }
+
     data object InitialInfoDialog : InfoDialogState {
-        override fun next(): InitializationState = NewFeaturesDialog
+        override suspend fun next(): InitializationState = NewFeaturesDialog
     }
 
     data object NewFeaturesDialog : InfoDialogState {
-        override fun next(): InitializationState = ReviewDialog
+        override suspend fun next(): InitializationState = ReviewDialog
     }
 
     data object ReviewDialog : InfoDialogState {
-        override fun next(): InitializationState = CallPermissionsDialog
+        override suspend fun next(): InitializationState = CallPermissionsDialog
     }
 
     data object CallPermissionsDialog : InitializationState {
-        override fun next(): InitializationState = Initialized
+        override suspend fun next(): InitializationState = Initialized
     }
 
     data object Initialized : InitializationState {
-        override fun next(): InitializationState = this
+        override suspend fun next(): InitializationState = this
     }
 }
