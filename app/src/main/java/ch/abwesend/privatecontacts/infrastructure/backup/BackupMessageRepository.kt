@@ -19,7 +19,7 @@ import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 
 private val Context.backupMessageDataStore: DataStore<Preferences>
-        by preferencesDataStore(name = "backup_messages")
+    by preferencesDataStore(name = "backup_messages")
 
 class BackupMessageRepository(private val context: Context) : IBackupMessageRepository {
     private val messagesKey = stringPreferencesKey("pending_messages")

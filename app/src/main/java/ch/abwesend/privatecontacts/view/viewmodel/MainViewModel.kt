@@ -28,10 +28,10 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartia
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
@@ -84,7 +84,7 @@ class MainViewModel : ViewModel() {
             _initializationState.value = _initializationState.value.next()
             logger.debug(
                 "Changed initializationState from ${oldState::class.java.simpleName} " +
-                        "to ${_initializationState.value::class.java.simpleName}"
+                    "to ${_initializationState.value::class.java.simpleName}"
             )
         }
     }

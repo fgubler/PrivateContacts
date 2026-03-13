@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.ILoggerFactory
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
+import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
@@ -41,7 +42,6 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
-import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupMessageRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
