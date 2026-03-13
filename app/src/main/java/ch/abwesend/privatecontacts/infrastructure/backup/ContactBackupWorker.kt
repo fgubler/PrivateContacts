@@ -42,6 +42,7 @@ class ContactBackupWorker(
 ) : CoroutineWorker(appContext, workerParams) {
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+    private val notificationRepository: ContactBackupNotificationRepository by injectAnywhere()
 
     private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
 
@@ -50,6 +51,9 @@ class ContactBackupWorker(
         private const val MAX_RETRY_COUNT = 5
     }
 
+    override suspend fun getForegroundInfo() =
+        notificationRepository.createForegroundInfo(applicationContext)
+
     /** Consider caching them before persisting all at once - however, if we fail that might not work. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
         backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
@@ -57,6 +61,7 @@ class ContactBackupWorker(
 
     override suspend fun doWork(): Result {
         return try {
+            setForeground(notificationRepository.createForegroundInfo(applicationContext))
             logger.debug("Starting periodic backup")
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
@@ -142,6 +147,8 @@ class ContactBackupWorker(
         } catch (e: Exception) {
             logger.error("Periodic backup failed", e)
             Result.failure()
+        } finally {
+            notificationRepository.dismissNotification(applicationContext)
         }
     }
 

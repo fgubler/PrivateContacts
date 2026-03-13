@@ -427,6 +427,10 @@
     <string name="backup_completed_with_failures_warning">Automatic backup completed but some contacts could not be exported.</string>
     <string name="backup_permission_missing_warning">Automatic backup skipped for public contacts: read-contacts permission not granted.</string>
     <string name="backup_file_creation_failed_error">Automatic backup failed: could not create backup-file.</string>
+    <string name="backup_notification_channel_title">Backup</string>
+    <string name="backup_notification_channel_description">Notifications for the periodic contact backup</string>
+    <string name="backup_notification_title">Backing up contacts</string>
+    <string name="backup_notification_text">Periodic backup is running in the background</string>
 
     <string name="failed_to_select_file">Failed to select file</string>
     <string name="new_something">New</string>

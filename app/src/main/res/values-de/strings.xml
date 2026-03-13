@@ -422,6 +422,10 @@
     <string name="backup_completed_with_failures_warning">Automatisches Backup abgeschlossen, aber einige Kontakte konnten nicht exportiert werden.</string>
     <string name="backup_permission_missing_warning">Automatisches Backup für öffentliche Kontakte übersprungen: Berechtigung zum Lesen von Kontakten fehlt.</string>
     <string name="backup_file_creation_failed_error">Automatisches Backup fehlgeschlagen: Sicherungsdatei konnte nicht erstellt werden.</string>
+    <string name="backup_notification_channel_title">Backup</string>
+    <string name="backup_notification_channel_description">Benachrichtigungen für das periodische Kontakte-Backup</string>
+    <string name="backup_notification_title">Kontakte werden gesichert</string>
+    <string name="backup_notification_text">Periodisches Backup läuft im Hintergrund</string>
 
     <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
     <string name="new_something">Neu</string>
