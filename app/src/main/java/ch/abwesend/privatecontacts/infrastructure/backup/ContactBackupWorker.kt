@@ -43,7 +43,6 @@ class ContactBackupWorker(
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
 
-
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
         private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
