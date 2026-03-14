@@ -16,6 +16,10 @@ interface IContactBase {
     val displayName: String
 }
 
+/**
+ * The main model-class for contacts.
+ * Beware: whenever adding something here, remember to also add import- and export via VCF.
+ */
 interface IContact : IContactBase {
     val firstName: String
     val lastName: String
