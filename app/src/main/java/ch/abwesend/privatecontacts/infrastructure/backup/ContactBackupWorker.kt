@@ -43,11 +43,10 @@ class ContactBackupWorker(
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
 
-    private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
-        private const val MAX_RETRY_COUNT = 5
+        private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
     }
 
     /** Consider caching them before persisting all at once - however, if we fail that might not work. */
@@ -116,6 +115,7 @@ class ContactBackupWorker(
             }
 
             Settings.repository.lastBackupDate = LocalDate.now()
+            retryCounter = 0
 
             if (success) {
                 logger.debug("Periodic backup completed successfully")
@@ -131,15 +131,16 @@ class ContactBackupWorker(
         } catch (e: CancellationException) {
             logger.debug("Periodic backup cancelled", e)
             retryCounter++
-            if (retryCounter > MAX_RETRY_COUNT) {
+            if (Math.random() > 0.2) { // re-try on average 4-5 times
+                logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
+                Result.retry()
+            } else {
                 logger.error("Periodic backup failed due to cancellation", e)
                 retryCounter = 0
                 Result.failure()
-            } else {
-                logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
-                Result.retry()
             }
         } catch (e: Exception) {
+            retryCounter = 0
             logger.error("Periodic backup failed", e)
             Result.failure()
         }
