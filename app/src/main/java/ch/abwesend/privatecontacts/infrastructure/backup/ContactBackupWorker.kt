@@ -130,7 +130,7 @@ class ContactBackupWorker(
         } catch (e: CancellationException) {
             logger.debug("Periodic backup cancelled", e)
             retryCounter++
-            if (Math.random() > 0.2) { // re-try on average 4-5 times
+            if (Math.random() > 0.05) { // re-try on average 20 times
                 logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
                 Result.retry()
             } else {

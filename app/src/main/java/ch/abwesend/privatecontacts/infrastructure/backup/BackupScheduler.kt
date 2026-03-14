@@ -29,6 +29,9 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
         try {
             val constraints = Constraints.Builder()
                 .setRequiresBatteryNotLow(true)
+                .setRequiresStorageNotLow(true)
+                .setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
                 .build()
 
             val now = Calendar.getInstance()
