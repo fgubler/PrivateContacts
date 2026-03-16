@@ -7,13 +7,8 @@
 package ch.abwesend.privatecontacts.infrastructure.backup
 
 import android.Manifest.permission.READ_CONTACTS
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-import android.os.Build
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
@@ -35,12 +30,12 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 
 class ContactBackupWorker(
     appContext: Context,
@@ -48,11 +43,10 @@ class ContactBackupWorker(
 ) : CoroutineWorker(appContext, workerParams) {
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+    private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
-        private const val NOTIFICATION_CHANNEL_ID = "ch.abwesend.privatecontacts.BackupChannel"
-        private const val NOTIFICATION_ID = 42_000
 
         private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
     }
@@ -64,7 +58,8 @@ class ContactBackupWorker(
 
     override suspend fun doWork(): Result {
         return try {
-            setForeground(createForegroundInfo())
+            val foregroundInfo = backupNotificationRepository.createForegroundInfo()
+            setForeground(foregroundInfo)
 
             logger.debug("Starting periodic backup")
             val settings = Settings.nextOrDefault()
@@ -240,35 +235,6 @@ class ContactBackupWorker(
         }
     }
 
-    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
-
-    private fun createForegroundInfo(): ForegroundInfo {
-        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                applicationContext.getString(R.string.backup_notification_channel_name),
-                NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = applicationContext.getString(R.string.backup_notification_channel_description)
-                setSound(null, null)
-            }
-            notificationManager.createNotificationChannel(channel)
-        }
-
-        val notification = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
-            .setContentTitle(applicationContext.getString(R.string.backup_notification_title))
-            .setContentText(applicationContext.getString(R.string.backup_notification_text))
-            .setSmallIcon(R.drawable.ic_backup)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setCategory(NotificationCompat.CATEGORY_SERVICE)
-            .setOngoing(true)
-            .build()
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(NOTIFICATION_ID, notification, FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-        } else {
-            ForegroundInfo(NOTIFICATION_ID, notification)
-        }
-    }
+    override suspend fun getForegroundInfo(): ForegroundInfo =
+        backupNotificationRepository.createForegroundInfo()
 }

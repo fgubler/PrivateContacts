@@ -43,6 +43,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupMessageRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
@@ -144,6 +145,7 @@ internal val koinModule = module {
     single { ContactGroupRepository() }
     single { ContactImageRepository() }
     single { CallNotificationRepository() }
+    factory { BackupNotificationRepository(androidContext()) }
     single { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
     single<IBackupMessageRepository> { BackupMessageRepository(androidContext()) }
