@@ -104,6 +104,7 @@
             <meta-data android:name="photopicker_activity:0:required" android:value="" />
         </service>
 
+        <!-- The Foreground-service of WorkManager: need to set the foreground-type. -->
         <service
             android:name="androidx.work.impl.foreground.SystemForegroundService"
             android:foregroundServiceType="dataSync"
