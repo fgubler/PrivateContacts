@@ -415,6 +415,10 @@
     <string name="backup_folder_select">Seleccionar carpeta</string>
     <string name="backup_trigger_once_label">Copia de seguridad ahora</string>
     <string name="backup_trigger_once_announcement">La copia de seguridad se iniciará en 10s</string>
+    <string name="backup_notification_channel_name">Servicio de copia de seguridad</string>
+    <string name="backup_notification_channel_description">Notificaciones durante la copia de seguridad de contactos</string>
+    <string name="backup_notification_title">Copia de seguridad en curso</string>
+    <string name="backup_notification_text">Se están respaldando sus contactos</string>
     <string name="backup_messages_dialog_title">Notificaciones de copia de seguridad</string>
     <string name="backup_folder_not_configured_warning">Copia de seguridad automática omitida: no hay carpeta de copia de seguridad configurada.</string>
     <string name="backup_folder_not_writable_error">Copia de seguridad automática fallida: no se puede escribir en la carpeta de copia de seguridad.</string>
