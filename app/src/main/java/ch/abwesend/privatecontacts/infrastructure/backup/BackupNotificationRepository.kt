@@ -49,4 +49,3 @@ class BackupNotificationRepository(private val context: Context) {
         }
     }
 }
-
