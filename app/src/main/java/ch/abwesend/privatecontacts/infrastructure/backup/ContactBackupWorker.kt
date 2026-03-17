@@ -47,11 +47,10 @@ class ContactBackupWorker(
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
-
-        private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
+        private var retryCounter = 0 // the counter will be reset on garbage-collection
     }
 
-    /** Consider caching them before persisting all at once - however, if we fail that might not work. */
+    /** Caching them would not work because they would be lost during a crash. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
         backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
     }
