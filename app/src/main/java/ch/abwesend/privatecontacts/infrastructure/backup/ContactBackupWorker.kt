@@ -47,6 +47,7 @@ class ContactBackupWorker(
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
+        const val MAX_RETRY_COUNT = 20
         private var retryCounter = 0 // the counter will be reset on garbage-collection
     }
 
@@ -132,7 +133,9 @@ class ContactBackupWorker(
         } catch (e: CancellationException) {
             logger.debug("Periodic backup cancelled", e)
             retryCounter++
-            if (Math.random() > 0.05) { // re-try on average 20 times
+
+            // randomness to avoid an infinite loop if JVM resets retryCounter
+            if (retryCounter < MAX_RETRY_COUNT && Math.random() > 0.01) {
                 logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
                 Result.retry()
             } else {
