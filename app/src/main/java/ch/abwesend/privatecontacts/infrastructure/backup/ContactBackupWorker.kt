@@ -59,6 +59,7 @@ class ContactBackupWorker(
     override suspend fun doWork(): Result {
         return try {
             logger.debug("Starting periodic backup")
+            backupMessageRepository.clearMessages() // a new start with a clean slate
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
 
