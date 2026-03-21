@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.net.Uri
+import android.provider.DocumentsContract
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -26,8 +27,6 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 import java.io.FileOutputStream
-
-import android.provider.DocumentsContract
 
 private const val MODE_READ_ONLY = "r"
 private const val MODE_WRITE_ONLY = "w"
