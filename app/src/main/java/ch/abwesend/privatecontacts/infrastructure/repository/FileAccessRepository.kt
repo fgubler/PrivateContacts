@@ -27,6 +27,8 @@ import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
+import android.provider.DocumentsContract
+
 private const val MODE_READ_ONLY = "r"
 private const val MODE_WRITE_ONLY = "w"
 private const val MAX_FILE_SIZE_IN_BYTES = 1024 * 1024 * 10 // 10 MB
@@ -86,9 +88,9 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
 
     override suspend fun writeFile(fileContent: TextFileContent, file: Uri, requestPermission: Boolean): FileWriteResult =
         withContext(dispatchers.io) {
+            val contentResolver = context.contentResolver
             try {
                 logger.debugLocally("Writing content to '${file.path}'")
-                val contentResolver = context.contentResolver
 
                 if (requestPermission) {
                     requestWritePermission(contentResolver, file)
@@ -103,12 +105,32 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 }
 
                 logger.debug("Wrote ${fileContent.numberOfLines} lines to file")
-                SuccessResult(value = Unit)
+                val fileSize = contentResolver.openFileDescriptor(file, MODE_READ_ONLY)?.use { it.statSize } ?: 0L
+
+                if (fileSize > 0L) {
+                    logger.debug("File written successfully with size $fileSize bytes")
+                    SuccessResult(value = Unit)
+                } else {
+                    val message = "Written file does not exist or has zero size"
+                    logger.warning(message)
+                    deleteFileOnError(contentResolver, file)
+                    ErrorResult(error = IllegalStateException(message))
+                }
             } catch (e: Exception) {
                 logger.warning("Failed to write to file", e)
+                deleteFileOnError(contentResolver, file)
                 ErrorResult(error = e)
             }
         }
+
+    private fun deleteFileOnError(contentResolver: ContentResolver, file: Uri) {
+        try {
+            logger.debug("Deleting file after write error")
+            DocumentsContract.deleteDocument(contentResolver, file)
+        } catch (e: Exception) {
+            logger.warning("Failed to delete file after write error", e)
+        }
+    }
 
     private fun requestReadPermission(contentResolver: ContentResolver, fileUri: Uri) {
         requestPermission(contentResolver, fileUri, FLAG_GRANT_READ_URI_PERMISSION)
