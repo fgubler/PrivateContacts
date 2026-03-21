@@ -235,6 +235,8 @@ class ContactBackupWorker(
         }
     }
 
-    override suspend fun getForegroundInfo(): ForegroundInfo =
-        backupNotificationRepository.createForegroundInfo()
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        logger.info("Creating foreground info for periodic backup")
+        return backupNotificationRepository.createForegroundInfo()
+    }
 }
