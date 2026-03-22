@@ -451,7 +451,11 @@ object SettingsScreen {
     }
 
     @Composable
-    private fun DefaultContactAccountField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
+    private fun DefaultContactAccountField(
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        labelAndValueHorizontal: Boolean = false,
+    ) {
         AccountSelectionDropDownField(
             settings = settingsRepository,
             selectedAccount = currentSettings.defaultExternalContactAccount,
@@ -462,6 +466,7 @@ object SettingsScreen {
                 description = R.string.settings_entry_default_external_contact_account_description,
                 value = selectedOption.value,
                 options = options,
+                labelAndValueHorizontal = labelAndValueHorizontal,
                 onValueChanged = onOptionSelected,
             )
         }

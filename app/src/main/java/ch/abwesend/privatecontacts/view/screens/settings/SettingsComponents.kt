@@ -132,6 +132,7 @@ object SettingsComponents {
         value: T,
         options: List<DropDownOption<T>>,
         enabled: Boolean = true,
+        labelAndValueHorizontal: Boolean = true,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
@@ -149,10 +150,22 @@ object SettingsComponents {
                         .padding(top = 10.dp, bottom = 10.dp)
                         .weight(1f)
                 ) {
-                    Row(horizontalArrangement = Arrangement.SpaceBetween,) {
-                        SettingsLabel(labelRes = label, textColor = textColor)
-                        selectedOption?.let {
-                            Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
+                    if (labelAndValueHorizontal) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            SettingsLabel(labelRes = label, textColor = textColor)
+                            selectedOption?.let {
+                                Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
+                            }
+                        }
+                    } else {
+                        Column {
+                            SettingsLabel(labelRes = label, textColor = textColor)
+                            selectedOption?.let {
+                                Text(it.getLabel(), color = textColor)
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
