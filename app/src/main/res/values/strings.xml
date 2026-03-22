@@ -412,7 +412,7 @@
     <string name="backup_frequency_weekly">Weekly</string>
     <string name="backup_frequency_monthly">Monthly</string>
     <string name="backup_contact_type_label">Contacts to back up</string>
-    <string name="backup_contact_type_all">All (in separate files)</string>
+    <string name="backup_contact_type_all">All Contacts</string>
     <string name="backup_contact_type_secret">Secret only</string>
     <string name="backup_contact_type_public">Public only</string>
     <string name="backup_folder_label">Backup folder</string>
