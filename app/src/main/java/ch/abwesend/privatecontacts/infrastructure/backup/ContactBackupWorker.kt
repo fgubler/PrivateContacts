@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
+import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -43,6 +44,7 @@ class ContactBackupWorker(
 ) : CoroutineWorker(appContext, workerParams) {
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+    private val fileAccessRepository: IFileAccessRepository by injectAnywhere()
     private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 
     companion object {
@@ -170,6 +172,7 @@ class ContactBackupWorker(
             ContactType.SECRET -> "backup_secret_$dateString.vcf"
             ContactType.PUBLIC -> "backup_public_$dateString.vcf"
         }
+        cleanupExistingFile(documentFolder, fileName)
 
         return exportToBackupFile(
             folder = documentFolder,
@@ -177,6 +180,17 @@ class ContactBackupWorker(
             contactType = type,
             vCardVersion = vCardVersion
         )
+    }
+
+    private fun cleanupExistingFile(documentFolder: DocumentFile, fileName: String) {
+        try {
+            val existingFile = documentFolder.findFile(fileName)
+            if (existingFile != null) {
+                fileAccessRepository.deleteFileIfEmpty(existingFile.uri)
+            }
+        } catch (e: Exception) {
+            logger.warning("Failed to potentially delete empty pre-existing backup file", e)
+        }
     }
 
     private fun hasAndroidContactsPermission(): Boolean {

@@ -104,16 +104,15 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 }
 
                 logger.debug("Wrote ${fileContent.numberOfLines} lines to file")
-                val fileSize = contentResolver.openFileDescriptor(file, MODE_READ_ONLY)?.use { it.statSize } ?: 0L
 
-                if (fileSize > 0L) {
-                    logger.debug("File written successfully with size $fileSize bytes")
-                    SuccessResult(value = Unit)
-                } else {
+                if (contentResolver.isFileEmpty(file)) {
                     val message = "Written file does not exist or has zero size"
                     logger.warning(message)
                     deleteFileOnError(contentResolver, file)
                     ErrorResult(error = IllegalStateException(message))
+                } else {
+                    logger.debug("File written successfully with non-zero size")
+                    SuccessResult(value = Unit)
                 }
             } catch (e: Exception) {
                 logger.warning("Failed to write to file", e)
@@ -121,6 +120,17 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 ErrorResult(error = e)
             }
         }
+
+    override fun deleteFileIfEmpty(fileUri: Uri) {
+        val contentResolver = context.contentResolver
+        if (contentResolver.isFileEmpty(fileUri)) {
+            logger.debug("Deleting empty file")
+            DocumentsContract.deleteDocument(contentResolver, fileUri)
+        }
+    }
+
+    private fun ContentResolver.isFileEmpty(fileUri: Uri): Boolean =
+        openFileDescriptor(fileUri, MODE_READ_ONLY)?.use { it.statSize } == 0L
 
     private fun deleteFileOnError(contentResolver: ContentResolver, file: Uri) {
         try {

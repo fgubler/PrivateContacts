@@ -20,6 +20,9 @@ interface IFileAccessRepository {
      *  if the file is located in a folder where we do not need or already have permission
      */
     suspend fun writeFile(fileContent: TextFileContent, file: Uri, requestPermission: Boolean = true): FileWriteResult
+
+    /** Checks whether the file at [fileUri] exists and is empty. If so, deletes it. */
+    fun deleteFileIfEmpty(fileUri: Uri)
 }
 
 typealias BinaryFileReadResult = BinaryResult<BinaryFileContent, Exception>
