@@ -56,6 +56,16 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
         }
     }
 
+    override suspend fun clearMessages() {
+        try {
+            context.backupMessageDataStore.edit { preferences ->
+                preferences.remove(messagesKey)
+            }
+        } catch (e: Exception) {
+            logger.warning("Failed to clear backup messages", e)
+        }
+    }
+
     private fun parseMessages(raw: String?): List<BackupMessage> {
         return if (raw.isNullOrEmpty())
             emptyList()

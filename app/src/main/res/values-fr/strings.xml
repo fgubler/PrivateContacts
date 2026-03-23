@@ -407,7 +407,7 @@
     <string name="backup_frequency_weekly">Hebdomadaire</string>
     <string name="backup_frequency_monthly">Mensuelle</string>
     <string name="backup_contact_type_label">Contacts à sauvegarder</string>
-    <string name="backup_contact_type_all">Tous (fichiers séparés)</string>
+    <string name="backup_contact_type_all">Tous Contacts</string>
     <string name="backup_contact_type_secret">Secrets uniquement</string>
     <string name="backup_contact_type_public">Publics uniquement</string>
     <string name="backup_folder_label">Dossier de sauvegarde</string>

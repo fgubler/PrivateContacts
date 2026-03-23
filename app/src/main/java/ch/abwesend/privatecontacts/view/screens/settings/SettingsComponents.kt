@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -37,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.util.doIf
 import ch.abwesend.privatecontacts.view.components.EditIcon
+import ch.abwesend.privatecontacts.view.components.ExpandableCard
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
@@ -59,12 +59,16 @@ object SettingsComponents {
         @StringRes titleRes: Int,
         @StringRes infoPopupText: Int? = null,
         hideInfoPopup: Boolean = false,
+        initiallyExpanded: Boolean = false,
         content: @Composable () -> Unit,
     ) {
         var showInfoPopup: Boolean by remember { mutableStateOf(false) }
+        var expanded: Boolean by remember { mutableStateOf(initiallyExpanded) }
 
-        Card {
-            Column(modifier = Modifier.padding(10.dp)) {
+        ExpandableCard(
+            expanded = expanded,
+            onToggleExpanded = { expanded = it },
+            header = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -75,6 +79,9 @@ object SettingsComponents {
                         InfoIconButton { showInfoPopup = true }
                     }
                 }
+            }
+        ) {
+            Column(modifier = Modifier.padding(top = 10.dp)) {
                 content()
             }
         }
@@ -125,6 +132,7 @@ object SettingsComponents {
         value: T,
         options: List<DropDownOption<T>>,
         enabled: Boolean = true,
+        labelAndValueHorizontal: Boolean = true,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
@@ -142,10 +150,22 @@ object SettingsComponents {
                         .padding(top = 10.dp, bottom = 10.dp)
                         .weight(1f)
                 ) {
-                    Row(horizontalArrangement = Arrangement.SpaceBetween,) {
-                        SettingsLabel(labelRes = label, textColor = textColor)
-                        selectedOption?.let {
-                            Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
+                    if (labelAndValueHorizontal) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            SettingsLabel(labelRes = label, textColor = textColor)
+                            selectedOption?.let {
+                                Text(it.getLabel(), color = textColor, modifier = Modifier.padding(start = 10.dp))
+                            }
+                        }
+                    } else {
+                        Column {
+                            SettingsLabel(labelRes = label, textColor = textColor)
+                            selectedOption?.let {
+                                Text(it.getLabel(), color = textColor)
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(5.dp))
