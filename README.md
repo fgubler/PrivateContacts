@@ -17,6 +17,7 @@ Additional features
 - Support of Imports/Exports in vcf format
 - Protecting the app with biometric prompt
 - Hiding the app by changing the app-name and -icon to "Pocket Calculator" with a calculator-icon.
+- Periodic backups of secret and public contacts
 
 ## What the app will be able to do in the future
 
