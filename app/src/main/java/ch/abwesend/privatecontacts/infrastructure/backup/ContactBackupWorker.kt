@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import androidx.work.CoroutineWorker
+import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -25,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
+import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -42,13 +44,16 @@ class ContactBackupWorker(
 ) : CoroutineWorker(appContext, workerParams) {
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+    private val fileAccessRepository: IFileAccessRepository by injectAnywhere()
+    private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
-        private var retryCounter = 0 // the counter will be reset on garbage-collection: should be enough
+        const val MAX_RETRY_COUNT = 20
+        private var retryCounter = 0 // the counter will be reset on garbage-collection
     }
 
-    /** Consider caching them before persisting all at once - however, if we fail that might not work. */
+    /** Caching them would not work because they would be lost during a crash. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
         backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
     }
@@ -56,6 +61,7 @@ class ContactBackupWorker(
     override suspend fun doWork(): Result {
         return try {
             logger.debug("Starting periodic backup")
+            backupMessageRepository.clearMessages() // a new start with a clean slate
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
 
@@ -130,11 +136,13 @@ class ContactBackupWorker(
         } catch (e: CancellationException) {
             logger.debug("Periodic backup cancelled", e)
             retryCounter++
-            if (Math.random() > 0.05) { // re-try on average 20 times
+
+            // randomness to avoid an infinite loop if JVM resets retryCounter
+            if (retryCounter < MAX_RETRY_COUNT && Math.random() > 0.01) {
                 logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
                 Result.retry()
             } else {
-                logger.error("Periodic backup failed due to cancellation", e)
+                logger.error("Periodic backup failed due to cancellation in attempt $retryCounter", e)
                 retryCounter = 0
                 Result.failure()
             }
@@ -164,6 +172,7 @@ class ContactBackupWorker(
             ContactType.SECRET -> "backup_secret_$dateString.vcf"
             ContactType.PUBLIC -> "backup_public_$dateString.vcf"
         }
+        cleanupExistingFile(documentFolder, fileName)
 
         return exportToBackupFile(
             folder = documentFolder,
@@ -171,6 +180,17 @@ class ContactBackupWorker(
             contactType = type,
             vCardVersion = vCardVersion
         )
+    }
+
+    private fun cleanupExistingFile(documentFolder: DocumentFile, fileName: String) {
+        try {
+            val existingFile = documentFolder.findFile(fileName)
+            if (existingFile != null) {
+                fileAccessRepository.deleteFileIfEmpty(existingFile.uri)
+            }
+        } catch (e: Exception) {
+            logger.warning("Failed to potentially delete empty pre-existing backup file", e)
+        }
     }
 
     private fun hasAndroidContactsPermission(): Boolean {
@@ -227,5 +247,10 @@ class ContactBackupWorker(
             BackupFrequency.WEEKLY -> ChronoUnit.DAYS.between(lastBackupDate, today) >= 7
             BackupFrequency.MONTHLY -> ChronoUnit.MONTHS.between(lastBackupDate, today) >= 1
         }
+    }
+
+    override suspend fun getForegroundInfo(): ForegroundInfo {
+        logger.info("Creating foreground info for periodic backup")
+        return backupNotificationRepository.createForegroundInfo()
     }
 }

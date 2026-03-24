@@ -407,7 +407,7 @@
     <string name="backup_frequency_weekly">Settimanale</string>
     <string name="backup_frequency_monthly">Mensile</string>
     <string name="backup_contact_type_label">Contatti da salvare</string>
-    <string name="backup_contact_type_all">Tutti (in file separati)</string>
+    <string name="backup_contact_type_all">Tutti</string>
     <string name="backup_contact_type_secret">Solo segreti</string>
     <string name="backup_contact_type_public">Solo pubblici</string>
     <string name="backup_folder_label">Cartella di backup</string>
@@ -415,6 +415,10 @@
     <string name="backup_folder_select">Seleziona cartella</string>
     <string name="backup_trigger_once_label">Eseguire un backup adesso</string>
     <string name="backup_trigger_once_announcement">Il backup verrà avviato tra 10s</string>
+    <string name="backup_notification_channel_name">Servizio di backup</string>
+    <string name="backup_notification_channel_description">Notifiche durante il backup dei contatti</string>
+    <string name="backup_notification_title">Backup in corso</string>
+    <string name="backup_notification_text">I tuoi contatti vengono salvati</string>
     <string name="backup_messages_dialog_title">Notifiche di backup</string>
     <string name="backup_folder_not_configured_warning">Backup automatico saltato: nessuna cartella di backup configurata.</string>
     <string name="backup_folder_not_writable_error">Backup automatico fallito: impossibile scrivere nella cartella di backup.</string>

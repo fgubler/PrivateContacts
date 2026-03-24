@@ -407,7 +407,7 @@
     <string name="backup_frequency_weekly">Hebdomadaire</string>
     <string name="backup_frequency_monthly">Mensuelle</string>
     <string name="backup_contact_type_label">Contacts à sauvegarder</string>
-    <string name="backup_contact_type_all">Tous (fichiers séparés)</string>
+    <string name="backup_contact_type_all">Tous Contacts</string>
     <string name="backup_contact_type_secret">Secrets uniquement</string>
     <string name="backup_contact_type_public">Publics uniquement</string>
     <string name="backup_folder_label">Dossier de sauvegarde</string>
@@ -415,6 +415,10 @@
     <string name="backup_folder_select">Sélectionner un dossier</string>
     <string name="backup_trigger_once_label">Sauvegarder maintenant</string>
     <string name="backup_trigger_once_announcement">La sauvegarde sera lancée dans 10s</string>
+    <string name="backup_notification_channel_name">Service de sauvegarde</string>
+    <string name="backup_notification_channel_description">Notifications pendant la sauvegarde des contacts</string>
+    <string name="backup_notification_title">Sauvegarde en cours</string>
+    <string name="backup_notification_text">Vos contacts sont en cours de sauvegarde</string>
     <string name="backup_messages_dialog_title">Notifications de sauvegarde</string>
     <string name="backup_folder_not_configured_warning">Sauvegarde automatique ignorée : aucun dossier de sauvegarde configuré.</string>
     <string name="backup_folder_not_writable_error">Sauvegarde automatique échouée : impossible d\'écrire dans le dossier de sauvegarde.</string>

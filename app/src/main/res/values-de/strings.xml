@@ -407,7 +407,7 @@
     <string name="backup_frequency_weekly">Wöchentlich</string>
     <string name="backup_frequency_monthly">Monatlich</string>
     <string name="backup_contact_type_label">Zu sichernde Kontakte</string>
-    <string name="backup_contact_type_all">Alle (in separaten Dateien)</string>
+    <string name="backup_contact_type_all">Alle Kontakte</string>
     <string name="backup_contact_type_secret">Nur geheime</string>
     <string name="backup_contact_type_public">Nur öffentliche</string>
     <string name="backup_folder_label">Sicherungsordner</string>
@@ -415,6 +415,10 @@
     <string name="backup_folder_select">Ordner auswählen</string>
     <string name="backup_trigger_once_label">Jetzt sichern</string>
     <string name="backup_trigger_once_announcement">Sicherung wird in 10s gestartet</string>
+    <string name="backup_notification_channel_name">Sicherungsdienst</string>
+    <string name="backup_notification_channel_description">Benachrichtigungen während der Kontaktsicherung</string>
+    <string name="backup_notification_title">Sicherung läuft</string>
+    <string name="backup_notification_text">Ihre Kontakte werden gesichert</string>
     <string name="backup_messages_dialog_title">Backup-Benachrichtigungen</string>
     <string name="backup_folder_not_configured_warning">Automatisches Backup übersprungen: kein Sicherungsordner konfiguriert.</string>
     <string name="backup_folder_not_writable_error">Automatisches Backup fehlgeschlagen: Sicherungsordner ist nicht beschreibbar.</string>
