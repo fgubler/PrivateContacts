@@ -47,6 +47,7 @@ Also, the existing logic to advertise the app as an app that can open .vcf files
 - Use the existing code as a starting point for your implementation
 - Add unit-tests for new code, where easily achievable. Consider the existing tests for their structure, used dependencies, superclasses, etc.
 - If anything is unclear, ask for clarification rather than making assumptions.
+- Do not execute more than 3 test-files: ask me to do it for you.
 
 #### Documentation
 After implementing the feature, create a short and concise documentation about its function and all design- and architecture-decisions taken during its development.
