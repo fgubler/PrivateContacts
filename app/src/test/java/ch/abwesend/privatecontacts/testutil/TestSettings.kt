@@ -55,6 +55,8 @@ data class TestSettings(
     override var backupContactScope: BackupContactScope = currentSettings.backupContactScope
     override var backupFolder: String = currentSettings.backupFolder
     override var lastBackupDate: LocalDate = currentSettings.lastBackupDate
+    override var backupEncryptionEnabled: Boolean = currentSettings.backupEncryptionEnabled
+    override var backupPasswordEncrypted: String = currentSettings.backupPasswordEncrypted
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings

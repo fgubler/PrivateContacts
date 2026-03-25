@@ -52,6 +52,8 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     backupContactScope = tryGetEnumValue(backupContactScopeEntry),
     backupFolder = getValue(backupFolderEntry),
     lastBackupDate = tryGetDateValue(lastBackupDateEntry),
+    backupEncryptionEnabled = getValue(backupEncryptionEnabledEntry),
+    backupPasswordEncrypted = getValue(backupPasswordEncryptedEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =
@@ -71,7 +73,7 @@ internal inline fun <reified T : Enum<T>> Preferences.tryGetEnumValue(
     val rawValue = this[settingsEntry.key]
     val parsedValue = try {
         rawValue?.let { enumValueOf<T>(rawValue) }
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         null
     }
     return parsedValue ?: settingsEntry.defaultValue
@@ -91,7 +93,7 @@ internal fun Preferences.tryGetDateValue(
     val rawValue = this[settingsEntry.key]
     val parsedValue = try {
         rawValue?.let { LocalDate.parse(it, dateFormatter) }
-    } catch (e: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         null
     }
     return parsedValue ?: settingsEntry.defaultValue
