@@ -93,22 +93,31 @@ class EncryptionRepository : IEncryptionRepository {
     override fun encryptPassword(password: String): String {
         val key = getOrCreateKeyStoreKey()
         val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, key)
-        val initializationVector = cipher.iv
-        val encrypted = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
-        // Layout: [iv (12)] [ciphertext + GCM tag]
-        val combined = initializationVector + encrypted
-        return Base64.getEncoder().encodeToString(combined)
+            .apply { init(Cipher.ENCRYPT_MODE, key) }
+        val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
+
+        val encoder = Base64.getEncoder()
+        val payload = EncryptedPasswordPayload(
+            version = JSON_VERSION,
+            algorithm = AES_GCM_TRANSFORMATION,
+            tagLength = GCM_TAG_LENGTH_BITS,
+            iv = encoder.encodeToString(cipher.iv),
+            ciphertext = encoder.encodeToString(cipherText),
+        )
+        return Json.encodeToString(payload)
     }
 
     override fun decryptPassword(encryptedPassword: String): String? = try {
-        val combined = Base64.getDecoder().decode(encryptedPassword)
-        val iv = combined.copyOfRange(0, GCM_IV_LENGTH_BYTES)
-        val data = combined.copyOfRange(GCM_IV_LENGTH_BYTES, combined.size)
-
         val key = getKeyStoreKey() ?: return null
-        val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
-        cipher.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
+
+        val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
+        val decoder = Base64.getDecoder()
+        val iv = decoder.decode(payload.iv)
+        val data = decoder.decode(payload.ciphertext)
+
+        val cipher = Cipher.getInstance(payload.algorithm).apply {
+            init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
+        }
         cipher.doFinal(data).toString(Charsets.UTF_8)
     } catch (e: Exception) {
         logger.warning("Failed to decrypt backup password", e)
@@ -162,6 +171,15 @@ class EncryptionRepository : IEncryptionRepository {
         return bytes
     }
 }
+
+@Serializable
+private data class EncryptedPasswordPayload(
+    val version: Int,
+    val algorithm: String,
+    val tagLength: Int,
+    val iv: String,
+    val ciphertext: String,
+)
 
 @Serializable
 private data class EncryptedPayload(
