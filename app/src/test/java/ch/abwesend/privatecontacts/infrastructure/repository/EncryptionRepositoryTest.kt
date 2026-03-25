@@ -26,6 +26,20 @@ class EncryptionRepositoryTest {
     }
 
     @Test
+    fun `encrypt should return a JSON string with expected fields`() {
+        val ciphertext = underTest.encrypt("some text", "password")
+
+        assertThat(ciphertext).contains("\"algorithm\"")
+        assertThat(ciphertext).contains("\"kdf\"")
+        assertThat(ciphertext).contains("\"iterations\"")
+        assertThat(ciphertext).contains("\"keySize\"")
+        assertThat(ciphertext).contains("\"tagLength\"")
+        assertThat(ciphertext).contains("\"salt\"")
+        assertThat(ciphertext).contains("\"iv\"")
+        assertThat(ciphertext).contains("\"ciphertext\"")
+    }
+
+    @Test
     fun `encrypt should produce different output each time (random salt and IV)`() {
         val password = "password123"
         val plaintext = "same plaintext"

@@ -7,11 +7,15 @@
 package ch.abwesend.privatecontacts.domain.repository
 
 interface IEncryptionRepository {
-    /** Encrypts [plaintext] with AES-256-GCM using a key derived from [password]. */
-    fun encrypt(plaintext: String, password: String): ByteArray
+    /**
+     * Encrypts [plaintext] with AES-256-GCM using a key derived from [password] via PBKDF2.
+     * Returns a JSON string containing all parameters (algorithm, iterations, salt, IV, ciphertext)
+     * needed for decryption, with binary values Base64-encoded.
+     */
+    fun encrypt(plaintext: String, password: String): String
 
-    /** Decrypts [ciphertext] previously produced by [encrypt]. */
-    fun decrypt(ciphertext: ByteArray, password: String): String
+    /** Decrypts a JSON string previously produced by [encrypt]. */
+    fun decrypt(ciphertext: String, password: String): String
 
     /**
      * Encrypts [password] with a key stored in the Android KeyStore and returns the
