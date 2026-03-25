@@ -426,6 +426,8 @@
     <string name="backup_completed_with_failures_warning">Copia de seguridad automática completada, pero algunos contactos no pudieron exportarse.</string>
     <string name="backup_permission_missing_warning">Copia de seguridad automática omitida para contactos públicos: falta el permiso de lectura de contactos.</string>
     <string name="backup_file_creation_failed_error">Copia de seguridad automática fallida: no se pudo crear el archivo de copia de seguridad.</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
 
     <string name="failed_to_select_file">No se pudo seleccionar el archivo</string>
     <string name="new_something">Nuevo</string>

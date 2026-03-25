@@ -426,6 +426,8 @@
     <string name="backup_completed_with_failures_warning">Sauvegarde automatique terminée, mais certains contacts n\'ont pas pu être exportés.</string>
     <string name="backup_permission_missing_warning">Sauvegarde automatique ignorée pour les contacts publics : permission de lecture des contacts manquante.</string>
     <string name="backup_file_creation_failed_error">Sauvegarde automatique échouée : impossible de créer le fichier de sauvegarde.</string>
+    <string name="show_password">Afficher le mot de passe</string>
+    <string name="hide_password">Masquer le mot de passe</string>
 
     <string name="failed_to_select_file">Échec de la sélection du fichier</string>
     <string name="new_something">Nouveau</string>
