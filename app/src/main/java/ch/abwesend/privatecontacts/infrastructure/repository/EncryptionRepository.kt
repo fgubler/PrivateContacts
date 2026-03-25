@@ -39,7 +39,7 @@ class EncryptionRepository : IEncryptionRepository {
 
     // ---- File encryption (password-based AES-256-GCM with PBKDF2) ----
 
-    override fun encrypt(plaintext: ByteArray, password: String): ByteArray {
+    override fun encrypt(plaintext: String, password: String): ByteArray {
         val salt = generateRandomBytes(PBKDF2_SALT_LENGTH_BYTES)
         val initializationVector = generateRandomBytes(GCM_IV_LENGTH_BYTES)
         val key = deriveKey(password, salt)
@@ -47,13 +47,13 @@ class EncryptionRepository : IEncryptionRepository {
         val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION).apply {
             init(Cipher.ENCRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, initializationVector))
         }
-        val ciphertext = cipher.doFinal(plaintext)
+        val ciphertext = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
 
         // Layout: [salt (16)] [iv (12)] [ciphertext + GCM tag]
         return salt + initializationVector + ciphertext
     }
 
-    override fun decrypt(ciphertext: ByteArray, password: String): ByteArray {
+    override fun decrypt(ciphertext: ByteArray, password: String): String {
         val salt = ciphertext.copyOfRange(0, PBKDF2_SALT_LENGTH_BYTES)
         val iv = ciphertext.copyOfRange(PBKDF2_SALT_LENGTH_BYTES, PBKDF2_SALT_LENGTH_BYTES + GCM_IV_LENGTH_BYTES)
         val data = ciphertext.copyOfRange(PBKDF2_SALT_LENGTH_BYTES + GCM_IV_LENGTH_BYTES, ciphertext.size)
@@ -62,7 +62,7 @@ class EncryptionRepository : IEncryptionRepository {
         val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION).apply {
             init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(GCM_TAG_LENGTH_BITS, iv))
         }
-        return cipher.doFinal(data)
+        return cipher.doFinal(data).toString(Charsets.UTF_8)
     }
 
     private fun deriveKey(password: String, salt: ByteArray): SecretKey {
