@@ -16,6 +16,7 @@ import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
+import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.repository.ILauncherAppearanceRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
@@ -54,6 +55,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.ContactGroupReposit
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactImageRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ContactRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.DatabaseRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.EncryptionRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.FileAccessRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.ToastRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.factory.AndroidContactMutableFactory
@@ -150,6 +152,7 @@ internal val koinModule = module {
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
     single<IBackupMessageRepository> { BackupMessageRepository(androidContext()) }
     single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
+    factory<IEncryptionRepository> { EncryptionRepository() }
 
     factory<ILauncherAppearanceRepository> { LauncherAppearanceRepository(androidContext()) }
 
