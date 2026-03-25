@@ -6,13 +6,29 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
+import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
+import ch.abwesend.privatecontacts.testutil.TestBase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.koin.core.module.Module
+import org.koin.test.inject
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
-class EncryptionRepositoryTest {
+@ExperimentalCoroutinesApi
+class EncryptionRepositoryTest : TestBase() {
+    private val underTest: IEncryptionRepository by inject()
 
-    private val underTest = EncryptionRepository()
+    override fun setupKoinModule(module: Module) {
+        super.setupKoinModule(module)
+        module.factory<IEncryptionRepository> { EncryptionRepository() }
+        module.factory<IKeyStoreRepository> { FakeKeyStoreRepository() }
+    }
+
+    // ---- File encryption (password-based PBKDF2 + AES-256-GCM) ----
 
     @Test
     fun `encrypt and decrypt should round-trip correctly`() {
@@ -81,4 +97,64 @@ class EncryptionRepositoryTest {
 
         assertThat(decrypted).isEqualTo(plaintext)
     }
+
+    // ---- Password storage (KeyStore-backed AES-256-GCM, mocked via FakeKeyStoreKeyProvider) ----
+
+    @Test
+    fun `encryptPassword and decryptPassword should round-trip correctly`() {
+        val password = "mySecretBackupPassword"
+
+        val encrypted = underTest.encryptPassword(password)
+        val decrypted = underTest.decryptPassword(encrypted)
+
+        assertThat(decrypted).isEqualTo(password)
+    }
+
+    @Test
+    fun `encryptPassword should return a JSON string with expected fields`() {
+        val encrypted = underTest.encryptPassword("somePassword")
+
+        assertThat(encrypted).contains("\"algorithm\"")
+        assertThat(encrypted).contains("\"tagLength\"")
+        assertThat(encrypted).contains("\"iv\"")
+        assertThat(encrypted).contains("\"ciphertext\"")
+    }
+
+    @Test
+    fun `encryptPassword should produce different output each time (random IV)`() {
+        val password = "samePassword"
+
+        val encrypted1 = underTest.encryptPassword(password)
+        val encrypted2 = underTest.encryptPassword(password)
+
+        assertThat(encrypted1).isNotEqualTo(encrypted2)
+    }
+
+    @Test
+    fun `decryptPassword should return null for invalid input`() {
+        val decrypted = underTest.decryptPassword("not-valid-json-at-all")
+
+        assertThat(decrypted).isNull()
+    }
+
+    @Test
+    fun `decryptPassword should return null for tampered ciphertext`() {
+        val encrypted = underTest.encryptPassword("originalPassword")
+        val tampered = encrypted.dropLast(10) + "AAAAAAAAAA"
+
+        val decrypted = underTest.decryptPassword(tampered)
+
+        assertThat(decrypted).isNull()
+    }
+}
+
+/** A pure JVM AES key provider — no Android KeyStore involved — for use in unit tests. */
+private class FakeKeyStoreRepository : IKeyStoreRepository {
+    private val secretKey: SecretKey by lazy {
+        KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
+    }
+
+    override fun getOrCreateKey(): SecretKey = secretKey
+    override fun getKey(): SecretKey? = secretKey
+    override fun deleteKey() { /* no-op */ }
 }
