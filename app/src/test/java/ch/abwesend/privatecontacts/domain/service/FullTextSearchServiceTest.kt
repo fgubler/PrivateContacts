@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someEmailAddress
 import ch.abwesend.privatecontacts.testutil.databuilders.somePhoneNumber
 import io.mockk.impl.annotations.InjectMockKs
@@ -90,6 +91,59 @@ class FullTextSearchServiceTest : TestBase() {
 
         contact.contactDataSet.forEach { email ->
             assertThat(result).containsSequence((email as EmailAddress).value)
+        }
+    }
+
+    @Test
+    fun `isLongEnough should return false for queries shorter than 3 characters`() {
+        assertThat(underTest.isLongEnough("")).isFalse()
+        assertThat(underTest.isLongEnough("a")).isFalse()
+        assertThat(underTest.isLongEnough("ab")).isFalse()
+    }
+
+    @Test
+    fun `isLongEnough should return true for queries with 3 or more characters`() {
+        assertThat(underTest.isLongEnough("abc")).isTrue()
+        assertThat(underTest.isLongEnough("abcd")).isTrue()
+    }
+
+    @Test
+    fun `prepareQuery should return the query unchanged`() {
+        val query = "Hello World"
+
+        val result = underTest.prepareQuery(query)
+
+        assertThat(result).isEqualTo(query)
+    }
+
+    @Test
+    fun `fulltext search string should contain the middle name, name prefix and name suffix`() {
+        val contact = someContactEditable(
+            middleName = "Aegon",
+            namePrefix = "Lord",
+            nameSuffix = "Jr",
+        )
+
+        val result = underTest.computeFullTextSearchColumn(contact)
+
+        assertThat(result).containsSequence(contact.middleName)
+        assertThat(result).containsSequence(contact.namePrefix)
+        assertThat(result).containsSequence(contact.nameSuffix)
+    }
+
+    @Test
+    fun `fulltext search string should contain the contact group names`() {
+        val contact = someContactEditable(
+            contactGroups = listOf(
+                someContactGroup(name = "Jedi"),
+                someContactGroup(name = "Rebels"),
+            )
+        )
+
+        val result = underTest.computeFullTextSearchColumn(contact)
+
+        contact.contactGroups.forEach { group ->
+            assertThat(result).containsSequence(group.id.name)
         }
     }
 
