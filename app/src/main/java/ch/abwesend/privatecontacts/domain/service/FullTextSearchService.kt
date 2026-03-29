@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactData
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
@@ -34,7 +35,16 @@ class FullTextSearchService {
         )
 
         val additionalData = contactDataSet
-            .mapNotNull { it.formatValueForSearch() }
+            .mapNotNull {
+                val customLabel = (it.type as? ContactDataType.CustomValue)?.customValue
+                val value = it.formatValueForSearch()
+                when {
+                    customLabel == null && value == null -> null
+                    customLabel != null && value != null -> "$customLabel: $value"
+                    customLabel != null -> customLabel
+                    else -> value
+                }
+            }
             .filter { it.isNotEmpty() }
 
         val groupData = contactGroups.map { it.id.name }

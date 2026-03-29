@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -90,5 +91,49 @@ class FullTextSearchServiceTest : TestBase() {
         contact.contactDataSet.forEach { email ->
             assertThat(result).containsSequence((email as EmailAddress).value)
         }
+    }
+
+    @Test
+    fun `fulltext search string should contain custom label and value combined`() {
+        val customLabel = "MyCustomLabel"
+        val phoneValue = "12345"
+        val contact = someContactEditable(
+            contactData = listOf(
+                somePhoneNumber(value = phoneValue, type = ContactDataType.CustomValue(customLabel)),
+            )
+        )
+
+        val result = underTest.computeFullTextSearchColumn(contact)
+
+        assertThat(result).containsSequence("$customLabel: $phoneValue")
+    }
+
+    @Test
+    fun `fulltext search string should contain custom label even without a value`() {
+        val customLabel = "MyCustomLabel"
+        val contact = someContactEditable(
+            contactData = listOf(
+                somePhoneNumber(value = "", type = ContactDataType.CustomValue(customLabel)),
+            )
+        )
+
+        val result = underTest.computeFullTextSearchColumn(contact)
+
+        assertThat(result).containsSequence(customLabel)
+    }
+
+    @Test
+    fun `fulltext search string should contain value without prefix for non-custom label`() {
+        val phoneValue = "12345"
+        val contact = someContactEditable(
+            contactData = listOf(
+                somePhoneNumber(value = phoneValue, type = ContactDataType.Mobile),
+            )
+        )
+
+        val result = underTest.computeFullTextSearchColumn(contact)
+
+        assertThat(result).containsSequence(phoneValue)
+        assertThat(result).doesNotContain(": $phoneValue")
     }
 }
