@@ -11,6 +11,9 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom
@@ -88,21 +91,26 @@ class EncryptionRepository : IEncryptionRepository {
 
     // ---- Password storage (KeyStore-backed AES-256-GCM) ----
 
-    override fun encryptPassword(password: String): String {
-        val key = keyStoreRepository.getOrCreateKey()
-        val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
-            .apply { init(Cipher.ENCRYPT_MODE, key) }
-        val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
+    override fun encryptPassword(password: String): BinaryResult<String, Exception> {
+        return try {
+            val key = keyStoreRepository.getOrCreateKey()
+            val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
+                .apply { init(Cipher.ENCRYPT_MODE, key) }
+            val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
 
-        val encoder = Base64.getEncoder()
-        val payload = EncryptedPasswordPayload(
-            version = JSON_VERSION,
-            algorithm = AES_GCM_TRANSFORMATION,
-            tagLength = GCM_TAG_LENGTH_BITS,
-            iv = encoder.encodeToString(cipher.iv),
-            ciphertext = encoder.encodeToString(cipherText),
-        )
-        return Json.encodeToString(payload)
+            val encoder = Base64.getEncoder()
+            val payload = EncryptedPasswordPayload(
+                version = JSON_VERSION,
+                algorithm = AES_GCM_TRANSFORMATION,
+                tagLength = GCM_TAG_LENGTH_BITS,
+                iv = encoder.encodeToString(cipher.iv),
+                ciphertext = encoder.encodeToString(cipherText),
+            )
+            SuccessResult(Json.encodeToString(payload))
+        } catch (e: Exception) {
+            logger.error("Failed to encrypt backup password", e)
+            ErrorResult(e)
+        }
     }
 
     override fun decryptPassword(encryptedPassword: String): String? = try {

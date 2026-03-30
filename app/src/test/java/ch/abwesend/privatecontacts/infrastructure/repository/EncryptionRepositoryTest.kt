@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
@@ -104,7 +105,9 @@ class EncryptionRepositoryTest : TestBase() {
     fun `encryptPassword and decryptPassword should round-trip correctly`() {
         val password = "mySecretBackupPassword"
 
-        val encrypted = underTest.encryptPassword(password)
+        val result = underTest.encryptPassword(password)
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val encrypted = (result as SuccessResult).value
         val decrypted = underTest.decryptPassword(encrypted)
 
         assertThat(decrypted).isEqualTo(password)
@@ -112,7 +115,9 @@ class EncryptionRepositoryTest : TestBase() {
 
     @Test
     fun `encryptPassword should return a JSON string with expected fields`() {
-        val encrypted = underTest.encryptPassword("somePassword")
+        val result = underTest.encryptPassword("somePassword")
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val encrypted = (result as SuccessResult).value
 
         assertThat(encrypted).contains("\"algorithm\"")
         assertThat(encrypted).contains("\"tagLength\"")
@@ -124,8 +129,13 @@ class EncryptionRepositoryTest : TestBase() {
     fun `encryptPassword should produce different output each time (random IV)`() {
         val password = "samePassword"
 
-        val encrypted1 = underTest.encryptPassword(password)
-        val encrypted2 = underTest.encryptPassword(password)
+        val result1 = underTest.encryptPassword(password)
+        val result2 = underTest.encryptPassword(password)
+
+        assertThat(result1).isInstanceOf(SuccessResult::class.java)
+        assertThat(result2).isInstanceOf(SuccessResult::class.java)
+        val encrypted1 = (result1 as SuccessResult).value
+        val encrypted2 = (result2 as SuccessResult).value
 
         assertThat(encrypted1).isNotEqualTo(encrypted2)
     }
@@ -139,7 +149,7 @@ class EncryptionRepositoryTest : TestBase() {
 
     @Test
     fun `decryptPassword should return null for tampered ciphertext`() {
-        val encrypted = underTest.encryptPassword("originalPassword")
+        val encrypted = (underTest.encryptPassword("originalPassword") as SuccessResult).value
         val tampered = encrypted.dropLast(10) + "AAAAAAAAAA"
 
         val decrypted = underTest.decryptPassword(tampered)

@@ -6,6 +6,8 @@
 
 package ch.abwesend.privatecontacts.domain.repository
 
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+
 interface IEncryptionRepository {
     /**
      * Encrypts [plaintext] with AES-256-GCM using a key derived from [password] via PBKDF2.
@@ -21,7 +23,7 @@ interface IEncryptionRepository {
      * Encrypts [password] with a key stored in the Android KeyStore and returns the
      * result as a Base64-encoded string suitable for storage in DataStore.
      */
-    fun encryptPassword(password: String): String
+    fun encryptPassword(password: String): BinaryResult<String, Exception>
 
     /**
      * Decrypts a password previously encrypted with [encryptPassword].
