@@ -15,6 +15,8 @@ Additional features
 - Creating new contacts in the standard Android database
 - Moving contacts from Private Contacts back the the standard Android contact database (in case that is desired)
 - Support of Imports/Exports in vcf format
+- Periodic, automatic backups to a local folder of your choice
+- Encrypted backups: backup files of periodic backups can optionally be protected with a user-supplied password
 - Protecting the app with biometric prompt
 - Hiding the app by changing the app-name and -icon to "Pocket Calculator" with a calculator-icon.
 
@@ -24,7 +26,6 @@ Additional features
   - Mark contacts as favorites
 - Improvements of caller detection
 - Maybe an additional category of "Anonymized" contacts which are shared with other apps but under an alias.
-- Encryption and password protection
 - Suggestions are always welcome...
 
 ## Technical Restrictions
@@ -71,14 +72,23 @@ All settings in this section define defaults which can be overridden by the user
 - _Contact account_: only relevant for public contacts, defines where they should be stored (e.g. phone-local or in your google account).
 - _VCF version_: VCF is the format in which contacts are exported and can be imported in other contacts apps. This format has a newer version 4 and an older version 3. The older version has fewer features but is more likely to be compatible with older contacts-apps.
 
-#### Security
-- _App authentication_: will add an authentication-step in the app startup. This means that the user will e.g. have to authenticate by fingerprint or face-id before seing the list of contacts. Disclaimer: the app does not implement any of the authentication-methods itself but uses the standard-authentication defined by the operating system (Google is better at this kind of thing).
+#### Section "Security"
+- _App authentication_: will add an authentication-step in the app startup. This means that the user will e.g. have to authenticate by fingerprint or face-id before seeing the list of contacts. The app does not implement any of the authentication-methods itself but delegates to the standard authentication defined by the operating system (e.g. fingerprint, face-id, or PIN).
 
-#### Privacy
+#### Section "Periodic Backup"
+This section controls automatic, scheduled backups of your contacts to a local folder of your choice.
+
+- _Backup frequency_: how often the backup should run automatically. Options are _Disabled_ (no automatic backup), _Daily_, _Weekly_, and _Monthly_.
+- _Contact scope_: which contacts should be included in the backup. Options are _Secret contacts only_, _Public contacts only_, or _All contacts_. Note: including public contacts requires the contacts permission.
+- _Backup folder_: the folder where backup files will be written. Tap the edit-icon to pick a folder. The app will request persistent read/write access to the chosen folder. A backup folder must be selected before automatic backups can run.
+- _Encrypt backups_: if enabled, backup files are encrypted with a password you supply. The encrypted file uses the `.vcf.crypt` extension instead of the usual `.vcf`. When you later import an encrypted backup, you will be asked for the password.
+  - **Important**: if you forget the password, the backup cannot be recovered. There is no password-reset mechanism.
+
+#### Section "Privacy"
 - _Hide app name and icon_: changes the name and icon of the app on the home-screen and in the app-overview. The app pretends to be a simple calculator app named "Pocket Calculator" (the name was chosen to start with the same letter so the app can be more easily found in alphabetical sorting).
   - However, in the system-settings the true name will still appear.
-  - Dependening on your phone, operating system and launcher, you will have to restart your phone to see the change - we appologize for the inconvenience but that is outside of our control.
-- _Send anonymous error reports_: if the app crashes or something goes wrong during its operation, we won't notice unless it happens on one of our phones. That is not satisfying because many bugs only appear under very specific circumstances (like only on one specific model or manufacturer). Therefore, we use Google's "Crashlytics" framework to get error-reports. We make sure that no sensitive information is written into these reports. However, you can ofc turn this off if it makes you uncomfortable. In that case, please let us know about bugs by email.
+  - Depending on your phone, operating system and launcher, you will have to restart your phone to see the change — we apologize for the inconvenience but that is outside of our control.
+- _Send anonymous error reports_: if the app crashes or something goes wrong during its operation, we won't notice unless it happens on one of our phones. That is not satisfying because many bugs only appear under very specific circumstances (like only on one specific model or manufacturer). Therefore, we use Google's "Crashlytics" framework to get error-reports. We make sure that no sensitive information is written into these reports. However, you can of course turn this off if it makes you uncomfortable. In that case, please let us know about bugs by email.
 
 ## Technical Background
 This chapter illustrates some technical background information to help users understand what happens behind the scenes.
@@ -100,15 +110,19 @@ Once a contact is written into the central database, we lose control over it.
 PrivateContacts maintains its own, separate database to store those contacts that are marked as _secret_. That database is in the app's private directory where it cannot be accessed by other apps (unless the device is rooted (jailbroken), but in that case all security-bets are off, anyway).
 
 #### Backups
-A downside of this is ofc that we are now responsible for backing them up: they are no longer synchronized nicely over Google.
-However, Google's "Google One-Backup" (which backs up the app-state of all installed apps for recovery after a factory-reset or on new phone) will cover the private directory of all apps, including the database of secret contacts. 
+A downside of this is of course that we are now responsible for backing them up: they are no longer synchronized nicely over Google.
+However, Google's "Google One-Backup" (which backs up the app-state of all installed apps for recovery after a factory-reset or on new phone) will cover the private directory of all apps, including the database of secret contacts.
 
 On first glance, this may look counter-intuitive to the promise of keeping these contacts secret, however we have decided that it is a risk worth taking, for the following reasons.
 - The convenience of this automatic backup-solution is unquestionable.
 - Google has promised not only publicly but under oath in the US legal system that these backups are end-to-end encrypted and cannot be read by anyone but the user.
   - We have the highest possible trust in Googles technical competence to make sure no one **else** is able to read these backups - if anything we would question their motivation to build in a back-door for themselves.
 - Any user who distrusts this statement can and should disable the entire "Google One-Backup" feature anyway.
-- If that is still not enough for you, probably you should not use an operating system developped and maintained by Google: in the end no app can protect you from the operating system in which it is running.
+- If that is still not enough for you, probably you should not use an operating system developed and maintained by Google: in the end no app can protect you from the operating system in which it is running.
+
+In addition to the Google One-Backup, the app offers its own **periodic backup** feature. It exports your contacts as a `.vcf` file to a folder of your choice at a configurable interval (daily, weekly, or monthly). This gives you full control over where your backup is stored — for example in a folder that is synced by a cloud provider of your choice, or on local storage only.
+
+Optionally, these backup files can be **encrypted** with a password you supply. The file is then saved with a `.vcf.crypt` extension and can only be imported back into the app by providing the correct password. Technically, the file content is encrypted with AES-256-GCM using a key derived from your password via PBKDF2 (310,000 iterations, random salt). Your password itself is never stored in plain text: it is encrypted with a key held in the Android KeyStore (hardware-backed on supported devices) and only the resulting ciphertext is persisted. This means that even if someone gains access to the app's storage, they cannot recover your backup password.
 
 #### Call detection
 The second big disadvantage of keeping our contacts out of the central contacts-database is ofc that not even the standard phone-app can get to them: we are still exploring technical possibilities to allow sharing secret contacts with select apps but have so far been unsuccessful. As a consequence, the call-screen will show an unknown number of one of your secret contacts calls you.
