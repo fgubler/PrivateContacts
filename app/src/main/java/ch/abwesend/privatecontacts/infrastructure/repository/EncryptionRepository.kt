@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom
@@ -92,7 +92,7 @@ class EncryptionRepository : IEncryptionRepository {
     // ---- Password storage (KeyStore-backed AES-256-GCM) ----
 
     override fun encryptPassword(password: String): BinaryResult<String, Exception> {
-        return try {
+        return runCatchingAsResult {
             val key = keyStoreRepository.getOrCreateKey()
             val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
                 .apply { init(Cipher.ENCRYPT_MODE, key) }
@@ -106,10 +106,7 @@ class EncryptionRepository : IEncryptionRepository {
                 iv = encoder.encodeToString(cipher.iv),
                 ciphertext = encoder.encodeToString(cipherText),
             )
-            SuccessResult(Json.encodeToString(payload))
-        } catch (e: Exception) {
-            logger.error("Failed to encrypt backup password", e)
-            ErrorResult(e)
+            Json.encodeToString(payload)
         }
     }
 
