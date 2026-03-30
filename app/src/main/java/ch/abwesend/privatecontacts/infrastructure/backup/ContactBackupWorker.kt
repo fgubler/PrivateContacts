@@ -33,7 +33,7 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
 import kotlinx.coroutines.CancellationException
@@ -232,7 +232,7 @@ class ContactBackupWorker(
         val existingFile = folder.findFile(fileName)
         existingFile?.delete()
 
-        val mimeType = if (encryptionPassword == null) VCF_MAIN_MIME_TYPE else CRYPT_MIME_TYPE
+        val mimeType = if (encryptionPassword == null) VCF_MAIN_MIME_TYPE else CRYPT_PRETENDING_MIME_TYPE
         val file = folder.createFile(mimeType, fileName)
         if (file == null) {
             logger.warning("Failed to create backup file: $fileName")
