@@ -431,6 +431,12 @@
     <string name="backup_completed_with_failures_warning">Automatic backup completed but some contacts could not be exported.</string>
     <string name="backup_permission_missing_warning">Automatic backup skipped for public contacts: read-contacts permission not granted.</string>
     <string name="backup_file_creation_failed_error">Automatic backup failed: could not create backup-file.</string>
+    <string name="backup_encryption_enabled_label">Encrypt backups</string>
+    <string name="backup_encryption_enabled_description">Protect backup files with a password</string>
+    <string name="backup_encryption_password_dialog_title">Backup Encryption Password</string>
+    <string name="backup_encryption_password_label">Password</string>
+    <string name="backup_encryption_password_empty_error">Please enter a password to enable encryption.</string>
+    <string name="backup_decryption_password_dialog_title">Enter Decryption Password</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
 
