@@ -7,13 +7,11 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.security.keystore.KeyProperties
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom

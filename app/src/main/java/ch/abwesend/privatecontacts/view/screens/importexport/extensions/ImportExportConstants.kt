@@ -12,8 +12,10 @@ object ImportExportConstants {
     val VCF_MIME_TYPES = arrayOf("text/vcard", VCF_MAIN_MIME_TYPE)
 
     const val CRYPT_FILE_EXTENSION = "vcf.crypt"
+
     /** during export, set octet-stream to avoid .txt file-extension */
     const val CRYPT_PRETENDING_MIME_TYPE = "application/octet-stream"
+
     /** in truth, it is a json-file */
     const val CRYPT_REAL_MIME_TYPE = "text/plain"
 

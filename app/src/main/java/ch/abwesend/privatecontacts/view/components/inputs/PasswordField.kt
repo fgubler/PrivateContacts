@@ -29,6 +29,7 @@ fun PasswordField(
     var passwordVisible: Boolean by remember { mutableStateOf(false) }
 
     val icon = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility
+
     @StringRes val iconDescriptionRes = if (passwordVisible) R.string.hide_password else R.string.show_password
     val transformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
 
