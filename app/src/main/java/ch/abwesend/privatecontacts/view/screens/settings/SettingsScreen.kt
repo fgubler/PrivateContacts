@@ -58,6 +58,7 @@ import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
@@ -608,6 +609,14 @@ object SettingsScreen {
 
                 BackupFolderField(settingsRepository, currentSettings.backupFolder)
 
+                SettingsEntryDivider()
+
+                BackupEncryptionField(
+                    settingsRepository = settingsRepository,
+                    encryptionEnabled = currentSettings.backupEncryptionEnabled,
+                    viewModel = viewModel,
+                )
+
                 Spacer(Modifier.height(10.dp))
 
                 val context = LocalContext.current
@@ -636,6 +645,43 @@ object SettingsScreen {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun BackupEncryptionField(
+        settingsRepository: SettingsRepository,
+        encryptionEnabled: Boolean,
+        viewModel: SettingsViewModel,
+    ) {
+        var showPasswordDialog by remember { mutableStateOf(false) }
+
+        SettingsCheckbox(
+            label = R.string.backup_encryption_enabled_label,
+            description = R.string.backup_encryption_enabled_description,
+            value = encryptionEnabled,
+            onValueChanged = { newValue ->
+                if (newValue) {
+                    showPasswordDialog = true
+                } else {
+                    viewModel.disableBackupEncryption()
+                }
+            },
+        )
+
+        if (showPasswordDialog) {
+            PasswordInputDialog(
+                title = R.string.backup_encryption_password_dialog_title,
+                label = R.string.backup_encryption_password_label,
+                onConfirm = { password ->
+                    showPasswordDialog = false
+                    viewModel.encryptBackupPassword(password)
+                },
+                onCancel = {
+                    showPasswordDialog = false
+                    settingsRepository.backupEncryptionEnabled = false
+                },
+            )
         }
     }
 

@@ -148,6 +148,14 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
             dataStore.setDateValue(lastBackupDateEntry, value)
         }
 
+    override var backupEncryptionEnabled: Boolean
+        get() = currentSettings.backupEncryptionEnabled
+        set(value) = dataStore.setValue(backupEncryptionEnabledEntry, value)
+
+    override var backupPasswordEncrypted: String
+        get() = currentSettings.backupPasswordEncrypted
+        set(value) = dataStore.setValue(backupPasswordEncryptedEntry, value)
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -209,6 +217,8 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         backupContactScope = settings.backupContactScope
         backupFolder = settings.backupFolder
         lastBackupDate = settings.lastBackupDate
+        backupEncryptionEnabled = settings.backupEncryptionEnabled
+        backupPasswordEncrypted = settings.backupPasswordEncrypted
         appLanguage = settings.appLanguage
 
         /*

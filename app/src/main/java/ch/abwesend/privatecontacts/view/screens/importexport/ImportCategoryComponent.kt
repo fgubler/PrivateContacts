@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.importexport
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.ExperimentalMaterialApi
@@ -23,7 +24,9 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
+import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ProgressAndResultHandler
@@ -31,7 +34,8 @@ import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.Re
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.TargetTypeFields
 import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.ALL_BACKUP_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
 import kotlin.contracts.ExperimentalContracts
 
@@ -81,8 +85,38 @@ object ImportCategoryComponent {
         val importAction = rememberActionWithContactPermission(permissionProvider)
         var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
 
-        val launcher = rememberOpenFileLauncher(mimeTypes = VCF_MIME_TYPES) { sourceFile ->
-            viewModel.importContacts(sourceFile, targetType, selectedAccount, replaceExisting)
+        var showPasswordDialog: Boolean by remember { mutableStateOf(false) }
+        var pendingFileUri: Uri? by remember { mutableStateOf(null) }
+
+        val launcher = rememberOpenFileLauncher(mimeTypes = ALL_BACKUP_MIME_TYPES) { sourceFile ->
+            if (sourceFile != null && sourceFile.path?.endsWith(CRYPT_FILE_EXTENSION) == true) {
+                pendingFileUri = sourceFile
+                showPasswordDialog = true
+            } else {
+                viewModel.importContacts(sourceFile, targetType, selectedAccount, replaceExisting)
+            }
+        }
+
+        if (showPasswordDialog) {
+            PasswordInputDialog(
+                title = R.string.backup_encryption_password_dialog_title,
+                label = R.string.backup_encryption_password_label,
+                onConfirm = { password ->
+                    viewModel.importContacts(
+                        sourceFile = pendingFileUri,
+                        targetType = targetType,
+                        targetAccount = selectedAccount,
+                        replaceExisting = replaceExisting,
+                        decryptionPassword = password
+                    )
+                    showPasswordDialog = false
+                    pendingFileUri = null
+                },
+                onCancel = {
+                    showPasswordDialog = false
+                    pendingFileUri = null
+                },
+            )
         }
 
         importAction.VisibleComponent()

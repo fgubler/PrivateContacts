@@ -63,6 +63,8 @@ interface SettingsRepository : ISettingsState {
     override var backupContactScope: BackupContactScope
     override var backupFolder: String
     override var lastBackupDate: LocalDate
+    override var backupEncryptionEnabled: Boolean
+    override var backupPasswordEncrypted: String
 
     // Others
     override var currentVersion: Int

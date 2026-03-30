@@ -10,6 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
@@ -24,6 +27,8 @@ class SettingsViewModel : ViewModel() {
     private val launcherAppearanceService: LauncherAppearanceService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
     private val backupScheduler: IBackupScheduler by injectAnywhere()
+    private val encryptionRepository: IEncryptionRepository by injectAnywhere()
+    private val settingsRepository: SettingsRepository by injectAnywhere()
 
     fun initialize(settingsRepository: SettingsRepository) {
         if (!permissionService.hasContactReadPermission()) {
@@ -55,5 +60,21 @@ class SettingsViewModel : ViewModel() {
 
     fun triggerOneTimeBackup() {
         backupScheduler.triggerOneTimeBackup()
+    }
+
+    fun encryptBackupPassword(password: String) {
+        when (val result = encryptionRepository.encryptPassword(password)) {
+            is SuccessResult -> {
+                settingsRepository.backupPasswordEncrypted = result.value
+                settingsRepository.backupEncryptionEnabled = true
+            }
+            is ErrorResult -> logger.warning("Failed to encrypt backup password", result.error)
+        }
+    }
+
+    fun disableBackupEncryption() {
+        settingsRepository.backupEncryptionEnabled = false
+        settingsRepository.backupPasswordEncrypted = ""
+        encryptionRepository.deleteKeyStoreKey()
     }
 }

@@ -80,6 +80,8 @@ interface ISettingsState {
     val backupContactScope: BackupContactScope
     val backupFolder: String
     val lastBackupDate: LocalDate
+    val backupEncryptionEnabled: Boolean
+    val backupPasswordEncrypted: String
 
     // Others
     val currentVersion: Int
@@ -125,6 +127,8 @@ data class SettingsState(
     override val backupContactScope: BackupContactScope,
     override val backupFolder: String,
     override val lastBackupDate: LocalDate,
+    override val backupEncryptionEnabled: Boolean,
+    override val backupPasswordEncrypted: String,
 
     override val currentVersion: Int,
     override val previousVersion: Int,
@@ -156,6 +160,8 @@ data class SettingsState(
             backupContactScope = BackupContactScope.default,
             backupFolder = "",
             lastBackupDate = LocalDate.MIN,
+            backupEncryptionEnabled = false,
+            backupPasswordEncrypted = "",
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,

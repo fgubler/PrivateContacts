@@ -153,7 +153,14 @@ internal val lastBackupDateEntry = DateSettingsEntry(
     key = stringPreferencesKey("lastBackupDate"),
     defaultValue = LocalDate.MIN
 )
-
+internal val backupEncryptionEnabledEntry = SettingsEntry(
+    key = booleanPreferencesKey("backupEncryptionEnabled"),
+    defaultValue = defaultSettings.backupEncryptionEnabled
+)
+internal val backupPasswordEncryptedEntry = SettingsEntry(
+    key = stringPreferencesKey("backupPasswordEncrypted"),
+    defaultValue = defaultSettings.backupPasswordEncrypted
+)
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.
