@@ -110,22 +110,21 @@ class EncryptionRepository : IEncryptionRepository {
         }
     }
 
-    override fun decryptPassword(encryptedPassword: String): String? = try {
-        val key = keyStoreRepository.getKey() ?: return null
+    override fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception> =
+        runCatchingAsResult {
+            val key = keyStoreRepository.getKey()
+                ?: throw IllegalStateException("No KeyStore key available")
 
-        val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
-        val decoder = Base64.getDecoder()
-        val iv = decoder.decode(payload.iv)
-        val data = decoder.decode(payload.ciphertext)
+            val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
+            val decoder = Base64.getDecoder()
+            val iv = decoder.decode(payload.iv)
+            val data = decoder.decode(payload.ciphertext)
 
-        val cipher = Cipher.getInstance(payload.algorithm).apply {
-            init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
+            val cipher = Cipher.getInstance(payload.algorithm).apply {
+                init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
+            }
+            cipher.doFinal(data).toString(Charsets.UTF_8)
         }
-        cipher.doFinal(data).toString(Charsets.UTF_8)
-    } catch (e: Exception) {
-        logger.warning("Failed to decrypt backup password", e)
-        null
-    }
 
     override fun deleteKeyStoreKey(): Boolean = keyStoreRepository.deleteKey()
 

@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
@@ -108,7 +109,9 @@ class EncryptionRepositoryTest : TestBase() {
         val result = underTest.encryptPassword(password)
         assertThat(result).isInstanceOf(SuccessResult::class.java)
         val encrypted = (result as SuccessResult).value
-        val decrypted = underTest.decryptPassword(encrypted)
+        val decryptResult = underTest.decryptPassword(encrypted)
+        assertThat(decryptResult).isInstanceOf(SuccessResult::class.java)
+        val decrypted = (decryptResult as SuccessResult).value
 
         assertThat(decrypted).isEqualTo(password)
     }
@@ -141,20 +144,20 @@ class EncryptionRepositoryTest : TestBase() {
     }
 
     @Test
-    fun `decryptPassword should return null for invalid input`() {
-        val decrypted = underTest.decryptPassword("not-valid-json-at-all")
+    fun `decryptPassword should return ErrorResult for invalid input`() {
+        val result = underTest.decryptPassword("not-valid-json-at-all")
 
-        assertThat(decrypted).isNull()
+        assertThat(result).isInstanceOf(ErrorResult::class.java)
     }
 
     @Test
-    fun `decryptPassword should return null for tampered ciphertext`() {
+    fun `decryptPassword should return ErrorResult for tampered ciphertext`() {
         val encrypted = (underTest.encryptPassword("originalPassword") as SuccessResult).value
         val tampered = encrypted.dropLast(10) + "AAAAAAAAAA"
 
-        val decrypted = underTest.decryptPassword(tampered)
+        val result = underTest.decryptPassword(tampered)
 
-        assertThat(decrypted).isNull()
+        assertThat(result).isInstanceOf(ErrorResult::class.java)
     }
 }
 

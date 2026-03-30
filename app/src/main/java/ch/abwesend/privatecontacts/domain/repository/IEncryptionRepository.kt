@@ -27,9 +27,9 @@ interface IEncryptionRepository {
 
     /**
      * Decrypts a password previously encrypted with [encryptPassword].
-     * Returns null if decryption fails.
+     * Returns an [ErrorResult] if decryption fails.
      */
-    fun decryptPassword(encryptedPassword: String): String?
+    fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception>
 
     /**
      * Deletes the KeyStore key used to protect the backup password.
