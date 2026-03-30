@@ -428,6 +428,8 @@
     <string name="backup_file_creation_failed_error">Copia de seguridad automática fallida: no se pudo crear el archivo de copia de seguridad.</string>
     <string name="backup_encryption_enabled_label">Cifrar copias de seguridad</string>
     <string name="backup_encryption_enabled_description">Proteger los archivos de copia de seguridad con una contraseña</string>
+    <string name="backup_encryption_info_dialog_title">Copias de seguridad cifradas</string>
+    <string name="backup_encryption_info_dialog_message">Los archivos de copia de seguridad pueden protegerse con una contraseña de tu elección.\n\nIMPORTANTE: No existe ningún mecanismo para restablecer la contraseña. Si olvidas la contraseña, los datos de los archivos de copia de seguridad cifrados se perderán de forma permanente.</string>
     <string name="backup_encryption_password_dialog_title">Contraseña de cifrado de copia de seguridad</string>
     <string name="backup_encryption_password_label">Contraseña</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>

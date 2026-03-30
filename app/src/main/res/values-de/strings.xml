@@ -428,6 +428,8 @@
     <string name="backup_file_creation_failed_error">Automatisches Backup fehlgeschlagen: Sicherungsdatei konnte nicht erstellt werden.</string>
     <string name="backup_encryption_enabled_label">Backups verschlüsseln</string>
     <string name="backup_encryption_enabled_description">Sicherungsdateien mit einem Passwort schützen</string>
+    <string name="backup_encryption_info_dialog_title">Verschlüsselte Backups</string>
+    <string name="backup_encryption_info_dialog_message">Sicherungsdateien können mit einem Passwort deiner Wahl geschützt werden.\n\nWICHTIG: Es gibt keinen Mechanismus zum Zurücksetzen des Passworts. Wenn du das Passwort vergisst, sind die Daten in den verschlüsselten Sicherungsdateien unwiederbringlich verloren.</string>
     <string name="backup_encryption_password_dialog_title">Backup-Verschlüsselungspasswort</string>
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>

@@ -656,9 +656,11 @@ object SettingsScreen {
     ) {
         var showPasswordDialog by remember { mutableStateOf(false) }
 
-        SettingsCheckbox(
+        SettingsCheckboxWithInfoButton(
             label = R.string.backup_encryption_enabled_label,
             description = R.string.backup_encryption_enabled_description,
+            infoDialogTitle = R.string.backup_encryption_info_dialog_title,
+            infoDialogText = R.string.backup_encryption_info_dialog_message,
             value = encryptionEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {

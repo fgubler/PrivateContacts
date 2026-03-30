@@ -428,6 +428,8 @@
     <string name="backup_file_creation_failed_error">Sauvegarde automatique échouée : impossible de créer le fichier de sauvegarde.</string>
     <string name="backup_encryption_enabled_label">Chiffrer les sauvegardes</string>
     <string name="backup_encryption_enabled_description">Protéger les fichiers de sauvegarde avec un mot de passe</string>
+    <string name="backup_encryption_info_dialog_title">Sauvegardes chiffrées</string>
+    <string name="backup_encryption_info_dialog_message">Les fichiers de sauvegarde peuvent être protégés par un mot de passe de votre choix.\n\nIMPORTANT : Il n\'existe aucun mécanisme de réinitialisation du mot de passe. Si vous oubliez le mot de passe, les données des fichiers de sauvegarde chiffrés seront définitivement perdues.</string>
     <string name="backup_encryption_password_dialog_title">Mot de passe de chiffrement</string>
     <string name="backup_encryption_password_label">Mot de passe</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>

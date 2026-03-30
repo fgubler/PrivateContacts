@@ -428,6 +428,8 @@
     <string name="backup_file_creation_failed_error">Backup automatico fallito: impossibile creare il file di backup.</string>
     <string name="backup_encryption_enabled_label">Cifra i backup</string>
     <string name="backup_encryption_enabled_description">Proteggi i file di backup con una password</string>
+    <string name="backup_encryption_info_dialog_title">Backup cifrati</string>
+    <string name="backup_encryption_info_dialog_message">I file di backup possono essere protetti con una password a tua scelta.\n\nIMPORTANTE: Non esiste alcun meccanismo di reimpostazione della password. Se dimentichi la password, i dati nei file di backup cifrati andranno persi definitivamente.</string>
     <string name="backup_encryption_password_dialog_title">Password di cifratura del backup</string>
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la cifratura.</string>
