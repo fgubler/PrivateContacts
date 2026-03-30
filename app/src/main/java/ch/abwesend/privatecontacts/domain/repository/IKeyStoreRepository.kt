@@ -11,5 +11,7 @@ import javax.crypto.SecretKey
 interface IKeyStoreRepository {
     fun getOrCreateKey(): SecretKey
     fun getKey(): SecretKey?
-    fun deleteKey()
+
+    /** @return true if the deletion was successful */
+    fun deleteKey(): Boolean
 }

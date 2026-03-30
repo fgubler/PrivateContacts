@@ -122,9 +122,7 @@ class EncryptionRepository : IEncryptionRepository {
         null
     }
 
-    override fun deleteKeyStoreKey() {
-        keyStoreRepository.deleteKey()
-    }
+    override fun deleteKeyStoreKey(): Boolean = keyStoreRepository.deleteKey()
 
     private fun generateRandomBytes(size: Int): ByteArray {
         val bytes = ByteArray(size)

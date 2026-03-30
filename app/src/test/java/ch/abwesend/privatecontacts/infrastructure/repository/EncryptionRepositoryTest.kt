@@ -156,5 +156,5 @@ private class FakeKeyStoreRepository : IKeyStoreRepository {
 
     override fun getOrCreateKey(): SecretKey = secretKey
     override fun getKey(): SecretKey? = secretKey
-    override fun deleteKey() { /* no-op */ }
+    override fun deleteKey(): Boolean = true
 }

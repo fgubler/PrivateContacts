@@ -42,16 +42,18 @@ class AndroidKeyStoreRepository : IKeyStoreRepository {
         keyStore.getKey(KEYSTORE_KEY_ALIAS, null) as? SecretKey
     }
 
-    override fun deleteKey() {
-        try {
+    override fun deleteKey(): Boolean {
+        return try {
             withKeyStore { keyStore ->
                 if (keyStore.containsAlias(KEYSTORE_KEY_ALIAS)) {
                     keyStore.deleteEntry(KEYSTORE_KEY_ALIAS)
                     logger.debug("Deleted KeyStore key for backup encryption")
                 }
             }
+            true
         } catch (e: Exception) {
             logger.warning("Failed to delete KeyStore key", e)
+            false
         }
     }
 

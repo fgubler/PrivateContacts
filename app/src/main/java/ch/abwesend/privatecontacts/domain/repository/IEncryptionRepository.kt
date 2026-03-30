@@ -29,6 +29,9 @@ interface IEncryptionRepository {
      */
     fun decryptPassword(encryptedPassword: String): String?
 
-    /** Deletes the KeyStore key used to protect the backup password. */
-    fun deleteKeyStoreKey()
+    /**
+     * Deletes the KeyStore key used to protect the backup password.
+     * @return true if the key was successfully deleted.
+     */
+    fun deleteKeyStoreKey(): Boolean
 }
