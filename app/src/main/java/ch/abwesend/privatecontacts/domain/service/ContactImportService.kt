@@ -18,12 +18,16 @@ import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
+import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.FILE_READING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.util.filterKeysNotNull
 import ch.abwesend.privatecontacts.domain.util.filterValuesNotNull
@@ -37,28 +41,51 @@ class ContactImportService {
     private val fileReadService: FileReadWriteService by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
+    private val encryptionRepository: IEncryptionRepository by injectAnywhere()
 
     suspend fun importContacts(
         sourceFile: Uri,
         targetType: ContactType,
         targetAccount: ContactAccount,
         replaceExistingContacts: Boolean,
+        decryptionPassword: String? = null,
     ): BinaryResult<ContactImportData, VCardParseError> {
-        val contactsToImport = loadContacts(sourceFile, targetType)
+        val contactsToImport = loadContacts(sourceFile, targetType, decryptionPassword)
         return contactsToImport.mapValue { parsedContacts ->
             storeContacts(parsedContacts, targetType, targetAccount, replaceExistingContacts)
         }
     }
 
-    suspend fun loadContacts(sourceFile: Uri, targetType: ContactType): BinaryResult<ParsedData, VCardParseError> =
+    suspend fun loadContacts(
+        sourceFile: Uri,
+        targetType: ContactType,
+        decryptionPassword: String? = null,
+    ): BinaryResult<ParsedData, VCardParseError> =
         withContext(dispatchers.default) {
-            val fileContentResult = fileReadService.readFileContent(sourceFile)
+            val fileContentResult = if (decryptionPassword == null) {
+                fileReadService.readFileContent(sourceFile)
+            } else {
+                readAndDecryptFile(sourceFile, decryptionPassword)
+            }
             fileContentResult
                 .mapError { FILE_READING_FAILED }
                 .mapValueToBinaryResult { fileContent ->
                     importExportRepository.parseContacts(fileContent, targetType)
                 }
         }
+
+    private suspend fun readAndDecryptFile(sourceFile: Uri, password: String): BinaryResult<TextFileContent, Exception> {
+        return when (val textResult = fileReadService.readFileContent(sourceFile)) {
+            is ErrorResult -> ErrorResult(textResult.error)
+            is SuccessResult -> try {
+                val plaintext = encryptionRepository.decrypt(textResult.value.content, password)
+                SuccessResult(TextFileContent(plaintext))
+            } catch (e: Exception) {
+                logger.warning("Failed to decrypt backup file", e)
+                ErrorResult(e)
+            }
+        }
+    }
 
     suspend fun storeContacts(
         parsedContacts: ParsedData,

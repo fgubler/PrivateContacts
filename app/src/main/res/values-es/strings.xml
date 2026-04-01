@@ -426,6 +426,16 @@
     <string name="backup_completed_with_failures_warning">Copia de seguridad automática completada, pero algunos contactos no pudieron exportarse.</string>
     <string name="backup_permission_missing_warning">Copia de seguridad automática omitida para contactos públicos: falta el permiso de lectura de contactos.</string>
     <string name="backup_file_creation_failed_error">Copia de seguridad automática fallida: no se pudo crear el archivo de copia de seguridad.</string>
+    <string name="backup_encryption_enabled_label">Cifrar copias de seguridad</string>
+    <string name="backup_encryption_enabled_description">Proteger los archivos de copia de seguridad con una contraseña</string>
+    <string name="backup_encryption_info_dialog_title">Copias de seguridad cifradas</string>
+    <string name="backup_encryption_info_dialog_message">Los archivos de copia de seguridad pueden protegerse con una contraseña de tu elección.\n\nIMPORTANTE: No existe ningún mecanismo para restablecer la contraseña. Si olvidas la contraseña, los datos de los archivos de copia de seguridad cifrados se perderán de forma permanente.</string>
+    <string name="backup_encryption_password_dialog_title">Contraseña de cifrado de copia de seguridad</string>
+    <string name="backup_encryption_password_label">Contraseña</string>
+    <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
+    <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="hide_password">Ocultar contraseña</string>
 
     <string name="failed_to_select_file">No se pudo seleccionar el archivo</string>
     <string name="new_something">Nuevo</string>

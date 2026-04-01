@@ -16,7 +16,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
-import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class BackupScheduler(private val context: Context) : IBackupScheduler {
@@ -34,25 +33,12 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
                 .setRequiresDeviceIdle(false)
                 .build()
 
-            val now = Calendar.getInstance()
-            val target = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 3)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-                set(Calendar.MILLISECOND, 0)
-                if (before(now)) {
-                    add(Calendar.DAY_OF_MONTH, 1)
-                }
-            }
-
-            val initialDelayMillis = target.timeInMillis - now.timeInMillis
-
             val workRequest = PeriodicWorkRequestBuilder<ContactBackupWorker>(
                 repeatInterval = 24,
                 repeatIntervalTimeUnit = TimeUnit.HOURS,
             )
                 .setConstraints(constraints)
-                .setInitialDelay(initialDelayMillis, TimeUnit.MILLISECONDS)
+                .setInitialDelay(30, TimeUnit.SECONDS)
                 .build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(

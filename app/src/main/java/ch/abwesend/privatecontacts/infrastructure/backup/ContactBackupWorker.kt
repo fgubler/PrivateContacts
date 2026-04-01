@@ -26,11 +26,16 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
+import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -45,6 +50,7 @@ class ContactBackupWorker(
     private val exportService: ContactExportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
     private val fileAccessRepository: IFileAccessRepository by injectAnywhere()
+    private val encryptionRepository: IEncryptionRepository by injectAnywhere()
     private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 
     companion object {
@@ -98,24 +104,25 @@ class ContactBackupWorker(
 
             val vCardVersion = VCardVersion.V4 // always use v4 for backups (no loss)
             val dateString = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+            val encryptionPassword = resolveEncryptionPassword(settings)
 
             val success = when (settings.backupContactScope) {
                 BackupContactScope.ALL -> {
                     coroutineScope {
                         val secretSuccess = async {
-                            exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
+                            exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder, encryptionPassword)
                         }
                         val publicSuccess = async {
-                            exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
+                            exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder, encryptionPassword)
                         }
                         secretSuccess.await() && publicSuccess.await()
                     }
                 }
                 BackupContactScope.SECRET -> {
-                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder)
+                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder, encryptionPassword)
                 }
                 BackupContactScope.PUBLIC -> {
-                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder)
+                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder, encryptionPassword)
                 }
             }
 
@@ -153,11 +160,26 @@ class ContactBackupWorker(
         }
     }
 
+    private fun resolveEncryptionPassword(settings: ISettingsState): String? {
+        return if (!settings.backupEncryptionEnabled || settings.backupPasswordEncrypted.isEmpty()) {
+            null
+        } else {
+            when (val result = encryptionRepository.decryptPassword(settings.backupPasswordEncrypted)) {
+                is SuccessResult -> result.value
+                is ErrorResult -> {
+                    logger.warning("Failed to decrypt backup password; skipping encryption", result.error)
+                    null
+                }
+            }
+        }
+    }
+
     private suspend fun exportContacts(
         type: ContactType,
         dateString: String,
         vCardVersion: VCardVersion,
         documentFolder: DocumentFile,
+        encryptionPassword: String?,
     ): Boolean {
         if (type == ContactType.PUBLIC && !hasAndroidContactsPermission()) {
             logger.warning("Skipping backup of public contacts: READ_CONTACTS permission not granted")
@@ -168,9 +190,10 @@ class ContactBackupWorker(
             return false
         }
 
+        val extension = if (encryptionPassword == null) VCF_FILE_EXTENSION else CRYPT_FILE_EXTENSION
         val fileName = when (type) {
-            ContactType.SECRET -> "backup_secret_$dateString.vcf"
-            ContactType.PUBLIC -> "backup_public_$dateString.vcf"
+            ContactType.SECRET -> "backup_secret_$dateString.$extension"
+            ContactType.PUBLIC -> "backup_public_$dateString.$extension"
         }
         cleanupExistingFile(documentFolder, fileName)
 
@@ -178,7 +201,8 @@ class ContactBackupWorker(
             folder = documentFolder,
             fileName = fileName,
             contactType = type,
-            vCardVersion = vCardVersion
+            vCardVersion = vCardVersion,
+            encryptionPassword = encryptionPassword,
         )
     }
 
@@ -203,11 +227,13 @@ class ContactBackupWorker(
         fileName: String,
         contactType: ContactType,
         vCardVersion: VCardVersion,
+        encryptionPassword: String?,
     ): Boolean {
         val existingFile = folder.findFile(fileName)
         existingFile?.delete()
 
-        val file = folder.createFile(ImportExportConstants.VCF_MAIN_MIME_TYPE, fileName)
+        val mimeType = if (encryptionPassword == null) VCF_MAIN_MIME_TYPE else CRYPT_PRETENDING_MIME_TYPE
+        val file = folder.createFile(mimeType, fileName)
         if (file == null) {
             logger.warning("Failed to create backup file: $fileName")
             addErrorMessage(
@@ -222,6 +248,7 @@ class ContactBackupWorker(
             sourceType = contactType,
             vCardVersion = vCardVersion,
             requestPermission = false, // we already have permission for the folder
+            encryptionPassword = encryptionPassword,
         )
 
         return when (result) {

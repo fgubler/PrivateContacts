@@ -426,6 +426,16 @@
     <string name="backup_completed_with_failures_warning">Automatisches Backup abgeschlossen, aber einige Kontakte konnten nicht exportiert werden.</string>
     <string name="backup_permission_missing_warning">Automatisches Backup für öffentliche Kontakte übersprungen: Berechtigung zum Lesen von Kontakten fehlt.</string>
     <string name="backup_file_creation_failed_error">Automatisches Backup fehlgeschlagen: Sicherungsdatei konnte nicht erstellt werden.</string>
+    <string name="backup_encryption_enabled_label">Backups verschlüsseln</string>
+    <string name="backup_encryption_enabled_description">Sicherungsdateien mit einem Passwort schützen</string>
+    <string name="backup_encryption_info_dialog_title">Verschlüsselte Backups</string>
+    <string name="backup_encryption_info_dialog_message">Sicherungsdateien können mit einem Passwort deiner Wahl geschützt werden.\n\nWICHTIG: Es gibt keinen Mechanismus zum Zurücksetzen des Passworts. Wenn du das Passwort vergisst, sind die Daten in den verschlüsselten Sicherungsdateien unwiederbringlich verloren.</string>
+    <string name="backup_encryption_password_dialog_title">Backup-Verschlüsselungspasswort</string>
+    <string name="backup_encryption_password_label">Passwort</string>
+    <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
+    <string name="backup_decryption_password_dialog_title">Entschlüsselungspasswort eingeben</string>
+    <string name="show_password">Passwort anzeigen</string>
+    <string name="hide_password">Passwort verbergen</string>
 
     <string name="failed_to_select_file">Dateiauswahl fehlgeschlagen</string>
     <string name="new_something">Neu</string>
