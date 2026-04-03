@@ -57,6 +57,7 @@ interface ISettingsScreenContext : IScreenContextBase {
 interface IContactImportExportScreenContext : IScreenContextBase {
     val exportViewModel: ContactExportViewModel
     val importViewModel: ContactImportViewModel
+    fun navigateToSettingsScreen(): Boolean
 }
 
 interface IScreenContext :

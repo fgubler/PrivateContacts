@@ -77,3 +77,17 @@ The method should delete the oldest backups.
 Also add a file periodicBackupDoc.md next to backupEncryptionDoc.md which explains the whole feature of periodic backups. 
 That documentation should reference backupEncryptionDoc.md for the part about encryption.
 It should act as a short and concise explanation of the feature, explaining architectural decisions rather than duplicating the code.
+
+## UI in ImportExportScreen
+Please add another card to ImportExportScreen which is dedicated to periodic backups.
+It should contain an explanation that periodic backups can be managed from SettingsScreen as well as a button to navigate there.
+This should be achieved by adding a method to ImportExportScreenContext to open SettingsScreen.
+
+Additionally, it should contain a button to validate an encrypted backup.
+This should open a file-picker to select a file to validate.
+It should try to read the file-content, decrypt it, parse the VCF-data and display the result.
+The result should show how many contacts were found or what kind of error occurred.
+It should, however, not actually import the contacts.
+
+Use existing code, components and logic as much as possible.
+In the end, also adapt the documentation about periodic backups and encryption in periodicBackupsDoc.md and backupEncryptionDoc.md.

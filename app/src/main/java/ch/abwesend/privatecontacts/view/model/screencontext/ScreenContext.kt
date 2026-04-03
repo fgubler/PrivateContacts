@@ -75,6 +75,10 @@ data class ScreenContext(
         return genericRouter.navigateUp()
     }
 
+    /** from [IContactImportExportScreenContext] */
+    override fun navigateToSettingsScreen(): Boolean =
+        genericRouter.navigateToScreen(Screen.Settings)
+
     override fun refreshSettingsScreen(): Boolean {
         val navOptions = NavOptions.Builder()
             .setPopUpTo(route = Screen.Settings.key, inclusive = true, saveState = false)

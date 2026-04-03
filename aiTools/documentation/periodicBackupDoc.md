@@ -28,5 +28,13 @@ Public and secret contacts are backed up independently into separate files, and 
 ### Cleanup of Old Backups
 After each successful backup, `deleteOldBackups()` is called. It lists all files in the backup folder whose names start with `backup_secret_` or `backup_public_`, sorts them alphabetically (which equals chronological order given the date-based naming), and deletes the oldest ones if the count exceeds the configured limit.
 
+### ImportExport Screen Card
+The `ImportExportScreen` contains a dedicated "Periodic Backup" card (`PeriodicBackupCategoryComponent`) with two actions:
+
+- **Go to Settings**: navigates directly to `SettingsScreen` via `IContactImportExportScreenContext.navigateToSettingsScreen()`, so the user can configure backup frequency, scope, folder, retention, and encryption without leaving the import/export flow.
+- **Validate Encrypted Backup**: opens a file picker (accepting `.vcf` and `.vcf.crypt` files). If a `.vcf.crypt` file is selected, the user is prompted for the decryption password. The file is then read, decrypted (if needed), and parsed via `ContactImportService.loadContacts()`. The result shows how many contacts were found and how many parsing errors occurred. No contacts are actually imported.
+
+The validation result is managed through `ContactImportViewModel.validationResult` (a `ResourceFlow`) and displayed via the shared `ResourceFlowProgressAndResultDialog` component, consistent with the existing import flow.
+
 ### Encryption
 Backup files can optionally be encrypted. See [backupEncryptionDoc.md](backupEncryptionDoc.md) for details on the encryption design, key management, and the `.vcf.crypt` file format.

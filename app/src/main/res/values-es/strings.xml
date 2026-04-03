@@ -442,6 +442,14 @@
     <string name="backup_encryption_password_label">Contraseña</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
     <string name="backup_encryption_password_recovery_failed_error">No se ha podido recuperar la contraseña de cifrado para las copias de seguridad periódicas. Se ha desactivado el cifrado: establece una nueva contraseña para volver a activarlo.</string>
+    <string name="backup_manage_in_settings_description">Las copias de seguridad periódicas se pueden configurar en los Ajustes.</string>
+    <string name="backup_go_to_settings">Ir a Ajustes</string>
+    <string name="backup_validate_button">Validar copia de seguridad cifrada</string>
+    <string name="backup_validate_progress">Validando archivo de copia de seguridad</string>
+    <string name="backup_validate_failed_title">Validación fallida</string>
+    <string name="backup_validate_success_title">Validación exitosa</string>
+    <string name="backup_validate_contacts_found">Contactos encontrados: %1$d</string>
+    <string name="backup_validate_parsing_errors">Errores de lectura: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>

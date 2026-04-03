@@ -442,6 +442,14 @@
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la crittografia.</string>
     <string name="backup_encryption_password_recovery_failed_error">Impossibile recuperare la password di crittografia per i backup periodici. La crittografia è stata disattivata: imposta una nuova password per riattivarla.</string>
+    <string name="backup_manage_in_settings_description">I backup periodici possono essere configurati nelle Impostazioni.</string>
+    <string name="backup_go_to_settings">Vai alle Impostazioni</string>
+    <string name="backup_validate_button">Valida backup cifrato</string>
+    <string name="backup_validate_progress">Validazione del file di backup</string>
+    <string name="backup_validate_failed_title">Validazione fallita</string>
+    <string name="backup_validate_success_title">Validazione riuscita</string>
+    <string name="backup_validate_contacts_found">Contatti trovati: %1$d</string>
+    <string name="backup_validate_parsing_errors">Errori di lettura: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Inserire la password di decrittografia</string>
     <string name="show_password">Mostrare password</string>
     <string name="hide_password">Nascondere password</string>

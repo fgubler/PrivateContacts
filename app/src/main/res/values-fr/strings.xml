@@ -442,6 +442,14 @@
     <string name="backup_encryption_password_label">Mot de passe</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>
     <string name="backup_encryption_password_recovery_failed_error">Impossible de récupérer le mot de passe de chiffrement pour les sauvegardes périodiques. Le chiffrement a été désactivé : veuillez définir un nouveau mot de passe pour le réactiver.</string>
+    <string name="backup_manage_in_settings_description">Les sauvegardes périodiques peuvent être configurées dans les Paramètres.</string>
+    <string name="backup_go_to_settings">Aller aux Paramètres</string>
+    <string name="backup_validate_button">Valider la sauvegarde chiffrée</string>
+    <string name="backup_validate_progress">Validation du fichier de sauvegarde</string>
+    <string name="backup_validate_failed_title">Validation échouée</string>
+    <string name="backup_validate_success_title">Validation réussie</string>
+    <string name="backup_validate_contacts_found">Contacts trouvés : %1$d</string>
+    <string name="backup_validate_parsing_errors">Erreurs de lecture : %1$d</string>
     <string name="backup_decryption_password_dialog_title">Entrer le mot de passe de déchiffrement</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>

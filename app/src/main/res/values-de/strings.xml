@@ -442,6 +442,14 @@
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
     <string name="backup_encryption_password_recovery_failed_error">Das Passwort für die Verschlüsselung periodischer Backups konnte nicht gelesen werden. Die Verschlüsselung wurde deaktiviert: Bitte legen Sie ein neues Passwort fest, um sie wieder zu aktivieren.</string>
+    <string name="backup_manage_in_settings_description">Periodische Backups können in den Einstellungen konfiguriert werden.</string>
+    <string name="backup_go_to_settings">Zu den Einstellungen</string>
+    <string name="backup_validate_button">Verschlüsseltes Backup prüfen</string>
+    <string name="backup_validate_progress">Backup-Datei wird geprüft</string>
+    <string name="backup_validate_failed_title">Prüfung fehlgeschlagen</string>
+    <string name="backup_validate_success_title">Prüfung erfolgreich</string>
+    <string name="backup_validate_contacts_found">Gefundene Kontakte: %1$d</string>
+    <string name="backup_validate_parsing_errors">Lesefehler: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Entschlüsselungspasswort eingeben</string>
     <string name="show_password">Passwort anzeigen</string>
     <string name="hide_password">Passwort verbergen</string>
