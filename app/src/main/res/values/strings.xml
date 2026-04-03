@@ -438,6 +438,7 @@
     <string name="backup_encryption_password_dialog_title">Backup Encryption Password</string>
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_empty_error">Please enter a password to enable encryption.</string>
+    <string name="backup_encryption_password_recovery_failed_error">Failed to recover the encryption password for periodic backups. Encryption has been disabled: please set a new password to enable it again.</string>
     <string name="backup_decryption_password_dialog_title">Enter Decryption Password</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>

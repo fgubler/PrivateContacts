@@ -55,3 +55,9 @@ After implementing the feature, create a short and concise documentation about i
 Store that documentation in the folder 'aiTools/documentation' by
 - either creating a new markdown file for that feature or topic
 - or adding a new section to an existing markdown file
+
+## Handle missing key-store entry
+Looking at ContactBackupWorker: please adapt resolveEncryptionPassword() as follows:
+If encryption is enabled but the encryption-password cannot be recovered, the method should
+- disable the encryption-feature
+- call addErrorMessage() to inform the user (at the next startup) that the password could not be recovered and encryption does not work.

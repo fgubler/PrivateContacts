@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <!--
   ~ Private Contacts
@@ -433,6 +433,7 @@
     <string name="backup_encryption_password_dialog_title">Mot de passe de chiffrement</string>
     <string name="backup_encryption_password_label">Mot de passe</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>
+    <string name="backup_encryption_password_recovery_failed_error">Impossible de récupérer le mot de passe de chiffrement pour les sauvegardes périodiques. Le chiffrement a été désactivé : veuillez définir un nouveau mot de passe pour le réactiver.</string>
     <string name="backup_decryption_password_dialog_title">Entrer le mot de passe de déchiffrement</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>

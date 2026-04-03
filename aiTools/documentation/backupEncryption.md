@@ -65,6 +65,14 @@ Storing the algorithm parameters inside the JSON enables future changes to itera
 All encryption logic is encapsulated in `EncryptionRepository` (implementing `IEncryptionRepository`), registered as a Koin singleton. 
 This keeps encryption concerns isolated from backup and import/export logic.
 
+### Password Recovery Failure Handling
+
+When a periodic backup runs and encryption is enabled, but the decryption of the stored password fails (e.g. the KeyStore key was deleted or the device was reset):
+
+1. Encryption is **automatically disabled** (`Settings.repository.backupEncryptionEnabled = false`).
+2. An **error message** is persisted via `addErrorMessage()` so the user is informed at the next app startup that the password could not be recovered and encryption has been turned off.
+3. The backup proceeds **without encryption** rather than failing silently or crashing.
+
 ---
 
 ## File Format

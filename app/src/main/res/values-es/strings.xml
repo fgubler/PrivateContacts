@@ -433,6 +433,7 @@
     <string name="backup_encryption_password_dialog_title">Contraseña de cifrado de copia de seguridad</string>
     <string name="backup_encryption_password_label">Contraseña</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
+    <string name="backup_encryption_password_recovery_failed_error">No se ha podido recuperar la contraseña de cifrado para las copias de seguridad periódicas. Se ha desactivado el cifrado: establece una nueva contraseña para volver a activarlo.</string>
     <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>

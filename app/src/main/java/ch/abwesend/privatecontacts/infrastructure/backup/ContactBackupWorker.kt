@@ -160,14 +160,19 @@ class ContactBackupWorker(
         }
     }
 
-    private fun resolveEncryptionPassword(settings: ISettingsState): String? {
+    private suspend fun resolveEncryptionPassword(settings: ISettingsState): String? {
         return if (!settings.backupEncryptionEnabled || settings.backupPasswordEncrypted.isEmpty()) {
             null
         } else {
             when (val result = encryptionRepository.decryptPassword(settings.backupPasswordEncrypted)) {
                 is SuccessResult -> result.value
                 is ErrorResult -> {
-                    logger.warning("Failed to decrypt backup password; skipping encryption", result.error)
+                    logger.warning("Failed to decrypt backup password; disabling encryption", result.error)
+                    Settings.repository.backupEncryptionEnabled = false
+                    addErrorMessage(
+                        text = applicationContext.getString(R.string.backup_encryption_password_recovery_failed_error),
+                        severity = BackupMessageSeverity.ERROR
+                    )
                     null
                 }
             }
