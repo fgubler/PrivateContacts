@@ -61,15 +61,17 @@ class ContactExportService {
                     requestPermission = requestPermission
                 )
             } else {
-                val ciphertext = encryptionRepository.encrypt(
+                val encryptionResult = encryptionRepository.encrypt(
                     plaintext = createdVCards.fileContent.content,
                     password = encryptionPassword
                 )
-                fileAccessRepository.writeFile(
-                    fileContent = TextFileContent(ciphertext),
-                    file = targetFile,
-                    requestPermission = requestPermission
-                )
+                encryptionResult.mapValueToResult { ciphertext ->
+                    fileAccessRepository.writeFile(
+                        fileContent = TextFileContent(ciphertext),
+                        file = targetFile,
+                        requestPermission = requestPermission
+                    )
+                }
             }
 
             writeResult
