@@ -76,16 +76,11 @@ class ContactImportService {
         }
 
     private suspend fun readAndDecryptFile(sourceFile: Uri, password: String): BinaryResult<TextFileContent, Exception> {
-        return when (val textResult = fileReadService.readFileContent(sourceFile)) {
-            is ErrorResult -> ErrorResult(textResult.error)
-            is SuccessResult -> try {
-                val plaintext = encryptionRepository.decrypt(textResult.value.content, password)
-                SuccessResult(TextFileContent(plaintext))
-            } catch (e: Exception) {
-                logger.warning("Failed to decrypt backup file", e)
-                ErrorResult(e)
+        return fileReadService.readFileContent(sourceFile)
+            .mapValueToResult { textResult ->
+                encryptionRepository.decrypt(textResult.content, password)
+                    .mapValue { plainText -> TextFileContent(plainText) }
             }
-        }
     }
 
     suspend fun storeContacts(
