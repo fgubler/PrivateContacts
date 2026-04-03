@@ -7,7 +7,9 @@
 package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.security.keystore.KeyProperties
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
@@ -64,7 +66,7 @@ class EncryptionRepository : IEncryptionRepository {
             ciphertext = encoder.encodeToString(ciphertextBytes),
         )
         Json.encodeToString(payload)
-    }
+    }.ifError { logger.error("Encryption failed", it) }
 
     override fun decrypt(ciphertext: String, password: String): BinaryResult<String, Exception> = runCatchingAsResult {
         val decoder = Base64.getDecoder()
@@ -78,7 +80,7 @@ class EncryptionRepository : IEncryptionRepository {
             init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
         }
         cipher.doFinal(data).toString(Charsets.UTF_8)
-    }
+    }.ifError { logger.error("Decryption failed", it) }
 
     private fun deriveKey(password: String, salt: ByteArray, iterations: Int, keySize: Int): SecretKey {
         val spec = PBEKeySpec(password.toCharArray(), salt, iterations, keySize)
@@ -89,40 +91,37 @@ class EncryptionRepository : IEncryptionRepository {
 
     // ---- Password storage (KeyStore-backed AES-256-GCM) ----
 
-    override fun encryptPassword(password: String): BinaryResult<String, Exception> {
-        return runCatchingAsResult {
-            val key = keyStoreRepository.getOrCreateKey()
-            val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
-                .apply { init(Cipher.ENCRYPT_MODE, key) }
-            val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
+    override fun encryptPassword(password: String): BinaryResult<String, Exception> = runCatchingAsResult {
+        val key = keyStoreRepository.getOrCreateKey()
+        val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
+            .apply { init(Cipher.ENCRYPT_MODE, key) }
+        val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
 
-            val encoder = Base64.getEncoder()
-            val payload = EncryptedPasswordPayload(
-                version = JSON_VERSION,
-                algorithm = AES_GCM_TRANSFORMATION,
-                tagLength = GCM_TAG_LENGTH_BITS,
-                iv = encoder.encodeToString(cipher.iv),
-                ciphertext = encoder.encodeToString(cipherText),
-            )
-            Json.encodeToString(payload)
+        val encoder = Base64.getEncoder()
+        val payload = EncryptedPasswordPayload(
+            version = JSON_VERSION,
+            algorithm = AES_GCM_TRANSFORMATION,
+            tagLength = GCM_TAG_LENGTH_BITS,
+            iv = encoder.encodeToString(cipher.iv),
+            ciphertext = encoder.encodeToString(cipherText),
+        )
+        Json.encodeToString(payload)
+    }.ifError { logger.error("Password encryption failed", it) }
+
+    override fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception> = runCatchingAsResult {
+        val key = keyStoreRepository.getKey()
+            ?: throw IllegalStateException("No KeyStore key available")
+
+        val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
+        val decoder = Base64.getDecoder()
+        val iv = decoder.decode(payload.iv)
+        val data = decoder.decode(payload.ciphertext)
+
+        val cipher = Cipher.getInstance(payload.algorithm).apply {
+            init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
         }
-    }
-
-    override fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception> =
-        runCatchingAsResult {
-            val key = keyStoreRepository.getKey()
-                ?: throw IllegalStateException("No KeyStore key available")
-
-            val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
-            val decoder = Base64.getDecoder()
-            val iv = decoder.decode(payload.iv)
-            val data = decoder.decode(payload.ciphertext)
-
-            val cipher = Cipher.getInstance(payload.algorithm).apply {
-                init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
-            }
-            cipher.doFinal(data).toString(Charsets.UTF_8)
-        }
+        cipher.doFinal(data).toString(Charsets.UTF_8)
+    }.ifError { logger.error("Password decryption failed", it) }
 
     override fun deleteKeyStoreKey(): Boolean = keyStoreRepository.deleteKey()
 
