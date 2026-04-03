@@ -282,7 +282,7 @@
     <string name="settings_category_default_values">Standardwerte</string>
     <string name="settings_category_miscellaneous">Verschiedenes</string>
     <string name="settings_category_security">Sicherheit</string>
-    <string name="settings_category_periodic_backup">Regelmässige Backups</string>
+    <string name="settings_category_periodic_backup">Periodische Backups</string>
     <string name="settings_category_call_detection">Anruferkennung</string>
     <string name="settings_category_call_detection_excuse">Leider ist die Anruferkennung für Android-Version 9 nicht verfügbar. Google hat hier die Berechtigungen problematisch gestaltet. Die Funktion funktioniert daher für alle Versionen ausser Version 9. Wir bitten um Entschuldigung.</string>
     <string name="settings_category_privacy">Datenschutz</string>
@@ -401,7 +401,7 @@
     <string name="export_complete_title">Export abgeschlossen</string>
     <string name="export_failed_contacts">Kontakte, die nicht exportiert werden konnten</string>
 
-    <string name="backup_title">Regelmässiges Backup</string>
+    <string name="backup_title">Periodisches Backup</string>
     <string name="backup_frequency_label">Backup-Häufigkeit</string>
     <string name="backup_frequency_disabled">Deaktiviert</string>
     <string name="backup_frequency_daily">Täglich</string>
@@ -494,6 +494,7 @@
     <string name="release_notes_v85">Übersetzungen für Deutsch, Französisch, Italienisch und Spanisch hinzugefügt.</string>
     <string name="release_notes_v87">Es wurde die Option hinzugefügt, öffentliche Kontakte in allen auf dem Gerät registrierten Konten zu speichern. Bisher wurden nur Google-Konten und lokale Telefonkontakte unterstützt.</string>
     <string name="release_notes_v90">Es wurde die Option hinzugefügt, alle eingehenden Anrufe von unbekannten Nummern zu blockieren. Dabei werden sowohl private als auch öffentliche Kontakte berücksichtigt.</string>
-    <string name="release_notes_v93">Die Option wurde hinzugefügt, regelmässige Backups zu planen.</string>
+    <string name="release_notes_v93">Die Option wurde hinzugefügt, periodische Backups zu planen.</string>
+    <string name="release_notes_v101">Die Möglichkeit wurde hinzugefügt, periodische Backups zu verschlüsseln.</string>
 
 </resources>

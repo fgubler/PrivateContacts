@@ -500,4 +500,5 @@
     <string name="release_notes_v87">Added the option to store public contacts in all accounts which are registered on the device. Previously, only Google-Accounts and the local phone contacts were possible.</string>
     <string name="release_notes_v90">Added the option to block all incoming calls from unknown numbers. Both private and public contacts are considered for this.</string>
     <string name="release_notes_v93">Added the option of automatic, periodic backups in the settings.</string>
+    <string name="release_notes_v101">Added the possibility to encrypt periodic backups.</string>
 </resources>
