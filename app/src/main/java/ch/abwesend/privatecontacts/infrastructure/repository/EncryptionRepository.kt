@@ -18,6 +18,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom
 import java.util.Base64
+import javax.crypto.AEADBadTagException
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.SecretKeyFactory
@@ -80,7 +81,13 @@ class EncryptionRepository : IEncryptionRepository {
             init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
         }
         cipher.doFinal(data).toString(Charsets.UTF_8)
-    }.ifError { logger.error("Decryption failed", it) }
+    }.ifError {
+        if (it is AEADBadTagException) {
+            logger.error("Decryption failed due to invalid password", it)
+        } else {
+            logger.error("Decryption failed", it)
+        }
+    }
 
     private fun deriveKey(password: String, salt: ByteArray, iterations: Int, keySize: Int): SecretKey {
         val spec = PBEKeySpec(password.toCharArray(), salt, iterations, keySize)

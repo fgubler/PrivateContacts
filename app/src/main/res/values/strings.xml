@@ -377,8 +377,9 @@
     <string name="import_contacts_progress">Contacts are being imported</string>
     <string name="import_complete_title">Import complete</string>
     <string name="import_failed_title">Import failed</string>
-    <string name="file_reading_failed">Failed to read file</string>
-    <string name="vcf_parsing_failed">Failed to read VCF in file</string>
+    <string name="file_reading_failed">Failed to read the file</string>
+    <string name="decryption_failed">Failed to decrypt the file: please check your password and try again</string>
+    <string name="vcf_parsing_failed">Failed to read the VCF in the file</string>
     <string name="newly_imported_contacts">Newly imported contacts:</string>
     <string name="replaced_existing_contacts">Replaced contacts:</string>
     <string name="vcf_parsing_errors">VCF errors:</string>

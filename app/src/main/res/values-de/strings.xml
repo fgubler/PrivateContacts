@@ -372,7 +372,8 @@
     <string name="import_contacts_progress">Kontakte werden importiert</string>
     <string name="import_complete_title">Import abgeschlossen</string>
     <string name="import_failed_title">Import fehlgeschlagen</string>
-    <string name="file_reading_failed">Datei konnte nicht gelesen werden</string>
+    <string name="file_reading_failed">Die Datei konnte nicht gelesen werden</string>
+    <string name="decryption_failed">Die Datei konnte nicht entschlüsselt werden: Stimmt das Passwort?</string>
     <string name="vcf_parsing_failed">VCF konnte aus Datei nicht gelesen werden</string>
     <string name="newly_imported_contacts">Neu importierte Kontakte:</string>
     <string name="replaced_existing_contacts">Ersetzte Kontakte:</string>

@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.R
 
 enum class VCardImportError(@StringRes val label: Int) {
     FILE_READING_FAILED(R.string.file_reading_failed),
+    DECRYPTION_FAILED(R.string.decryption_failed),
     VCF_PARSING_FAILED(R.string.vcf_parsing_failed),
 }
 

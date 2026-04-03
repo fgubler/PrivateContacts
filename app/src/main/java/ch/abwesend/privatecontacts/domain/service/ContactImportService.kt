@@ -64,22 +64,26 @@ class ContactImportService {
         withContext(dispatchers.default) {
             val fileContentResult = if (decryptionPassword == null) {
                 fileReadService.readFileContent(sourceFile)
+                    .mapError { FILE_READING_FAILED }
             } else {
                 readAndDecryptFile(sourceFile, decryptionPassword)
             }
-            fileContentResult
-                .mapError { FILE_READING_FAILED }
-                .mapValueToResult { fileContent ->
-                    importExportRepository.parseContacts(fileContent, targetType)
-                }
+            fileContentResult.mapValueToResult { fileContent ->
+                importExportRepository.parseContacts(fileContent, targetType)
+            }
         }
 
-    private suspend fun readAndDecryptFile(sourceFile: Uri, password: String): BinaryResult<TextFileContent, Exception> {
+    private suspend fun readAndDecryptFile(
+        sourceFile: Uri,
+        password: String,
+    ): BinaryResult<TextFileContent, VCardImportError> {
         return fileReadService.readFileContent(sourceFile)
+            .mapError { FILE_READING_FAILED }
             .mapValueToResult { textResult ->
                 encryptionRepository.decrypt(textResult.content, password)
                     .mapValue { plainText -> TextFileContent(plainText) }
             }
+            .mapError { DECRYPTION_FAILED }
     }
 
     suspend fun storeContacts(
