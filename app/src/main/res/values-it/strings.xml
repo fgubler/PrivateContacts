@@ -444,7 +444,8 @@
     <string name="backup_encryption_password_recovery_failed_error">Impossibile recuperare la password di crittografia per i backup periodici. La crittografia è stata disattivata: imposta una nuova password per riattivarla.</string>
     <string name="backup_manage_in_settings_description">I backup periodici possono essere configurati nelle Impostazioni.</string>
     <string name="backup_go_to_settings">Vai alle Impostazioni</string>
-    <string name="backup_validate_button">Valida backup cifrato</string>
+    <string name="backup_validate_description">Validi i backup e le esportazioni senza importare i contatti contenuti.</string>
+    <string name="backup_validate_button">Valida backup</string>
     <string name="backup_validate_progress">Validazione del file di backup</string>
     <string name="backup_validate_failed_title">Validazione fallita</string>
     <string name="backup_validate_success_title">Validazione riuscita</string>

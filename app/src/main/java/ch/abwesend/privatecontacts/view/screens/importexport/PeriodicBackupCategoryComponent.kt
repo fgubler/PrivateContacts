@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.view.screens.importexport
 import android.net.Uri
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -49,18 +50,19 @@ object PeriodicBackupCategoryComponent {
 
         ImportExportCategory(title = R.string.backup_title) {
             Text(text = stringResource(id = R.string.backup_manage_in_settings_description))
-
             Spacer(modifier = Modifier.height(10.dp))
             SecondaryButton(
                 onClick = { screenContext.navigateToSettingsScreen() },
                 content = {
-                    Text(
-                        text = stringResource(id = R.string.backup_go_to_settings),
-                        textAlign = TextAlign.Center,
-                    )
+                    Text(text = stringResource(id = R.string.backup_go_to_settings))
                 }
             )
 
+            Spacer(modifier = Modifier.height(5.dp))
+            Divider()
+            Spacer(modifier = Modifier.height(5.dp))
+
+            Text(text = stringResource(id = R.string.backup_validate_description))
             Spacer(modifier = Modifier.height(10.dp))
             ValidateBackupButton(viewModel)
         }
