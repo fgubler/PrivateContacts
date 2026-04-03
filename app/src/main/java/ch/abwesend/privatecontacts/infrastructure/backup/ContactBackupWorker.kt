@@ -283,11 +283,12 @@ class ContactBackupWorker(
                 val backupFiles = documentFolder.listFiles()
                     .filter { it.name?.startsWith(prefix) == true }
                     .sortedBy { it.name } // that also sorts by date (ascending)
-                val toDelete = backupFiles.size - numberOfBackupsToKeep.maxCount
+                val toDelete = (backupFiles.size - numberOfBackupsToKeep.maxCount).coerceAtLeast(0)
                 backupFiles.take(toDelete).forEach { file ->
                     logger.debug("Deleting old backup: ${file.name}")
                     file.delete()
                 }
+                logger.info("Deleted $toDelete old backups for $type")
             } catch (e: Exception) {
                 logger.warning("Failed to delete old backups for $type", e)
                 addErrorMessage(
