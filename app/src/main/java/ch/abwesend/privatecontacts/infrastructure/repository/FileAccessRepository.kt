@@ -19,6 +19,8 @@ import ch.abwesend.privatecontacts.domain.model.importexport.BinaryFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.repository.BinaryFileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileWriteResult
@@ -36,23 +38,19 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
     private val dispatchers: IDispatchers by injectAnywhere()
 
     override suspend fun readTextFileContent(fileUri: Uri, requestPermission: Boolean): FileReadResult =
-        try {
+        runCatchingAsResult {
             val content = readFileContent(fileUri, requestPermission) { inputStream ->
                 inputStream.bufferedReader().use { reader ->
                     reader.readText()
                 }
             }.orEmpty()
-            val fileContent = TextFileContent(content)
 
-            logger.debug("Read ${fileContent.numberOfLines} lines from file")
-            SuccessResult(value = fileContent)
-        } catch (e: Exception) {
-            logger.warning("Failed to read file content", e)
-            ErrorResult(error = e)
-        }
+            TextFileContent(content)
+                .also { fileContent -> logger.debug("Read ${fileContent.numberOfLines} lines from file") }
+        }.ifError { logger.warning("Failed to read file content", it) }
 
     override suspend fun readBinaryFileContent(fileUri: Uri, requestPermission: Boolean): BinaryFileReadResult =
-        try {
+        runCatchingAsResult {
             val content = readFileContent(fileUri, requestPermission) { inputStream ->
                 inputStream.readBytes()
             } ?: ByteArray(0)
@@ -61,13 +59,9 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 throw IllegalArgumentException("File is too large: ${content.size / 1024 / 1024}MB!")
             }
 
-            val fileContent = BinaryFileContent(content)
-            logger.debug("Read binary file")
-            SuccessResult(value = fileContent)
-        } catch (e: Exception) {
-            logger.warning("Failed to read file content", e)
-            ErrorResult(error = e)
-        }
+            BinaryFileContent(content)
+                .also { logger.debug("Read binary file") }
+        }.ifError { logger.error("Failed to read file content", it) }
 
     private suspend fun <T> readFileContent(fileUri: Uri, requestPermission: Boolean, readContent: suspend (FileInputStream) -> T): T? =
         withContext(dispatchers.io) {
@@ -119,7 +113,7 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                 deleteFileOnError(contentResolver, file)
                 ErrorResult(error = e)
             }
-        }
+        }.ifError { logger.warning("Failed to write to file", it) }
 
     override fun deleteFileIfEmpty(fileUri: Uri) {
         val contentResolver = context.contentResolver
