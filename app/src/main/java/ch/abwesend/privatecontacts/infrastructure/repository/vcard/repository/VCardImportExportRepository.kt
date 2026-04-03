@@ -12,8 +12,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.VCF_PARSING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -37,7 +37,7 @@ class VCardImportExportRepository : IVCardImportExportRepository {
 
         return try {
             if (successfulVCards.isEmpty()) {
-                ErrorResult(VCardCreateError.NO_CONTACTS_TO_EXPORT)
+                ErrorResult(VCardExportError.NO_CONTACTS_TO_EXPORT)
             } else {
                 val fileContent = repository.exportVCards(successfulVCards, vCardVersion)
                 val partialResult = ContactExportPartialData.CreatedVCards(fileContent, failedContacts)
@@ -45,7 +45,7 @@ class VCardImportExportRepository : IVCardImportExportRepository {
             }
         } catch (e: Exception) {
             logger.error("Failed to export vcf file", e)
-            ErrorResult(VCardCreateError.VCF_SERIALIZATION_FAILED)
+            ErrorResult(VCardExportError.VCF_SERIALIZATION_FAILED)
         }
     }
 

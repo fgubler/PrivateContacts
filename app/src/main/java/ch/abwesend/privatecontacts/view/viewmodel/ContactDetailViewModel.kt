@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contact.toContactEditable
 import ch.abwesend.privatecontacts.domain.model.importexport.BinaryFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -56,8 +56,8 @@ class ContactDetailViewModel : ViewModel() {
     private val _typeChangeResult = EventFlow.createShared<ContactSaveResult>()
     val typeChangeResult: Flow<ContactSaveResult> = _typeChangeResult
 
-    private val _exportResult = EventFlow.createShared<BinaryResult<ContactExportData, VCardCreateError>>()
-    val exportResult: Flow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
+    private val _exportResult = EventFlow.createShared<BinaryResult<ContactExportData, VCardExportError>>()
+    val exportResult: Flow<BinaryResult<ContactExportData, VCardExportError>> = _exportResult
 
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()

@@ -7,8 +7,8 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError.VCF_SERIALIZATION_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError.VCF_SERIALIZATION_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -65,7 +65,7 @@ class ContactExportServiceTest : TestBase() {
 
         coVerify { fileWriteService.writeContentToFile(partialData.fileContent, file) }
         assertThat(result).isInstanceOf(ErrorResult::class.java)
-        assertThat(result.getErrorOrNull()).isEqualTo(VCardCreateError.FILE_WRITING_FAILED)
+        assertThat(result.getErrorOrNull()).isEqualTo(VCardExportError.FILE_WRITING_FAILED)
     }
 
     @Test

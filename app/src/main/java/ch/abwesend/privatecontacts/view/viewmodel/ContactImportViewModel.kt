@@ -21,7 +21,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -38,8 +38,8 @@ class ContactImportViewModel : ViewModel() {
     val targetAccount: State<ContactAccount?> = _targetAccount
 
     /** implemented as a resource to show a loading-indicator during import */
-    private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
-    val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _importResult
+    private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _importResult
 
     fun selectTargetType(contactType: ContactType) {
         _targetType.value = contactType

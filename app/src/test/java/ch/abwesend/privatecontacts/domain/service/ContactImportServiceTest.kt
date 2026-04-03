@@ -13,8 +13,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType.PUBLIC
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.FILE_READING_FAILED
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.VCF_PARSING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.FILE_READING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.VCF_PARSING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError.NAME_NOT_SET
