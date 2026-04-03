@@ -41,7 +41,7 @@ class EncryptionRepository : IEncryptionRepository {
 
     // ---- File encryption (password-based AES-256-GCM with PBKDF2) ----
 
-    override fun encrypt(plaintext: String, password: String): String {
+    override fun encrypt(plaintext: String, password: String): BinaryResult<String, Exception> = runCatchingAsResult {
         val salt = generateRandomBytes(PBKDF2_SALT_LENGTH_BYTES)
         val initializationVector = generateRandomBytes(GCM_IV_LENGTH_BYTES)
         val key = deriveKey(password, salt, PBKDF2_ITERATIONS, AES_KEY_SIZE_BITS)
@@ -63,7 +63,7 @@ class EncryptionRepository : IEncryptionRepository {
             iv = encoder.encodeToString(initializationVector),
             ciphertext = encoder.encodeToString(ciphertextBytes),
         )
-        return Json.encodeToString(payload)
+        Json.encodeToString(payload)
     }
 
     override fun decrypt(ciphertext: String, password: String): String {

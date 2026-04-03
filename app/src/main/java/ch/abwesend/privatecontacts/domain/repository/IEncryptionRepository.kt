@@ -14,7 +14,7 @@ interface IEncryptionRepository {
      * Returns a JSON string containing all parameters (algorithm, iterations, salt, IV, ciphertext)
      * needed for decryption, with binary values Base64-encoded.
      */
-    fun encrypt(plaintext: String, password: String): String
+    fun encrypt(plaintext: String, password: String): BinaryResult<String, Exception>
 
     /** Decrypts a JSON string previously produced by [encrypt]. */
     fun decrypt(ciphertext: String, password: String): String
