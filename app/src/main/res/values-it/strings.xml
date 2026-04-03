@@ -373,6 +373,7 @@
     <string name="import_complete_title">Importazione completata</string>
     <string name="import_failed_title">Importazione non riuscita</string>
     <string name="file_reading_failed">Impossibile leggere il file</string>
+    <string name="decryption_failed">Impossibile decriptare il file: controlla la password e riprova</string>
     <string name="vcf_parsing_failed">Impossibile analizzare il file VCF</string>
     <string name="newly_imported_contacts">Contatti importati:</string>
     <string name="replaced_existing_contacts">Contatti sostituiti:</string>
