@@ -17,7 +17,7 @@ interface IEncryptionRepository {
     fun encrypt(plaintext: String, password: String): BinaryResult<String, Exception>
 
     /** Decrypts a JSON string previously produced by [encrypt]. */
-    fun decrypt(ciphertext: String, password: String): String
+    fun decrypt(ciphertext: String, password: String): BinaryResult<String, Exception>
 
     /**
      * Encrypts [password] with a key stored in the Android KeyStore and returns the

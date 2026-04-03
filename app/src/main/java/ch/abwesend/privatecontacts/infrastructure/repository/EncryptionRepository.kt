@@ -66,7 +66,7 @@ class EncryptionRepository : IEncryptionRepository {
         Json.encodeToString(payload)
     }
 
-    override fun decrypt(ciphertext: String, password: String): String {
+    override fun decrypt(ciphertext: String, password: String): BinaryResult<String, Exception> = runCatchingAsResult {
         val decoder = Base64.getDecoder()
         val payload = Json.decodeFromString<EncryptedPayload>(ciphertext)
         val salt = decoder.decode(payload.salt)
@@ -77,7 +77,7 @@ class EncryptionRepository : IEncryptionRepository {
         val cipher = Cipher.getInstance(payload.algorithm).apply {
             init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
         }
-        return cipher.doFinal(data).toString(Charsets.UTF_8)
+        cipher.doFinal(data).toString(Charsets.UTF_8)
     }
 
     private fun deriveKey(password: String, salt: ByteArray, iterations: Int, keySize: Int): SecretKey {
