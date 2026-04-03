@@ -17,9 +17,9 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
-import ch.abwesend.privatecontacts.domain.model.importexport.NumberOfBackupsToKeep
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
