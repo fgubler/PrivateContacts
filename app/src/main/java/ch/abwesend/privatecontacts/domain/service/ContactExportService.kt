@@ -17,7 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError.FILE_WRITING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToBinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
@@ -53,7 +53,7 @@ class ContactExportService {
         val vCardResult = importExportRepository.exportContacts(contacts, vCardVersion)
             .ifHasError { logger.warning("Failed to create vCards for contacts: $it") }
 
-        val fileWriteResult = vCardResult.mapValueToBinaryResult { createdVCards ->
+        val fileWriteResult = vCardResult.mapValueToResult { createdVCards ->
             val writeResult = if (encryptionPassword == null) {
                 fileWriteService.writeContentToFile(
                     content = createdVCards.fileContent,
