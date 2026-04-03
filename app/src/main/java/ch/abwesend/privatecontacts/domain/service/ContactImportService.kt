@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToBinaryResult
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository

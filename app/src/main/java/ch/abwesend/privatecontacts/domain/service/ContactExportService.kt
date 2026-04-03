@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError.FILE_WRITING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToBinaryResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
