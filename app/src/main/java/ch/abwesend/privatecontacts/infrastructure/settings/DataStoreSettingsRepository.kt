@@ -19,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.importexport.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -156,6 +157,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.backupPasswordEncrypted
         set(value) = dataStore.setValue(backupPasswordEncryptedEntry, value)
 
+    override var numberOfBackupsToKeep: NumberOfBackupsToKeep
+        get() = currentSettings.numberOfBackupsToKeep
+        set(value) = dataStore.setEnumValue(numberOfBackupsToKeepEntry, value)
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -219,6 +224,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         lastBackupDate = settings.lastBackupDate
         backupEncryptionEnabled = settings.backupEncryptionEnabled
         backupPasswordEncrypted = settings.backupPasswordEncrypted
+        numberOfBackupsToKeep = settings.numberOfBackupsToKeep
         appLanguage = settings.appLanguage
 
         /*

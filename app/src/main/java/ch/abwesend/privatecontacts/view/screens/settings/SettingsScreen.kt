@@ -49,6 +49,7 @@ import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.importexport.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -608,6 +609,19 @@ object SettingsScreen {
                 }
 
                 BackupFolderField(settingsRepository, currentSettings.backupFolder)
+
+                SettingsEntryDivider()
+
+                val numberOfBackupsToKeepOptions = remember {
+                    NumberOfBackupsToKeep.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+                }
+                SettingsDropDown(
+                    label = R.string.backup_number_to_keep_label,
+                    description = null,
+                    value = currentSettings.numberOfBackupsToKeep,
+                    options = numberOfBackupsToKeepOptions,
+                    onValueChanged = { settingsRepository.numberOfBackupsToKeep = it },
+                )
 
                 SettingsEntryDivider()
 

@@ -161,6 +161,10 @@ internal val backupPasswordEncryptedEntry = SettingsEntry(
     key = stringPreferencesKey("backupPasswordEncrypted"),
     defaultValue = defaultSettings.backupPasswordEncrypted
 )
+internal val numberOfBackupsToKeepEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("numberOfBackupsToKeep"),
+    defaultValue = defaultSettings.numberOfBackupsToKeep
+)
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.

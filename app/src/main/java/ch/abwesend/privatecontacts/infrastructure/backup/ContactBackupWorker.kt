@@ -9,6 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.backup
 import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
@@ -22,6 +23,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupMessageSeverity
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.importexport.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -59,6 +61,11 @@ class ContactBackupWorker(
         private var retryCounter = 0 // the counter will be reset on garbage-collection
     }
 
+    private suspend fun addErrorMessage(@StringRes textRes: Int, severity: BackupMessageSeverity) {
+        val text = applicationContext.getString(textRes)
+        addErrorMessage(text = text, severity = severity)
+    }
+
     /** Caching them would not work because they would be lost during a crash. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
         backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
@@ -80,7 +87,7 @@ class ContactBackupWorker(
             if (backupFolder.isEmpty()) {
                 logger.warning("Backup folder not configured, skipping backup")
                 addErrorMessage(
-                    text = applicationContext.getString(R.string.backup_folder_not_configured_warning),
+                    textRes = R.string.backup_folder_not_configured_warning,
                     severity = BackupMessageSeverity.WARNING
                 )
                 return Result.failure()
@@ -96,7 +103,7 @@ class ContactBackupWorker(
             if (documentFolder == null || !documentFolder.canWrite()) {
                 logger.warning("Cannot write to backup folder: $backupFolder")
                 addErrorMessage(
-                    text = applicationContext.getString(R.string.backup_folder_not_writable_error),
+                    textRes = R.string.backup_folder_not_writable_error,
                     severity = BackupMessageSeverity.WARNING
                 )
                 return Result.failure()
@@ -131,11 +138,12 @@ class ContactBackupWorker(
 
             if (success) {
                 logger.debug("Periodic backup completed successfully")
+                deleteOldBackups(settings.numberOfBackupsToKeep, documentFolder)
                 Result.success()
             } else {
                 logger.warning("Periodic backup completed with failures")
                 addErrorMessage(
-                    text = applicationContext.getString(R.string.backup_completed_with_failures_warning),
+                    textRes = R.string.backup_completed_with_failures_warning,
                     severity = BackupMessageSeverity.ERROR
                 )
                 Result.failure()
@@ -170,7 +178,7 @@ class ContactBackupWorker(
                     logger.warning("Failed to decrypt backup password; disabling encryption", result.error)
                     Settings.repository.backupEncryptionEnabled = false
                     addErrorMessage(
-                        text = applicationContext.getString(R.string.backup_encryption_password_recovery_failed_error),
+                        textRes = R.string.backup_encryption_password_recovery_failed_error,
                         severity = BackupMessageSeverity.ERROR
                     )
                     null
@@ -189,17 +197,15 @@ class ContactBackupWorker(
         if (type == ContactType.PUBLIC && !hasAndroidContactsPermission()) {
             logger.warning("Skipping backup of public contacts: READ_CONTACTS permission not granted")
             addErrorMessage(
-                text = applicationContext.getString(R.string.backup_permission_missing_warning),
+                textRes = R.string.backup_permission_missing_warning,
                 severity = BackupMessageSeverity.WARNING
             )
             return false
         }
 
         val extension = if (encryptionPassword == null) VCF_FILE_EXTENSION else CRYPT_FILE_EXTENSION
-        val fileName = when (type) {
-            ContactType.SECRET -> "backup_secret_$dateString.$extension"
-            ContactType.PUBLIC -> "backup_public_$dateString.$extension"
-        }
+        val fileNamePrefix = getFilenamePrefix(type)
+        val fileName = "$fileNamePrefix$dateString.$extension"
         cleanupExistingFile(documentFolder, fileName)
 
         return exportToBackupFile(
@@ -242,7 +248,7 @@ class ContactBackupWorker(
         if (file == null) {
             logger.warning("Failed to create backup file: $fileName")
             addErrorMessage(
-                text = applicationContext.getString(R.string.backup_file_creation_failed_error),
+                textRes = R.string.backup_file_creation_failed_error,
                 severity = BackupMessageSeverity.ERROR
             )
             return false
@@ -270,6 +276,28 @@ class ContactBackupWorker(
         }
     }
 
+    private suspend fun deleteOldBackups(numberOfBackupsToKeep: NumberOfBackupsToKeep, documentFolder: DocumentFile) {
+        listOf(ContactType.SECRET, ContactType.PUBLIC).forEach { type ->
+            try {
+                val prefix = getFilenamePrefix(type)
+                val backupFiles = documentFolder.listFiles()
+                    .filter { it.name?.startsWith(prefix) == true }
+                    .sortedBy { it.name } // that also sorts by date (ascending)
+                val toDelete = backupFiles.size - numberOfBackupsToKeep.maxCount
+                backupFiles.take(toDelete).forEach { file ->
+                    logger.debug("Deleting old backup: ${file.name}")
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                logger.warning("Failed to delete old backups for $type", e)
+                addErrorMessage(
+                    textRes = R.string.backup_delete_old_failed_warning,
+                    severity = BackupMessageSeverity.WARNING
+                )
+            }
+        }
+    }
+
     private fun isBackupDue(frequency: BackupFrequency, lastBackupDate: LocalDate): Boolean {
         val today = LocalDate.now()
 
@@ -279,6 +307,11 @@ class ContactBackupWorker(
             BackupFrequency.WEEKLY -> ChronoUnit.DAYS.between(lastBackupDate, today) >= 7
             BackupFrequency.MONTHLY -> ChronoUnit.MONTHS.between(lastBackupDate, today) >= 1
         }
+    }
+
+    private fun getFilenamePrefix(type: ContactType): String = when (type) {
+        ContactType.SECRET -> "backup_secret_"
+        ContactType.PUBLIC -> "backup_public_"
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {

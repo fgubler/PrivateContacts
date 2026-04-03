@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.importexport.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -65,6 +66,7 @@ interface SettingsRepository : ISettingsState {
     override var lastBackupDate: LocalDate
     override var backupEncryptionEnabled: Boolean
     override var backupPasswordEncrypted: String
+    override var numberOfBackupsToKeep: NumberOfBackupsToKeep
 
     // Others
     override var currentVersion: Int

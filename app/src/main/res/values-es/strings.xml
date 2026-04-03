@@ -412,6 +412,13 @@
     <string name="backup_contact_type_secret">Solo secretos</string>
     <string name="backup_contact_type_public">Solo públicos</string>
     <string name="backup_folder_label">Carpeta de copia de seguridad</string>
+    <string name="backup_number_to_keep_label">Copias de seguridad a conservar</string>
+    <string name="backup_delete_old_failed_warning">Error al eliminar las copias de seguridad antiguas</string>
+    <string name="backup_number_to_keep_all">Todas</string>
+    <string name="backup_number_to_keep_5">5</string>
+    <string name="backup_number_to_keep_10">10</string>
+    <string name="backup_number_to_keep_30">30</string>
+    <string name="backup_number_to_keep_50">50</string>
     <string name="backup_folder_not_selected">Ninguna carpeta seleccionada</string>
     <string name="backup_folder_select">Seleccionar carpeta</string>
     <string name="backup_trigger_once_label">Copia de seguridad ahora</string>

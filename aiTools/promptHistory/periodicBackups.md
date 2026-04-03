@@ -61,3 +61,19 @@ Looking at ContactBackupWorker: please adapt resolveEncryptionPassword() as foll
 If encryption is enabled but the encryption-password cannot be recovered, the method should
 - disable the encryption-feature
 - call addErrorMessage() to inform the user (at the next startup) that the password could not be recovered and encryption does not work.
+
+## Delete old backups
+Please add another drop-down menu-item to the SettingsScreen that allows the user to define how many backups should be kept.
+The options should be \[All, 5, 10, 30, 50\]
+For the UI, consider the existing components and be consistent with the rest of this screen.
+The new field should be added after the backup-folder field.
+
+In ContactBackupWorker, please add a method to delete old backups.
+It should be called after a new backup has been created successfully.
+It should count the backups based on their file-names. 
+Backups for secret and public contacts should be counted independently (i.e. if 10 backups should be kept, that means 10 for public contacts and 10 for secret contacts).
+The method should delete the oldest backups.
+
+Also add a file periodicBackupDoc.md next to backupEncryptionDoc.md which explains the whole feature of periodic backups. 
+That documentation should reference backupEncryptionDoc.md for the part about encryption.
+It should act as a short and concise explanation of the feature, explaining architectural decisions rather than duplicating the code.

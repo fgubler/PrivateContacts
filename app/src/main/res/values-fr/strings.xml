@@ -412,6 +412,13 @@
     <string name="backup_contact_type_secret">Secrets uniquement</string>
     <string name="backup_contact_type_public">Publics uniquement</string>
     <string name="backup_folder_label">Dossier de sauvegarde</string>
+    <string name="backup_number_to_keep_label">Sauvegardes à conserver</string>
+    <string name="backup_delete_old_failed_warning">Échec de la suppression des anciennes sauvegardes</string>
+    <string name="backup_number_to_keep_all">Toutes</string>
+    <string name="backup_number_to_keep_5">5</string>
+    <string name="backup_number_to_keep_10">10</string>
+    <string name="backup_number_to_keep_30">30</string>
+    <string name="backup_number_to_keep_50">50</string>
     <string name="backup_folder_not_selected">Aucun dossier sélectionné</string>
     <string name="backup_folder_select">Sélectionner un dossier</string>
     <string name="backup_trigger_once_label">Sauvegarder maintenant</string>
