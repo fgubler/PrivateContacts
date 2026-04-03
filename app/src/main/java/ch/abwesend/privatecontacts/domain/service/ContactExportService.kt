@@ -13,8 +13,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError.FILE_WRITING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError.FILE_WRITING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
@@ -39,7 +39,7 @@ class ContactExportService {
         vCardVersion: VCardVersion,
         requestPermission: Boolean = true,
         encryptionPassword: String? = null,
-    ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
+    ): BinaryResult<ContactExportData, VCardExportError> = withContext(dispatchers.default) {
         val contacts = loadService.loadFullContactsByType(sourceType)
         exportContacts(targetFile, vCardVersion, contacts, requestPermission, encryptionPassword)
     }
@@ -50,7 +50,7 @@ class ContactExportService {
         contacts: List<IContact>,
         requestPermission: Boolean = true,
         encryptionPassword: String? = null,
-    ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
+    ): BinaryResult<ContactExportData, VCardExportError> = withContext(dispatchers.default) {
         val vCardResult = importExportRepository.exportContacts(contacts, vCardVersion)
             .ifError { logger.warning("Failed to create vCards for contacts: $it") }
 

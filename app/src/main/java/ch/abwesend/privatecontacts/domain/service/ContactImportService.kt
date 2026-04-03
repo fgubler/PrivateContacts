@@ -19,13 +19,12 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError.FILE_READING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.DECRYPTION_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.FILE_READING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
-import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToResult
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
@@ -50,7 +49,7 @@ class ContactImportService {
         targetAccount: ContactAccount,
         replaceExistingContacts: Boolean,
         decryptionPassword: String? = null,
-    ): BinaryResult<ContactImportData, VCardParseError> {
+    ): BinaryResult<ContactImportData, VCardImportError> {
         val contactsToImport = loadContacts(sourceFile, targetType, decryptionPassword)
         return contactsToImport.mapValue { parsedContacts ->
             storeContacts(parsedContacts, targetType, targetAccount, replaceExistingContacts)
@@ -61,7 +60,7 @@ class ContactImportService {
         sourceFile: Uri,
         targetType: ContactType,
         decryptionPassword: String? = null,
-    ): BinaryResult<ParsedData, VCardParseError> =
+    ): BinaryResult<ParsedData, VCardImportError> =
         withContext(dispatchers.default) {
             val fileContentResult = if (decryptionPassword == null) {
                 fileReadService.readFileContent(sourceFile)

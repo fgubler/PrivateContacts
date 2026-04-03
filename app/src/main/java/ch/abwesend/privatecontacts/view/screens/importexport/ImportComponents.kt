@@ -37,7 +37,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -101,7 +101,7 @@ object ImportComponents {
 
     @Composable
     fun ProgressAndResultHandler(
-        importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>>,
+        importResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>>,
         onResetResult: () -> Unit
     ) {
         ResourceFlowProgressAndResultDialog(
@@ -118,7 +118,7 @@ object ImportComponents {
     }
 
     @Composable
-    private fun ResultDialog(importResult: BinaryResult<ContactImportData, VCardParseError>, onClose: () -> Unit) {
+    private fun ResultDialog(importResult: BinaryResult<ContactImportData, VCardImportError>, onClose: () -> Unit) {
         when (importResult) {
             is ErrorResult -> ErrorResultDialog(error = importResult.error, onClose = onClose)
             is SuccessResult -> SuccessResultDialog(data = importResult.value, onClose = onClose)
@@ -126,7 +126,7 @@ object ImportComponents {
     }
 
     @Composable
-    private fun ErrorResultDialog(error: VCardParseError, onClose: () -> Unit) {
+    private fun ErrorResultDialog(error: VCardImportError, onClose: () -> Unit) {
         OkDialog(title = R.string.import_failed_title, text = error.label, onClose = onClose)
     }
 

@@ -7,8 +7,8 @@
 package ch.abwesend.privatecontacts.infrastructure.repository.importexport
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
@@ -104,7 +104,7 @@ class VCardImportExportRepositoryTest : RepositoryTestBase() {
         coVerify(exactly = 0) { parsingRepository.exportVCards(any(), any()) }
         assertThat(result).isInstanceOf(ErrorResult::class.java)
         assertThat(result.getValueOrNull()).isNull()
-        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardCreateError.NO_CONTACTS_TO_EXPORT)
+        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardExportError.NO_CONTACTS_TO_EXPORT)
     }
 
     @Test
@@ -121,7 +121,7 @@ class VCardImportExportRepositoryTest : RepositoryTestBase() {
         coVerify { parsingRepository.exportVCards(listOf(vCard), vCardVersion) }
         assertThat(result).isInstanceOf(ErrorResult::class.java)
         assertThat(result.getValueOrNull()).isNull()
-        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardCreateError.VCF_SERIALIZATION_FAILED)
+        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardExportError.VCF_SERIALIZATION_FAILED)
     }
 
     @Test
@@ -156,7 +156,7 @@ class VCardImportExportRepositoryTest : RepositoryTestBase() {
 
         assertThat(result).isInstanceOf(ErrorResult::class.java)
         assertThat(result.getValueOrNull()).isNull()
-        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardParseError.VCF_PARSING_FAILED)
+        assertThat(result.getErrorOrNull()).isNotNull.isEqualTo(VCardImportError.VCF_PARSING_FAILED)
     }
 
     @Test

@@ -20,7 +20,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
@@ -38,8 +38,8 @@ class ContactExportViewModel : ViewModel() {
     val vCardVersion: State<VCardVersion> = _vCardVersion
 
     /** implemented as a resource to show a loading-indicator during export */
-    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardCreateError>>()
-    val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardCreateError>> = _exportResult
+    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardExportError>>()
+    val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardExportError>> = _exportResult
 
     fun selectSourceType(contactType: ContactType) {
         _sourceType.value = contactType
