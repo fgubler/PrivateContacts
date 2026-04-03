@@ -496,5 +496,7 @@
     <string name="release_notes_v90">Ajout d\'une option permettant de bloquer tous les appels entrants provenant de numéros inconnus. Les contacts privés et publics sont pris en compte pour cette decision.</string>
     <string name="release_notes_v93">Ajout de l\'option de sauvegardes automatiques et périodiques.</string>
     <string name="release_notes_v101">Ajout de la possibilité de chiffrer les sauvegardes périodiques.</string>
+    <string name="release_notes_v102_1">Les anciennes sauvegardes périodiques peuvent maintenant être nettoyées automatiquement par l\'application.</string>
+    <string name="release_notes_v102_2">Les sauvegardes et les fichiers exportés peuvent maintenant être validés sans les importer.</string>
 
 </resources>

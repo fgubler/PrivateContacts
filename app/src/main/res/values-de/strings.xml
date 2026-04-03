@@ -496,5 +496,7 @@
     <string name="release_notes_v90">Es wurde die Option hinzugefügt, alle eingehenden Anrufe von unbekannten Nummern zu blockieren. Dabei werden sowohl private als auch öffentliche Kontakte berücksichtigt.</string>
     <string name="release_notes_v93">Die Option wurde hinzugefügt, periodische Backups zu planen.</string>
     <string name="release_notes_v101">Die Möglichkeit wurde hinzugefügt, periodische Backups zu verschlüsseln.</string>
+    <string name="release_notes_v102_1">Alte, periodische Backups können jetzt automatisch von der App bereinigt werden.</string>
+    <string name="release_notes_v102_2">Backups und exportierte Dateien können jetzt validiert werden, ohne sie tatsächlich zu importieren.</string>
 
 </resources>

@@ -496,5 +496,7 @@
     <string name="release_notes_v90">Se ha añadido la opción de bloquear todas las llamadas entrantes de números desconocidos. Para ello se tienen en cuenta tanto los contactos privados como los públicos.</string>
     <string name="release_notes_v93">Se ha añadido la posibilidad de copias de seguridad automáticas y periódicas en los ajustes.</string>
     <string name="release_notes_v101">Se ha añadido la posibilidad de cifrar las copias de seguridad periódicas.</string>
+    <string name="release_notes_v102_1">Las copias de seguridad periódicas antiguas ahora pueden ser limpiadas automáticamente por la app.</string>
+    <string name="release_notes_v102_2">Las copias de seguridad y los archivos exportados ahora se pueden validar sin necesidad de importarlos.</string>
 
 </resources>

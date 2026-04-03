@@ -496,5 +496,7 @@
     <string name="release_notes_v90">Aggiunta l\'opzione per bloccare tutte le chiamate in arrivo da numeri sconosciuti. Per questa decisione vengono presi in considerazione sia i contatti privati che quelli pubblici.</string>
     <string name="release_notes_v93">Aggiunta l\'opzione di backup automatici e periodici.</string>
     <string name="release_notes_v101">Aggiunta la possibilità di cifrare i backup periodici.</string>
+    <string name="release_notes_v102_1">I vecchi backup periodici possono ora essere eliminati automaticamente dall\'app.</string>
+    <string name="release_notes_v102_2">I backup e i file esportati possono ora essere validati senza importarli.</string>
 
 </resources>

@@ -501,4 +501,6 @@
     <string name="release_notes_v90">Added the option to block all incoming calls from unknown numbers. Both private and public contacts are considered for this.</string>
     <string name="release_notes_v93">Added the option of automatic, periodic backups in the settings.</string>
     <string name="release_notes_v101">Added the possibility to encrypt periodic backups.</string>
+    <string name="release_notes_v102_1">Old, periodic backups can now be cleaned up automatically by the app.</string>
+    <string name="release_notes_v102_2">Backups and exported files can now be validated without actually importing them.</string>
 </resources>
