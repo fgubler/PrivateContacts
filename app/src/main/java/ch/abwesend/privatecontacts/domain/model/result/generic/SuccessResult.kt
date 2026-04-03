@@ -16,10 +16,4 @@ data class SuccessResult<TValue>(val value: TValue) : BinaryResult<TValue, Nothi
         val newValue = mapper(value)
         return SuccessResult(newValue)
     }
-
-    override suspend fun ifHasValue(block: suspend (TValue) -> Unit): BinaryResult<TValue, Nothing> {
-        block(value)
-        return this
-    }
-    override suspend fun ifHasError(block: suspend (Nothing) -> Unit) = this
 }

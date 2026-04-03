@@ -15,10 +15,4 @@ data class ErrorResult<TError>(val error: TError) : BinaryResult<Nothing, TError
         val newError = mapper(error)
         return ErrorResult(newError)
     }
-
-    override suspend fun ifHasValue(block: suspend (Nothing) -> Unit) = this
-    override suspend fun ifHasError(block: suspend (TError) -> Unit): BinaryResult<Nothing, TError> {
-        block(error)
-        return this
-    }
 }

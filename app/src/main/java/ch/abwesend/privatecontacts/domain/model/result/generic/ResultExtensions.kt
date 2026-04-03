@@ -14,9 +14,29 @@ inline fun <T> runCatchingAsResult(block: () -> T): BinaryResult<T, Exception> {
     }
 }
 
-suspend inline fun <TValue, TError, T> BinaryResult<TValue, TError>.mapValueToResult(
-    mapper: suspend (TValue) -> BinaryResult<T, TError>
+inline fun <TValue, TError, T> BinaryResult<TValue, TError>.mapValueToResult(
+    mapper: (TValue) -> BinaryResult<T, TError>
 ): BinaryResult<T, TError> = when (this) {
     is ErrorResult -> this
     is SuccessResult -> mapper(value)
+}
+
+inline fun <TValue, TError> BinaryResult<TValue, TError>.ifSuccess(
+    block: (TValue) -> Unit
+): BinaryResult<TValue, TError> {
+    when (this) {
+        is SuccessResult -> block(value)
+        is ErrorResult -> Unit
+    }
+    return this
+}
+
+inline fun <TValue, TError> BinaryResult<TValue, TError>.ifError(
+    block: (TError) -> Unit
+): BinaryResult<TValue, TError> {
+    when (this) {
+        is ErrorResult -> block(error)
+        is SuccessResult -> Unit
+    }
+    return this
 }

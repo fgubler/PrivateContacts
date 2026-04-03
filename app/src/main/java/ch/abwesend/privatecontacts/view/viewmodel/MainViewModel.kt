@@ -28,6 +28,8 @@ import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartia
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifSuccess
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -104,24 +106,26 @@ class MainViewModel : ViewModel() {
     fun parseVcfFile(fileUri: Uri) {
         viewModelScope.launch {
             val loadResult = importService.loadContacts(fileUri, Settings.current.defaultContactType)
-            loadResult.ifHasError {
-                logger.warning("Failed to load contact(s) from VCF file: $it")
-                _vcfParsingResult.emit(ParseVcfFromIntentResult.Failure(fileUri))
-            }.ifHasValue { data ->
-                val contacts = data.successfulContacts
-                logger.info(
-                    "Parsed ${contacts.size} contact(s) from VCF file " +
-                        "with ${data.numberOfFailedContacts} failures"
-                )
-                val result = if (contacts.size > 1) {
-                    ParseVcfFromIntentResult.MultipleContacts(fileUri, data)
-                } else if (contacts.size == 1) {
-                    ParseVcfFromIntentResult.SingleContact(fileUri, contacts.first())
-                } else {
-                    ParseVcfFromIntentResult.Failure(fileUri)
+            loadResult
+                .ifError {
+                    logger.warning("Failed to load contact(s) from VCF file: $it")
+                    _vcfParsingResult.emit(ParseVcfFromIntentResult.Failure(fileUri))
                 }
-                _vcfParsingResult.emit(result)
-            }
+                .ifSuccess { data ->
+                    val contacts = data.successfulContacts
+                    logger.info(
+                        "Parsed ${contacts.size} contact(s) from VCF file " +
+                                "with ${data.numberOfFailedContacts} failures"
+                    )
+                    val result = if (contacts.size > 1) {
+                        ParseVcfFromIntentResult.MultipleContacts(fileUri, data)
+                    } else if (contacts.size == 1) {
+                        ParseVcfFromIntentResult.SingleContact(fileUri, contacts.first())
+                    } else {
+                        ParseVcfFromIntentResult.Failure(fileUri)
+                    }
+                    _vcfParsingResult.emit(result)
+                }
         }
     }
 
