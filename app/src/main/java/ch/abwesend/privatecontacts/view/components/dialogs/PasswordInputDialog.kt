@@ -44,6 +44,11 @@ fun PasswordInputDialog(
                 onValueChange = { value = it },
                 label = label,
                 modifier = Modifier.focusRequester(focusRequester),
+                onKeyboardDone = {
+                    if (value.isNotEmpty()) {
+                        onConfirm(value)
+                    }
+                },
             )
         },
         onDismissRequest = onCancel,
