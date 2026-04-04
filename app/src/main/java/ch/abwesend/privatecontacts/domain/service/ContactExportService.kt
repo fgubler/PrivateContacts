@@ -18,6 +18,8 @@ import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError.FI
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValue
 import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository

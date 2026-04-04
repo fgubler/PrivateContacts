@@ -10,10 +10,4 @@ data class SuccessResult<TValue>(val value: TValue) : BinaryResult<TValue, Nothi
     override fun getValueOrNull(): TValue? = value
     override fun getErrorOrNull(): Nothing? = null
 
-    override suspend fun <T> mapError(mapper: suspend (Nothing) -> T): BinaryResult<TValue, T> = SuccessResult(value)
-
-    override suspend fun <T> mapValue(mapper: suspend (TValue) -> T): BinaryResult<T, Nothing> {
-        val newValue = mapper(value)
-        return SuccessResult(newValue)
-    }
 }
