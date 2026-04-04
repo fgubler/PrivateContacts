@@ -44,9 +44,9 @@ fun PasswordInputDialog(
     var confirmationValue: String by remember { mutableStateOf("") }
 
     val passwordsNotMatching = confirmationRequired &&
-            value.isNotEmpty() &&
-            confirmationValue.isNotEmpty() &&
-            value != confirmationValue
+        value.isNotEmpty() &&
+        confirmationValue.isNotEmpty() &&
+        value != confirmationValue
 
     val isConfirmButtonEnabled = if (confirmationRequired) {
         value.isNotEmpty() && value == confirmationValue

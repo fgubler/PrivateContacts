@@ -104,7 +104,7 @@ class ContactImportService {
         }
 
     private fun BinaryResult<TextFileContent, VCardImportError>
-            .mapEmptyFileError(): BinaryResult<TextFileContent, VCardImportError> =
+    .mapEmptyFileError(): BinaryResult<TextFileContent, VCardImportError> =
         mapValueToResult { fileContent ->
             if (fileContent.content.isEmpty()) {
                 ErrorResult(VCardImportError.FILE_IS_EMPTY)
