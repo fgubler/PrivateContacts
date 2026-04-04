@@ -280,7 +280,7 @@ class ContactBackupWorker(
                     .filter { it.name?.startsWith(prefix) == true }
                     .sortedBy { it.name } // that also sorts by date (ascending)
 
-                if (backupFiles.size > 2) {
+                if (backupFiles.size >= 2) {
                     val secondNewestFile = backupFiles[backupFiles.lastIndex - 1] // not the one we just created
                     val fileName = secondNewestFile.name
                     val deleted = fileAccessRepository.deleteFileIfEmpty(secondNewestFile)
