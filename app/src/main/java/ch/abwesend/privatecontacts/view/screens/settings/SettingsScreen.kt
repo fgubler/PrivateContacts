@@ -691,7 +691,7 @@ object SettingsScreen {
                 label = R.string.backup_encryption_password_label,
                 onConfirm = { password ->
                     showPasswordDialog = false
-                    viewModel.encryptBackupPassword(password)
+                    viewModel.encryptAndSaveBackupPassword(password)
                 },
                 onCancel = {
                     showPasswordDialog = false

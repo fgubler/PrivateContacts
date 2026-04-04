@@ -62,7 +62,7 @@ class SettingsViewModel : ViewModel() {
         backupScheduler.triggerOneTimeBackup()
     }
 
-    fun encryptBackupPassword(password: String) {
+    fun encryptAndSaveBackupPassword(password: String) {
         when (val result = encryptionRepository.encryptPassword(password)) {
             is SuccessResult -> {
                 settingsRepository.backupPasswordEncrypted = result.value
