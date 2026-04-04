@@ -42,6 +42,7 @@ fun PasswordField(
         value = value,
         onValueChange = onValueChange,
         visualTransformation = transformation,
+        singleLine = true,
         trailingIcon = {
             val description = stringResource(id = iconDescriptionRes)
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
