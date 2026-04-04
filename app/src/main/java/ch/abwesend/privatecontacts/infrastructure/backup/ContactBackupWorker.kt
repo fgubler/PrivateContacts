@@ -138,7 +138,7 @@ class ContactBackupWorker(
 
             if (success) {
                 logger.debug("Periodic backup completed successfully")
-                deleteOldBackups(settings.numberOfBackupsToKeep, documentFolder)
+                cleanupOldBackups(settings.numberOfBackupsToKeep, documentFolder)
                 Result.success()
             } else {
                 logger.warning("Periodic backup completed with failures")
@@ -271,13 +271,26 @@ class ContactBackupWorker(
         }
     }
 
-    private suspend fun deleteOldBackups(numberOfBackupsToKeep: NumberOfBackupsToKeep, documentFolder: DocumentFile) {
-        listOf(ContactType.SECRET, ContactType.PUBLIC).forEach { type ->
+    private suspend fun cleanupOldBackups(numberOfBackupsToKeep: NumberOfBackupsToKeep, documentFolder: DocumentFile) {
+        ContactType.entries.forEach { type ->
             try {
                 val prefix = getFilenamePrefix(type)
                 val backupFiles = documentFolder.listFiles()
+                    .filterNotNull()
                     .filter { it.name?.startsWith(prefix) == true }
                     .sortedBy { it.name } // that also sorts by date (ascending)
+
+                if (backupFiles.size > 2) {
+                    val secondNewestFile = backupFiles[backupFiles.lastIndex - 1] // not the one we just created
+                    val deleted = fileAccessRepository.deleteFileIfEmpty(secondNewestFile)
+                    if (deleted) {
+                        logger.debug("Deleted second newest backup file: ${secondNewestFile.name}")
+                        // if it was empty, this cleanup did not run => the one before might be empty, too.
+                        cleanupOldBackups(numberOfBackupsToKeep, documentFolder)
+                        return
+                    }
+                }
+
                 val toDelete = (backupFiles.size - numberOfBackupsToKeep.maxCount).coerceAtLeast(0)
                 backupFiles.take(toDelete).forEach { file ->
                     logger.debug("Deleting old backup: ${file.name}")
