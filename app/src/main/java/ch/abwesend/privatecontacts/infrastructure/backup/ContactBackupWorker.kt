@@ -282,9 +282,10 @@ class ContactBackupWorker(
 
                 if (backupFiles.size > 2) {
                     val secondNewestFile = backupFiles[backupFiles.lastIndex - 1] // not the one we just created
+                    val fileName = secondNewestFile.name
                     val deleted = fileAccessRepository.deleteFileIfEmpty(secondNewestFile)
                     if (deleted) {
-                        logger.debug("Deleted second newest backup file: ${secondNewestFile.name}")
+                        logger.debug("Deleted second newest backup file, because it was empty: $fileName")
                         // if it was empty, this cleanup did not run => the one before might be empty, too.
                         cleanupOldBackups(numberOfBackupsToKeep, documentFolder)
                         return
