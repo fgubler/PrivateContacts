@@ -220,9 +220,7 @@ class ContactBackupWorker(
     private fun cleanupExistingFile(documentFolder: DocumentFile, fileName: String) {
         try {
             val existingFile = documentFolder.findFile(fileName)
-            if (existingFile != null) {
-                fileAccessRepository.deleteFileIfEmpty(existingFile.uri)
-            }
+            existingFile?.let { fileAccessRepository.deleteFileIfEmpty(it) }
         } catch (e: Exception) {
             logger.warning("Failed to potentially delete empty pre-existing backup file", e)
         }

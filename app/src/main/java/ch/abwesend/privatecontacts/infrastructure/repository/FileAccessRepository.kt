@@ -12,6 +12,7 @@ import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.net.Uri
 import android.provider.DocumentsContract
+import androidx.documentfile.provider.DocumentFile
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -115,12 +116,20 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
             }
         }.ifError { logger.warning("Failed to write to file", it) }
 
-    override fun deleteFileIfEmpty(fileUri: Uri) {
+    override fun deleteFileIfEmpty(fileUri: Uri): Boolean {
         val contentResolver = context.contentResolver
-        if (contentResolver.isFileEmpty(fileUri)) {
+        return if (contentResolver.isFileEmpty(fileUri)) {
             logger.debug("Deleting empty file")
             DocumentsContract.deleteDocument(contentResolver, fileUri)
-        }
+        } else false
+    }
+
+    override fun deleteFileIfEmpty(file: DocumentFile): Boolean {
+        val contentResolver = context.contentResolver
+        return if (contentResolver.isFileEmpty(file.uri)) {
+            logger.debug("Deleting empty file")
+            file.delete()
+        } else false
     }
 
     private fun ContentResolver.isFileEmpty(fileUri: Uri): Boolean =
