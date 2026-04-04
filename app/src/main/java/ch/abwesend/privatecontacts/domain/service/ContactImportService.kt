@@ -209,12 +209,12 @@ class ContactImportService {
     }
 
     private fun IContact.considerAsSamePerson(other: IContact): Boolean = (
-            (firstName == other.firstName && lastName == other.lastName) ||
-                    (firstName == other.lastName && lastName == other.firstName)
-            ) && (
-            getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = true) ||
-                    getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = false) ||
-                    getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = false) ||
-                    getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = true)
-            )
+        (firstName == other.firstName && lastName == other.lastName) ||
+            (firstName == other.lastName && lastName == other.firstName)
+        ) && (
+        getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = true) ||
+            getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = false) ||
+            getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = false) ||
+            getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = true)
+        )
 }

@@ -115,7 +115,7 @@ class MainViewModel : ViewModel() {
                     val contacts = data.successfulContacts
                     logger.info(
                         "Parsed ${contacts.size} contact(s) from VCF file " +
-                                "with ${data.numberOfFailedContacts} failures"
+                            "with ${data.numberOfFailedContacts} failures"
                     )
                     val result = if (contacts.size > 1) {
                         ParseVcfFromIntentResult.MultipleContacts(fileUri, data)
