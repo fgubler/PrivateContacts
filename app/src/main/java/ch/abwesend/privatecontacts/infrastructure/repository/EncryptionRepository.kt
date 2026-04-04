@@ -8,13 +8,16 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import android.security.keystore.KeyProperties
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.importexport.DecryptionError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import java.security.SecureRandom
 import java.util.Base64
@@ -69,7 +72,7 @@ class EncryptionRepository : IEncryptionRepository {
         Json.encodeToString(payload)
     }.ifError { logger.error("Encryption failed", it) }
 
-    override fun decrypt(ciphertext: String, password: String): BinaryResult<String, Exception> = runCatchingAsResult {
+    override fun decrypt(ciphertext: String, password: String): BinaryResult<String, DecryptionError> = runCatchingAsResult {
         val decoder = Base64.getDecoder()
         val payload = Json.decodeFromString<EncryptedPayload>(ciphertext)
         val salt = decoder.decode(payload.salt)
@@ -81,11 +84,24 @@ class EncryptionRepository : IEncryptionRepository {
             init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(payload.tagLength, iv))
         }
         cipher.doFinal(data).toString(Charsets.UTF_8)
-    }.ifError {
-        if (it is AEADBadTagException) {
-            logger.error("Decryption failed due to invalid password", it)
-        } else {
-            logger.error("Decryption failed", it)
+    }.mapError { exception ->
+        when (exception) {
+            is AEADBadTagException -> {
+                logger.error("Decryption failed due to invalid password", exception)
+                DecryptionError.INVALID_PASSWORD
+            }
+            is SerializationException -> {
+                logger.error("Not a valid JSON file", exception)
+                DecryptionError.INVALID_FILE
+            }
+            is IllegalArgumentException -> {
+                logger.error("Decryption failed due to invalid JSON structure", exception)
+                DecryptionError.INVALID_FILE
+            }
+            else -> {
+                logger.error("Decryption failed", exception)
+                DecryptionError.UNKNOWN
+            }
         }
     }
 

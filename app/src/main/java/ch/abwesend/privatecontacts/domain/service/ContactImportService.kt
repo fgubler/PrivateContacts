@@ -18,13 +18,15 @@ import ch.abwesend.privatecontacts.domain.model.contact.getFullName
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.SavedData
+import ch.abwesend.privatecontacts.domain.model.importexport.DecryptionError
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.DECRYPTION_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError.FILE_READING_FAILED
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
 import ch.abwesend.privatecontacts.domain.model.result.generic.mapValue
 import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToResult
@@ -67,6 +69,7 @@ class ContactImportService {
             val fileContentResult = if (decryptionPassword == null) {
                 fileReadService.readFileContent(sourceFile)
                     .mapError { FILE_READING_FAILED }
+                    .mapEmptyFileError()
             } else {
                 readAndDecryptFile(sourceFile, decryptionPassword)
             }
@@ -81,12 +84,34 @@ class ContactImportService {
     ): BinaryResult<TextFileContent, VCardImportError> {
         return fileReadService.readFileContent(sourceFile)
             .mapError { FILE_READING_FAILED }
-            .mapValueToResult { textResult ->
-                encryptionRepository.decrypt(textResult.content, password)
-                    .mapValue { plainText -> TextFileContent(plainText) }
-            }
-            .mapError { DECRYPTION_FAILED }
+            .mapEmptyFileError()
+            .decryptFileContent(password)
     }
+
+    private fun BinaryResult<TextFileContent, VCardImportError>.decryptFileContent(
+        password: String
+    ): BinaryResult<TextFileContent, VCardImportError> =
+        mapValueToResult { textResult ->
+            encryptionRepository.decrypt(textResult.content, password)
+                .mapValue { plainText -> TextFileContent(plainText) }
+                .mapError {
+                    when (it) {
+                        DecryptionError.INVALID_FILE -> VCardImportError.DECRYPTION_FAILED_INVALID_FILE
+                        DecryptionError.INVALID_PASSWORD -> VCardImportError.DECRYPTION_FAILED_INVALID_PASSWORD
+                        DecryptionError.UNKNOWN -> VCardImportError.DECRYPTION_FAILED
+                    }
+                }
+        }
+
+    private fun BinaryResult<TextFileContent, VCardImportError>
+            .mapEmptyFileError(): BinaryResult<TextFileContent, VCardImportError> =
+        mapValueToResult { fileContent ->
+            if (fileContent.content.isEmpty()) {
+                ErrorResult(VCardImportError.FILE_IS_EMPTY)
+            } else {
+                SuccessResult(fileContent)
+            }
+        }
 
     suspend fun storeContacts(
         parsedContacts: ParsedData,
@@ -184,12 +209,12 @@ class ContactImportService {
     }
 
     private fun IContact.considerAsSamePerson(other: IContact): Boolean = (
-        (firstName == other.firstName && lastName == other.lastName) ||
-            (firstName == other.lastName && lastName == other.firstName)
-        ) && (
-        getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = true) ||
-            getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = false) ||
-            getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = false) ||
-            getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = true)
-        )
+            (firstName == other.firstName && lastName == other.lastName) ||
+                    (firstName == other.lastName && lastName == other.firstName)
+            ) && (
+            getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = true) ||
+                    getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = false) ||
+                    getFullName(firstNameFirst = true) == other.getFullName(firstNameFirst = false) ||
+                    getFullName(firstNameFirst = false) == other.getFullName(firstNameFirst = true)
+            )
 }

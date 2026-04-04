@@ -373,7 +373,10 @@
     <string name="import_complete_title">Importazione completata</string>
     <string name="import_failed_title">Importazione non riuscita</string>
     <string name="file_reading_failed">Impossibile leggere il file</string>
-    <string name="decryption_failed">Impossibile decriptare il file: controlla la password e riprova</string>
+    <string name="decryption_failed_invalid_password">La password fornita non è valida</string>
+    <string name="decryption_failed_invalid_file">Il file fornito non è valido o è corrotto e non può essere decriptato</string>
+    <string name="decryption_failed">Decriptazione fallita: riprova</string>
+    <string name="file_is_empty">Il file è vuoto</string>
     <string name="vcf_parsing_failed">Impossibile analizzare il file VCF</string>
     <string name="newly_imported_contacts">Contatti importati:</string>
     <string name="replaced_existing_contacts">Contatti sostituiti:</string>
