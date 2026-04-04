@@ -443,6 +443,7 @@
     <string name="backup_encryption_info_dialog_message">Les fichiers de sauvegarde peuvent être protégés par un mot de passe de votre choix.\n\nIMPORTANT : Il n\'existe aucun mécanisme de réinitialisation du mot de passe. Si vous oubliez le mot de passe, les données des fichiers de sauvegarde chiffrés seront définitivement perdues.</string>
     <string name="backup_encryption_password_dialog_title">Mot de passe de chiffrement</string>
     <string name="backup_encryption_password_label">Mot de passe</string>
+    <string name="backup_encryption_password_confirmation_label">Confirmer le mot de passe</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>
     <string name="backup_encryption_password_recovery_failed_error">Impossible de récupérer le mot de passe de chiffrement pour les sauvegardes périodiques. Le chiffrement a été désactivé : veuillez définir un nouveau mot de passe pour le réactiver.</string>
     <string name="backup_manage_in_settings_description">Les sauvegardes périodiques peuvent être configurées dans les Paramètres.</string>

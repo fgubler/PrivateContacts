@@ -448,6 +448,7 @@
     <string name="backup_encryption_info_dialog_message">Backup files can be protected with a password of your choice.\n\nIMPORTANT: There is no password-reset mechanism. If you forget the password, the data in the encrypted backup files will be permanently lost and cannot be recovered.</string>
     <string name="backup_encryption_password_dialog_title">Backup Encryption Password</string>
     <string name="backup_encryption_password_label">Password</string>
+    <string name="backup_encryption_password_confirmation_label">Confirm Password</string>
     <string name="backup_encryption_password_empty_error">Please enter a password to enable encryption.</string>
     <string name="backup_encryption_password_recovery_failed_error">Failed to recover the encryption password for periodic backups. Encryption has been disabled: please set a new password to enable it again.</string>
     <string name="backup_manage_in_settings_description">Periodic backups can be configured in the Settings screen.</string>

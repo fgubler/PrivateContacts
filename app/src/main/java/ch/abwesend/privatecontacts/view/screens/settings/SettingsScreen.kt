@@ -689,6 +689,7 @@ object SettingsScreen {
             PasswordInputDialog(
                 title = R.string.backup_encryption_password_dialog_title,
                 label = R.string.backup_encryption_password_label,
+                confirmationRequired = true,
                 onConfirm = { password ->
                     showPasswordDialog = false
                     viewModel.encryptAndSaveBackupPassword(password)

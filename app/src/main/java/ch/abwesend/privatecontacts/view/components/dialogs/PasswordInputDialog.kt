@@ -8,6 +8,9 @@ package ch.abwesend.privatecontacts.view.components.dialogs
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Text
@@ -21,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.inputs.PasswordField
 
@@ -30,32 +34,61 @@ fun PasswordInputDialog(
     @StringRes label: Int,
     onConfirm: (String) -> Unit,
     onCancel: () -> Unit,
+    confirmationRequired: Boolean = false,
 ) {
+    val passwordFocusRequester = remember { FocusRequester() }
+    val confirmationFocusRequester = remember { FocusRequester() }
+
     var value: String by remember { mutableStateOf("") }
-    val focusRequester = remember { FocusRequester() }
+    var confirmationValue: String by remember { mutableStateOf("") }
+
+    val isConfirmButtonEnabled = if (confirmationRequired) {
+        value.isNotEmpty() && value == confirmationValue
+    } else {
+        value.isNotEmpty()
+    }
 
     BackHandler { onCancel() }
+    LaunchedEffect(Unit) { passwordFocusRequester.requestFocus() }
 
     AlertDialog(
         title = { Text(stringResource(id = title)) },
         text = {
-            PasswordField(
-                value = value,
-                onValueChange = { value = it },
-                label = label,
-                modifier = Modifier.focusRequester(focusRequester),
-                onKeyboardDone = {
-                    if (value.isNotEmpty()) {
-                        onConfirm(value)
-                    }
-                },
-            )
+            Column {
+                PasswordField(
+                    value = value,
+                    onValueChange = { value = it },
+                    label = label,
+                    modifier = Modifier.focusRequester(passwordFocusRequester),
+                    onKeyboardDone = {
+                        if (value.isNotEmpty() && confirmationRequired) {
+                            confirmationFocusRequester.requestFocus()
+                        } else if (value.isNotEmpty()) {
+                            onConfirm(value)
+                        }
+                    },
+                )
+                if (confirmationRequired) {
+                    Spacer(modifier = Modifier.height(10.dp))
+                    PasswordField(
+                        value = confirmationValue,
+                        onValueChange = { confirmationValue = it },
+                        label = R.string.backup_encryption_password_confirmation_label,
+                        modifier = Modifier.focusRequester(confirmationFocusRequester),
+                        onKeyboardDone = {
+                            if (isConfirmButtonEnabled) {
+                                onConfirm(value)
+                            }
+                        },
+                    )
+                }
+            }
         },
         onDismissRequest = onCancel,
         confirmButton = {
             Button(
                 onClick = { onConfirm(value) },
-                enabled = value.isNotEmpty(),
+                enabled = isConfirmButtonEnabled,
                 content = { Text(stringResource(id = R.string.ok)) },
             )
         },
@@ -65,5 +98,4 @@ fun PasswordInputDialog(
             }
         },
     )
-    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 }
