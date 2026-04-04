@@ -449,6 +449,7 @@
     <string name="backup_encryption_password_dialog_title">Backup Encryption Password</string>
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_confirmation_label">Confirm Password</string>
+    <string name="password_confirmation_mismatch_error">Passwords must be identical</string>
     <string name="backup_encryption_password_empty_error">Please enter a password to enable encryption.</string>
     <string name="backup_encryption_password_recovery_failed_error">Failed to recover the encryption password for periodic backups. Encryption has been disabled: please set a new password to enable it again.</string>
     <string name="backup_manage_in_settings_description">Periodic backups can be configured in the Settings screen.</string>

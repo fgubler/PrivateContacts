@@ -444,6 +444,7 @@
     <string name="backup_encryption_password_dialog_title">Backup-Verschlüsselungspasswort</string>
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_confirmation_label">Passwort bestätigen</string>
+    <string name="password_confirmation_mismatch_error">Passw�rter m�ssen identisch sein</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
     <string name="backup_encryption_password_recovery_failed_error">Das Passwort für die Verschlüsselung periodischer Backups konnte nicht gelesen werden. Die Verschlüsselung wurde deaktiviert: Bitte legen Sie ein neues Passwort fest, um sie wieder zu aktivieren.</string>
     <string name="backup_manage_in_settings_description">Periodische Backups können in den Einstellungen konfiguriert werden.</string>

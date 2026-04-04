@@ -444,6 +444,7 @@
     <string name="backup_encryption_password_dialog_title">Password di crittografia  del backup</string>
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_confirmation_label">Conferma password</string>
+    <string name="password_confirmation_mismatch_error">Le password devono essere identiche</string>
     <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la crittografia.</string>
     <string name="backup_encryption_password_recovery_failed_error">Impossibile recuperare la password di crittografia per i backup periodici. La crittografia è stata disattivata: imposta una nuova password per riattivarla.</string>
     <string name="backup_manage_in_settings_description">I backup periodici possono essere configurati nelle Impostazioni.</string>

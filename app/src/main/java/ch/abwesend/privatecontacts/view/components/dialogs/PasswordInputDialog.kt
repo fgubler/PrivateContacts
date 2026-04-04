@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +42,11 @@ fun PasswordInputDialog(
 
     var value: String by remember { mutableStateOf("") }
     var confirmationValue: String by remember { mutableStateOf("") }
+
+    val passwordsNotMatching = confirmationRequired &&
+            value.isNotEmpty() &&
+            confirmationValue.isNotEmpty() &&
+            value != confirmationValue
 
     val isConfirmButtonEnabled = if (confirmationRequired) {
         value.isNotEmpty() && value == confirmationValue
@@ -81,6 +87,14 @@ fun PasswordInputDialog(
                             }
                         },
                     )
+                    if (passwordsNotMatching) {
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(
+                            text = stringResource(id = R.string.password_confirmation_mismatch_error),
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption,
+                        )
+                    }
                 }
             }
         },
