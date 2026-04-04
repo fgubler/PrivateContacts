@@ -240,9 +240,6 @@ class ContactBackupWorker(
         vCardVersion: VCardVersion,
         encryptionPassword: String?,
     ): Boolean {
-        val existingFile = folder.findFile(fileName)
-        existingFile?.delete()
-
         val mimeType = if (encryptionPassword == null) VCF_MAIN_MIME_TYPE else CRYPT_PRETENDING_MIME_TYPE
         val file = folder.createFile(mimeType, fileName)
         if (file == null) {
