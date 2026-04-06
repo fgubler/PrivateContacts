@@ -13,7 +13,8 @@ fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> =
         .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
 
 fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
-    removeDuplicatesBy { it.displayValue }
+    filterNot { it.displayValue.isEmpty() }
+        .removeDuplicatesBy { it.displayValue }
         .removeDuplicatesBy { it.value }
 
 private fun <T : BaseGenericContactData<S>, S, R> List<T>.removeDuplicatesBy(attributeSelector: (T) -> R): List<T> =
