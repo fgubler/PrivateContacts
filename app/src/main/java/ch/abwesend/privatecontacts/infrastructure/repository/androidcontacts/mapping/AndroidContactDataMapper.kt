@@ -18,8 +18,8 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.createExternalDummyC
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.domain.util.removeDuplicates
-import ch.abwesend.privatecontacts.domain.util.removePhoneNumberDuplicates
+import ch.abwesend.privatecontacts.domain.util.sanitize
+import ch.abwesend.privatecontacts.domain.util.sanitizePhoneNumbers
 import ch.abwesend.privatecontacts.domain.util.simpleClassName
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import com.alexstyl.contactstore.Contact
@@ -61,7 +61,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removePhoneNumberDuplicates()
+        }.sanitizePhoneNumbers()
 
     private fun Contact.getEmailAddresses(): List<EmailAddress> {
         return mails.mapIndexed { index, email ->
@@ -76,7 +76,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removeDuplicates()
+        }.sanitize()
     }
 
     private fun Contact.getPhysicalAddresses(): List<PhysicalAddress> =
@@ -101,7 +101,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removeDuplicates()
+        }.sanitize()
 
     private fun Contact.getWebsites(): List<Website> {
         return webAddresses.mapIndexed { index, address ->
@@ -116,7 +116,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removeDuplicates()
+        }.sanitize()
     }
 
     private fun Contact.getRelationships(): List<Relationship> {
@@ -134,7 +134,7 @@ class AndroidContactDataMapper {
                     isMain = index == 0,
                     modelStatus = ModelStatus.UNCHANGED,
                 )
-            }.removeDuplicates()
+            }.sanitize()
     }
 
     private fun Contact.getEventDates(): List<EventDate> {
@@ -154,7 +154,7 @@ class AndroidContactDataMapper {
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )
-        }.removeDuplicates()
+        }.sanitize()
     }
 
     private fun Contact.getCompanies(): List<Company> {
@@ -175,7 +175,7 @@ class AndroidContactDataMapper {
                     modelStatus = ModelStatus.UNCHANGED,
                 )
             }
-            .removeDuplicates()
+            .sanitize()
     }
 
     private fun LabeledValue<*>.toContactDataId(): IContactDataIdExternal =

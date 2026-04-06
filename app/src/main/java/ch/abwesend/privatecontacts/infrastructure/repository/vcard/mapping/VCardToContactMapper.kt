@@ -21,8 +21,8 @@ import ch.abwesend.privatecontacts.domain.service.ContactSanitizingService
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.domain.util.enforceContinuousSortOrder
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.domain.util.removeDuplicates
-import ch.abwesend.privatecontacts.domain.util.removePhoneNumberDuplicates
+import ch.abwesend.privatecontacts.domain.util.sanitize
+import ch.abwesend.privatecontacts.domain.util.sanitizePhoneNumbers
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.firstTypeOrNull
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.toCompany
@@ -83,29 +83,29 @@ class VCardToContactMapper {
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
             .map { sanitizingService.sanitizePhoneNumber(it) }
-            .removePhoneNumberDuplicates()
+            .sanitizePhoneNumbers()
             .enforceContinuousSortOrder()
         val emails = vCard.emails.orEmpty()
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
         val addresses = vCard.addresses.orEmpty()
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> addressMapper.toContactData(elem, index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
         val websites = vCard.urls.orEmpty()
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
 
         val relationships = vCard.relations.orEmpty()
             .filterNotNull()
             .filterNot { it.isPseudoRelationForCompany() }
             .mapIndexedNotNull { index, elem -> elem.toRelationship(index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
 
         val companiesFromRelations = vCard.relations.orEmpty() // companies from pseudo-relations
@@ -117,18 +117,18 @@ class VCardToContactMapper {
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toCompany(numberOfRelationCompanies + index) }
         val allCompanies = (companiesFromRelations + companiesFromOrganisations)
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
 
         val birthDays = vCard.birthdays.orEmpty()
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Birthday, index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
         val anniversaries = vCard.anniversaries.orEmpty()
             .filterNotNull()
             .mapIndexedNotNull { index, elem -> elem.toContactData(Anniversary, index) }
-            .removeDuplicates()
+            .sanitize()
             .enforceContinuousSortOrder()
 
         val allData = phoneNumbers + emails + addresses + websites +

@@ -8,11 +8,11 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumber
 fun List<ContactData>.enforceContinuousSortOrder(): List<ContactData> =
     sortedBy { it.sortOrder }.mapIndexed { index, data -> data.changeSortOrder(index) }
 
-fun List<PhoneNumber>.removePhoneNumberDuplicates(): List<PhoneNumber> =
-    removeDuplicates()
+fun List<PhoneNumber>.sanitizePhoneNumbers(): List<PhoneNumber> =
+    sanitize()
         .removeDuplicatesBy { it.formatValueForSearch() } // to remove duplicates with different formatting
 
-fun <T : BaseGenericContactData<S>, S> List<T>.removeDuplicates(): List<T> =
+fun <T : BaseGenericContactData<S>, S> List<T>.sanitize(): List<T> =
     filterNot { it.displayValue.isEmpty() }
         .removeDuplicatesBy { it.displayValue }
         .removeDuplicatesBy { it.value }

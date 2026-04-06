@@ -34,7 +34,7 @@ class AndroidContactDuplicationUtilTest {
             phoneNumbers[6],
         )
 
-        val result = phoneNumbers.removePhoneNumberDuplicates()
+        val result = phoneNumbers.sanitizePhoneNumbers()
 
         assertThat(result).hasSameSizeAs(expectedResult)
         assertThat(result).isEqualTo(expectedResult)
@@ -54,7 +54,7 @@ class AndroidContactDuplicationUtilTest {
             phoneNumbers[0],
         )
 
-        val result = phoneNumbers.removePhoneNumberDuplicates()
+        val result = phoneNumbers.sanitizePhoneNumbers()
 
         assertThat(result).hasSameSizeAs(expectedResult)
         assertThat(result).isEqualTo(expectedResult)
