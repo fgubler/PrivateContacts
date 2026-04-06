@@ -182,7 +182,15 @@ class ContactsAndroidDataMapper {
             }
 
         val companyFromOrganization = organization?.let { org ->
-            val companyName = org.company.orEmpty()
+            val baseName = org.company.orEmpty()
+            val department = org.department.orEmpty()
+            val jobTitle = org.title.orEmpty()
+            val companyName = when {
+                jobTitle.isBlank() && department.isBlank() -> baseName
+                jobTitle.isBlank() -> "baseName - $department"
+                department.isBlank() -> "$baseName ($jobTitle)"
+                else -> "$baseName - $department ($jobTitle)"
+            }
             Company(
                 id = org.toContactDataId(),
                 sortOrder = companiesFromRelations.size,
