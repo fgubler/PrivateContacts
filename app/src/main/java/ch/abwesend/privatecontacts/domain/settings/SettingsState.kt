@@ -85,6 +85,9 @@ interface ISettingsState {
     val backupPasswordEncrypted: String
     val numberOfBackupsToKeep: NumberOfBackupsToKeep
 
+    // Feature Flags
+    val useNewContactsLibrary: Boolean
+
     // Others
     val currentVersion: Int
     val previousVersion: Int
@@ -133,6 +136,8 @@ data class SettingsState(
     override val backupPasswordEncrypted: String,
     override val numberOfBackupsToKeep: NumberOfBackupsToKeep,
 
+    override val useNewContactsLibrary: Boolean,
+
     override val currentVersion: Int,
     override val previousVersion: Int,
     override val numberOfAppStarts: Int,
@@ -169,6 +174,7 @@ data class SettingsState(
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,
+            useNewContactsLibrary = false,
             currentVersion = BuildConfig.VERSION_CODE,
             previousVersion = BuildConfig.VERSION_CODE,
             numberOfAppStarts = 0,

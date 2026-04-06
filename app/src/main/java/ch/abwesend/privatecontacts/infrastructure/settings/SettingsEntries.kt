@@ -165,6 +165,10 @@ internal val numberOfBackupsToKeepEntry = EnumSettingsEntry(
     key = stringPreferencesKey("numberOfBackupsToKeep"),
     defaultValue = defaultSettings.numberOfBackupsToKeep
 )
+internal val useNewContactsLibraryEntry = SettingsEntry(
+    key = booleanPreferencesKey("useNewContactsLibrary"),
+    defaultValue = defaultSettings.useNewContactsLibrary
+)
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.

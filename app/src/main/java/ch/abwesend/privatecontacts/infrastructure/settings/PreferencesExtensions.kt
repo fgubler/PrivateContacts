@@ -55,6 +55,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     backupEncryptionEnabled = getValue(backupEncryptionEnabledEntry),
     backupPasswordEncrypted = getValue(backupPasswordEncryptedEntry),
     numberOfBackupsToKeep = tryGetEnumValue(numberOfBackupsToKeepEntry),
+    useNewContactsLibrary = getValue(useNewContactsLibraryEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =

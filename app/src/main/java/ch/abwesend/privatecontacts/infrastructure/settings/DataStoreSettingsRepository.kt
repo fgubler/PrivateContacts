@@ -197,6 +197,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.defaultVCardVersion
         set(value) = dataStore.setEnumValue(defaultVCardVersionEntry, value)
 
+    override var useNewContactsLibrary: Boolean
+        get() = currentSettings.useNewContactsLibrary
+        set(value) = dataStore.setValue(useNewContactsLibraryEntry, value)
+
     override fun overrideSettingsWith(settings: ISettingsState) {
         appTheme = settings.appTheme
         appLanguage = settings.appLanguage
@@ -226,6 +230,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         backupPasswordEncrypted = settings.backupPasswordEncrypted
         numberOfBackupsToKeep = settings.numberOfBackupsToKeep
         appLanguage = settings.appLanguage
+        useNewContactsLibrary = settings.useNewContactsLibrary
 
         /*
            meta-data is not changed

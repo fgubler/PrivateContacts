@@ -70,6 +70,10 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.ContactsAndroidLoadService
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.ContactsAndroidSaveService
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.DelegatingContactLoadService
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.DelegatingContactSaveService
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.contactdata.import.ToPhysicalAddressMapper
@@ -92,6 +96,7 @@ import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import com.alexstyl.contactstore.ContactStore
+import contacts.core.Contacts
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -113,9 +118,16 @@ internal val koinModule = module {
     factory<PermissionService> { AndroidPermissionService() }
     factory<AccountService> { AndroidAccountService(androidContext()) }
 
-    factory<IAndroidContactLoadService> { AndroidContactLoadService() }
+    // Contacts-Android
+    factory { ContactsAndroidLoadService() }
+    // TODO clean up
+    factory<IAndroidContactLoadService> { DelegatingContactLoadService(get<AndroidContactLoadService>(), get<ContactsAndroidLoadService>()) }
+    factory<IAndroidContactSaveService> { DelegatingContactSaveService(get<AndroidContactSaveService>(), get<ContactsAndroidSaveService>()) }
+    factory { ContactsAndroidSaveService() }
+
+    // Contact Store
     factory { AndroidContactLoadService() }
-    factory<IAndroidContactSaveService> { AndroidContactSaveService() }
+    factory { AndroidContactSaveService() }
     factory<IAndroidContactMutableFactory> { AndroidContactMutableFactory() }
     factory { AndroidContactChangeService() }
     factory { AndroidContactAccountService() }
@@ -178,4 +190,5 @@ internal val koinModule = module {
 
     // Android contacts
     single { ContactStore.newInstance(androidContext()) }
+    single { Contacts(androidContext()) }
 }

@@ -68,6 +68,9 @@ interface SettingsRepository : ISettingsState {
     override var backupPasswordEncrypted: String
     override var numberOfBackupsToKeep: NumberOfBackupsToKeep
 
+    // Feature Flags
+    override var useNewContactsLibrary: Boolean
+
     // Others
     override var currentVersion: Int
     override var previousVersion: Int

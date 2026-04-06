@@ -59,6 +59,7 @@ data class TestSettings(
     override var backupEncryptionEnabled: Boolean = currentSettings.backupEncryptionEnabled
     override var backupPasswordEncrypted: String = currentSettings.backupPasswordEncrypted
     override var numberOfBackupsToKeep: NumberOfBackupsToKeep = currentSettings.numberOfBackupsToKeep
+    override var useNewContactsLibrary: Boolean = currentSettings.useNewContactsLibrary
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings
