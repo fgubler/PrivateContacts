@@ -90,6 +90,7 @@ How I want you to work:
 - Do not jump straight to deleting `contactstore`. In fact: DO NOT UNDER ANY CIRCUMSTANCES DELETE IT. I will manually do that, later.
 - Do not do broad refactors unless they directly support the migration.
 - If something is unclear, ask for clarification: DO NOT MAKE ASSUMPTIONS - ever.
+- prefer consulting the online documentation over decompiling library code.
 
 Deliverables for each phase:
 - code changes

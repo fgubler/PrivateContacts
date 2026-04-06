@@ -126,7 +126,7 @@ internal val koinModule = module {
     factory { ContactsAndroidSaveService() }
     factory { ContactsAndroidContactMapper() }
     factory { ContactsAndroidDataMapper() }
-    factory { ContactsAndroidLoadRepository(get()) }
+    factory { ContactsAndroidLoadRepository() }
     factory<IAndroidContactLoadService> { DelegatingContactLoadService(get<AndroidContactLoadService>(), get<ContactsAndroidLoadService>()) }
     factory<IAndroidContactSaveService> { DelegatingContactSaveService(get<AndroidContactSaveService>(), get<ContactsAndroidSaveService>()) }
 
