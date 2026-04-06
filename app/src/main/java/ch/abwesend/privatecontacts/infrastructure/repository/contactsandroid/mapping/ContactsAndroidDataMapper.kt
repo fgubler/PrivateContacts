@@ -187,7 +187,7 @@ class ContactsAndroidDataMapper {
             val jobTitle = org.title.orEmpty()
             val companyName = when {
                 jobTitle.isBlank() && department.isBlank() -> baseName
-                jobTitle.isBlank() -> "baseName - $department"
+                jobTitle.isBlank() -> "$baseName - $department"
                 department.isBlank() -> "$baseName ($jobTitle)"
                 else -> "$baseName - $department ($jobTitle)"
             }
