@@ -22,7 +22,6 @@ import contacts.core.Fields
 import contacts.core.entities.Contact
 import contacts.core.entities.Group
 import contacts.core.equalTo
-import contacts.core.util.lookupKeyIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
