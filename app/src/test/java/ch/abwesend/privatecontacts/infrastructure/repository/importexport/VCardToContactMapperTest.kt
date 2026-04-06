@@ -68,7 +68,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
             someVCardPhoneNumber(number = null),
             someVCardPhoneNumber(number = "456"),
         )
-        val validPhoneNumbers = phoneNumbers.filter { it.text != null }
+        val validPhoneNumbers = phoneNumbers.filterNot { it.text.isNullOrEmpty() }
         vCard.telephoneNumbers.addAll(phoneNumbers)
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
@@ -78,7 +78,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
         assertThat(resultContact.contactDataSet).hasSameSizeAs(validPhoneNumbers)
         val resultPhoneNumbers = resultContact.contactDataSet.filterIsInstance<PhoneNumber>()
         assertThat(resultPhoneNumbers).hasSameSizeAs(validPhoneNumbers)
-        assertThat(resultPhoneNumbers.map { it.value }).containsExactlyElementsOf(phoneNumbers.mapNotNull { it.text })
+        assertThat(resultPhoneNumbers.map { it.value }).containsExactlyElementsOf(validPhoneNumbers.mapNotNull { it.text })
         assertThat(resultPhoneNumbers.map { it.sortOrder }).containsExactlyElementsOf(validPhoneNumbers.indices)
     }
 
@@ -92,7 +92,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
             someVCardEmail("d@e.f"),
             someVCardEmail("g@h.i"),
         )
-        val validEmailAddresses = emailAddresses.filter { it.value != null }
+        val validEmailAddresses = emailAddresses.filterNot { it.value.isNullOrEmpty() }
         vCard.emails.addAll(emailAddresses)
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
@@ -149,7 +149,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
             someVCardRelation("Aurelius"),
             someVCardRelation("Augustus"),
         )
-        val validRelations = relations.filter { it.text != null }
+        val validRelations = relations.filterNot { it.text.isNullOrEmpty() }
         vCard.relations.addAll(relations)
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
@@ -172,7 +172,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
             someVCardUrl(""),
             someVCardUrl("http://www.ergon.ch"),
         )
-        val validRelations = relations.filter { it.value != null }
+        val validRelations = relations.filterNot { it.value.isNullOrEmpty() }
         vCard.urls.addAll(relations)
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
@@ -244,7 +244,7 @@ class VCardToContactMapperTest : RepositoryTestBase() {
             someCompanyVCardPseudoRelation("Amazon"),
             someCompanyVCardPseudoRelation("Ergon"),
         )
-        val validCompanies = companies.filter { it.text != null }
+        val validCompanies = companies.filterNot { it.text.isNullOrEmpty() }
         vCard.relations.addAll(companies)
 
         val result = underTest.mapToContact(vCard, ContactType.PUBLIC)
