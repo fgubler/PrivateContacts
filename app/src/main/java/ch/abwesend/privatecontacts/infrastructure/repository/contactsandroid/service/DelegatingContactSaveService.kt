@@ -15,15 +15,14 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
 
 /**
  * Delegates to either the old (contactstore) or new (contacts-android) implementation
  * based on the [Settings.current.useNewContactsLibrary] feature flag.
  */
 class DelegatingContactSaveService(
-    private val oldService: AndroidContactSaveService,
-    private val newService: ContactsAndroidSaveService,
+    private val oldService: IAndroidContactSaveService,
+    private val newService: IAndroidContactSaveService,
 ) : IAndroidContactSaveService {
 
     private val delegate: IAndroidContactSaveService

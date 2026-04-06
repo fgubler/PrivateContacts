@@ -16,15 +16,14 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.search.ContactSearchConfig
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.settings.Settings
-import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 
 /**
  * Delegates to either the old (contactstore) or new (contacts-android) implementation
  * based on the [Settings.current.useNewContactsLibrary] feature flag.
  */
 class DelegatingContactLoadService(
-    private val oldService: AndroidContactLoadService,
-    private val newService: ContactsAndroidLoadService,
+    private val oldService: IAndroidContactLoadService,
+    private val newService: IAndroidContactLoadService,
 ) : IAndroidContactLoadService {
 
     private val delegate: IAndroidContactLoadService

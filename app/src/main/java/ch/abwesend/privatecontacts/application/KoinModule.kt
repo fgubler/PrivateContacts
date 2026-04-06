@@ -70,6 +70,9 @@ import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.ser
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactChangeService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.androidcontacts.service.AndroidContactSaveService
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.mapping.ContactsAndroidContactMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.mapping.ContactsAndroidDataMapper
+import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.repository.ContactsAndroidLoadRepository
 import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.ContactsAndroidLoadService
 import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.ContactsAndroidSaveService
 import ch.abwesend.privatecontacts.infrastructure.repository.contactsandroid.service.DelegatingContactLoadService
@@ -118,12 +121,14 @@ internal val koinModule = module {
     factory<PermissionService> { AndroidPermissionService() }
     factory<AccountService> { AndroidAccountService(androidContext()) }
 
-    // Contacts-Android
+    // Contacts-Android (new library)
     factory { ContactsAndroidLoadService() }
-    // TODO clean up
+    factory { ContactsAndroidSaveService() }
+    factory { ContactsAndroidContactMapper() }
+    factory { ContactsAndroidDataMapper() }
+    factory { ContactsAndroidLoadRepository(get()) }
     factory<IAndroidContactLoadService> { DelegatingContactLoadService(get<AndroidContactLoadService>(), get<ContactsAndroidLoadService>()) }
     factory<IAndroidContactSaveService> { DelegatingContactSaveService(get<AndroidContactSaveService>(), get<ContactsAndroidSaveService>()) }
-    factory { ContactsAndroidSaveService() }
 
     // Contact Store
     factory { AndroidContactLoadService() }
