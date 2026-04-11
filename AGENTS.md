@@ -16,6 +16,7 @@ The app can also display and edit "normal" contacts (called "public" in the code
 ## Code Style
 - Use Kotlin idioms: extension functions, sealed classes for UI states/results, data classes for models.
 - Avoid: raw Java types, mutable state in Composables, deprecated APIs.
+- Consider using the custom interface BinaryResult for any method executing code that might fail.
 
 ## UI/UX Consistency
 - Match existing Material theme (colors, typography from app theme) and UX.
