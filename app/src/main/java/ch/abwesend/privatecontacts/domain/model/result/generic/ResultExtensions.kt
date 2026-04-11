@@ -13,3 +13,11 @@ inline fun <T> runCatchingAsResult(block: () -> T): BinaryResult<T, Exception> {
         ErrorResult(e)
     }
 }
+
+inline fun <T> runCatchingOnResult(block: () -> BinaryResult<T, Exception>): BinaryResult<T, Exception> {
+    return try {
+        block()
+    } catch (e: Exception) {
+        ErrorResult(e)
+    }
+}

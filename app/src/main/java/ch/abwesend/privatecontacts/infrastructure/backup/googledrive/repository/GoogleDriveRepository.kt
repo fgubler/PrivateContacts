@@ -10,13 +10,15 @@ import android.content.Context
 import android.content.Intent
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupData
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAccessToken
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolderInfo
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupData
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingOnResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
@@ -31,9 +33,9 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.withContext
-import com.google.api.services.drive.model.File as DriveFile
 import java.io.File
 import java.util.UUID
+import com.google.api.services.drive.model.File as DriveFile
 
 // TODO consider for all methods whether the should return BinaryResult objects
 // TODO avoid leaking the Drive instance: keep that inside the repository
@@ -47,15 +49,21 @@ class GoogleDriveRepository(private val context: Context) : IGoogleDriveReposito
         private const val APP_NAME = "PrivateContacts"
     }
 
-    override suspend fun requestAuthorization(): GoogleDriveAuthResult = withContext(dispatchers.io) {
+    override suspend fun <T> runWithAuthorization(
+        block: suspend (GoogleDriveAccessToken) -> BinaryResult<T, Exception>
+    ): GoogleDriveAuthResult<T> = withContext(dispatchers.io) {
         try {
-            val result = authorize()
-            if (result.hasResolution()) {
-                result.pendingIntent
+            val authorizationResult = authorize()
+            if (authorizationResult.hasResolution()) {
+                authorizationResult.pendingIntent
                     ?.let { GoogleDriveAuthResult.ConsentRequired(it) }
                     ?: GoogleDriveAuthResult.Error
             } else {
-                GoogleDriveAuthResult.Authorized(setupFolderFromResult(result))
+                val accessToken = authorizationResult.extractAccessToken()
+                when (val result = block(accessToken)) {
+                    is SuccessResult -> GoogleDriveAuthResult.Authorized(data = result.value)
+                    is ErrorResult -> GoogleDriveAuthResult.Error
+                }
             }
         } catch (e: Exception) {
             logger.error("Failed to request authorization", e)
@@ -63,19 +71,35 @@ class GoogleDriveRepository(private val context: Context) : IGoogleDriveReposito
         }
     }
 
-    override suspend fun handleAuthorizationResult(
-        data: Intent?
-    ): BinaryResult<GoogleDriveSetupData, Exception> = withContext(dispatchers.io) {
-        runCatchingAsResult {
+    override suspend fun <T> runWithAuthorizationFromIntent(
+        data: Intent?,
+        block: suspend (GoogleDriveAccessToken) -> BinaryResult<T, Exception>,
+    ): BinaryResult<T, Exception> = withContext(dispatchers.io) {
+        runCatchingOnResult {
             val result = Identity.getAuthorizationClient(context)
                 .getAuthorizationResultFromIntent(data)
-            setupFolderFromResult(result)
+            val accessToken = result.extractAccessToken()
+            block(accessToken)
         }.ifHasError { logger.error("Failed to handle authorization result", it) }
     }
 
-    fun buildDriveService(accessToken: String): Drive {
+    override suspend fun createBackupFolder(
+        accessToken: GoogleDriveAccessToken
+    ): BinaryResult<GoogleDriveSetupData, Exception> = runCatchingAsResult {
+        val drive = buildDriveService(accessToken)
+        val folderInfo = createBackupFolder(drive)
+        logger.info("Google Drive backup configured with folder: $folderInfo")
+
+        GoogleDriveSetupData(
+            accountEmail = "",
+            folderId = folderInfo.id,
+            folderName = folderInfo.name,
+        )
+    }
+
+    fun buildDriveService(accessToken: GoogleDriveAccessToken): Drive {
         val initializer = HttpRequestInitializer { request ->
-            request.headers.authorization = "Bearer $accessToken"
+            request.headers.authorization = "Bearer ${accessToken.value}"
         }
 
         return Drive.Builder(
@@ -83,27 +107,6 @@ class GoogleDriveRepository(private val context: Context) : IGoogleDriveReposito
             GsonFactory.getDefaultInstance(),
             initializer,
         ).setApplicationName(APP_NAME).build()
-    }
-
-    /**
-     * Obtains a valid access token silently (i.e. without user interaction).
-     * @return the access token string, or null if authorization is not granted.
-     */
-    suspend fun getAccessTokenSilently(): BinaryResult<String, Unit> = withContext(dispatchers.io) {
-        try {
-            val result = authorize()
-            if (result.hasResolution()) {
-                logger.warning("Authorization requires user consent, cannot obtain token silently")
-                ErrorResult(Unit)
-            } else {
-                result.accessToken
-                    ?.let { SuccessResult(it) }
-                    ?: ErrorResult(Unit)
-            }
-        } catch (e: Exception) {
-            logger.error("Failed to obtain access token", e)
-            ErrorResult(Unit)
-        }
     }
 
     fun createBackupFolder(drive: Drive): GoogleDriveFolderInfo {
@@ -143,21 +146,6 @@ class GoogleDriveRepository(private val context: Context) : IGoogleDriveReposito
         return uploaded
     }
 
-    private fun setupFolderFromResult(result: AuthorizationResult): GoogleDriveSetupData {
-        val accessToken = result.accessToken
-            ?: throw IllegalStateException("Authorization succeeded but no access token returned")
-
-        val drive = buildDriveService(accessToken)
-        val folderInfo = createBackupFolder(drive)
-
-        logger.info("Google Drive backup configured with folder: $folderInfo")
-        return GoogleDriveSetupData(
-            accountEmail = "",
-            folderId = folderInfo.id,
-            folderName = folderInfo.name,
-        )
-    }
-
     private fun buildAuthorizationRequest(): AuthorizationRequest =
         AuthorizationRequest.builder()
             .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_FILE)))
@@ -171,6 +159,11 @@ class GoogleDriveRepository(private val context: Context) : IGoogleDriveReposito
     private suspend fun authorize(): AuthorizationResult = withContext(dispatchers.io) {
         val client = Identity.getAuthorizationClient(context)
         Tasks.await(client.authorize(buildAuthorizationRequest()))
+    }
+
+    private fun AuthorizationResult.extractAccessToken(): GoogleDriveAccessToken {
+        return accessToken?.let { GoogleDriveAccessToken(it) }
+            ?: throw IllegalStateException("Authorization succeeded but no access token returned")
     }
 }
 

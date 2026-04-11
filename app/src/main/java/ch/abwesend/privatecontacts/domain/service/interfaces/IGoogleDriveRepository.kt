@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service.interfaces
 
 import android.content.Intent
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAccessToken
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupData
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
@@ -16,17 +17,20 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
  * Uses the modern AuthorizationClient API (Identity Services) instead of the deprecated GoogleSignIn API.
  */
 interface IGoogleDriveRepository {
-    /**
-     * Requests authorization for Google Drive access.
-     * @return [GoogleDriveAuthResult.ConsentRequired] if user consent is needed,
-     *         [GoogleDriveAuthResult.Authorized] if authorization was granted silently and folder was created,
-     *         [GoogleDriveAuthResult.Error] if something went wrong.
-     */
-    suspend fun requestAuthorization(): GoogleDriveAuthResult
+    /** Requests authorization for Google Drive access and runs [block] with the resulting access token. */
+    suspend fun <T> runWithAuthorization(
+        block: suspend (GoogleDriveAccessToken) -> BinaryResult<T, Exception>
+    ): GoogleDriveAuthResult<T>
 
     /**
-     * Handles the result Intent returned after the user completes the authorization consent flow.
-     * @return [GoogleDriveSetupData] on success, or the [Exception] on failure.
+     * After [runWithAuthorization] had returned [GoogleDriveAuthResult.ConsentRequired], the consent-dialog was shown.
+     * Here, we handle the result from that consent flow.
      */
-    suspend fun handleAuthorizationResult(data: Intent?): BinaryResult<GoogleDriveSetupData, Exception>
+    suspend fun <T> runWithAuthorizationFromIntent(
+        data: Intent?,
+        block: suspend (GoogleDriveAccessToken) -> BinaryResult<T, Exception>,
+    ): BinaryResult<T, Exception>
+
+    /** Creates a new folder in Google Drive for backups. */
+    suspend fun createBackupFolder(accessToken: GoogleDriveAccessToken): BinaryResult<GoogleDriveSetupData, Exception>
 }

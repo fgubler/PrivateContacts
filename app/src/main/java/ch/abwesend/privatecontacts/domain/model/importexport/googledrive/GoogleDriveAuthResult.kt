@@ -8,8 +8,8 @@ package ch.abwesend.privatecontacts.domain.model.importexport.googledrive
 
 import android.app.PendingIntent
 
-sealed interface GoogleDriveAuthResult {
-    data class ConsentRequired(val pendingIntent: PendingIntent) : GoogleDriveAuthResult
-    data class Authorized(val data: GoogleDriveSetupData) : GoogleDriveAuthResult
-    data object Error : GoogleDriveAuthResult
+sealed interface GoogleDriveAuthResult<out T> {
+    data class ConsentRequired(val pendingIntent: PendingIntent) : GoogleDriveAuthResult<Nothing>
+    data class Authorized<T>(val data: T) : GoogleDriveAuthResult<T>
+    data object Error : GoogleDriveAuthResult<Nothing>
 }
