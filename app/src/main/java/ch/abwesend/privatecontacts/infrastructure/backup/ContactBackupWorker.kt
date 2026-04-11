@@ -61,13 +61,13 @@ class ContactBackupWorker(
 
     /** Caching them would not work because they would be lost during a crash. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
-        backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
+        backupMessageRepository.addLocalMessage(BackupMessage(text = text, severity = severity))
     }
 
     override suspend fun doWork(): Result {
         return try {
             logger.debug("Starting periodic backup")
-            backupMessageRepository.clearMessages() // a new start with a clean slate
+            backupMessageRepository.clearLocalMessages() // a new start with a clean slate
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
 

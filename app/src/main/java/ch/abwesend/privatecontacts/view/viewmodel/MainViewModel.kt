@@ -154,7 +154,10 @@ class MainViewModel : ViewModel() {
 
     private suspend fun loadBackupMessages(): List<BackupMessage> {
         logger.debug("Loading backup messages")
-        return backupMessageRepository.getAndClearMessages()
-            .also { logger.debug("Loaded ${it.size} backup messages") }
+        val localMessages = backupMessageRepository.getAndClearLocalMessages()
+        val driveMessages = backupMessageRepository.getAndClearDriveMessages()
+        val allMessages = (localMessages + driveMessages).sortedByDescending { it.timestamp }
+        logger.debug("Loaded ${allMessages.size} backup messages (${localMessages.size} local, ${driveMessages.size} drive)")
+        return allMessages
     }
 }
