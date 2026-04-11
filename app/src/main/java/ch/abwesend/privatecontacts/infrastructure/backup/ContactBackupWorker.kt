@@ -32,6 +32,8 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.PUBLIC_BACKUP_PREFIX
+import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.SECRET_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
@@ -192,8 +194,8 @@ class ContactBackupWorker(
 
         val extension = if (encryptionPassword == null) VCF_FILE_EXTENSION else CRYPT_FILE_EXTENSION
         val fileName = when (type) {
-            ContactType.SECRET -> "backup_secret_$dateString.$extension"
-            ContactType.PUBLIC -> "backup_public_$dateString.$extension"
+            ContactType.SECRET -> "${SECRET_BACKUP_PREFIX}$dateString.$extension"
+            ContactType.PUBLIC -> "${PUBLIC_BACKUP_PREFIX}$dateString.$extension"
         }
         cleanupExistingFile(documentFolder, fileName)
 
