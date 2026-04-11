@@ -55,3 +55,39 @@ After implementing the feature, create a short and concise documentation about i
 Store that documentation in the folder 'aiTools/documentation' by
 - either creating a new markdown file for that feature or topic
 - or adding a new section to an existing markdown file
+
+# Google Drive Backups
+## Initial Prompt
+The App contains logic for periodic, local backups.
+ - In SettingsScreen, the settings are defined for whether and how the backups should be created.
+ - BackupScheduler defines how and when the backups should be done. 
+ - ContactBackupWorker takes care of the actual backup-logic.
+
+I want to extend that to also allow backups to be stored on Google Drive.
+
+In the SettingsScreen, controls should be added to
+ - enable/disable Google Drive backups
+ - select the Google Account to use for backups which should launch a Google account-chooser as well as ask for the permission to create a new folder there including the read- and write-permission in that folder.
+   - A new folder should be created in Google-Drive, called "PrivateContacts Backups", followed by a UUID to make sure that it is unique.
+   - The name of the folder should also be displayed on SettingsScreen.
+
+I do not want to change the existing backup-logic in ContactBackupWorker.
+Instead, I want a second Worker-Class which 
+ - takes the newest local backup made by ContactBackupWorker of each type (public and secret contacts)
+ - checks whether that has already been successfully uploaded to Google Drive
+ - if not, uploads it to Google Drive
+The task should be scheduled to run daily: if possible, after the ContactBackupWorker job has finished.
+ - If the upload fails, a Retry-Result should be returned.
+ - That task should also write to the list of error-messages in DataStore which will be shown to the user on next start of the app.
+   - Maybe better to write in a separate list/property in DataStore to make sure they don't mix.
+
+If something is unclear, pause the work and ask for clarification.
+Use only modern, idiomatic kotlin code.
+Use the existing code as a starting point for your implementation.
+Re-use code rather than duplicating it. Try to use elegant abstractions and extract logic into separate methods and classes if that makes it more readable.
+The code should be robust and readable.
+
+After implementing the feature, create a short and concise documentation about its function and all design- and architecture-decisions taken during its development.
+Store that documentation in the folder 'aiTools/documentation' by
+- either creating a new markdown file for that feature or topic
+- or adding a new section to an existing markdown file
