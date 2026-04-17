@@ -434,6 +434,15 @@
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
     <string name="backup_decryption_password_dialog_title">Entschlüsselungspasswort eingeben</string>
+    <string name="drive_backup_folder_not_configured_warning">Google Drive Backup übersprungen: kein Drive-Ordner konfiguriert.</string>
+    <string name="drive_backup_account_not_signed_in_error">Google Drive Backup fehlgeschlagen: kein Google-Konto angemeldet.</string>
+    <string name="drive_backup_local_folder_not_configured_warning">Google Drive Backup übersprungen: kein lokaler Backup-Ordner konfiguriert.</string>
+    <string name="drive_backup_local_folder_unreadable_error">Google Drive Backup fehlgeschlagen: lokaler Backup-Ordner nicht lesbar.</string>
+    <string name="drive_backup_no_local_file_warning">Keine lokale Sicherungsdatei für %1$s-Kontakte gefunden.</string>
+    <string name="drive_backup_upload_failed_error">Google Drive Backup ist unerwartet fehlgeschlagen.</string>
+    <string name="drive_backup_upload_file_failed_error">Google Drive Backup: Datei konnte nicht hochgeladen werden: %1$s</string>
+    <string name="drive_backup_sign_in_failed">Anmeldung beim Google-Konto fehlgeschlagen.</string>
+    <string name="drive_backup_folder_creation_failed">Google Drive-Ordner konnte nicht erstellt werden.</string>
     <string name="show_password">Passwort anzeigen</string>
     <string name="hide_password">Passwort verbergen</string>
 
