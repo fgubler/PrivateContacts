@@ -434,6 +434,15 @@
     <string name="backup_encryption_password_label">Contraseña</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
     <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
+
+    <string name="drive_backup_title">Copia de seguridad en Google Drive</string>
+    <string name="drive_backup_enabled_label">Subir copias de seguridad a Google Drive</string>
+    <string name="drive_backup_enabled_description">Subir automáticamente las copias de seguridad locales a Google Drive</string>
+    <string name="drive_backup_account_label">Cuenta de Google</string>
+    <string name="drive_backup_account_not_selected">Ninguna cuenta seleccionada</string>
+    <string name="drive_backup_account_select">Seleccionar cuenta</string>
+    <string name="drive_backup_folder_label">Carpeta de Drive</string>
+    <string name="drive_backup_folder_creating">Creando carpeta...</string>
     <string name="drive_backup_folder_not_configured_warning">Copia de seguridad en Google Drive omitida: no hay carpeta de Drive configurada.</string>
     <string name="drive_backup_account_not_signed_in_error">Copia de seguridad en Google Drive fallida: no hay cuenta de Google conectada.</string>
     <string name="drive_backup_local_folder_not_configured_warning">Copia de seguridad en Google Drive omitida: no se ha configurado una carpeta de copia de seguridad local.</string>
@@ -443,6 +452,7 @@
     <string name="drive_backup_upload_file_failed_error">Copia de seguridad en Google Drive: error al subir archivo: %1$s</string>
     <string name="drive_backup_sign_in_failed">Error al iniciar sesión en la cuenta de Google.</string>
     <string name="drive_backup_folder_creation_failed">No se pudo crear la carpeta de Google Drive.</string>
+    <string name="disable">Desactivar</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
 

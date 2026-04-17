@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -87,6 +88,8 @@ import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -147,6 +150,12 @@ object SettingsScreen {
                 PeriodicBackupCategory(
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
+                    currentSettings = currentSettings,
+                    viewModel = screenContext.settingsViewModel,
+                )
+                SettingsCategorySpacer()
+
+                GoogleDriveBackupCategory(
                     currentSettings = currentSettings,
                     viewModel = screenContext.settingsViewModel,
                 )
@@ -732,6 +741,86 @@ object SettingsScreen {
             }
 
             EditIconButton { folderPickerLauncher.launch(currentFolderUri) }
+        }
+    }
+
+    @Composable
+    private fun GoogleDriveBackupCategory(
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+    ) {
+        val setupInProgress by viewModel.driveSetupInProgress.collectAsState()
+
+        val authorizationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            viewModel.handleGoogleAuthorizationResult(result.data)
+        }
+
+        SettingsCategory(titleRes = R.string.drive_backup_title) {
+            val enabled = currentSettings.googleDriveBackupEnabled
+            val accountEmail = currentSettings.googleDriveAccountEmail
+            val folderName = currentSettings.googleDriveFolderName
+
+            if (enabled && accountEmail.isNotEmpty()) {
+                // Show current config
+                SettingsLabel(labelRes = R.string.drive_backup_account_label)
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = accountEmail,
+                    style = MaterialTheme.typography.body2,
+                    fontStyle = FontStyle.Italic,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                SettingsLabel(labelRes = R.string.drive_backup_folder_label)
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(
+                    text = folderName.ifEmpty { "—" },
+                    style = MaterialTheme.typography.body2,
+                    fontStyle = FontStyle.Italic,
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    TextButton(onClick = { viewModel.disableGoogleDriveBackup() }) {
+                        Text(text = stringResource(id = R.string.disable))
+                    }
+                }
+            } else {
+                // Show setup button
+                if (setupInProgress) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.padding(start = 10.dp))
+                        Text(text = stringResource(id = R.string.drive_backup_folder_creating))
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        TextButton(
+                            onClick = {
+                                viewModel.requestGoogleDriveAuthorization { pendingIntent ->
+                                    val request = IntentSenderRequest.Builder(pendingIntent).build()
+                                    authorizationLauncher.launch(request)
+                                }
+                            }
+                        ) {
+                            Text(text = stringResource(id = R.string.drive_backup_account_select))
+                        }
+                    }
+                }
+            }
         }
     }
 

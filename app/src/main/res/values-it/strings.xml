@@ -434,6 +434,15 @@
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la cifratura.</string>
     <string name="backup_decryption_password_dialog_title">Inserisci la password di decifratura</string>
+
+    <string name="drive_backup_title">Backup su Google Drive</string>
+    <string name="drive_backup_enabled_label">Carica i backup su Google Drive</string>
+    <string name="drive_backup_enabled_description">Carica automaticamente i backup locali su Google Drive</string>
+    <string name="drive_backup_account_label">Account Google</string>
+    <string name="drive_backup_account_not_selected">Nessun account selezionato</string>
+    <string name="drive_backup_account_select">Seleziona account</string>
+    <string name="drive_backup_folder_label">Cartella Drive</string>
+    <string name="drive_backup_folder_creating">Creazione cartella...</string>
     <string name="drive_backup_folder_not_configured_warning">Backup Google Drive saltato: nessuna cartella Drive configurata.</string>
     <string name="drive_backup_account_not_signed_in_error">Backup Google Drive fallito: nessun account Google connesso.</string>
     <string name="drive_backup_local_folder_not_configured_warning">Backup Google Drive saltato: nessuna cartella di backup locale configurata.</string>
@@ -443,6 +452,7 @@
     <string name="drive_backup_upload_file_failed_error">Backup Google Drive: caricamento file fallito: %1$s</string>
     <string name="drive_backup_sign_in_failed">Accesso all\'account Google fallito.</string>
     <string name="drive_backup_folder_creation_failed">Impossibile creare la cartella Google Drive.</string>
+    <string name="disable">Disattiva</string>
     <string name="show_password">Mostrare password</string>
     <string name="hide_password">Nascondere password</string>
 

@@ -439,6 +439,15 @@
     <string name="backup_encryption_password_label">Password</string>
     <string name="backup_encryption_password_empty_error">Please enter a password to enable encryption.</string>
     <string name="backup_decryption_password_dialog_title">Enter Decryption Password</string>
+
+    <string name="drive_backup_title">Google Drive Backup</string>
+    <string name="drive_backup_enabled_label">Upload backups to Google Drive</string>
+    <string name="drive_backup_enabled_description">Automatically upload local backups to Google Drive</string>
+    <string name="drive_backup_account_label">Google Account</string>
+    <string name="drive_backup_account_not_selected">No account selected</string>
+    <string name="drive_backup_account_select">Select account</string>
+    <string name="drive_backup_folder_label">Drive folder</string>
+    <string name="drive_backup_folder_creating">Creating folder...</string>
     <string name="drive_backup_folder_not_configured_warning">Google Drive backup skipped: no Drive folder configured.</string>
     <string name="drive_backup_account_not_signed_in_error">Google Drive backup failed: no Google account signed in.</string>
     <string name="drive_backup_local_folder_not_configured_warning">Google Drive backup skipped: no local backup folder configured.</string>
@@ -448,6 +457,7 @@
     <string name="drive_backup_upload_file_failed_error">Google Drive backup failed to upload file: %1$s</string>
     <string name="drive_backup_sign_in_failed">Failed to sign in to Google account.</string>
     <string name="drive_backup_folder_creation_failed">Failed to create Google Drive folder.</string>
+    <string name="disable">Disable</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>
 

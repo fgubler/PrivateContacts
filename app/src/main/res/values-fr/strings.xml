@@ -434,6 +434,15 @@
     <string name="backup_encryption_password_label">Mot de passe</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>
     <string name="backup_decryption_password_dialog_title">Entrer le mot de passe de déchiffrement</string>
+
+    <string name="drive_backup_title">Sauvegarde Google Drive</string>
+    <string name="drive_backup_enabled_label">Téléverser les sauvegardes sur Google Drive</string>
+    <string name="drive_backup_enabled_description">Téléverser automatiquement les sauvegardes locales sur Google Drive</string>
+    <string name="drive_backup_account_label">Compte Google</string>
+    <string name="drive_backup_account_not_selected">Aucun compte sélectionné</string>
+    <string name="drive_backup_account_select">Sélectionner un compte</string>
+    <string name="drive_backup_folder_label">Dossier Drive</string>
+    <string name="drive_backup_folder_creating">Création du dossier...</string>
     <string name="drive_backup_folder_not_configured_warning">Sauvegarde Google Drive ignorée : aucun dossier Drive configuré.</string>
     <string name="drive_backup_account_not_signed_in_error">Sauvegarde Google Drive échouée : aucun compte Google connecté.</string>
     <string name="drive_backup_local_folder_not_configured_warning">Sauvegarde Google Drive ignorée : aucun dossier de sauvegarde local configuré.</string>
@@ -443,6 +452,7 @@
     <string name="drive_backup_upload_file_failed_error">Sauvegarde Google Drive : échec du téléversement du fichier : %1$s</string>
     <string name="drive_backup_sign_in_failed">Échec de la connexion au compte Google.</string>
     <string name="drive_backup_folder_creation_failed">Impossible de créer le dossier Google Drive.</string>
+    <string name="disable">Désactiver</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>
 

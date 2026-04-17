@@ -156,6 +156,22 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.backupPasswordEncrypted
         set(value) = dataStore.setValue(backupPasswordEncryptedEntry, value)
 
+    override var googleDriveBackupEnabled: Boolean
+        get() = currentSettings.googleDriveBackupEnabled
+        set(value) = dataStore.setValue(googleDriveBackupEnabledEntry, value)
+
+    override var googleDriveAccountEmail: String
+        get() = currentSettings.googleDriveAccountEmail
+        set(value) = dataStore.setValue(googleDriveAccountEmailEntry, value)
+
+    override var googleDriveFolderId: String
+        get() = currentSettings.googleDriveFolderId
+        set(value) = dataStore.setValue(googleDriveFolderIdEntry, value)
+
+    override var googleDriveFolderName: String
+        get() = currentSettings.googleDriveFolderName
+        set(value) = dataStore.setValue(googleDriveFolderNameEntry, value)
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -219,6 +235,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         lastBackupDate = settings.lastBackupDate
         backupEncryptionEnabled = settings.backupEncryptionEnabled
         backupPasswordEncrypted = settings.backupPasswordEncrypted
+        googleDriveBackupEnabled = settings.googleDriveBackupEnabled
+        googleDriveAccountEmail = settings.googleDriveAccountEmail
+        googleDriveFolderId = settings.googleDriveFolderId
+        googleDriveFolderName = settings.googleDriveFolderName
         appLanguage = settings.appLanguage
 
         /*
