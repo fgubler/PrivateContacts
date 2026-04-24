@@ -48,9 +48,10 @@ import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -633,12 +634,26 @@ object SettingsScreen {
 
         BackupFolderField(settingsRepository, currentSettings.backupFolder)
 
-        SettingsEntryDivider()
-        BackupEncryptionField(
-            settingsRepository = settingsRepository,
-            encryptionEnabled = currentSettings.backupEncryptionEnabled,
-            viewModel = viewModel,
-        )
+                SettingsEntryDivider()
+
+                val numberOfBackupsToKeepOptions = remember {
+                    NumberOfBackupsToKeep.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+                }
+                SettingsDropDown(
+                    label = R.string.backup_number_to_keep_label,
+                    description = null,
+                    value = currentSettings.numberOfBackupsToKeep,
+                    options = numberOfBackupsToKeepOptions,
+                    onValueChanged = { settingsRepository.numberOfBackupsToKeep = it },
+                )
+
+                SettingsEntryDivider()
+
+                BackupEncryptionField(
+                    settingsRepository = settingsRepository,
+                    encryptionEnabled = currentSettings.backupEncryptionEnabled,
+                    viewModel = viewModel,
+                )
 
         @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
         if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {
@@ -717,9 +732,10 @@ object SettingsScreen {
             PasswordInputDialog(
                 title = R.string.backup_encryption_password_dialog_title,
                 label = R.string.backup_encryption_password_label,
+                confirmationRequired = true,
                 onConfirm = { password ->
                     showPasswordDialog = false
-                    viewModel.encryptBackupPassword(password)
+                    viewModel.encryptAndSaveBackupPassword(password)
                 },
                 onCancel = {
                     showPasswordDialog = false

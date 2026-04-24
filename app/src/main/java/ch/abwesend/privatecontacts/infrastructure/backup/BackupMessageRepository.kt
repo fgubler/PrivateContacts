@@ -64,7 +64,7 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
                 preferences.remove(key)
             }
             logger.debug("Read backup messages (${key.name}) before clearing them: ${messages.size}")
-            messages
+            messages.distinctBy { it.text + it.severity.name }
         } catch (e: Exception) {
             logger.error("Failed to read backup messages (${key.name})", e)
             emptyList()

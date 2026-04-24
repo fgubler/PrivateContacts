@@ -13,12 +13,13 @@ import androidx.datastore.preferences.preferencesDataStore
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -156,6 +157,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.backupPasswordEncrypted
         set(value) = dataStore.setValue(backupPasswordEncryptedEntry, value)
 
+    override var numberOfBackupsToKeep: NumberOfBackupsToKeep
+        get() = currentSettings.numberOfBackupsToKeep
+        set(value) = dataStore.setEnumValue(numberOfBackupsToKeepEntry, value)
+
     override var googleDriveBackupEnabled: Boolean
         get() = currentSettings.googleDriveBackupEnabled
         set(value) = dataStore.setValue(googleDriveBackupEnabledEntry, value)
@@ -235,6 +240,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         lastBackupDate = settings.lastBackupDate
         backupEncryptionEnabled = settings.backupEncryptionEnabled
         backupPasswordEncrypted = settings.backupPasswordEncrypted
+        numberOfBackupsToKeep = settings.numberOfBackupsToKeep
         googleDriveBackupEnabled = settings.googleDriveBackupEnabled
         googleDriveAccountEmail = settings.googleDriveAccountEmail
         googleDriveFolderId = settings.googleDriveFolderId

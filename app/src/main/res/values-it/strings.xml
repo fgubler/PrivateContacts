@@ -373,6 +373,10 @@
     <string name="import_complete_title">Importazione completata</string>
     <string name="import_failed_title">Importazione non riuscita</string>
     <string name="file_reading_failed">Impossibile leggere il file</string>
+    <string name="decryption_failed_invalid_password">La password fornita non è valida</string>
+    <string name="decryption_failed_invalid_file">Il file fornito non è valido o è corrotto e non può essere decriptato</string>
+    <string name="decryption_failed">Decriptazione fallita: riprova</string>
+    <string name="file_is_empty">Il file è vuoto</string>
     <string name="vcf_parsing_failed">Impossibile analizzare il file VCF</string>
     <string name="newly_imported_contacts">Contatti importati:</string>
     <string name="replaced_existing_contacts">Contatti sostituiti:</string>
@@ -411,6 +415,13 @@
     <string name="backup_contact_type_secret">Solo segreti</string>
     <string name="backup_contact_type_public">Solo pubblici</string>
     <string name="backup_folder_label">Cartella di backup</string>
+    <string name="backup_number_to_keep_label">Backup da conservare</string>
+    <string name="backup_delete_old_failed_warning">Impossibile eliminare i vecchi backup</string>
+    <string name="backup_number_to_keep_all">Tutti</string>
+    <string name="backup_number_to_keep_5">5</string>
+    <string name="backup_number_to_keep_10">10</string>
+    <string name="backup_number_to_keep_30">30</string>
+    <string name="backup_number_to_keep_50">50</string>
     <string name="backup_folder_not_selected">Nessuna cartella selezionata</string>
     <string name="backup_folder_select">Seleziona cartella</string>
     <string name="backup_trigger_once_label">Eseguire un backup adesso</string>
@@ -426,14 +437,32 @@
     <string name="backup_completed_with_failures_warning">Backup automatico completato, ma alcuni contatti non hanno potuto essere esportati.</string>
     <string name="backup_permission_missing_warning">Backup automatico saltato per i contatti pubblici: autorizzazione di lettura dei contatti mancante.</string>
     <string name="backup_file_creation_failed_error">Backup automatico fallito: impossibile creare il file di backup.</string>
-    <string name="backup_encryption_enabled_label">Cifra i backup</string>
+    <string name="backup_encryption_enabled_label">Crittografa i backup</string>
     <string name="backup_encryption_enabled_description">Proteggi i file di backup con una password</string>
-    <string name="backup_encryption_info_dialog_title">Backup cifrati</string>
-    <string name="backup_encryption_info_dialog_message">I file di backup possono essere protetti con una password a tua scelta.\n\nIMPORTANTE: Non esiste alcun meccanismo di reimpostazione della password. Se dimentichi la password, i dati nei file di backup cifrati andranno persi definitivamente.</string>
-    <string name="backup_encryption_password_dialog_title">Password di cifratura del backup</string>
+    <string name="backup_encryption_info_dialog_title">Backup crittografati</string>
+    <string name="backup_encryption_info_dialog_message">I file di backup possono essere protetti con una password a tua scelta.\n\nIMPORTANTE: Non esiste alcun meccanismo di reimpostazione della password. Se dimentichi la password, i dati nei file di backup crittografati andranno persi definitivamente.</string>
+    <string name="backup_encryption_password_dialog_title">Password di crittografia  del backup</string>
     <string name="backup_encryption_password_label">Password</string>
+    <string name="backup_encryption_password_confirmation_label">Conferma password</string>
+    <string name="password_confirmation_mismatch_error">Le password devono essere identiche</string>
+    <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la crittografia.</string>
+    <string name="backup_encryption_password_recovery_failed_error">Impossibile recuperare la password di crittografia per i backup periodici. La crittografia è stata disattivata: imposta una nuova password per riattivarla.</string>
+    <string name="backup_manage_in_settings_description">I backup periodici possono essere configurati nelle Impostazioni.</string>
+    <string name="backup_go_to_settings">Vai alle Impostazioni</string>
+    <string name="backup_validate_description">Validi i backup e le esportazioni senza importare i contatti contenuti.</string>
+    <string name="backup_validate_button">Valida backup</string>
+    <string name="backup_validate_progress">Validazione del file di backup</string>
+    <string name="backup_validate_failed_title">Validazione fallita</string>
+    <string name="backup_validate_success_title">Validazione riuscita</string>
+    <string name="backup_validate_contacts_found">Contatti trovati: %1$d</string>
+    <string name="backup_validate_parsing_errors">Errori di lettura: %1$d</string>
+    <string name="backup_decryption_password_dialog_title">Inserire la password di decrittografia</string>
     <string name="backup_encryption_password_empty_error">Inserisci una password per abilitare la cifratura.</string>
     <string name="backup_decryption_password_dialog_title">Inserisci la password di decifratura</string>
+
+    <string name="disable">Disattiva</string>
+    <string name="show_password">Mostrare password</string>
+    <string name="hide_password">Nascondere password</string>
 
     <string name="drive_backup_title">Backup su Google Drive</string>
     <string name="drive_backup_description">Carica i backup locali su Google Drive per maggiore sicurezza</string>
@@ -463,10 +492,6 @@
     <string name="drive_backup_setup_error_folder_access">Impossibile verificare l\'accesso alla cartella Google Drive esistente. Riprova.</string>
     <string name="drive_backup_setup_error_folder_creation">Impossibile creare la cartella di backup su Google Drive. Riprova.</string>
     <string name="drive_backup_setup_error_unknown">Si è verificato un errore imprevisto durante la configurazione del backup di Google Drive. Riprova.</string>
-    <string name="disable">Disattiva</string>
-    <string name="show_password">Mostrare password</string>
-    <string name="hide_password">Nascondere password</string>
-
     <string name="failed_to_select_file">Selezione file non riuscita</string>
     <string name="new_something">Nuovo</string>
 
@@ -507,5 +532,8 @@
     <string name="release_notes_v87">Aggiunta l\'opzione per memorizzare i contatti pubblici in tutti gli account registrati sul dispositivo. In precedenza erano supportati solo gli account Google e i contatti telefonici locali.</string>
     <string name="release_notes_v90">Aggiunta l\'opzione per bloccare tutte le chiamate in arrivo da numeri sconosciuti. Per questa decisione vengono presi in considerazione sia i contatti privati che quelli pubblici.</string>
     <string name="release_notes_v93">Aggiunta l\'opzione di backup automatici e periodici.</string>
+    <string name="release_notes_v101">Aggiunta la possibilità di cifrare i backup periodici.</string>
+    <string name="release_notes_v102_1">I vecchi backup periodici possono ora essere eliminati automaticamente dall\'app.</string>
+    <string name="release_notes_v102_2">I backup e i file esportati possono ora essere validati senza importarli.</string>
 
 </resources>

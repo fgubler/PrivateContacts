@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.testutil.TestBase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.koin.core.module.Module
 import org.koin.test.inject
 import javax.crypto.KeyGenerator
@@ -37,15 +36,22 @@ class EncryptionRepositoryTest : TestBase() {
         val password = "s3cr3tP@ssw0rd"
         val plaintext = "Hello, World! This is a test contact backup."
 
-        val ciphertext = underTest.encrypt(plaintext, password)
-        val decrypted = underTest.decrypt(ciphertext, password)
+        val encryptionResult = underTest.encrypt(plaintext, password)
+        assertThat(encryptionResult).isInstanceOf(SuccessResult::class.java)
+        val ciphertext = (encryptionResult as SuccessResult).value
+
+        val decryptionResult = underTest.decrypt(ciphertext, password)
+        assertThat(decryptionResult).isInstanceOf(SuccessResult::class.java)
+        val decrypted = (decryptionResult as SuccessResult).value
 
         assertThat(decrypted).isEqualTo(plaintext)
     }
 
     @Test
     fun `encrypt should return a JSON string with expected fields`() {
-        val ciphertext = underTest.encrypt("some text", "password")
+        val result = underTest.encrypt("some text", "password")
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val ciphertext = (result as SuccessResult).value
 
         assertThat(ciphertext).contains("\"algorithm\"")
         assertThat(ciphertext).contains("\"kdf\"")
@@ -62,8 +68,13 @@ class EncryptionRepositoryTest : TestBase() {
         val password = "password123"
         val plaintext = "same plaintext"
 
-        val ciphertext1 = underTest.encrypt(plaintext, password)
-        val ciphertext2 = underTest.encrypt(plaintext, password)
+        val result1 = underTest.encrypt(plaintext, password)
+        val result2 = underTest.encrypt(plaintext, password)
+
+        assertThat(result1).isInstanceOf(SuccessResult::class.java)
+        assertThat(result2).isInstanceOf(SuccessResult::class.java)
+        val ciphertext1 = (result1 as SuccessResult).value
+        val ciphertext2 = (result2 as SuccessResult).value
 
         assertThat(ciphertext1).isNotEqualTo(ciphertext2)
     }
@@ -71,11 +82,12 @@ class EncryptionRepositoryTest : TestBase() {
     @Test
     fun `decrypt should fail with wrong password`() {
         val plaintext = "sensitive data"
-        val ciphertext = underTest.encrypt(plaintext, "correctPassword")
+        val result = underTest.encrypt(plaintext, "correctPassword")
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val ciphertext = (result as SuccessResult).value
 
-        assertThrows<Exception> {
-            underTest.decrypt(ciphertext, "wrongPassword")
-        }
+        val decryptResult = underTest.decrypt(ciphertext, "wrongPassword")
+        assertThat(decryptResult).isInstanceOf(ErrorResult::class.java)
     }
 
     @Test
@@ -83,8 +95,13 @@ class EncryptionRepositoryTest : TestBase() {
         val password = "anyPassword"
         val plaintext = ""
 
-        val ciphertext = underTest.encrypt(plaintext, password)
-        val decrypted = underTest.decrypt(ciphertext, password)
+        val encryptionResult = underTest.encrypt(plaintext, password)
+        assertThat(encryptionResult).isInstanceOf(SuccessResult::class.java)
+        val ciphertext = (encryptionResult as SuccessResult).value
+
+        val decryptionResult = underTest.decrypt(ciphertext, password)
+        assertThat(decryptionResult).isInstanceOf(SuccessResult::class.java)
+        val decrypted = (decryptionResult as SuccessResult).value
 
         assertThat(decrypted).isEqualTo(plaintext)
     }
@@ -94,8 +111,13 @@ class EncryptionRepositoryTest : TestBase() {
         val password = "unicodeTest"
         val plaintext = "Ünïcödé téxt with spëcïal chàracters 日本語"
 
-        val ciphertext = underTest.encrypt(plaintext, password)
-        val decrypted = underTest.decrypt(ciphertext, password)
+        val result = underTest.encrypt(plaintext, password)
+        assertThat(result).isInstanceOf(SuccessResult::class.java)
+        val ciphertext = (result as SuccessResult).value
+
+        val decryptResult = underTest.decrypt(ciphertext, password)
+        assertThat(decryptResult).isInstanceOf(SuccessResult::class.java)
+        val decrypted = (decryptResult as SuccessResult).value
 
         assertThat(decrypted).isEqualTo(plaintext)
     }

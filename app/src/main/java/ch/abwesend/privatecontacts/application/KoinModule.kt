@@ -142,37 +142,37 @@ internal val koinModule = module {
     factory { LauncherAppearanceService() }
 
     // Repositories
-    single { AndroidContactLoadRepository() }
-    single { AndroidContactSaveRepository() }
-    single { VCardRepository() }
-    single<IVCardImportExportRepository> { VCardImportExportRepository() }
-    single<IContactRepository> { ContactRepository() }
-    single<IDatabaseRepository> { DatabaseRepository() }
-    single<IAddressFormattingService> { AddressFormattingService() }
-    single<IContactGroupRepository> { ContactGroupRepository() }
-    single { ContactDataRepository() }
-    single { ContactGroupRepository() }
-    single { ContactImageRepository() }
+    factory { AndroidContactLoadRepository() }
+    factory { AndroidContactSaveRepository() }
+    factory { VCardRepository() }
+    factory<IVCardImportExportRepository> { VCardImportExportRepository() }
+    factory<IContactRepository> { ContactRepository() }
+    factory<IDatabaseRepository> { DatabaseRepository() }
+    factory<IAddressFormattingService> { AddressFormattingService() }
+    factory<IContactGroupRepository> { ContactGroupRepository() }
+    factory { ContactDataRepository() }
+    factory { ContactGroupRepository() }
+    factory { ContactImageRepository() }
     single { CallNotificationRepository() }
     factory { BackupNotificationRepository(androidContext()) }
-    single { ToastRepository() }
+    factory { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
     factory<ISettingsState> { get<SettingsRepository>() }
 
     single<IBackupMessageRepository> { BackupMessageRepository(androidContext()) }
-    factory<IGoogleDriveAuthorizationRepository> { GoogleDriveAuthorizationRepository(androidContext()) }
-    single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
+    factory<IFileAccessRepository> { FileAccessRepository(androidContext()) }
     factory<IEncryptionRepository> { EncryptionRepository() }
     factory<IKeyStoreRepository> { AndroidKeyStoreRepository() }
+    factory<IGoogleDriveAuthorizationRepository> { GoogleDriveAuthorizationRepository(androidContext()) }
 
     factory<ILauncherAppearanceRepository> { LauncherAppearanceRepository(androidContext()) }
 
     // Factories
     single<ILoggerFactory> { LoggerFactory(androidContext()) }
-    single<IDatabaseFactory<AppDatabase>> { DatabaseFactory() }
+    factory<IDatabaseFactory<AppDatabase>> { DatabaseFactory() }
 
     // Helpers
-    single { IncomingCallHelper() }
+    factory { IncomingCallHelper() }
     single<IDispatchers> { Dispatchers }
 
     single { ApplicationScope() }
@@ -180,8 +180,8 @@ internal val koinModule = module {
     factory<StringProvider> { ResourcesBasedStringProvider(androidContext().resources) }
 
     // Database
-    single { DatabaseInitializer() }
-    single { DatabaseDeletionHelper() }
+    factory { DatabaseInitializer() }
+    factory { DatabaseDeletionHelper() }
     single { DatabaseHolder(androidContext()) }
 
     // Android contacts

@@ -13,10 +13,14 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError.FILE_WRITING_FAILED
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError.FILE_WRITING_FAILED
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValue
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapValueToResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
@@ -37,7 +41,7 @@ class ContactExportService {
         vCardVersion: VCardVersion,
         requestPermission: Boolean = true,
         encryptionPassword: String? = null,
-    ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
+    ): BinaryResult<ContactExportData, VCardExportError> = withContext(dispatchers.default) {
         val contacts = loadService.loadFullContactsByType(sourceType)
         exportContacts(targetFile, vCardVersion, contacts, requestPermission, encryptionPassword)
     }
@@ -48,11 +52,11 @@ class ContactExportService {
         contacts: List<IContact>,
         requestPermission: Boolean = true,
         encryptionPassword: String? = null,
-    ): BinaryResult<ContactExportData, VCardCreateError> = withContext(dispatchers.default) {
+    ): BinaryResult<ContactExportData, VCardExportError> = withContext(dispatchers.default) {
         val vCardResult = importExportRepository.exportContacts(contacts, vCardVersion)
-            .ifHasError { logger.warning("Failed to create vCards for contacts: $it") }
+            .ifError { logger.warning("Failed to create vCards for contacts: $it") }
 
-        val fileWriteResult = vCardResult.mapValueToBinaryResult { createdVCards ->
+        val fileWriteResult = vCardResult.mapValueToResult { createdVCards ->
             val writeResult = if (encryptionPassword == null) {
                 fileWriteService.writeContentToFile(
                     content = createdVCards.fileContent,
@@ -60,15 +64,17 @@ class ContactExportService {
                     requestPermission = requestPermission
                 )
             } else {
-                val ciphertext = encryptionRepository.encrypt(
+                val encryptionResult = encryptionRepository.encrypt(
                     plaintext = createdVCards.fileContent.content,
                     password = encryptionPassword
                 )
-                fileAccessRepository.writeFile(
-                    fileContent = TextFileContent(ciphertext),
-                    file = targetFile,
-                    requestPermission = requestPermission
-                )
+                encryptionResult.mapValueToResult { ciphertext ->
+                    fileAccessRepository.writeFile(
+                        fileContent = TextFileContent(ciphertext),
+                        file = targetFile,
+                        requestPermission = requestPermission
+                    )
+                }
             }
 
             writeResult
@@ -77,7 +83,7 @@ class ContactExportService {
                     val successfulContacts = contacts.minus(failedContacts.toSet())
                     ContactExportData(successfulContacts = successfulContacts, failedContacts = failedContacts)
                 }
-                .ifHasError { logger.warning("Failed to export vCards to file: $it") }
+                .ifError { logger.warning("Failed to export vCards to file: $it") }
                 .mapError { FILE_WRITING_FAILED }
         }
         fileWriteResult

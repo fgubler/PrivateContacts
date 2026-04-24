@@ -21,7 +21,8 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -38,8 +39,12 @@ class ContactImportViewModel : ViewModel() {
     val targetAccount: State<ContactAccount?> = _targetAccount
 
     /** implemented as a resource to show a loading-indicator during import */
-    private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardParseError>>()
-    val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardParseError>> = _importResult
+    private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _importResult
+
+    /** result of a backup validation (read + decrypt + parse, but no import) */
+    private val _validationResult = mutableResourceStateFlow<BinaryResult<ParsedData, VCardImportError>>()
+    val validationResult: ResourceFlow<BinaryResult<ParsedData, VCardImportError>> = _validationResult
 
     fun selectTargetType(contactType: ContactType) {
         _targetType.value = contactType
@@ -53,6 +58,30 @@ class ContactImportViewModel : ViewModel() {
         logger.debug("Resetting contact import result")
         viewModelScope.launch {
             _importResult.emitInactive()
+        }
+    }
+
+    fun resetValidationResult() {
+        logger.debug("Resetting backup validation result")
+        viewModelScope.launch {
+            _validationResult.emitInactive()
+        }
+    }
+
+    fun validateBackup(sourceFile: Uri?, decryptionPassword: String? = null) {
+        if (sourceFile == null) {
+            logger.warning("Trying to validate backup but no file is selected")
+            return
+        }
+        logger.debugLocally("Validating backup file '${sourceFile.path}'")
+        viewModelScope.launch {
+            _validationResult.withLoadingState {
+                importService.loadContacts(
+                    sourceFile = sourceFile,
+                    targetType = ContactType.SECRET,
+                    decryptionPassword = decryptionPassword,
+                )
+            }
         }
     }
 

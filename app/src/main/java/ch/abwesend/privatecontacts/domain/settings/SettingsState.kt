@@ -8,10 +8,11 @@ package ch.abwesend.privatecontacts.domain.settings
 
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import java.time.LocalDate
 
@@ -82,6 +83,7 @@ interface ISettingsState {
     val lastBackupDate: LocalDate
     val backupEncryptionEnabled: Boolean
     val backupPasswordEncrypted: String
+    val numberOfBackupsToKeep: NumberOfBackupsToKeep
 
     // Google Drive Backup
     val googleDriveBackupEnabled: Boolean
@@ -135,6 +137,7 @@ data class SettingsState(
     override val lastBackupDate: LocalDate,
     override val backupEncryptionEnabled: Boolean,
     override val backupPasswordEncrypted: String,
+    override val numberOfBackupsToKeep: NumberOfBackupsToKeep,
 
     override val googleDriveBackupEnabled: Boolean,
     override val googleDriveAccountEmail: String,
@@ -173,6 +176,7 @@ data class SettingsState(
             lastBackupDate = LocalDate.MIN,
             backupEncryptionEnabled = false,
             backupPasswordEncrypted = "",
+            numberOfBackupsToKeep = NumberOfBackupsToKeep.default,
             googleDriveBackupEnabled = false,
             googleDriveAccountEmail = "",
             googleDriveFolderId = "",

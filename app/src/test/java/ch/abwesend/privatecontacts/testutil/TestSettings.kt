@@ -7,10 +7,11 @@
 package ch.abwesend.privatecontacts.testutil
 
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -57,6 +58,7 @@ data class TestSettings(
     override var lastBackupDate: LocalDate = currentSettings.lastBackupDate
     override var backupEncryptionEnabled: Boolean = currentSettings.backupEncryptionEnabled
     override var backupPasswordEncrypted: String = currentSettings.backupPasswordEncrypted
+    override var numberOfBackupsToKeep: NumberOfBackupsToKeep = currentSettings.numberOfBackupsToKeep
     override var googleDriveBackupEnabled: Boolean = currentSettings.googleDriveBackupEnabled
     override var googleDriveAccountEmail: String = currentSettings.googleDriveAccountEmail
     override var googleDriveFolderId: String = currentSettings.googleDriveFolderId

@@ -161,6 +161,10 @@ internal val backupPasswordEncryptedEntry = SettingsEntry(
     key = stringPreferencesKey("backupPasswordEncrypted"),
     defaultValue = defaultSettings.backupPasswordEncrypted
 )
+internal val numberOfBackupsToKeepEntry = EnumSettingsEntry(
+    key = stringPreferencesKey("numberOfBackupsToKeep"),
+    defaultValue = defaultSettings.numberOfBackupsToKeep
+)
 internal val googleDriveBackupEnabledEntry = SettingsEntry(
     key = booleanPreferencesKey("googleDriveBackupEnabled"),
     defaultValue = defaultSettings.googleDriveBackupEnabled

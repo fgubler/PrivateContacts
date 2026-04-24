@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
@@ -146,7 +146,7 @@ object ExportCategoryComponent {
     }
 
     @Composable
-    private fun ResultDialog(exportResult: BinaryResult<ContactExportData, VCardCreateError>, onClose: () -> Unit) {
+    private fun ResultDialog(exportResult: BinaryResult<ContactExportData, VCardExportError>, onClose: () -> Unit) {
         when (exportResult) {
             is ErrorResult -> ErrorResultDialog(error = exportResult.error, onClose = onClose)
             is SuccessResult -> SuccessResultDialog(
@@ -157,7 +157,7 @@ object ExportCategoryComponent {
     }
 
     @Composable
-    private fun ErrorResultDialog(error: VCardCreateError, onClose: () -> Unit) {
+    private fun ErrorResultDialog(error: VCardExportError, onClose: () -> Unit) {
         OkDialog(title = R.string.export_failed_title, text = error.label, onClose = onClose)
     }
 

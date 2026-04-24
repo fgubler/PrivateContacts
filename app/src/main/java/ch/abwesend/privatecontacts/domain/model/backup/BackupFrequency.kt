@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.domain.model.importexport
+package ch.abwesend.privatecontacts.domain.model.backup
 
 import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R

@@ -65,6 +65,25 @@ Storing the algorithm parameters inside the JSON enables future changes to itera
 All encryption logic is encapsulated in `EncryptionRepository` (implementing `IEncryptionRepository`), registered as a Koin singleton. 
 This keeps encryption concerns isolated from backup and import/export logic.
 
+### Password Recovery Failure Handling
+
+When a periodic backup runs and encryption is enabled, but the decryption of the stored password fails (e.g. the KeyStore key was deleted or the device was reset):
+
+1. Encryption is **automatically disabled** (`Settings.repository.backupEncryptionEnabled = false`).
+2. An **error message** is persisted via `addErrorMessage()` so the user is informed at the next app startup that the password could not be recovered and encryption has been turned off.
+3. The backup proceeds **without encryption** rather than failing silently or crashing.
+
+### Backup Validation
+
+The `ImportExportScreen` provides a "Validate Encrypted Backup" action that lets the user verify a backup file without importing it:
+
+1. A file picker opens, accepting both `.vcf` and `.vcf.crypt` files.
+2. If a `.vcf.crypt` file is selected, the user is prompted for the decryption password via `PasswordInputDialog`.
+3. `ContactImportService.loadContacts()` reads the file, decrypts it (if a password was provided), and parses the VCF data — the same code path used during a real import.
+4. The result (number of contacts found, number of parsing errors, or an error description) is shown in a dialog. No contacts are saved.
+
+This reuses the existing import pipeline end-to-end, ensuring that validation accurately reflects what a real import would produce.
+
 ---
 
 ## File Format

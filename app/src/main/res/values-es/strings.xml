@@ -373,6 +373,10 @@
     <string name="import_complete_title">Importación completada</string>
     <string name="import_failed_title">Error al importar</string>
     <string name="file_reading_failed">No se pudo leer el archivo</string>
+    <string name="decryption_failed_invalid_password">La contraseña proporcionada no es válida</string>
+    <string name="decryption_failed_invalid_file">El archivo proporcionado no es válido o está dañado y no se puede descifrar</string>
+    <string name="decryption_failed">Error al descifrar: por favor, inténtalo de nuevo</string>
+    <string name="file_is_empty">El archivo está vacío</string>
     <string name="vcf_parsing_failed">El archivo no contiene un VCF válido</string>
     <string name="newly_imported_contacts">Contactos importados:</string>
     <string name="replaced_existing_contacts">Contactos reemplazados:</string>
@@ -411,6 +415,13 @@
     <string name="backup_contact_type_secret">Solo secretos</string>
     <string name="backup_contact_type_public">Solo públicos</string>
     <string name="backup_folder_label">Carpeta de copia de seguridad</string>
+    <string name="backup_number_to_keep_label">Copias de seguridad a conservar</string>
+    <string name="backup_delete_old_failed_warning">Error al eliminar las copias de seguridad antiguas</string>
+    <string name="backup_number_to_keep_all">Todas</string>
+    <string name="backup_number_to_keep_5">5</string>
+    <string name="backup_number_to_keep_10">10</string>
+    <string name="backup_number_to_keep_30">30</string>
+    <string name="backup_number_to_keep_50">50</string>
     <string name="backup_folder_not_selected">Ninguna carpeta seleccionada</string>
     <string name="backup_folder_select">Seleccionar carpeta</string>
     <string name="backup_trigger_once_label">Copia de seguridad ahora</string>
@@ -432,7 +443,19 @@
     <string name="backup_encryption_info_dialog_message">Los archivos de copia de seguridad pueden protegerse con una contraseña de tu elección.\n\nIMPORTANTE: No existe ningún mecanismo para restablecer la contraseña. Si olvidas la contraseña, los datos de los archivos de copia de seguridad cifrados se perderán de forma permanente.</string>
     <string name="backup_encryption_password_dialog_title">Contraseña de cifrado de copia de seguridad</string>
     <string name="backup_encryption_password_label">Contraseña</string>
+    <string name="backup_encryption_password_confirmation_label">Confirmar contraseña</string>
+    <string name="password_confirmation_mismatch_error">Las contrase�as deben ser id�nticas</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
+    <string name="backup_encryption_password_recovery_failed_error">No se ha podido recuperar la contraseña de cifrado para las copias de seguridad periódicas. Se ha desactivado el cifrado: establece una nueva contraseña para volver a activarlo.</string>
+    <string name="backup_manage_in_settings_description">Las copias de seguridad periódicas se pueden configurar en los Ajustes.</string>
+    <string name="backup_go_to_settings">Ir a Ajustes</string>
+    <string name="backup_validate_description">Las copias de seguridad y exportaciones pueden validarse aquí sin importar los contactos.</string>
+    <string name="backup_validate_button">Validar copia de seguridad</string>
+    <string name="backup_validate_progress">Validando archivo de copia de seguridad</string>
+    <string name="backup_validate_failed_title">Validación fallida</string>
+    <string name="backup_validate_success_title">Validación exitosa</string>
+    <string name="backup_validate_contacts_found">Contactos encontrados: %1$d</string>
+    <string name="backup_validate_parsing_errors">Errores de lectura: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
 
     <string name="drive_backup_title">Copia de seguridad en Google Drive</string>
@@ -507,5 +530,8 @@
     <string name="release_notes_v87">Se ha añadido la opción de almacenar contactos públicos en todas las cuentas registradas en el dispositivo. Anteriormente, solo era posible hacerlo en las cuentas de Google y en los contactos locales del teléfono.</string>
     <string name="release_notes_v90">Se ha añadido la opción de bloquear todas las llamadas entrantes de números desconocidos. Para ello se tienen en cuenta tanto los contactos privados como los públicos.</string>
     <string name="release_notes_v93">Se ha añadido la posibilidad de copias de seguridad automáticas y periódicas en los ajustes.</string>
+    <string name="release_notes_v101">Se ha añadido la posibilidad de cifrar las copias de seguridad periódicas.</string>
+    <string name="release_notes_v102_1">Las copias de seguridad periódicas antiguas ahora pueden ser limpiadas automáticamente por la app.</string>
+    <string name="release_notes_v102_2">Las copias de seguridad y los archivos exportados ahora se pueden validar sin necesidad de importarlos.</string>
 
 </resources>

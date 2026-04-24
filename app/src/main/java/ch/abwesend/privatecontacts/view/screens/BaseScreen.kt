@@ -54,6 +54,7 @@ fun BaseScreen(
     floatingActionButton: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
+    val enableSideDrawer = allowFullNavigation && isGenericNavigationAllowed(screenContext)
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = if (invertTopAndBottomBars) hidden else topBar,
@@ -62,8 +63,9 @@ fun BaseScreen(
             .setTopBarSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false)
             .setMainContentSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false),
         floatingActionButton = floatingActionButton,
+        drawerGesturesEnabled = enableSideDrawer,
         drawerContent = {
-            if (allowFullNavigation && isGenericNavigationAllowed(screenContext)) {
+            if (enableSideDrawer) {
                 SideDrawerContent(
                     selectedScreen = selectedScreen,
                     scaffoldState = scaffoldState,

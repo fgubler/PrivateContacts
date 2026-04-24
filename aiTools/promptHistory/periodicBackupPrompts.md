@@ -56,6 +56,42 @@ Store that documentation in the folder 'aiTools/documentation' by
 - either creating a new markdown file for that feature or topic
 - or adding a new section to an existing markdown file
 
+## Handle missing key-store entry
+Looking at ContactBackupWorker: please adapt resolveEncryptionPassword() as follows:
+If encryption is enabled but the encryption-password cannot be recovered, the method should
+- disable the encryption-feature
+- call addErrorMessage() to inform the user (at the next startup) that the password could not be recovered and encryption does not work.
+
+## Delete old backups
+Please add another drop-down menu-item to the SettingsScreen that allows the user to define how many backups should be kept.
+The options should be \[All, 5, 10, 30, 50\]
+For the UI, consider the existing components and be consistent with the rest of this screen.
+The new field should be added after the backup-folder field.
+
+In ContactBackupWorker, please add a method to delete old backups.
+It should be called after a new backup has been created successfully.
+It should count the backups based on their file-names. 
+Backups for secret and public contacts should be counted independently (i.e. if 10 backups should be kept, that means 10 for public contacts and 10 for secret contacts).
+The method should delete the oldest backups.
+
+Also add a file periodicBackupDoc.md next to backupEncryptionDoc.md which explains the whole feature of periodic backups. 
+That documentation should reference backupEncryptionDoc.md for the part about encryption.
+It should act as a short and concise explanation of the feature, explaining architectural decisions rather than duplicating the code.
+
+## UI in ImportExportScreen
+Please add another card to ImportExportScreen which is dedicated to periodic backups.
+It should contain an explanation that periodic backups can be managed from SettingsScreen as well as a button to navigate there.
+This should be achieved by adding a method to ImportExportScreenContext to open SettingsScreen.
+
+Additionally, it should contain a button to validate an encrypted backup.
+This should open a file-picker to select a file to validate.
+It should try to read the file-content, decrypt it, parse the VCF-data and display the result.
+The result should show how many contacts were found or what kind of error occurred.
+It should, however, not actually import the contacts.
+
+Use existing code, components and logic as much as possible.
+In the end, also adapt the documentation about periodic backups and encryption in periodicBackupsDoc.md and backupEncryptionDoc.md.
+
 # Google Drive Backups
 ## Initial Prompt
 The App contains logic for periodic, local backups.
