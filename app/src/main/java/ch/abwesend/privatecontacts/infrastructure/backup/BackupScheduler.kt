@@ -79,7 +79,7 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
                 .then(driveWork)
                 .enqueue()
 
-            logger.info("One-time backup work triggered (local + Drive) with 10s delay")
+            logger.info("One-time backup work triggered (local + drive) with 10s delay")
         } catch (e: Exception) {
             logger.error("Failed to trigger one-time backup", e)
         }
