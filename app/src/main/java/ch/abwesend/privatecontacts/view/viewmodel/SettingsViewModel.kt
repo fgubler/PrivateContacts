@@ -6,13 +6,16 @@
 
 package ch.abwesend.privatecontacts.view.viewmodel
 
-import android.app.PendingIntent
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupError
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.toDriveSetupState
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
@@ -28,6 +31,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SettingsViewModel : ViewModel() {
@@ -39,9 +43,8 @@ class SettingsViewModel : ViewModel() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
     private val googleDriveAuthRepository: IGoogleDriveAuthenticationRepository by injectAnywhere()
 
-    // TODO extend to proper progress-construct including error-dialog
-    private val _driveSetupInProgress = MutableStateFlow(false)
-    val driveSetupInProgress: StateFlow<Boolean> = _driveSetupInProgress
+    private val _driveSetupState = MutableStateFlow<GoogleDriveSetupState>(GoogleDriveSetupState.Inactive)
+    val driveSetupState: StateFlow<GoogleDriveSetupState> = _driveSetupState.asStateFlow()
 
     fun initialize(settingsRepository: SettingsRepository) {
         if (!permissionService.hasContactReadPermission()) {
@@ -91,107 +94,123 @@ class SettingsViewModel : ViewModel() {
         encryptionRepository.deleteKeyStoreKey()
     }
 
-    fun requestGoogleDriveAuthorization(onPendingIntent: (PendingIntent) -> Unit) {
-        viewModelScope.launch {
-            _driveSetupInProgress.value = true
-            try {
-                val result = googleDriveAuthRepository.authorize()
-                handleGoogleDriveAuthorizationResult(result, onPendingIntent)
-            } finally {
-                _driveSetupInProgress.value = false
-            }
+    fun requestGoogleDriveAuthorization() {
+        _driveSetupState.withLoadingState {
+            val result = googleDriveAuthRepository.authorize()
+            handleGoogleDriveAuthorizationResult(result)
         }
     }
 
     private suspend fun handleGoogleDriveAuthorizationResult(
         result: GoogleDriveAuthResult<IGoogleDriveRepository>,
-        onPendingIntent: (PendingIntent) -> Unit,
-    ) {
-        when (result) {
-            is GoogleDriveAuthResult.Authorized -> {
-                onGoogleDriveAuthorized(result.data)
-            }
-            is GoogleDriveAuthResult.ConsentRequired ->
-                onPendingIntent(result.pendingIntent) // TODO consider async mechanism here
-            is GoogleDriveAuthResult.Error -> {
-                settingsRepository.googleDriveBackupEnabled = false
-            }
+    ): GoogleDriveSetupState {
+        return when (result) {
+            is GoogleDriveAuthResult.Authorized -> onGoogleDriveAuthorized(result.data)
+            is GoogleDriveAuthResult.ConsentRequired -> GoogleDriveSetupState.ConsentRequired(result.pendingIntent)
+            is GoogleDriveAuthResult.Error -> GoogleDriveSetupError.AUTHORIZATION_FAILED.toDriveSetupState()
         }
     }
 
     fun handleGoogleDriveConsentResponse(data: Intent?) {
-        viewModelScope.launch {
-            _driveSetupInProgress.value = true
-            try {
-                when (val authResult = googleDriveAuthRepository.authorizeFromIntent(data)) {
-                    is ErrorResult -> TODO("show error message")
-                    is SuccessResult -> onGoogleDriveAuthorized(authResult.value)
-                }
-            } finally {
-                _driveSetupInProgress.value = false
+        _driveSetupState.withLoadingState {
+            when (val authResult = googleDriveAuthRepository.authorizeFromIntent(data)) {
+                is ErrorResult -> GoogleDriveSetupError.CONSENT_FAILED.toDriveSetupState()
+                is SuccessResult -> onGoogleDriveAuthorized(authResult.value)
             }
         }
     }
 
-    private suspend fun isFolderCreationRequired(repository: IGoogleDriveRepository): Boolean {
-        val existingFolderId = settingsRepository.googleDriveFolderId
-        val existingFolderName = settingsRepository.googleDriveFolderName
-
-        if (existingFolderId.isEmpty() || existingFolderName.isEmpty()) return true
-
-        return when (val accessResult = repository.checkFolderAccess(existingFolderId, existingFolderName)) {
-            is SuccessResult -> {
-                if (accessResult.value) {
-                    logger.info("Reusing existing Google Drive folder: $existingFolderName ($existingFolderId)")
-                    false
-                } else {
-                    logger.info("Stored Google Drive folder no longer accessible; creating a new one.")
-                    true
-                }
-            }
+    private suspend fun onGoogleDriveAuthorized(repository: IGoogleDriveRepository): GoogleDriveSetupState {
+        return when (val emailResult = repository.getAccountEmail()) {
             is ErrorResult -> {
-                logger.warning("Failed to check folder access", accessResult.error)
-                true
+                logger.warning("Failed to retrieve Google Drive account email", emailResult.error)
+                GoogleDriveSetupError.EMAIL_RETRIEVAL_FAILED.toDriveSetupState()
+            }
+            is SuccessResult -> {
+                settingsRepository.googleDriveAccountEmail = emailResult.value
+                logger.info("Stored Google Drive account email: ${emailResult.value}")
+                createDriveBackupFolder(repository)
             }
         }
     }
 
-    private suspend fun onGoogleDriveAuthorized(repository: IGoogleDriveRepository) {
-        storeAccountEmail(repository)
-
-        if (!isFolderCreationRequired(repository)) {
-            settingsRepository.googleDriveBackupEnabled = true
-            return
+    private suspend fun createDriveBackupFolder(repository: IGoogleDriveRepository): GoogleDriveSetupState {
+        when (val folderCreationRequired = isFolderCreationRequired(repository)) {
+            is ErrorResult -> folderCreationRequired.error.toDriveSetupState()
+            is SuccessResult -> {
+                if (!folderCreationRequired.value) {
+                    settingsRepository.googleDriveBackupEnabled = true
+                    return GoogleDriveSetupState.Inactive
+                }
+            }
         }
 
-        when (val setupData = repository.createBackupFolder()) {
+        return when (val setupData = repository.createBackupFolder()) {
             is SuccessResult -> {
                 settingsRepository.googleDriveBackupEnabled = true
                 settingsRepository.googleDriveFolderId = setupData.value.folderId
                 settingsRepository.googleDriveFolderName = setupData.value.folderName
                 logger.info("Created Google Drive folder: ${setupData.value.folderName} (${setupData.value.folderId})")
+                GoogleDriveSetupState.Inactive
             }
-            is ErrorResult -> {
-                settingsRepository.googleDriveBackupEnabled = false
-                // TODO show error dialog
-                logger.warning("Failed to create Google Drive folder", setupData.error)
-            }
+            is ErrorResult -> GoogleDriveSetupError.FOLDER_CREATION_FAILED.toDriveSetupState()
         }
     }
 
-    private suspend fun storeAccountEmail(repository: IGoogleDriveRepository) {
-        when (val result = repository.getAccountEmail()) {
-            is SuccessResult -> {
-                settingsRepository.googleDriveAccountEmail = result.value
-                logger.info("Stored Google Drive account email: ${result.value}")
-            }
-            is ErrorResult -> logger.warning("Failed to retrieve Google Drive account email", result.error)
+    private suspend fun isFolderCreationRequired(
+        repository: IGoogleDriveRepository
+    ): BinaryResult<Boolean, GoogleDriveSetupError> {
+        val existingFolderId = settingsRepository.googleDriveFolderId
+        val existingFolderName = settingsRepository.googleDriveFolderName
+
+        if (existingFolderId.isEmpty() || existingFolderName.isEmpty()){
+            return SuccessResult(true)
         }
+
+        return repository.checkFolderAccess(existingFolderId, existingFolderName)
+            .ifHasValue {
+                if (it) {
+                    logger.info("Reusing existing Google Drive folder: $existingFolderName ($existingFolderId)")
+                } else {
+                    logger.info("Stored Google Drive folder no longer accessible; creating a new one.")
+                }
+            }.mapError {
+                logger.warning("Failed to check folder access", it)
+                GoogleDriveSetupError.FOLDER_ACCESS_CHECK_FAILED
+            }
+    }
+
+    fun resetDriveSetupState() {
+        _driveSetupState.value = GoogleDriveSetupState.Inactive
     }
 
     fun disableGoogleDriveBackup() {
         settingsRepository.googleDriveBackupEnabled = false
         settingsRepository.googleDriveAccountEmail = ""
         // leave folderName and folderId intact to be able to use the same folder again
+    }
+
+    private fun MutableStateFlow<GoogleDriveSetupState>.withLoadingState(
+        block: suspend () -> GoogleDriveSetupState
+    ) {
+        viewModelScope.launch {
+            val newValue = try {
+                value = GoogleDriveSetupState.Loading
+                block()
+            } catch(e: Exception) {
+                logger.warning("Failed to handle Google Drive setup", e)
+                GoogleDriveSetupError.UNKNOWN.toDriveSetupState()
+            }
+
+            logger.debug("Drive setup state changed to $newValue")
+            when (newValue) {
+                is GoogleDriveSetupState.ConsentRequired,
+                is GoogleDriveSetupState.Inactive,
+                is GoogleDriveSetupState.Loading -> Unit
+                is GoogleDriveSetupState.Error -> disableGoogleDriveBackup()
+            }
+
+            value = newValue
+        }
     }
 }

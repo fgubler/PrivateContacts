@@ -455,6 +455,13 @@
     <string name="drive_backup_upload_file_failed_error">Copia de seguridad en Google Drive: error al subir archivo: %1$s</string>
     <string name="drive_backup_sign_in_failed">Error al iniciar sesión en la cuenta de Google.</string>
     <string name="drive_backup_folder_creation_failed">No se pudo crear la carpeta de Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configurando la copia de seguridad de Google Drive</string>
+    <string name="drive_backup_setup_error_authorization">Error de autorización con Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_consent">No se concedió el consentimiento de Google Drive. Inténtelo de nuevo y conceda los permisos necesarios.</string>
+    <string name="drive_backup_setup_error_email">No se pudo obtener la dirección de correo electrónico de la cuenta de Google. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_folder_access">No se pudo verificar el acceso a la carpeta existente de Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_folder_creation">No se pudo crear la carpeta de copia de seguridad en Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_unknown">Se produjo un error inesperado al configurar la copia de seguridad de Google Drive. Inténtelo de nuevo.</string>
     <string name="disable">Desactivar</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>

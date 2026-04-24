@@ -455,6 +455,13 @@
     <string name="drive_backup_upload_file_failed_error">Backup Google Drive: caricamento file fallito: %1$s</string>
     <string name="drive_backup_sign_in_failed">Accesso all\'account Google fallito.</string>
     <string name="drive_backup_folder_creation_failed">Impossibile creare la cartella Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configurazione del backup di Google Drive</string>
+    <string name="drive_backup_setup_error_authorization">Autorizzazione con Google Drive non riuscita. Riprova.</string>
+    <string name="drive_backup_setup_error_consent">Il consenso per Google Drive non è stato concesso. Riprova e concedi le autorizzazioni richieste.</string>
+    <string name="drive_backup_setup_error_email">Impossibile recuperare l\'indirizzo e-mail dell\'account Google. Riprova.</string>
+    <string name="drive_backup_setup_error_folder_access">Impossibile verificare l\'accesso alla cartella Google Drive esistente. Riprova.</string>
+    <string name="drive_backup_setup_error_folder_creation">Impossibile creare la cartella di backup su Google Drive. Riprova.</string>
+    <string name="drive_backup_setup_error_unknown">Si è verificato un errore imprevisto durante la configurazione del backup di Google Drive. Riprova.</string>
     <string name="disable">Disattiva</string>
     <string name="show_password">Mostrare password</string>
     <string name="hide_password">Nascondere password</string>

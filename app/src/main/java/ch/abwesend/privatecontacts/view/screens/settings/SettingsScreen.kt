@@ -88,8 +88,10 @@ import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.runtime.collectAsState
+import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -775,14 +777,6 @@ object SettingsScreen {
         currentSettings: ISettingsState,
         viewModel: SettingsViewModel,
     ) {
-        val setupInProgress by viewModel.driveSetupInProgress.collectAsState()
-
-        val authorizationLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartIntentSenderForResult(),
-        ) { result ->
-            viewModel.handleGoogleDriveConsentResponse(result.data)
-        }
-
         SettingsCheckboxWithInfoButton(
             label = R.string.drive_backup_title,
             description = R.string.drive_backup_description,
@@ -791,26 +785,14 @@ object SettingsScreen {
             value = currentSettings.googleDriveBackupEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {
-                    viewModel.requestGoogleDriveAuthorization { pendingIntent ->
-                        val request = IntentSenderRequest.Builder(pendingIntent).build()
-                        authorizationLauncher.launch(request)
-                    }
+                    viewModel.requestGoogleDriveAuthorization()
                 } else {
                     viewModel.disableGoogleDriveBackup()
                 }
             },
         )
 
-        if (setupInProgress) {
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.padding(start = 10.dp))
-                Text(text = stringResource(id = R.string.drive_backup_folder_creating))
-            }
-        }
+        DriveSetupProgressAndResultHandler(viewModel = viewModel)
 
         if (currentSettings.googleDriveBackupEnabled) {
             Spacer(modifier = Modifier.height(10.dp))
@@ -831,6 +813,39 @@ object SettingsScreen {
                 style = MaterialTheme.typography.body2,
                 fontStyle = FontStyle.Italic,
             )
+        }
+    }
+
+    @Composable
+    private fun DriveSetupProgressAndResultHandler(viewModel: SettingsViewModel) {
+        val setupState by viewModel.driveSetupState.collectAsStateWithLifecycle()
+
+        val authorizationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            viewModel.handleGoogleDriveConsentResponse(result.data)
+        }
+
+        when (val state = setupState) {
+            is GoogleDriveSetupState.Loading -> {
+                SimpleProgressDialog(
+                    title = R.string.drive_backup_setup_in_progress,
+                    allowRunningInBackground = false,
+                )
+            }
+            is GoogleDriveSetupState.Error -> {
+                ErrorDialog(
+                    errorMessage = stringResource(id = state.error.errorMessageRes),
+                    onClose = { viewModel.resetDriveSetupState() },
+                )
+            }
+            is GoogleDriveSetupState.ConsentRequired -> {
+                LaunchedEffect(state) {
+                    val request = IntentSenderRequest.Builder(state.intent).build()
+                    authorizationLauncher.launch(request)
+                }
+            }
+            is GoogleDriveSetupState.Inactive -> { /* nothing to do */ }
         }
     }
 

@@ -455,6 +455,13 @@
     <string name="drive_backup_upload_file_failed_error">Google Drive Backup: Datei konnte nicht hochgeladen werden: %1$s</string>
     <string name="drive_backup_sign_in_failed">Anmeldung beim Google-Konto fehlgeschlagen.</string>
     <string name="drive_backup_folder_creation_failed">Google Drive-Ordner konnte nicht erstellt werden.</string>
+    <string name="drive_backup_setup_in_progress">Google Drive-Backup wird eingerichtet</string>
+    <string name="drive_backup_setup_error_authorization">Autorisierung mit Google Drive fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_consent">Die Google Drive-Berechtigung wurde nicht erteilt. Bitte versuchen Sie es erneut und erteilen Sie die erforderlichen Berechtigungen.</string>
+    <string name="drive_backup_setup_error_email">Die E-Mail-Adresse des Google-Kontos konnte nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_folder_access">Der Zugriff auf den bestehenden Google Drive-Ordner konnte nicht überprüft werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_folder_creation">Der Backup-Ordner auf Google Drive konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_unknown">Beim Einrichten des Google Drive-Backups ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
     <string name="disable">Deaktivieren</string>
     <string name="show_password">Passwort anzeigen</string>
     <string name="hide_password">Passwort verbergen</string>

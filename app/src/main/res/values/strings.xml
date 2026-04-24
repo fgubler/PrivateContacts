@@ -460,6 +460,13 @@
     <string name="drive_backup_upload_file_failed_error">Google Drive backup failed to upload file: %1$s</string>
     <string name="drive_backup_sign_in_failed">Failed to sign in to Google account.</string>
     <string name="drive_backup_folder_creation_failed">Failed to create Google Drive folder.</string>
+    <string name="drive_backup_setup_in_progress">Setting up Google Drive backup</string>
+    <string name="drive_backup_setup_error_authorization">Failed to authorize with Google Drive. Please try again.</string>
+    <string name="drive_backup_setup_error_consent">Google Drive consent was not granted. Please try again and grant the required permissions.</string>
+    <string name="drive_backup_setup_error_email">Failed to retrieve the Google account email. Please try again.</string>
+    <string name="drive_backup_setup_error_folder_access">Failed to check access to the existing Google Drive folder. Please try again.</string>
+    <string name="drive_backup_setup_error_folder_creation">Failed to create the backup folder on Google Drive. Please try again.</string>
+    <string name="drive_backup_setup_error_unknown">An unexpected error occurred while setting up Google Drive backup. Please try again.</string>
     <string name="disable">Disable</string>
     <string name="show_password">Show password</string>
     <string name="hide_password">Hide password</string>

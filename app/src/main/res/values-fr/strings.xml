@@ -455,6 +455,13 @@
     <string name="drive_backup_upload_file_failed_error">Sauvegarde Google Drive : échec du téléversement du fichier : %1$s</string>
     <string name="drive_backup_sign_in_failed">Échec de la connexion au compte Google.</string>
     <string name="drive_backup_folder_creation_failed">Impossible de créer le dossier Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configuration de la sauvegarde Google Drive</string>
+    <string name="drive_backup_setup_error_authorization">Échec de l\'autorisation avec Google Drive. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_consent">Le consentement Google Drive n\'a pas été accordé. Veuillez réessayer et accorder les autorisations requises.</string>
+    <string name="drive_backup_setup_error_email">Impossible de récupérer l\'adresse e-mail du compte Google. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_folder_access">Impossible de vérifier l\'accès au dossier Google Drive existant. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_folder_creation">Impossible de créer le dossier de sauvegarde sur Google Drive. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_unknown">Une erreur inattendue s\'est produite lors de la configuration de la sauvegarde Google Drive. Veuillez réessayer.</string>
     <string name="disable">Désactiver</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>
