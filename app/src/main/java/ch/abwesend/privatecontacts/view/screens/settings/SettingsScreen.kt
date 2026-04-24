@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
@@ -52,16 +53,21 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.FlavorConstants
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialogTexts
 import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
@@ -80,7 +86,6 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategory
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategorySpacer
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
-import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckboxWithInfoButton
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsLabel
@@ -90,11 +95,6 @@ import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
-import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
-import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
-import ch.abwesend.privatecontacts.domain.util.FlavorConstants
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -285,11 +285,13 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_block_unknown_calls,
                 description = R.string.settings_entry_block_unknown_calls_description,
-                infoDialogTitle = R.string.settings_entry_block_unknown_calls_info_dialog_title,
-                infoDialogText = R.string.settings_entry_block_unknown_calls_info_dialog_message,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_block_unknown_calls_info_dialog_title,
+                    text = R.string.settings_entry_block_unknown_calls_info_dialog_message,
+                ),
                 value = currentSettings.observeIncomingCalls &&
                     currentSettings.blockIncomingCallsFromUnknownNumbers,
                 enabled = currentSettings.observeIncomingCalls,
@@ -350,11 +352,13 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_show_third_party_contact_accounts,
                 description = R.string.settings_entry_show_third_party_contact_accounts_description,
-                infoDialogTitle = R.string.settings_entry_show_third_party_accounts_info_dialog_title,
-                infoDialogText = R.string.settings_entry_show_third_party_accounts_info_dialog_message,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_show_third_party_accounts_info_dialog_title,
+                    text = R.string.settings_entry_show_third_party_accounts_info_dialog_message,
+                ),
                 value = currentSettings.showThirdPartyContactAccounts,
                 enabled = currentSettings.showAndroidContacts,
             ) { newValue ->
@@ -541,11 +545,13 @@ object SettingsScreen {
             }
         }
 
-        SettingsCheckboxWithInfoButton(
+        SettingsCheckbox(
             label = R.string.settings_entry_enable_authentication,
             description = R.string.settings_entry_enable_authentication_description,
-            infoDialogTitle = R.string.settings_entry_enable_authentication,
-            infoDialogText = R.string.settings_entry_enable_authentication_info_dialog,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.settings_entry_enable_authentication,
+                text = R.string.settings_entry_enable_authentication_info_dialog,
+            ),
             enabled = fieldEnabled,
             value = currentSettings.authenticationRequired,
             onValueChanged = onValueChanged,
@@ -713,11 +719,13 @@ object SettingsScreen {
     ) {
         var showPasswordDialog by remember { mutableStateOf(false) }
 
-        SettingsCheckboxWithInfoButton(
+        SettingsCheckbox(
             label = R.string.backup_encryption_enabled_label,
             description = R.string.backup_encryption_enabled_description,
-            infoDialogTitle = R.string.backup_encryption_info_dialog_title,
-            infoDialogText = R.string.backup_encryption_info_dialog_message,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.backup_encryption_info_dialog_title,
+                text = R.string.backup_encryption_info_dialog_message,
+            ),
             value = encryptionEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {
@@ -798,11 +806,13 @@ object SettingsScreen {
         currentSettings: ISettingsState,
         viewModel: SettingsViewModel,
     ) {
-        SettingsCheckboxWithInfoButton(
+        SettingsCheckbox(
             label = R.string.drive_backup_title,
             description = R.string.drive_backup_description,
-            infoDialogTitle = R.string.drive_backup_info_dialog_title,
-            infoDialogText = R.string.drive_backup_info_dialog_message,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.drive_backup_info_dialog_title,
+                text = R.string.drive_backup_info_dialog_message,
+            ),
             value = currentSettings.googleDriveBackupEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {
@@ -879,11 +889,13 @@ object SettingsScreen {
     ) {
         val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_use_alternative_icon,
                 description = R.string.settings_entry_use_alternative_icon_description,
-                infoDialogTitle = R.string.settings_entry_use_alternative_icon,
-                infoDialogText = R.string.settings_entry_use_alternative_icon_info_dialog_text,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_use_alternative_icon,
+                    text = R.string.settings_entry_use_alternative_icon_info_dialog_text,
+                ),
                 value = currentSettings.useAlternativeAppIcon,
                 onValueChanged = {
                     settingsRepository.useAlternativeAppIcon = it
