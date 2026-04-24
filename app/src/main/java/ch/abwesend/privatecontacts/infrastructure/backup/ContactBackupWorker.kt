@@ -19,15 +19,13 @@ import androidx.work.WorkerParameters
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessageSeverity
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
+import ch.abwesend.privatecontacts.domain.model.backup.resolveContactTypes
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
-import ch.abwesend.privatecontacts.domain.model.importexport.resolveContactTypes
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
@@ -37,8 +35,6 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.PUBLIC_BACKUP_PREFIX
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.SECRET_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION

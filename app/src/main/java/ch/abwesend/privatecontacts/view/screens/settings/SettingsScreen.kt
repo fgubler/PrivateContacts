@@ -634,26 +634,26 @@ object SettingsScreen {
 
         BackupFolderField(settingsRepository, currentSettings.backupFolder)
 
-                SettingsEntryDivider()
+        SettingsEntryDivider()
 
-                val numberOfBackupsToKeepOptions = remember {
-                    NumberOfBackupsToKeep.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
-                }
-                SettingsDropDown(
-                    label = R.string.backup_number_to_keep_label,
-                    description = null,
-                    value = currentSettings.numberOfBackupsToKeep,
-                    options = numberOfBackupsToKeepOptions,
-                    onValueChanged = { settingsRepository.numberOfBackupsToKeep = it },
-                )
+        val numberOfBackupsToKeepOptions = remember {
+            NumberOfBackupsToKeep.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+        }
+        SettingsDropDown(
+            label = R.string.backup_number_to_keep_label,
+            description = null,
+            value = currentSettings.numberOfBackupsToKeep,
+            options = numberOfBackupsToKeepOptions,
+            onValueChanged = { settingsRepository.numberOfBackupsToKeep = it },
+        )
 
-                SettingsEntryDivider()
+        SettingsEntryDivider()
 
-                BackupEncryptionField(
-                    settingsRepository = settingsRepository,
-                    encryptionEnabled = currentSettings.backupEncryptionEnabled,
-                    viewModel = viewModel,
-                )
+        BackupEncryptionField(
+            settingsRepository = settingsRepository,
+            encryptionEnabled = currentSettings.backupEncryptionEnabled,
+            viewModel = viewModel,
+        )
 
         @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
         if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {

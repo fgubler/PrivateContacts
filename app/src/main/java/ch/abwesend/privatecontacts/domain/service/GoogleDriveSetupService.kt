@@ -10,6 +10,8 @@ import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.toDrive
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifSuccess
+import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -98,7 +100,7 @@ class GoogleDriveSetupService {
         }
 
         return repository.hasFolderAccess(existingFolderId, existingFolderName)
-            .ifHasValue { hasAccess ->
+            .ifSuccess { hasAccess ->
                 if (hasAccess) {
                     logger.info("Reusing existing Google Drive folder: $existingFolderName ($existingFolderId)")
                 } else {

@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
@@ -41,7 +42,7 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
         runCatchingAsResult {
             CredentialManager.create(context).clearCredentialState(ClearCredentialStateRequest())
             logger.debug("Google Drive authorization cleared")
-        }.ifHasError { logger.error("Failed to clear Google Drive authorization", it) }
+        }.ifError { logger.error("Failed to clear Google Drive authorization", it) }
     }
 
     override suspend fun authorize(): GoogleDriveAuthResult<IGoogleDriveRepository> = withContext(dispatchers.io) {
@@ -68,7 +69,7 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
             val result = Identity.getAuthorizationClient(context)
                 .getAuthorizationResultFromIntent(data)
             result.buildDriveRepository()
-        }.ifHasError { logger.error("Failed to handle authorization result", it) }
+        }.ifError { logger.error("Failed to handle authorization result", it) }
     }
 
     private fun buildDriveService(accessToken: GoogleDriveAccessToken): Drive {
