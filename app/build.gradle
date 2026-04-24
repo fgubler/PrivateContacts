@@ -147,11 +147,11 @@ dependencies {
     implementation "com.google.android.play:review-ktx:${androidReviewVersion}"
 
     // Google Drive
-    implementation "com.google.android.gms:play-services-auth:21.5.1"
+    googlePlayImplementation "com.google.android.gms:play-services-auth:21.5.1"
 
-    implementation("com.google.api-client:google-api-client-android:2.9.0")
-    implementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
-    implementation("androidx.credentials:credentials:1.6.0")
+    googlePlayImplementation("com.google.api-client:google-api-client-android:2.9.0")
+    googlePlayImplementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
+    googlePlayImplementation("androidx.credentials:credentials:1.6.0")
 
     implementation("com.google.http-client:google-http-client-gson:2.1.0")
 

@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
@@ -92,6 +93,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
+import ch.abwesend.privatecontacts.domain.util.FlavorConstants
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -638,11 +640,14 @@ object SettingsScreen {
             viewModel = viewModel,
         )
 
-        SettingsEntryDivider()
-        GoogleDriveBackupSubSection(
-            currentSettings = currentSettings,
-            viewModel = viewModel,
-        )
+        @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
+        if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {
+            SettingsEntryDivider()
+            GoogleDriveBackupSubSection(
+                currentSettings = currentSettings,
+                viewModel = viewModel,
+            )
+        }
 
         SettingsEntryDivider()
         TriggerBackupButton(
