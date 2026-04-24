@@ -71,16 +71,16 @@ import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
+import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
+import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
-import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
-import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
@@ -294,4 +294,3 @@ class MainActivity : AppCompatActivity() {
         )
     }
 }
-

@@ -24,12 +24,12 @@ import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.view.components.dialogs.SaveCancelDialog
+import ch.abwesend.privatecontacts.view.model.result.ParseVcfFromIntentResult
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContext
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.ProgressAndResultHandler
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.ReplaceExistingContactsCheckBox
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.TargetTypeFields
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
-import ch.abwesend.privatecontacts.view.model.result.ParseVcfFromIntentResult
 
 @ExperimentalMaterialApi
 object ImportContactsFromIntentComponents {

@@ -35,9 +35,9 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.ALL_BACKUP_MIME_TYPES
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportScreenComponents
 import kotlin.contracts.ExperimentalContracts
 

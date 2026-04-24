@@ -69,7 +69,6 @@ import ch.abwesend.privatecontacts.view.util.composeIfError
 import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
-import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 

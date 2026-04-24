@@ -58,7 +58,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
                 val enableCrashlytics = settings.sendErrorsToCrashlytics
                 RemoteLoggingHelper().enableCrashlytics(settings.sendErrorsToCrashlytics)
                 LogcatLogger("PrivateContactsApplication", { false })
-                    .info("Crashlytics ${if(enableCrashlytics) "enabled" else "disabled"}")
+                    .info("Crashlytics ${if (enableCrashlytics) "enabled" else "disabled"}")
             }
         } catch (e: Exception) {
             LogcatLogger("PrivateContactsApplication", { false })

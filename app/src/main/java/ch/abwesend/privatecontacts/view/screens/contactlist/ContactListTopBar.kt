@@ -54,7 +54,6 @@ import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 
 @ExperimentalMaterialApi

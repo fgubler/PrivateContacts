@@ -116,7 +116,7 @@ class SettingsViewModel : ViewModel() {
             val newValue = try {
                 value = GoogleDriveSetupState.Loading
                 block()
-            } catch(e: Exception) {
+            } catch (e: Exception) {
                 logger.warning("Failed to handle Google Drive setup", e)
                 GoogleDriveSetupError.UNKNOWN.toDriveSetupState()
             }

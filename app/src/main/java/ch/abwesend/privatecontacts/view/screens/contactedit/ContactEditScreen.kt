@@ -59,7 +59,6 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalComposeUiApi

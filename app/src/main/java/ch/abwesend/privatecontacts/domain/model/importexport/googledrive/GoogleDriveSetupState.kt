@@ -17,7 +17,7 @@ sealed interface GoogleDriveIntermediateSetupState {
     ) : GoogleDriveIntermediateSetupState
 }
 
-sealed interface GoogleDriveSetupState: GoogleDriveIntermediateSetupState {
+sealed interface GoogleDriveSetupState : GoogleDriveIntermediateSetupState {
     data object Inactive : GoogleDriveSetupState
     data object Loading : GoogleDriveSetupState
     data class ConsentRequired(val intent: PendingIntent) : GoogleDriveSetupState

@@ -9,8 +9,8 @@ package ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFile
-import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolderInfo
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolder
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolderInfo
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository

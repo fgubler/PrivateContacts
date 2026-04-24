@@ -13,9 +13,9 @@ import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 
 /**
