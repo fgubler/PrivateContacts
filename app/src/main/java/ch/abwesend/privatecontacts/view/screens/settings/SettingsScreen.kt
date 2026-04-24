@@ -812,13 +812,12 @@ object SettingsScreen {
             }
         }
 
-//        if (enabled && accountEmail.isNotEmpty()) { // TODO fix
-        Spacer(modifier = Modifier.height(10.dp))
         if (currentSettings.googleDriveBackupEnabled) {
+            Spacer(modifier = Modifier.height(10.dp))
             SettingsLabel(labelRes = R.string.drive_backup_account_label)
             Spacer(modifier = Modifier.height(5.dp))
             Text(
-                text = currentSettings.googleDriveAccountEmail,
+                text = currentSettings.googleDriveAccountEmail.ifEmpty { "—" },
                 style = MaterialTheme.typography.body2,
                 fontStyle = FontStyle.Italic,
             )
