@@ -836,6 +836,7 @@ object SettingsScreen {
             is GoogleDriveSetupState.Error -> {
                 ErrorDialog(
                     errorMessage = stringResource(id = state.error.errorMessageRes),
+                    title = R.string.drive_backup_setup_failed_title,
                     onClose = { viewModel.resetDriveSetupState() },
                 )
             }

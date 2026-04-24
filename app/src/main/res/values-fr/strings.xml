@@ -456,6 +456,7 @@
     <string name="drive_backup_sign_in_failed">Échec de la connexion au compte Google.</string>
     <string name="drive_backup_folder_creation_failed">Impossible de créer le dossier Google Drive.</string>
     <string name="drive_backup_setup_in_progress">Configuration de la sauvegarde Google Drive</string>
+    <string name="drive_backup_setup_failed_title">�chec de la configuration de Google Drive</string>
     <string name="drive_backup_setup_error_authorization">Échec de l\'autorisation avec Google Drive. Veuillez réessayer.</string>
     <string name="drive_backup_setup_error_consent">Le consentement Google Drive n\'a pas été accordé. Veuillez réessayer et accorder les autorisations requises.</string>
     <string name="drive_backup_setup_error_email">Impossible de récupérer l\'adresse e-mail du compte Google. Veuillez réessayer.</string>

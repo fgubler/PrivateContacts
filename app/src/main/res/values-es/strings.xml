@@ -456,6 +456,7 @@
     <string name="drive_backup_sign_in_failed">Error al iniciar sesi贸n en la cuenta de Google.</string>
     <string name="drive_backup_folder_creation_failed">No se pudo crear la carpeta de Google Drive.</string>
     <string name="drive_backup_setup_in_progress">Configurando la copia de seguridad de Google Drive</string>
+    <string name="drive_backup_setup_failed_title">Error en la configuraci髇 de Google Drive</string>
     <string name="drive_backup_setup_error_authorization">Error de autorizaci贸n con Google Drive. Int茅ntelo de nuevo.</string>
     <string name="drive_backup_setup_error_consent">No se concedi贸 el consentimiento de Google Drive. Int茅ntelo de nuevo y conceda los permisos necesarios.</string>
     <string name="drive_backup_setup_error_email">No se pudo obtener la direcci贸n de correo electr贸nico de la cuenta de Google. Int茅ntelo de nuevo.</string>

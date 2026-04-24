@@ -14,8 +14,9 @@ import ch.abwesend.privatecontacts.R
 @Composable
 fun ErrorDialog(
     errorMessage: String,
+    @StringRes title: Int = R.string.error,
     @StringRes okButtonLabel: Int = R.string.close,
     onClose: () -> Unit,
-) = OkDialog(title = R.string.error, okButtonLabel = okButtonLabel, onClose = onClose) {
+) = OkDialog(title = title, okButtonLabel = okButtonLabel, onClose = onClose) {
     Text(text = errorMessage)
 }

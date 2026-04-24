@@ -461,6 +461,7 @@
     <string name="drive_backup_sign_in_failed">Failed to sign in to Google account.</string>
     <string name="drive_backup_folder_creation_failed">Failed to create Google Drive folder.</string>
     <string name="drive_backup_setup_in_progress">Setting up Google Drive backup</string>
+    <string name="drive_backup_setup_failed_title">Google Drive setup failed</string>
     <string name="drive_backup_setup_error_authorization">Failed to authorize with Google Drive. Please try again.</string>
     <string name="drive_backup_setup_error_consent">Google Drive consent was not granted. Please try again and grant the required permissions.</string>
     <string name="drive_backup_setup_error_email">Failed to retrieve the Google account email. Please try again.</string>

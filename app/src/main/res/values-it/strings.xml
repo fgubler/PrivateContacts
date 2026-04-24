@@ -456,6 +456,7 @@
     <string name="drive_backup_sign_in_failed">Accesso all\'account Google fallito.</string>
     <string name="drive_backup_folder_creation_failed">Impossibile creare la cartella Google Drive.</string>
     <string name="drive_backup_setup_in_progress">Configurazione del backup di Google Drive</string>
+    <string name="drive_backup_setup_failed_title">Configurazione di Google Drive non riuscita</string>
     <string name="drive_backup_setup_error_authorization">Autorizzazione con Google Drive non riuscita. Riprova.</string>
     <string name="drive_backup_setup_error_consent">Il consenso per Google Drive non è stato concesso. Riprova e concedi le autorizzazioni richieste.</string>
     <string name="drive_backup_setup_error_email">Impossibile recuperare l\'indirizzo e-mail dell\'account Google. Riprova.</string>
