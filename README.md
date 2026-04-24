@@ -140,3 +140,7 @@ The experimental call-detection feature registers the app to be informed by the 
 * Florian Gubler
 * 2Gusoft@gmail.com
 * App entry in Google Play Store: [PrivateContacts](https://play.google.com/store/apps/details?id=ch.abwesend.privatecontacts)
+
+## Legal
+* Privacy Policy: [PrivateContacts Privacy Policy](https://www.privacypolicies.com/live/f40e5368-c69c-4530-9abc-60fef967ef93)
+* Disclaimer: we refuse any and all liability for damage incurred by using this app.
