@@ -53,7 +53,7 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
             }
         }
 
-    override suspend fun checkFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception> =
+    override suspend fun hasFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception> =
         withContext(dispatchers.io) {
             runCatchingAsResult {
                 drive.files().get(folderId)

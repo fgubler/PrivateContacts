@@ -58,10 +58,10 @@ class GoogleDriveSetupService {
         repository: IGoogleDriveRepository,
         accountEmail: String,
     ): GoogleDriveIntermediateSetupState {
-        when (val folderCreationRequired = isFolderCreationRequired(repository)) {
-            is ErrorResult -> return folderCreationRequired.error.toDriveSetupState()
+        when (val canReuseFolder = canReuseBackupFolder(repository)) {
+            is ErrorResult -> return canReuseFolder.error.toDriveSetupState()
             is SuccessResult -> {
-                if (!folderCreationRequired.value) {
+                if (canReuseFolder.value) {
                     return GoogleDriveIntermediateSetupState.Success(
                         accountEmail = accountEmail,
                         backupEnabled = true,
@@ -86,19 +86,19 @@ class GoogleDriveSetupService {
         }
     }
 
-    private suspend fun isFolderCreationRequired(
+    private suspend fun canReuseBackupFolder(
         repository: IGoogleDriveRepository
     ): BinaryResult<Boolean, GoogleDriveSetupError> {
         val existingFolderId = settingsState.googleDriveFolderId
         val existingFolderName = settingsState.googleDriveFolderName
 
         if (existingFolderId.isEmpty() || existingFolderName.isEmpty()) {
-            return SuccessResult(true)
+            return SuccessResult(false)
         }
 
-        return repository.checkFolderAccess(existingFolderId, existingFolderName)
-            .ifHasValue {
-                if (it) {
+        return repository.hasFolderAccess(existingFolderId, existingFolderName)
+            .ifHasValue { hasAccess ->
+                if (hasAccess) {
                     logger.info("Reusing existing Google Drive folder: $existingFolderName ($existingFolderId)")
                 } else {
                     logger.info("Stored Google Drive folder no longer accessible; creating a new one.")

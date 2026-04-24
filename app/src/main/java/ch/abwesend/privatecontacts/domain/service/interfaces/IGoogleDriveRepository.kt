@@ -18,7 +18,7 @@ interface IGoogleDriveRepository {
     suspend fun createBackupFolder(): BinaryResult<GoogleDriveFolder, Exception>
 
     /** @return true if the folder exists and is accessible for read & write. */
-    suspend fun checkFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception>
+    suspend fun hasFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception>
 
     suspend fun findExistingFiles(folderId: String, fileName: String): List<DriveFile>
     suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): DriveFile
