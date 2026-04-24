@@ -161,6 +161,22 @@ internal val backupPasswordEncryptedEntry = SettingsEntry(
     key = stringPreferencesKey("backupPasswordEncrypted"),
     defaultValue = defaultSettings.backupPasswordEncrypted
 )
+internal val googleDriveBackupEnabledEntry = SettingsEntry(
+    key = booleanPreferencesKey("googleDriveBackupEnabled"),
+    defaultValue = defaultSettings.googleDriveBackupEnabled
+)
+internal val googleDriveAccountEmailEntry = SettingsEntry(
+    key = stringPreferencesKey("googleDriveAccountEmail"),
+    defaultValue = defaultSettings.googleDriveAccountEmail
+)
+internal val googleDriveFolderIdEntry = SettingsEntry(
+    key = stringPreferencesKey("googleDriveFolderId"),
+    defaultValue = defaultSettings.googleDriveFolderId
+)
+internal val googleDriveFolderNameEntry = SettingsEntry(
+    key = stringPreferencesKey("googleDriveFolderName"),
+    defaultValue = defaultSettings.googleDriveFolderName
+)
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.

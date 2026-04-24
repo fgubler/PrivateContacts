@@ -83,6 +83,12 @@ interface ISettingsState {
     val backupEncryptionEnabled: Boolean
     val backupPasswordEncrypted: String
 
+    // Google Drive Backup
+    val googleDriveBackupEnabled: Boolean
+    val googleDriveAccountEmail: String
+    val googleDriveFolderId: String
+    val googleDriveFolderName: String
+
     // Others
     val currentVersion: Int
     val previousVersion: Int
@@ -130,6 +136,11 @@ data class SettingsState(
     override val backupEncryptionEnabled: Boolean,
     override val backupPasswordEncrypted: String,
 
+    override val googleDriveBackupEnabled: Boolean,
+    override val googleDriveAccountEmail: String,
+    override val googleDriveFolderId: String,
+    override val googleDriveFolderName: String,
+
     override val currentVersion: Int,
     override val previousVersion: Int,
     override val numberOfAppStarts: Int,
@@ -162,6 +173,10 @@ data class SettingsState(
             lastBackupDate = LocalDate.MIN,
             backupEncryptionEnabled = false,
             backupPasswordEncrypted = "",
+            googleDriveBackupEnabled = false,
+            googleDriveAccountEmail = "",
+            googleDriveFolderId = "",
+            googleDriveFolderName = "",
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,

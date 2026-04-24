@@ -57,6 +57,10 @@ data class TestSettings(
     override var lastBackupDate: LocalDate = currentSettings.lastBackupDate
     override var backupEncryptionEnabled: Boolean = currentSettings.backupEncryptionEnabled
     override var backupPasswordEncrypted: String = currentSettings.backupPasswordEncrypted
+    override var googleDriveBackupEnabled: Boolean = currentSettings.googleDriveBackupEnabled
+    override var googleDriveAccountEmail: String = currentSettings.googleDriveAccountEmail
+    override var googleDriveFolderId: String = currentSettings.googleDriveFolderId
+    override var googleDriveFolderName: String = currentSettings.googleDriveFolderName
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings
