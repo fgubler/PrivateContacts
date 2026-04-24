@@ -62,7 +62,6 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.PUBLIC_CONTACTS
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
-import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 

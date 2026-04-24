@@ -20,7 +20,6 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,6 +38,7 @@ import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.ExpandableCard
 import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialogTexts
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownComponent
 import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.model.DropDownOption
@@ -100,9 +100,11 @@ object SettingsComponents {
         @StringRes description: Int?,
         value: Boolean,
         enabled: Boolean = true,
+        infoDialogTexts: OkDialogTexts? = null,
         onValueChanged: (Boolean) -> Unit,
     ) {
         val textColor = if (enabled) normalContentColor() else disabledContentColor()
+        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -115,12 +117,21 @@ object SettingsComponents {
                 SettingsLabel(labelRes = label, textColor = textColor)
                 description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
             }
+
+            if (infoDialogTexts != null) {
+                InfoIconButton { showInfoDialog = true }
+            }
+
             Checkbox(
                 checked = value,
                 enabled = enabled,
                 onCheckedChange = onValueChanged,
                 modifier = Modifier.padding(start = 10.dp)
             )
+        }
+
+        if (infoDialogTexts != null && showInfoDialog) {
+            OkDialog(texts = infoDialogTexts) { showInfoDialog = false }
         }
     }
 
@@ -206,35 +217,5 @@ object SettingsComponents {
             color = textColor,
             modifier = modifier,
         )
-    }
-
-    @Composable
-    fun SettingsCheckboxWithInfoButton(
-        @StringRes label: Int,
-        @StringRes description: Int?,
-        @StringRes infoDialogTitle: Int,
-        @StringRes infoDialogText: Int,
-        value: Boolean,
-        enabled: Boolean = true,
-        onValueChanged: (Boolean) -> Unit,
-    ) {
-        var showInfoDialog: Boolean by remember { mutableStateOf(false) }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Surface(modifier = Modifier.weight(1.0f)) {
-                SettingsCheckbox(
-                    label = label,
-                    description = description,
-                    enabled = enabled,
-                    value = value,
-                    onValueChanged = onValueChanged
-                )
-            }
-            InfoIconButton { showInfoDialog = true }
-        }
-
-        if (showInfoDialog) {
-            OkDialog(title = infoDialogTitle, text = infoDialogText,) { showInfoDialog = false }
-        }
     }
 }

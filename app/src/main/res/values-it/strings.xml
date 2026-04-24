@@ -456,10 +456,40 @@
     <string name="backup_validate_success_title">Validazione riuscita</string>
     <string name="backup_validate_contacts_found">Contatti trovati: %1$d</string>
     <string name="backup_validate_parsing_errors">Errori di lettura: %1$d</string>
-    <string name="backup_decryption_password_dialog_title">Inserire la password di decrittografia</string>
+    <string name="backup_decryption_password_dialog_title">Inserisci la password di decifratura</string>
+
+    <string name="disable">Disattiva</string>
     <string name="show_password">Mostrare password</string>
     <string name="hide_password">Nascondere password</string>
 
+    <string name="drive_backup_title">Backup su Google Drive</string>
+    <string name="drive_backup_description">Carica i backup locali su Google Drive per maggiore sicurezza</string>
+    <string name="drive_backup_info_dialog_title">Google Drive Backup</string>
+    <string name="drive_backup_info_dialog_message">Il backup locale più recente di ogni tipo viene caricato periodicamente su Google Drive.\n\nSi consiglia di attivare il backup su Google Drive solo insieme alla crittografia dei backup per una maggiore privacy.\n\nL\'app creerà una nuova cartella nel tuo Google Drive per archiviare i backup. Nessun altro file o cartella verrà toccato.\n\nDisattivare il backup su Google Drive non cancellerà i backup esistenti nel tuo Google Drive.\n\nPer spostare i backup su un altro account Google Drive, disattiva il backup su Google Drive e riattivalo.\n\nL\'indirizzo email dell\'account Google Drive viene memorizzato solo localmente per essere visualizzato qui. Non viene mai inviato a nessun server.</string>
+    <string name="drive_backup_enabled_label">Carica i backup su Google Drive</string>
+    <string name="drive_backup_enabled_description">Carica automaticamente i backup locali su Google Drive</string>
+    <string name="drive_backup_account_label">Account Google</string>
+    <string name="drive_backup_account_not_selected">Nessun account selezionato</string>
+    <string name="drive_backup_account_select">Seleziona account</string>
+    <string name="drive_backup_folder_label">Cartella Drive</string>
+    <string name="drive_backup_folder_creating">Creazione cartella...</string>
+    <string name="drive_backup_folder_not_configured_warning">Backup Google Drive saltato: nessuna cartella Drive configurata.</string>
+    <string name="drive_backup_account_not_signed_in_error">Backup Google Drive fallito: nessun account Google connesso.</string>
+    <string name="drive_backup_local_folder_not_configured_warning">Backup Google Drive saltato: nessuna cartella di backup locale configurata.</string>
+    <string name="drive_backup_local_folder_unreadable_error">Backup Google Drive fallito: impossibile leggere la cartella di backup locale.</string>
+    <string name="drive_backup_no_local_file_warning">Nessun file di backup locale trovato per i contatti %1$s.</string>
+    <string name="drive_backup_upload_failed_error">Il backup di Google Drive è fallito inaspettatamente.</string>
+    <string name="drive_backup_upload_file_failed_error">Backup Google Drive: caricamento file fallito: %1$s</string>
+    <string name="drive_backup_sign_in_failed">Accesso all\'account Google fallito.</string>
+    <string name="drive_backup_folder_creation_failed">Impossibile creare la cartella Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configurazione del backup di Google Drive</string>
+    <string name="drive_backup_setup_failed_title">Configurazione di Google Drive non riuscita</string>
+    <string name="drive_backup_setup_error_authorization">Autorizzazione con Google Drive non riuscita. Riprova.</string>
+    <string name="drive_backup_setup_error_consent">Il consenso per Google Drive non è stato concesso. Riprova e concedi le autorizzazioni richieste.</string>
+    <string name="drive_backup_setup_error_email">Impossibile recuperare l\'indirizzo e-mail dell\'account Google. Riprova.</string>
+    <string name="drive_backup_setup_error_folder_access">Impossibile verificare l\'accesso alla cartella Google Drive esistente. Riprova.</string>
+    <string name="drive_backup_setup_error_folder_creation">Impossibile creare la cartella di backup su Google Drive. Riprova.</string>
+    <string name="drive_backup_setup_error_unknown">Si è verificato un errore imprevisto durante la configurazione del backup di Google Drive. Riprova.</string>
     <string name="failed_to_select_file">Selezione file non riuscita</string>
     <string name="new_something">Nuovo</string>
 
@@ -503,5 +533,6 @@
     <string name="release_notes_v101">Aggiunta la possibilità di cifrare i backup periodici.</string>
     <string name="release_notes_v102_1">I vecchi backup periodici possono ora essere eliminati automaticamente dall\'app.</string>
     <string name="release_notes_v102_2">I backup e i file esportati possono ora essere validati senza importarli.</string>
+    <string name="release_notes_v104">L\'app ora consente di caricare automaticamente i backup periodici su Google Drive.</string>
 
 </resources>

@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2022.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.contactedit
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +36,7 @@ class ContactEditViewModel : ViewModel() {
     var selectedContact: ContactEditableWrapper? by mutableStateOf(null)
         private set
 
-    private val _saveResult = EventFlow.createShared<ContactSaveResult>()
+    private val _saveResult = EventFlow.Companion.createShared<ContactSaveResult>()
     val saveResult: Flow<ContactSaveResult> = _saveResult
 
     private val _allContactGroups = mutableResourceStateFlow<List<IContactGroup>>()
@@ -58,7 +52,7 @@ class ContactEditViewModel : ViewModel() {
     }
 
     fun createContact() {
-        val contact = ContactEditable.createNew()
+        val contact = ContactEditable.Companion.createNew()
         selectContact(contact)
     }
 

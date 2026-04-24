@@ -9,7 +9,11 @@ package ch.abwesend.privatecontacts.domain.repository
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 
 interface IBackupMessageRepository {
-    suspend fun addMessage(message: BackupMessage)
-    suspend fun getAndClearMessages(): List<BackupMessage>
-    suspend fun clearMessages()
+    suspend fun addLocalMessage(message: BackupMessage)
+    suspend fun getAndClearLocalMessages(): List<BackupMessage>
+    suspend fun clearLocalMessages()
+
+    suspend fun addDriveMessage(message: BackupMessage)
+    suspend fun getAndClearDriveMessages(): List<BackupMessage>
+    suspend fun clearDriveMessages()
 }

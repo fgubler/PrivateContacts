@@ -14,6 +14,14 @@ inline fun <T> runCatchingAsResult(block: () -> T): BinaryResult<T, Exception> {
     }
 }
 
+inline fun <T> runCatchingOnResult(block: () -> BinaryResult<T, Exception>): BinaryResult<T, Exception> {
+    return try {
+        block()
+    } catch (e: Exception) {
+        ErrorResult(e)
+    }
+}
+
 inline fun <TValue, TError, T> BinaryResult<TValue, TError>.mapValue(
     mapper: (TValue) -> T
 ): BinaryResult<T, TError> = when (this) {

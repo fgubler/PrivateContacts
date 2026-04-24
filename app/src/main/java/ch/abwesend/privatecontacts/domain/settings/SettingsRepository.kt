@@ -68,6 +68,12 @@ interface SettingsRepository : ISettingsState {
     override var backupPasswordEncrypted: String
     override var numberOfBackupsToKeep: NumberOfBackupsToKeep
 
+    // Google Drive Backup
+    override var googleDriveBackupEnabled: Boolean
+    override var googleDriveAccountEmail: String
+    override var googleDriveFolderId: String
+    override var googleDriveFolderName: String
+
     // Others
     override var currentVersion: Int
     override var previousVersion: Int

@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.view.viewmodel.model
+package ch.abwesend.privatecontacts.view.model.result
 
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError

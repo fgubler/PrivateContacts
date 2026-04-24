@@ -109,7 +109,7 @@ object AboutScreen {
             }
             BulletPointListItem {
                 LinkText(text = stringResource(id = R.string.privacy_title)) {
-                    openLink(context, "https://www.privacypolicies.com/live/f40e5368-c69c-4530-9abc-60fef967ef93")
+                    openLink(context, "https://www.abwesend.ch/PrivateContacts/PrivacyPolicy.html")
                 }
             }
         }

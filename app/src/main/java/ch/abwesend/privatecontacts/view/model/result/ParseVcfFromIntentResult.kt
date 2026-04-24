@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.viewmodel.model
+package ch.abwesend.privatecontacts.view.model.result
 
 import android.net.Uri
 import ch.abwesend.privatecontacts.domain.model.contact.IContact

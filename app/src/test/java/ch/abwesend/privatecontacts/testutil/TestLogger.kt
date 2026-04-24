@@ -55,4 +55,8 @@ class TestRemoteLoggingHelper : IRemoteLoggingHelper {
     override fun logMessageToCrashlytics(message: String) {
         println("Test logging message to crashlytics: $message")
     }
+
+    override fun enableCrashlytics(enable: Boolean) {
+        println("Test enabling crashlytics: $enable")
+    }
 }

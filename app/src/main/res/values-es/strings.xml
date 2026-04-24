@@ -444,7 +444,7 @@
     <string name="backup_encryption_password_dialog_title">Contraseña de cifrado de copia de seguridad</string>
     <string name="backup_encryption_password_label">Contraseña</string>
     <string name="backup_encryption_password_confirmation_label">Confirmar contraseña</string>
-    <string name="password_confirmation_mismatch_error">Las contrase�as deben ser id�nticas</string>
+    <string name="password_confirmation_mismatch_error">Las contraseñas deben ser idénticas</string>
     <string name="backup_encryption_password_empty_error">Por favor, introduce una contraseña para activar el cifrado.</string>
     <string name="backup_encryption_password_recovery_failed_error">No se ha podido recuperar la contraseña de cifrado para las copias de seguridad periódicas. Se ha desactivado el cifrado: establece una nueva contraseña para volver a activarlo.</string>
     <string name="backup_manage_in_settings_description">Las copias de seguridad periódicas se pueden configurar en los Ajustes.</string>
@@ -457,6 +457,36 @@
     <string name="backup_validate_contacts_found">Contactos encontrados: %1$d</string>
     <string name="backup_validate_parsing_errors">Errores de lectura: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Introducir contraseña de descifrado</string>
+
+    <string name="drive_backup_title">Copia de seguridad en Google Drive</string>
+    <string name="drive_backup_description">Sube las copias de seguridad locales a Google Drive para mayor seguridad</string>
+    <string name="drive_backup_info_dialog_title">Copia de seguridad en Google Drive</string>
+    <string name="drive_backup_info_dialog_message">La copia de seguridad local más reciente de cada tipo se sube periódicamente a Google Drive.\n\nRecomendamos activar la copia de seguridad en Google Drive solo junto con el cifrado de copias de seguridad para mayor privacidad.\n\nLa aplicación creará una nueva carpeta en tu Google Drive para almacenar sus copias de seguridad. No se tocará ningún otro archivo o carpeta.\n\nDesactivar la copia de seguridad en Google Drive no eliminará las copias de seguridad existentes en tu Google Drive.\n\nPara cambiar las copias de seguridad a otra cuenta de Google Drive, desactiva la copia de seguridad en Google Drive y vuelve a activarla.\n\nLa dirección de correo electrónico de la cuenta de Google Drive solo se almacena localmente para mostrarse aquí. Nunca se envía a ningún servidor.</string>
+    <string name="drive_backup_enabled_label">Subir copias de seguridad a Google Drive</string>
+    <string name="drive_backup_enabled_description">Subir automáticamente las copias de seguridad locales a Google Drive</string>
+    <string name="drive_backup_account_label">Cuenta de Google</string>
+    <string name="drive_backup_account_not_selected">Ninguna cuenta seleccionada</string>
+    <string name="drive_backup_account_select">Seleccionar cuenta</string>
+    <string name="drive_backup_folder_label">Carpeta de Drive</string>
+    <string name="drive_backup_folder_creating">Creando carpeta...</string>
+    <string name="drive_backup_folder_not_configured_warning">Copia de seguridad en Google Drive omitida: no hay carpeta de Drive configurada.</string>
+    <string name="drive_backup_account_not_signed_in_error">Copia de seguridad en Google Drive fallida: no hay cuenta de Google conectada.</string>
+    <string name="drive_backup_local_folder_not_configured_warning">Copia de seguridad en Google Drive omitida: no se ha configurado una carpeta de copia de seguridad local.</string>
+    <string name="drive_backup_local_folder_unreadable_error">Copia de seguridad en Google Drive fallida: no se puede leer la carpeta de copia de seguridad local.</string>
+    <string name="drive_backup_no_local_file_warning">No se encontró archivo de copia de seguridad local para contactos %1$s.</string>
+    <string name="drive_backup_upload_failed_error">La copia de seguridad en Google Drive falló inesperadamente.</string>
+    <string name="drive_backup_upload_file_failed_error">Copia de seguridad en Google Drive: error al subir archivo: %1$s</string>
+    <string name="drive_backup_sign_in_failed">Error al iniciar sesión en la cuenta de Google.</string>
+    <string name="drive_backup_folder_creation_failed">No se pudo crear la carpeta de Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configurando la copia de seguridad de Google Drive</string>
+    <string name="drive_backup_setup_failed_title">Error en la configuración de Google Drive</string>
+    <string name="drive_backup_setup_error_authorization">Error de autorización con Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_consent">No se concedió el consentimiento de Google Drive. Inténtelo de nuevo y conceda los permisos necesarios.</string>
+    <string name="drive_backup_setup_error_email">No se pudo obtener la dirección de correo electrónico de la cuenta de Google. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_folder_access">No se pudo verificar el acceso a la carpeta existente de Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_folder_creation">No se pudo crear la carpeta de copia de seguridad en Google Drive. Inténtelo de nuevo.</string>
+    <string name="drive_backup_setup_error_unknown">Se produjo un error inesperado al configurar la copia de seguridad de Google Drive. Inténtelo de nuevo.</string>
+    <string name="disable">Desactivar</string>
     <string name="show_password">Mostrar contraseña</string>
     <string name="hide_password">Ocultar contraseña</string>
 
@@ -503,5 +533,6 @@
     <string name="release_notes_v101">Se ha añadido la posibilidad de cifrar las copias de seguridad periódicas.</string>
     <string name="release_notes_v102_1">Las copias de seguridad periódicas antiguas ahora pueden ser limpiadas automáticamente por la app.</string>
     <string name="release_notes_v102_2">Las copias de seguridad y los archivos exportados ahora se pueden validar sin necesidad de importarlos.</string>
+    <string name="release_notes_v104">La app ahora permite subir automáticamente las copias de seguridad periódicas a Google Drive.</string>
 
 </resources>

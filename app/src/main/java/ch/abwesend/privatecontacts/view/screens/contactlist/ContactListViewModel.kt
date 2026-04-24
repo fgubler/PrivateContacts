@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2022.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import android.net.Uri
 import androidx.compose.foundation.lazy.LazyListState
@@ -37,16 +31,9 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactListScreenState
-import ch.abwesend.privatecontacts.view.model.ContactListScreenState.BulkMode
-import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Normal
-import ch.abwesend.privatecontacts.view.model.ContactListScreenState.Search
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.ALL_CONTACTS
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.PUBLIC_CONTACTS
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRET_CONTACTS
-import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactDeleteResult
-import ch.abwesend.privatecontacts.view.viewmodel.model.BulkContactExportResult
-import ch.abwesend.privatecontacts.view.viewmodel.model.BulkOperationResult
+import ch.abwesend.privatecontacts.view.model.result.BulkContactDeleteResult
+import ch.abwesend.privatecontacts.view.model.result.BulkContactExportResult
+import ch.abwesend.privatecontacts.view.model.result.BulkOperationResult
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.emitAll
@@ -85,7 +72,8 @@ class ContactListViewModel : ViewModel() {
             updateScreenState()
         }
 
-    private val _screenState: MutableState<ContactListScreenState> = mutableStateOf(Normal)
+    private val _screenState: MutableState<ContactListScreenState> =
+        mutableStateOf(ContactListScreenState.Normal)
     val screenState: State<ContactListScreenState> = _screenState
 
     /** the currently applied search-filter for the list */
@@ -94,7 +82,7 @@ class ContactListViewModel : ViewModel() {
 
     @FlowPreview
     private val searchQueryDebouncer by lazy {
-        Debouncer.debounce<String>(
+        Debouncer.Companion.debounce<String>(
             scope = viewModelScope,
             debounceMs = 300,
         ) { query ->
@@ -126,7 +114,8 @@ class ContactListViewModel : ViewModel() {
     val exportResult: ResourceFlow<BulkContactExportResult> = _exportResult
 
     /** to remember the scrolling-position after returning from an opened contact */
-    val scrollingState: LazyListState = LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
+    val scrollingState: LazyListState =
+        LazyListState(firstVisibleItemIndex = 0, firstVisibleItemScrollOffset = 0)
 
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
@@ -154,9 +143,9 @@ class ContactListViewModel : ViewModel() {
     private suspend fun loadContacts(): ResourceFlow<List<IContactBase>> {
         logger.debug("Loading contacts")
         return when (selectedTab.value) {
-            SECRET_CONTACTS -> loadService.loadSecretContacts()
-            PUBLIC_CONTACTS -> loadService.loadAndroidContacts()
-            ALL_CONTACTS -> loadService.loadAllContacts()
+            ContactListTab.SECRET_CONTACTS -> loadService.loadSecretContacts()
+            ContactListTab.PUBLIC_CONTACTS -> loadService.loadAndroidContacts()
+            ContactListTab.ALL_CONTACTS -> loadService.loadAllContacts()
         }
     }
 
@@ -164,9 +153,9 @@ class ContactListViewModel : ViewModel() {
     private suspend fun searchContacts(query: String): ResourceFlow<List<IContactBase>> {
         logger.debug("Searching contacts with query '$query'")
         return when (selectedTab.value) {
-            SECRET_CONTACTS -> loadService.searchSecretContacts(query)
-            PUBLIC_CONTACTS -> loadService.searchAndroidContacts(query)
-            ALL_CONTACTS -> loadService.searchAllContacts(query)
+            ContactListTab.SECRET_CONTACTS -> loadService.searchSecretContacts(query)
+            ContactListTab.PUBLIC_CONTACTS -> loadService.searchAndroidContacts(query)
+            ContactListTab.ALL_CONTACTS -> loadService.searchAllContacts(query)
         }
     }
 
@@ -198,9 +187,9 @@ class ContactListViewModel : ViewModel() {
 
     private fun updateScreenState() {
         val newState: ContactListScreenState = when {
-            bulkModeEnabled -> BulkMode(selectedContacts = bulkModeSelectedContacts)
-            showSearch -> Search(searchText = searchText)
-            else -> Normal
+            bulkModeEnabled -> ContactListScreenState.BulkMode(selectedContacts = bulkModeSelectedContacts)
+            showSearch -> ContactListScreenState.Search(searchText = searchText)
+            else -> ContactListScreenState.Normal
         }
         _screenState.value = newState
     }

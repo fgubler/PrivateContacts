@@ -55,6 +55,10 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     backupEncryptionEnabled = getValue(backupEncryptionEnabledEntry),
     backupPasswordEncrypted = getValue(backupPasswordEncryptedEntry),
     numberOfBackupsToKeep = tryGetEnumValue(numberOfBackupsToKeepEntry),
+    googleDriveBackupEnabled = getValue(googleDriveBackupEnabledEntry),
+    googleDriveAccountEmail = getValue(googleDriveAccountEmailEntry),
+    googleDriveFolderId = getValue(googleDriveFolderIdEntry),
+    googleDriveFolderName = getValue(googleDriveFolderNameEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =

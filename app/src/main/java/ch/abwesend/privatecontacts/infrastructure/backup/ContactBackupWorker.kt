@@ -17,12 +17,13 @@ import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
-import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessageSeverity
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
+import ch.abwesend.privatecontacts.domain.model.backup.resolveContactTypes
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
@@ -34,13 +35,11 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -68,13 +67,13 @@ class ContactBackupWorker(
 
     /** Caching them would not work because they would be lost during a crash. */
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
-        backupMessageRepository.addMessage(BackupMessage(text = text, severity = severity))
+        backupMessageRepository.addLocalMessage(BackupMessage(text = text, severity = severity))
     }
 
     override suspend fun doWork(): Result {
         return try {
             logger.debug("Starting periodic backup")
-            backupMessageRepository.clearMessages() // a new start with a clean slate
+            backupMessageRepository.clearLocalMessages() // a new start with a clean slate
             val settings = Settings.nextOrDefault()
             val overrideFrequency = inputData.getBoolean(OVERRIDE_BACKUP_FREQUENCY, defaultValue = false)
 
@@ -113,25 +112,9 @@ class ContactBackupWorker(
             val dateString = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
             val encryptionPassword = resolveEncryptionPassword(settings)
 
-            val success = when (settings.backupContactScope) {
-                BackupContactScope.ALL -> {
-                    coroutineScope {
-                        val secretSuccess = async {
-                            exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder, encryptionPassword)
-                        }
-                        val publicSuccess = async {
-                            exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder, encryptionPassword)
-                        }
-                        secretSuccess.await() && publicSuccess.await()
-                    }
-                }
-                BackupContactScope.SECRET -> {
-                    exportContacts(ContactType.SECRET, dateString, vCardVersion, documentFolder, encryptionPassword)
-                }
-                BackupContactScope.PUBLIC -> {
-                    exportContacts(ContactType.PUBLIC, dateString, vCardVersion, documentFolder, encryptionPassword)
-                }
-            }
+            val success = settings.backupContactScope.resolveContactTypes().mapAsync { type ->
+                exportContacts(type, dateString, vCardVersion, documentFolder, encryptionPassword)
+            }.all { it }
 
             Settings.repository.lastBackupDate = LocalDate.now()
             retryCounter = 0

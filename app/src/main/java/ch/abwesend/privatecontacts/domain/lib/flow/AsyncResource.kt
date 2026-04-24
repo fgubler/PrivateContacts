@@ -33,6 +33,7 @@ class LoadingResource<T> : AsyncResource<T>() {
     }
 }
 
+// TODO replace ErrorResource with a ReadyResource<ErrorResult<T>>
 data class ErrorResource<T>(val errors: List<Throwable>) : AsyncResource<T>() {
     override val valueOrNull: T? = null
     override fun ifError(handler: ErrorHandlerGeneric<Throwable>): ErrorResource<T> {

@@ -444,7 +444,7 @@
     <string name="backup_encryption_password_dialog_title">Backup-Verschlüsselungspasswort</string>
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_confirmation_label">Passwort bestätigen</string>
-    <string name="password_confirmation_mismatch_error">Passw�rter m�ssen identisch sein</string>
+    <string name="password_confirmation_mismatch_error">Passwörter müssen identisch sein</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
     <string name="backup_encryption_password_recovery_failed_error">Das Passwort für die Verschlüsselung periodischer Backups konnte nicht gelesen werden. Die Verschlüsselung wurde deaktiviert: Bitte legen Sie ein neues Passwort fest, um sie wieder zu aktivieren.</string>
     <string name="backup_manage_in_settings_description">Periodische Backups können in den Einstellungen konfiguriert werden.</string>
@@ -457,6 +457,36 @@
     <string name="backup_validate_contacts_found">Gefundene Kontakte: %1$d</string>
     <string name="backup_validate_parsing_errors">Lesefehler: %1$d</string>
     <string name="backup_decryption_password_dialog_title">Entschlüsselungspasswort eingeben</string>
+
+    <string name="drive_backup_title">Google Drive Backup</string>
+    <string name="drive_backup_description">Lokale Backups auf Google Drive hochladen für zusätzliche Sicherheit</string>
+    <string name="drive_backup_info_dialog_title">Google Drive Backup</string>
+    <string name="drive_backup_info_dialog_message">Das jeweils neueste lokale Backup wird regelmässig auf Google Drive hochgeladen.\n\nWir empfehlen, Google Drive Backup nur zusammen mit der Backup-Verschlüsselung zu aktivieren, um die Privatsphäre besser zu schützen.\n\nDie App erstellt einen neuen Ordner in deinem Google Drive, um die Backups dort zu speichern. Keine anderen Dateien oder Ordner werden berührt.\n\nDas Deaktivieren von Google Drive Backup löscht keine bestehenden Backups in deinem Google Drive.\n\nUm die Backups auf ein anderes Google Drive Konto zu wechseln, deaktiviere Google Drive Backup und aktiviere es erneut.\n\nDie E-Mail-Adresse des Google Drive Kontos wird nur lokal gespeichert, um hier angezeigt zu werden. Sie wird niemals an einen Server gesendet.</string>
+    <string name="drive_backup_enabled_label">Backups auf Google Drive hochladen</string>
+    <string name="drive_backup_enabled_description">Lokale Backups automatisch auf Google Drive hochladen</string>
+    <string name="drive_backup_account_label">Google-Konto</string>
+    <string name="drive_backup_account_not_selected">Kein Konto ausgewählt</string>
+    <string name="drive_backup_account_select">Konto auswählen</string>
+    <string name="drive_backup_folder_label">Drive-Ordner</string>
+    <string name="drive_backup_folder_creating">Ordner wird erstellt...</string>
+    <string name="drive_backup_folder_not_configured_warning">Google Drive Backup übersprungen: kein Drive-Ordner konfiguriert.</string>
+    <string name="drive_backup_account_not_signed_in_error">Google Drive Backup fehlgeschlagen: kein Google-Konto angemeldet.</string>
+    <string name="drive_backup_local_folder_not_configured_warning">Google Drive Backup übersprungen: kein lokaler Backup-Ordner konfiguriert.</string>
+    <string name="drive_backup_local_folder_unreadable_error">Google Drive Backup fehlgeschlagen: lokaler Backup-Ordner nicht lesbar.</string>
+    <string name="drive_backup_no_local_file_warning">Keine lokale Sicherungsdatei für %1$s-Kontakte gefunden.</string>
+    <string name="drive_backup_upload_failed_error">Google Drive Backup ist unerwartet fehlgeschlagen.</string>
+    <string name="drive_backup_upload_file_failed_error">Google Drive Backup: Datei konnte nicht hochgeladen werden: %1$s</string>
+    <string name="drive_backup_sign_in_failed">Anmeldung beim Google-Konto fehlgeschlagen.</string>
+    <string name="drive_backup_folder_creation_failed">Google Drive-Ordner konnte nicht erstellt werden.</string>
+    <string name="drive_backup_setup_in_progress">Google Drive-Backup wird eingerichtet</string>
+    <string name="drive_backup_setup_failed_title">Google Drive-Einrichtung fehlgeschlagen</string>
+    <string name="drive_backup_setup_error_authorization">Autorisierung mit Google Drive fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_consent">Die Google Drive-Berechtigung wurde nicht erteilt. Bitte versuchen Sie es erneut und erteilen Sie die erforderlichen Berechtigungen.</string>
+    <string name="drive_backup_setup_error_email">Die E-Mail-Adresse des Google-Kontos konnte nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_folder_access">Der Zugriff auf den bestehenden Google Drive-Ordner konnte nicht überprüft werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_folder_creation">Der Backup-Ordner auf Google Drive konnte nicht erstellt werden. Bitte versuchen Sie es erneut.</string>
+    <string name="drive_backup_setup_error_unknown">Beim Einrichten des Google Drive-Backups ist ein unerwarteter Fehler aufgetreten. Bitte versuchen Sie es erneut.</string>
+    <string name="disable">Deaktivieren</string>
     <string name="show_password">Passwort anzeigen</string>
     <string name="hide_password">Passwort verbergen</string>
 
@@ -503,5 +533,6 @@
     <string name="release_notes_v101">Die Möglichkeit wurde hinzugefügt, periodische Backups zu verschlüsseln.</string>
     <string name="release_notes_v102_1">Alte, periodische Backups können jetzt automatisch von der App bereinigt werden.</string>
     <string name="release_notes_v102_2">Backups und exportierte Dateien können jetzt validiert werden, ohne sie tatsächlich zu importieren.</string>
+    <string name="release_notes_v104">Die App ermöglicht es jetzt, periodische Backups automatisch auf Google Drive hochzuladen.</string>
 
 </resources>

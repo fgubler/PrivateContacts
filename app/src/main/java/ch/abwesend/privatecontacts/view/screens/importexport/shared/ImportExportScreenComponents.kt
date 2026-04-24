@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2023.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.shared
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
@@ -33,11 +27,11 @@ object ImportExportScreenComponents {
     @Composable
     fun ImportExportCategory(@StringRes title: Int, content: @Composable () -> Unit) {
         Card(
-            modifier = Modifier
+            modifier = Modifier.Companion
                 .padding(all = 5.dp)
                 .fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(10.dp)) {
+            Column(modifier = Modifier.Companion.padding(10.dp)) {
                 SectionTitle(titleRes = title, addTopPadding = false)
                 content()
             }
@@ -80,12 +74,12 @@ object ImportExportScreenComponents {
         ) {
             Column {
                 Text(text = stringResource(id = R.string.import_export_permission_required_explanation))
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.Companion.height(10.dp))
                 Divider()
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.Companion.height(10.dp))
                 Text(
                     text = stringResource(id = R.string.settings_info_dialog_android_contacts_permission),
-                    fontStyle = FontStyle.Italic,
+                    fontStyle = FontStyle.Companion.Italic,
                 )
             }
         }

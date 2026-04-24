@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2022.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.contactdetail
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -50,13 +44,13 @@ class ContactDetailViewModel : ViewModel() {
     private val _selectedContact = mutableResourceStateFlow<IContact>()
     val selectedContact = _selectedContact.asStateFlow()
 
-    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
+    private val _deleteResult = EventFlow.Companion.createShared<ContactDeleteResult>()
     val deleteResult: Flow<ContactDeleteResult> = _deleteResult
 
-    private val _typeChangeResult = EventFlow.createShared<ContactSaveResult>()
+    private val _typeChangeResult = EventFlow.Companion.createShared<ContactSaveResult>()
     val typeChangeResult: Flow<ContactSaveResult> = _typeChangeResult
 
-    private val _exportResult = EventFlow.createShared<BinaryResult<ContactExportData, VCardExportError>>()
+    private val _exportResult = EventFlow.Companion.createShared<BinaryResult<ContactExportData, VCardExportError>>()
     val exportResult: Flow<BinaryResult<ContactExportData, VCardExportError>> = _exportResult
 
     val hasContactWritePermission: Boolean

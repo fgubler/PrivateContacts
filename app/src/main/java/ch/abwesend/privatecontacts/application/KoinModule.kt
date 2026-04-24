@@ -33,20 +33,24 @@ import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FileReadWriteService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
+import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupMessageRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
+import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository.GoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.launcher.LauncherAppearanceRepository
@@ -112,6 +116,7 @@ internal val koinModule = module {
     factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
     factory<PermissionService> { AndroidPermissionService() }
     factory<AccountService> { AndroidAccountService(androidContext()) }
+    factory { GoogleDriveSetupService() }
 
     factory<IAndroidContactLoadService> { AndroidContactLoadService() }
     factory { AndroidContactLoadService() }
@@ -152,10 +157,13 @@ internal val koinModule = module {
     factory { BackupNotificationRepository(androidContext()) }
     factory { ToastRepository() }
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
+    factory<ISettingsState> { get<SettingsRepository>() }
+
     single<IBackupMessageRepository> { BackupMessageRepository(androidContext()) }
     factory<IFileAccessRepository> { FileAccessRepository(androidContext()) }
     factory<IEncryptionRepository> { EncryptionRepository() }
     factory<IKeyStoreRepository> { AndroidKeyStoreRepository() }
+    factory<IGoogleDriveAuthorizationRepository> { GoogleDriveAuthorizationRepository(androidContext()) }
 
     factory<ILauncherAppearanceRepository> { LauncherAppearanceRepository(androidContext()) }
 
