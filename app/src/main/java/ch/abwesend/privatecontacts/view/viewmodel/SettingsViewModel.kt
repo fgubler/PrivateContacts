@@ -101,6 +101,15 @@ class SettingsViewModel : ViewModel() {
         }
     }
 
+    fun handleGoogleDriveConsentResponse(data: Intent?) {
+        _driveSetupState.withLoadingState {
+            when (val authResult = googleDriveAuthRepository.authorizeFromIntent(data)) {
+                is ErrorResult -> GoogleDriveSetupError.CONSENT_FAILED.toDriveSetupState()
+                is SuccessResult -> onGoogleDriveAuthorized(authResult.value)
+            }
+        }
+    }
+
     private suspend fun handleGoogleDriveAuthorizationResult(
         result: GoogleDriveAuthResult<IGoogleDriveRepository>,
     ): GoogleDriveSetupState {
@@ -108,15 +117,6 @@ class SettingsViewModel : ViewModel() {
             is GoogleDriveAuthResult.Authorized -> onGoogleDriveAuthorized(result.data)
             is GoogleDriveAuthResult.ConsentRequired -> GoogleDriveSetupState.ConsentRequired(result.pendingIntent)
             is GoogleDriveAuthResult.Error -> GoogleDriveSetupError.AUTHORIZATION_FAILED.toDriveSetupState()
-        }
-    }
-
-    fun handleGoogleDriveConsentResponse(data: Intent?) {
-        _driveSetupState.withLoadingState {
-            when (val authResult = googleDriveAuthRepository.authorizeFromIntent(data)) {
-                is ErrorResult -> GoogleDriveSetupError.CONSENT_FAILED.toDriveSetupState()
-                is SuccessResult -> onGoogleDriveAuthorized(authResult.value)
-            }
         }
     }
 
