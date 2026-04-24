@@ -20,6 +20,7 @@ class GoogleDriveSetupService {
     private val settingsState: ISettingsState by injectAnywhere()
 
     suspend fun requestGoogleDriveAuthorization(): GoogleDriveIntermediateSetupState {
+        authRepository.clearAuthorization()
         val result = authRepository.authorize()
         return handleGoogleDriveAuthorizationResult(result)
     }

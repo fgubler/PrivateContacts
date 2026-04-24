@@ -14,6 +14,7 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveReposit
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.testutil.TestBase
 import io.mockk.coEvery
+import io.mockk.coJustRun
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -51,6 +52,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
 
     @Test
     fun `requestGoogleDriveAuthorization should return error when authorization fails`() {
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Error
 
         val result = runBlocking { underTest.requestGoogleDriveAuthorization() }
@@ -61,6 +63,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
     @Test
     fun `requestGoogleDriveAuthorization should return ConsentRequired when consent is needed`() {
         val pendingIntent = mockk<PendingIntent>()
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.ConsentRequired(pendingIntent)
 
         val result = runBlocking { underTest.requestGoogleDriveAuthorization() }
@@ -73,6 +76,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val email = "test@example.com"
         val folderId = "folder-123"
         val folderName = "BackupFolder"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns folderId
@@ -139,6 +143,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
 
     @Test
     fun `should return error when email retrieval fails`() {
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns ErrorResult(Exception("email error"))
 
@@ -156,6 +161,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val email = "user@gmail.com"
         val existingFolderId = "existing-folder-id"
         val existingFolderName = "ExistingFolder"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns existingFolderId
@@ -179,6 +185,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val existingFolderName = "OldFolder"
         val newFolderId = "new-folder-id"
         val newFolderName = "NewFolder"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns existingFolderId
@@ -202,6 +209,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val email = "user@gmail.com"
         val newFolderId = "new-folder-id"
         val newFolderName = "NewFolder"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns ""
@@ -229,6 +237,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val email = "user@gmail.com"
         val existingFolderId = "folder-id"
         val existingFolderName = "FolderName"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns existingFolderId
@@ -245,6 +254,7 @@ class GoogleDriveSetupServiceTest : TestBase() {
         val email = "user@gmail.com"
         val existingFolderId = "old-folder-id"
         val existingFolderName = "OldFolder"
+        coJustRun { authRepository.clearAuthorization() }
         coEvery { authRepository.authorize() } returns GoogleDriveAuthResult.Authorized(driveRepository)
         coEvery { driveRepository.getAccountEmail() } returns SuccessResult(email)
         every { settingsState.googleDriveFolderId } returns existingFolderId

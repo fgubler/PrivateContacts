@@ -151,6 +151,7 @@ dependencies {
 
     implementation("com.google.api-client:google-api-client-android:2.9.0")
     implementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
+    implementation("androidx.credentials:credentials:1.6.0")
 
     implementation("com.google.http-client:google-http-client-gson:2.1.0")
 

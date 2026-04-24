@@ -19,4 +19,10 @@ interface IGoogleDriveAuthorizationRepository {
      * Here, we handle the result from that consent flow.
      */
     suspend fun authorizeFromIntent(data: Intent?): BinaryResult<IGoogleDriveRepository, Exception>
+
+    /**
+     * Clears any cached authorization.
+     * This also means that the next [authorize] call will show the account-selection dialog.
+     */
+    suspend fun clearAuthorization(): BinaryResult<Unit, Exception>
 }

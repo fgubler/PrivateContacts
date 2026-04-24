@@ -8,6 +8,8 @@ package ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository
 
 import android.content.Context
 import android.content.Intent
+import androidx.credentials.ClearCredentialStateRequest
+import androidx.credentials.CredentialManager
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
@@ -33,6 +35,13 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
 
     companion object {
         private const val APP_NAME = "PrivateContacts"
+    }
+
+    override suspend fun clearAuthorization(): BinaryResult<Unit, Exception> = withContext(dispatchers.io) {
+        runCatchingAsResult {
+            CredentialManager.create(context).clearCredentialState(ClearCredentialStateRequest())
+            logger.debug("Google Drive authorization cleared")
+        }.ifHasError { logger.error("Failed to clear Google Drive authorization", it) }
     }
 
     override suspend fun authorize(): GoogleDriveAuthResult<IGoogleDriveRepository> = withContext(dispatchers.io) {
