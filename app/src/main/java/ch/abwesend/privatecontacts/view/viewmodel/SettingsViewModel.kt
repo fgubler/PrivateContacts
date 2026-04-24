@@ -22,7 +22,7 @@ import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
-import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthenticationRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
@@ -41,7 +41,7 @@ class SettingsViewModel : ViewModel() {
     private val backupScheduler: IBackupScheduler by injectAnywhere()
     private val encryptionRepository: IEncryptionRepository by injectAnywhere()
     private val settingsRepository: SettingsRepository by injectAnywhere()
-    private val googleDriveAuthRepository: IGoogleDriveAuthenticationRepository by injectAnywhere()
+    private val googleDriveAuthRepository: IGoogleDriveAuthorizationRepository by injectAnywhere()
 
     private val _driveSetupState = MutableStateFlow<GoogleDriveSetupState>(GoogleDriveSetupState.Inactive)
     val driveSetupState: StateFlow<GoogleDriveSetupState> = _driveSetupState.asStateFlow()

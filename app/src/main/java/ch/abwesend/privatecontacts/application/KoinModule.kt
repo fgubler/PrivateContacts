@@ -14,7 +14,7 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
-import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthenticationRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
@@ -48,7 +48,7 @@ import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupMessageRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
-import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository.GoogleDriveAuthenticationRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository.GoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.launcher.LauncherAppearanceRepository
@@ -156,7 +156,7 @@ internal val koinModule = module {
     single<SettingsRepository> { DataStoreSettingsRepository(androidContext()) } // required to be a Singleton
 
     single<IBackupMessageRepository> { BackupMessageRepository(androidContext()) }
-    factory<IGoogleDriveAuthenticationRepository> { GoogleDriveAuthenticationRepository(androidContext()) }
+    factory<IGoogleDriveAuthorizationRepository> { GoogleDriveAuthorizationRepository(androidContext()) }
     single<IFileAccessRepository> { FileAccessRepository(androidContext()) }
     factory<IEncryptionRepository> { EncryptionRepository() }
     factory<IKeyStoreRepository> { AndroidKeyStoreRepository() }

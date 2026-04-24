@@ -13,7 +13,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
-import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthenticationRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
@@ -28,7 +28,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.withContext
 
-class GoogleDriveAuthenticationRepository(private val context: Context) : IGoogleDriveAuthenticationRepository {
+class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogleDriveAuthorizationRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
 
     companion object {

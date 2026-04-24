@@ -24,7 +24,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
-import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthenticationRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
@@ -43,7 +43,7 @@ class GoogleDriveBackupWorker(
     appContext: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(appContext, workerParams) {
-    private val googleDriveAuthRepository: IGoogleDriveAuthenticationRepository by injectAnywhere()
+    private val googleDriveAuthRepository: IGoogleDriveAuthorizationRepository by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
     private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 

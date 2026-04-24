@@ -10,7 +10,7 @@ import android.content.Intent
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
-interface IGoogleDriveAuthenticationRepository {
+interface IGoogleDriveAuthorizationRepository {
     /** Requests initial authorization for Google Drive access. */
     suspend fun authorize(): GoogleDriveAuthResult<IGoogleDriveRepository>
 
