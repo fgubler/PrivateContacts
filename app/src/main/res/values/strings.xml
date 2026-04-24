@@ -538,4 +538,5 @@
     <string name="release_notes_v101">Added the possibility to encrypt periodic backups.</string>
     <string name="release_notes_v102_1">Old, periodic backups can now be cleaned up automatically by the app.</string>
     <string name="release_notes_v102_2">Backups and exported files can now be validated without actually importing them.</string>
+    <string name="release_notes_v104">The app now allows to upload periodic backups automatically to Google Drive.</string>
 </resources>
