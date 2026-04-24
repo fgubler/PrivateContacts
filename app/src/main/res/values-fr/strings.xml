@@ -373,6 +373,10 @@
     <string name="import_complete_title">Import terminé</string>
     <string name="import_failed_title">Échec de l\'import</string>
     <string name="file_reading_failed">Lecture du fichier impossible</string>
+    <string name="decryption_failed_invalid_password">Le mot de passe fourni est invalide</string>
+    <string name="decryption_failed_invalid_file">Le fichier fourni est invalide ou corrompu et ne peut pas être déchiffré</string>
+    <string name="decryption_failed">Échec du déchiffrement : veuillez réessayer</string>
+    <string name="file_is_empty">Le fichier est vide</string>
     <string name="vcf_parsing_failed">Le fichier ne contient pas de VCF valide</string>
     <string name="newly_imported_contacts">Nouveaux contacts importés :</string>
     <string name="replaced_existing_contacts">Contacts remplacés :</string>
@@ -411,6 +415,13 @@
     <string name="backup_contact_type_secret">Secrets uniquement</string>
     <string name="backup_contact_type_public">Publics uniquement</string>
     <string name="backup_folder_label">Dossier de sauvegarde</string>
+    <string name="backup_number_to_keep_label">Sauvegardes à conserver</string>
+    <string name="backup_delete_old_failed_warning">Échec de la suppression des anciennes sauvegardes</string>
+    <string name="backup_number_to_keep_all">Toutes</string>
+    <string name="backup_number_to_keep_5">5</string>
+    <string name="backup_number_to_keep_10">10</string>
+    <string name="backup_number_to_keep_30">30</string>
+    <string name="backup_number_to_keep_50">50</string>
     <string name="backup_folder_not_selected">Aucun dossier sélectionné</string>
     <string name="backup_folder_select">Sélectionner un dossier</string>
     <string name="backup_trigger_once_label">Sauvegarder maintenant</string>
@@ -432,8 +443,51 @@
     <string name="backup_encryption_info_dialog_message">Les fichiers de sauvegarde peuvent être protégés par un mot de passe de votre choix.\n\nIMPORTANT : Il n\'existe aucun mécanisme de réinitialisation du mot de passe. Si vous oubliez le mot de passe, les données des fichiers de sauvegarde chiffrés seront définitivement perdues.</string>
     <string name="backup_encryption_password_dialog_title">Mot de passe de chiffrement</string>
     <string name="backup_encryption_password_label">Mot de passe</string>
+    <string name="backup_encryption_password_confirmation_label">Confirmer le mot de passe</string>
+    <string name="password_confirmation_mismatch_error">Les mots de passe doivent être identiques</string>
     <string name="backup_encryption_password_empty_error">Veuillez entrer un mot de passe pour activer le chiffrement.</string>
+    <string name="backup_encryption_password_recovery_failed_error">Impossible de récupérer le mot de passe de chiffrement pour les sauvegardes périodiques. Le chiffrement a été désactivé : veuillez définir un nouveau mot de passe pour le réactiver.</string>
+    <string name="backup_manage_in_settings_description">Les sauvegardes périodiques peuvent être configurées dans les Paramètres.</string>
+    <string name="backup_go_to_settings">Aller aux Paramètres</string>
+    <string name="backup_validate_description">Validez les sauvegardes et les exports sans importer les contacts contenus.</string>
+    <string name="backup_validate_button">Valider la sauvegarde</string>
+    <string name="backup_validate_progress">Validation du fichier de sauvegarde</string>
+    <string name="backup_validate_failed_title">Validation échouée</string>
+    <string name="backup_validate_success_title">Validation réussie</string>
+    <string name="backup_validate_contacts_found">Contacts trouvés : %1$d</string>
+    <string name="backup_validate_parsing_errors">Erreurs de lecture : %1$d</string>
     <string name="backup_decryption_password_dialog_title">Entrer le mot de passe de déchiffrement</string>
+
+    <string name="drive_backup_title">Sauvegarde Google Drive</string>
+    <string name="drive_backup_description">Téléverse les sauvegardes locales sur Google Drive pour plus de sécurité</string>
+    <string name="drive_backup_info_dialog_title">Sauvegarde Google Drive</string>
+    <string name="drive_backup_info_dialog_message">La sauvegarde locale la plus récente de chaque type est périodiquement téléversée sur Google Drive.\n\nNous recommandons d\'activer la sauvegarde Google Drive uniquement avec le chiffrement des sauvegardes pour une meilleure confidentialité.\n\nL\'application créera un nouveau dossier dans votre Google Drive pour y stocker ses sauvegardes. Aucun autre fichier ou dossier ne sera touché.\n\nDésactiver la sauvegarde Google Drive ne supprimera pas les sauvegardes existantes dans votre Google Drive.\n\nPour transférer les sauvegardes vers un autre compte Google Drive, désactivez la sauvegarde Google Drive et réactivez-la.\n\nL\'adresse email du compte Google Drive est uniquement stockée localement pour être affichée ici. Elle n\'est jamais envoyée à un serveur.</string>
+    <string name="drive_backup_enabled_label">Téléverser les sauvegardes sur Google Drive</string>
+    <string name="drive_backup_enabled_description">Téléverser automatiquement les sauvegardes locales sur Google Drive</string>
+    <string name="drive_backup_account_label">Compte Google</string>
+    <string name="drive_backup_account_not_selected">Aucun compte sélectionné</string>
+    <string name="drive_backup_account_select">Sélectionner un compte</string>
+    <string name="drive_backup_folder_label">Dossier Drive</string>
+    <string name="drive_backup_folder_creating">Création du dossier...</string>
+    <string name="drive_backup_folder_not_configured_warning">Sauvegarde Google Drive ignorée : aucun dossier Drive configuré.</string>
+    <string name="drive_backup_account_not_signed_in_error">Sauvegarde Google Drive échouée : aucun compte Google connecté.</string>
+    <string name="drive_backup_local_folder_not_configured_warning">Sauvegarde Google Drive ignorée : aucun dossier de sauvegarde local configuré.</string>
+    <string name="drive_backup_local_folder_unreadable_error">Sauvegarde Google Drive échouée : impossible de lire le dossier de sauvegarde local.</string>
+    <string name="drive_backup_no_local_file_warning">Aucun fichier de sauvegarde local trouvé pour les contacts %1$s.</string>
+    <string name="drive_backup_upload_failed_error">La sauvegarde Google Drive a échoué de manière inattendue.</string>
+    <string name="drive_backup_upload_file_failed_error">Sauvegarde Google Drive : échec du téléversement du fichier : %1$s</string>
+    <string name="drive_backup_sign_in_failed">Échec de la connexion au compte Google.</string>
+    <string name="drive_backup_folder_creation_failed">Impossible de créer le dossier Google Drive.</string>
+    <string name="drive_backup_setup_in_progress">Configuration de la sauvegarde Google Drive</string>
+    <string name="drive_backup_setup_failed_title">Échec de la configuration de Google Drive</string>
+    <string name="drive_backup_setup_error_authorization">Échec de l\'autorisation avec Google Drive. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_consent">Le consentement Google Drive n\'a pas été accordé. Veuillez réessayer et accorder les autorisations requises.</string>
+    <string name="drive_backup_setup_error_email">Impossible de récupérer l\'adresse e-mail du compte Google. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_folder_access">Impossible de vérifier l\'accès au dossier Google Drive existant. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_folder_creation">Impossible de créer le dossier de sauvegarde sur Google Drive. Veuillez réessayer.</string>
+    <string name="drive_backup_setup_error_unknown">Une erreur inattendue s\'est produite lors de la configuration de la sauvegarde Google Drive. Veuillez réessayer.</string>
+
+    <string name="disable">Désactiver</string>
     <string name="show_password">Afficher le mot de passe</string>
     <string name="hide_password">Masquer le mot de passe</string>
 
@@ -477,5 +531,9 @@
     <string name="release_notes_v87">Ajout de l\'option permettant de stocker les contacts publics dans tous les comptes enregistrés sur l\'appareil. Auparavant, seuls les comptes Google et les contacts téléphoniques locaux étaient pris en charge.</string>
     <string name="release_notes_v90">Ajout d\'une option permettant de bloquer tous les appels entrants provenant de numéros inconnus. Les contacts privés et publics sont pris en compte pour cette decision.</string>
     <string name="release_notes_v93">Ajout de l\'option de sauvegardes automatiques et périodiques.</string>
+    <string name="release_notes_v101">Ajout de la possibilité de chiffrer les sauvegardes périodiques.</string>
+    <string name="release_notes_v102_1">Les anciennes sauvegardes périodiques peuvent désormais être supprimées automatiquement par l\'application.</string>
+    <string name="release_notes_v102_2">Les sauvegardes et les fichiers exportés peuvent désormais être validés sans les importer.</string>
+    <string name="release_notes_v104">L\'application permet désormais de téléverser automatiquement les sauvegardes périodiques sur Google Drive.</string>
 
 </resources>

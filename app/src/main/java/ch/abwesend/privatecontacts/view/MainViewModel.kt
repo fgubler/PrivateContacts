@@ -1,0 +1,161 @@
+package ch.abwesend.privatecontacts.view
+
+import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ch.abwesend.privatecontacts.BuildConfig
+import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
+import ch.abwesend.privatecontacts.domain.lib.flow.EventFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
+import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifError
+import ch.abwesend.privatecontacts.domain.model.result.generic.ifSuccess
+import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
+import ch.abwesend.privatecontacts.domain.service.ContactImportService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
+import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.initialization.InitializationState
+import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
+import ch.abwesend.privatecontacts.view.model.result.ParseVcfFromIntentResult
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
+
+class MainViewModel : ViewModel() {
+    private val dispatchers: IDispatchers by injectAnywhere()
+    private val importService: ContactImportService by injectAnywhere()
+    private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+
+    private val _initializationState: MutableState<InitializationState> = mutableStateOf(
+        InitializationState.InitialState {
+            val backupMessages = loadBackupMessages()
+            InitializationState.BackupMessagesDialog(backupMessages)
+        }
+    )
+
+    val initializationState: State<InitializationState> = _initializationState
+
+    private val _authenticationStatus: MutableState<AuthenticationStatus> =
+        mutableStateOf(AuthenticationStatus.NOT_AUTHENTICATED)
+    val authenticationStatus: State<AuthenticationStatus> = _authenticationStatus
+
+    private val _vcfParsingResult = EventFlow.Companion.createShared<ParseVcfFromIntentResult>()
+    val vcfParsingResult: Flow<ParseVcfFromIntentResult> = _vcfParsingResult
+
+    /**
+     * Implemented as a resource to show a loading-indicator during import.
+     * The [ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult] would not be necessary in this case but lets us re-use the components from the Import-Screen
+     */
+    private val _contactImportResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    val contactImportResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _contactImportResult
+
+    fun updateAppStatistics(settings: ISettingsState) {
+        // app starts
+        Settings.repository.numberOfAppStarts = settings.numberOfAppStarts + 1
+
+        // app version
+        Settings.repository.previousVersion = settings.currentVersion
+        Settings.repository.currentVersion = BuildConfig.VERSION_CODE
+    }
+
+    fun goToNextState() {
+        viewModelScope.launch {
+            val oldState = _initializationState.value
+            _initializationState.value = _initializationState.value.next()
+            logger.debug(
+                "Changed initializationState from ${oldState::class.java.simpleName} " +
+                    "to ${_initializationState.value::class.java.simpleName}"
+            )
+        }
+    }
+
+    fun handleAuthenticationResult(authenticationFlow: Flow<AuthenticationStatus>) {
+        viewModelScope.launch(dispatchers.default) {
+            authenticationFlow.firstOrNull()?.let {
+                _authenticationStatus.value = it
+            }
+        }
+    }
+
+    fun grantAccessWithoutAuthentication() {
+        _authenticationStatus.value = AuthenticationStatus.SUCCESS
+    }
+
+    fun parseVcfFile(fileUri: Uri) {
+        viewModelScope.launch {
+            val loadResult = importService.loadContacts(fileUri, Settings.current.defaultContactType)
+            loadResult
+                .ifError {
+                    logger.warning("Failed to load contact(s) from VCF file: $it")
+                    _vcfParsingResult.emit(ParseVcfFromIntentResult.Failure(fileUri))
+                }
+                .ifSuccess { data ->
+                    val contacts = data.successfulContacts
+                    logger.info(
+                        "Parsed ${contacts.size} contact(s) from VCF file " +
+                            "with ${data.numberOfFailedContacts} failures"
+                    )
+                    val result = if (contacts.size > 1) {
+                        ParseVcfFromIntentResult.MultipleContacts(fileUri, data)
+                    } else if (contacts.size == 1) {
+                        ParseVcfFromIntentResult.SingleContact(fileUri, contacts.first())
+                    } else {
+                        ParseVcfFromIntentResult.Failure(fileUri)
+                    }
+                    _vcfParsingResult.emit(result)
+                }
+        }
+    }
+
+    fun importContacts(
+        parsedContacts: ContactImportPartialData.ParsedData,
+        targetType: ContactType,
+        targetAccount: ContactAccount,
+        replaceExisting: Boolean,
+    ) {
+        val contacts = parsedContacts.successfulContacts
+        if (contacts.isEmpty()) {
+            logger.warning("No contacts selected for import")
+            return
+        }
+        logger.debug("Importing ${contacts.size} contacts as $targetType, ${if (replaceExisting) "" else "not "}replacing")
+
+        viewModelScope.launch {
+            _contactImportResult.withLoadingState {
+                val result = importService.storeContacts(parsedContacts, targetType, targetAccount, replaceExisting)
+                val numberOfChanged = result.newImportedContacts.size + result.replacedExistingContacts.size
+                logger.debug("Import $numberOfChanged contact(s) successfully")
+                SuccessResult(result)
+            }
+        }
+    }
+
+    fun resetContactImportResult() {
+        viewModelScope.launch { _contactImportResult.emitInactive() }
+    }
+
+    private suspend fun loadBackupMessages(): List<BackupMessage> {
+        logger.debug("Loading backup messages")
+        val localMessages = backupMessageRepository.getAndClearLocalMessages()
+        val driveMessages = backupMessageRepository.getAndClearDriveMessages()
+        val allMessages = (localMessages + driveMessages).sortedByDescending { it.timestamp }
+        logger.debug("Loaded ${allMessages.size} backup messages (${localMessages.size} local, ${driveMessages.size} drive)")
+        return allMessages
+    }
+}

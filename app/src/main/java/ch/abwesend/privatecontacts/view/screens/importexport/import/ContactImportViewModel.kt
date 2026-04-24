@@ -1,0 +1,112 @@
+package ch.abwesend.privatecontacts.view.screens.importexport.import
+
+import android.net.Uri
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.emitInactive
+import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
+import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
+import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
+import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.service.ContactImportService
+import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.launch
+
+class ContactImportViewModel : ViewModel() {
+    private val importService: ContactImportService by injectAnywhere()
+
+    private val _targetType: MutableState<ContactType> =
+        mutableStateOf(Settings.current.defaultContactType)
+    val targetType: State<ContactType> = _targetType
+
+    private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
+    val targetAccount: State<ContactAccount?> = _targetAccount
+
+    /** implemented as a resource to show a loading-indicator during import */
+    private val _importResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _importResult
+
+    /** result of a backup validation (read + decrypt + parse, but no import) */
+    private val _validationResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportPartialData.ParsedData, VCardImportError>>()
+    val validationResult: ResourceFlow<BinaryResult<ContactImportPartialData.ParsedData, VCardImportError>> = _validationResult
+
+    fun selectTargetType(contactType: ContactType) {
+        _targetType.value = contactType
+    }
+
+    fun selectTargetAccount(contactAccount: ContactAccount) {
+        _targetAccount.value = contactAccount
+    }
+
+    fun resetImportResult() {
+        logger.debug("Resetting contact import result")
+        viewModelScope.launch {
+            _importResult.emitInactive()
+        }
+    }
+
+    fun resetValidationResult() {
+        logger.debug("Resetting backup validation result")
+        viewModelScope.launch {
+            _validationResult.emitInactive()
+        }
+    }
+
+    fun validateBackup(sourceFile: Uri?, decryptionPassword: String? = null) {
+        if (sourceFile == null) {
+            logger.warning("Trying to validate backup but no file is selected")
+            return
+        }
+        logger.debugLocally("Validating backup file '${sourceFile.path}'")
+        viewModelScope.launch {
+            _validationResult.withLoadingState {
+                importService.loadContacts(
+                    sourceFile = sourceFile,
+                    targetType = ContactType.SECRET,
+                    decryptionPassword = decryptionPassword,
+                )
+            }
+        }
+    }
+
+    fun importContacts(
+        sourceFile: Uri?,
+        targetType: ContactType,
+        targetAccount: ContactAccount,
+        replaceExisting: Boolean,
+        decryptionPassword: String? = null,
+    ) {
+        if (sourceFile == null) {
+            logger.warning("Trying to import vcf file but no file is selected")
+            return
+        }
+        logger.debugLocally("Importing vcf file '${sourceFile.path}' as $targetType in account ${targetAccount.type}")
+        logger.debug("Importing vcf file as $targetType, ${if (replaceExisting) "" else "not "}replacing")
+        viewModelScope.launch {
+            _importResult.withLoadingState {
+                val result = importService.importContacts(
+                    sourceFile = sourceFile,
+                    targetType = targetType,
+                    targetAccount = targetAccount,
+                    replaceExistingContacts = replaceExisting,
+                    decryptionPassword = decryptionPassword
+                )
+                logger.debug("Imported vcf file: result of type ${result.javaClass.simpleName}")
+                result
+            }
+        }
+    }
+}

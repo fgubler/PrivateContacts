@@ -11,8 +11,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactExportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardCreateError
-import ch.abwesend.privatecontacts.domain.model.importexport.VCardParseError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardExportError
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 
@@ -26,5 +26,5 @@ interface IVCardImportExportRepository {
     suspend fun parseContacts(fileContent: TextFileContent, targetType: ContactType): ContactParseResult
 }
 
-typealias ContactParseResult = BinaryResult<ContactImportPartialData.ParsedData, VCardParseError>
-typealias VCardCreationResult = BinaryResult<ContactExportPartialData.CreatedVCards, VCardCreateError>
+typealias ContactParseResult = BinaryResult<ContactImportPartialData.ParsedData, VCardImportError>
+typealias VCardCreationResult = BinaryResult<ContactExportPartialData.CreatedVCards, VCardExportError>

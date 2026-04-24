@@ -11,8 +11,12 @@ import android.content.Context
 import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
+import ch.abwesend.privatecontacts.domain.lib.logging.RemoteLoggingHelper
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
+import ch.abwesend.privatecontacts.domain.settings.Settings
+import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.component.KoinComponent
@@ -28,6 +32,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
         ContactDetailInitializationWorkaround.hasOpenedContact = false
         FileLogger.tryCleanOldLogFilesAsync(applicationContext)
         backupScheduler.schedulePeriodicBackup()
+        initializeCrashlytics()
     }
 
     private fun initializeKoin() {
@@ -43,6 +48,21 @@ class PrivateContactsApplication : Application(), KoinComponent {
             }
             androidContext(context)
             modules(koinModule)
+        }
+    }
+
+    private fun initializeCrashlytics() {
+        try {
+            applicationScope.launch {
+                val settings = Settings.nextOrDefault()
+                val enableCrashlytics = settings.sendErrorsToCrashlytics
+                RemoteLoggingHelper().enableCrashlytics(settings.sendErrorsToCrashlytics)
+                LogcatLogger("PrivateContactsApplication", { false })
+                    .info("Crashlytics ${if (enableCrashlytics) "enabled" else "disabled"}")
+            }
+        } catch (e: Exception) {
+            LogcatLogger("PrivateContactsApplication", { false })
+                .error("Failed to initialize Crashlytics", e)
         }
     }
 }

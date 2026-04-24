@@ -34,8 +34,10 @@ android {
         applicationId "ch.abwesend.privatecontacts"
         minSdk 24
         targetSdk 36
-        versionCode 101
-        versionName "5.6.0"
+
+        // consider writing release-notes when incrementing the version
+        versionCode 104
+        versionName "5.8.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -87,7 +89,7 @@ android {
     }
     packagingOptions {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md}"
+            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE-notice.md,DEPENDENCIES}"
         }
     }
     namespace 'ch.abwesend.privatecontacts'
@@ -146,9 +148,18 @@ dependencies {
     implementation "com.google.android.play:review:${androidReviewVersion}"
     implementation "com.google.android.play:review-ktx:${androidReviewVersion}"
 
+    // Google Drive
+    googlePlayImplementation "com.google.android.gms:play-services-auth:21.5.1"
+
+    googlePlayImplementation("com.google.api-client:google-api-client-android:2.9.0")
+    googlePlayImplementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
+    googlePlayImplementation("androidx.credentials:credentials:1.6.0")
+
+    implementation("com.google.http-client:google-http-client-gson:2.1.0")
+
     // Others
     implementation "androidx.datastore:datastore-preferences:1.1.1" // 1.1.6 produces strange errors in crashlytics
-    implementation "androidx.work:work-runtime-ktx:2.11.1"
+    implementation "androidx.work:work-runtime-ktx:2.11.2"
     implementation "androidx.documentfile:documentfile:1.1.0"
 
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'

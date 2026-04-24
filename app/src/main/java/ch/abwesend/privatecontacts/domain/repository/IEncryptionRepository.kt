@@ -6,7 +6,9 @@
 
 package ch.abwesend.privatecontacts.domain.repository
 
+import ch.abwesend.privatecontacts.domain.model.importexport.DecryptionError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
+import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 
 interface IEncryptionRepository {
     /**
@@ -14,10 +16,10 @@ interface IEncryptionRepository {
      * Returns a JSON string containing all parameters (algorithm, iterations, salt, IV, ciphertext)
      * needed for decryption, with binary values Base64-encoded.
      */
-    fun encrypt(plaintext: String, password: String): String
+    fun encrypt(plaintext: String, password: String): BinaryResult<String, Exception>
 
     /** Decrypts a JSON string previously produced by [encrypt]. */
-    fun decrypt(ciphertext: String, password: String): String
+    fun decrypt(ciphertext: String, password: String): BinaryResult<String, DecryptionError>
 
     /**
      * Encrypts [password] with a key stored in the Android KeyStore and returns the

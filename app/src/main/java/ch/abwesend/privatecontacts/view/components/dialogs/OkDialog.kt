@@ -24,6 +24,18 @@ import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.view.components.inputs.DoNotShowAgainCheckbox
 
+data class OkDialogTexts(
+    @param:StringRes val title: Int,
+    @param:StringRes val text: Int,
+)
+
+@Composable
+fun OkDialog(
+    texts: OkDialogTexts,
+    @StringRes okButtonLabel: Int = R.string.ok,
+    onClose: () -> Unit,
+) = OkDialog(title = texts.title, text = texts.text, okButtonLabel = okButtonLabel, onClose = onClose)
+
 @Composable
 fun OkDialog(
     @StringRes title: Int,

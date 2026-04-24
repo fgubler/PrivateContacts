@@ -38,6 +38,13 @@ private const val EXT_CONTACT_STORE_PACKAGE = "com.alexstyl.contactstore.."
 private const val EXT_EZ_VCARD_PACKAGE = "ezvcard"
 private const val EXT_ADDRESS_LIBRARY_PACKAGE = "com.google.i18n.addressinput.."
 
+private const val EXT_GOOGLE_DRIVE_GMS_PACKAGE = "com.google.android.gms.auth.api.identity.."
+private const val EXT_GOOGLE_DRIVE_API_PACKAGE = "com.google.api.."
+private const val EXT_CREDENTIALS_PACKAGE = "androidx.credentials.."
+
+private const val INFRASTRUCTURE_GOOGLE_DRIVE_REPOSITORY_PACKAGE =
+    "$INFRASTRUCTURE_PACKAGE_PARTIAL.backup.googledrive.repository.."
+
 // layers
 private const val APPLICATION_LAYER = "APPLICATION"
 private const val VIEW_LAYER = "VIEW"
@@ -116,6 +123,21 @@ class ArchitectureTest {
         .that().resideOutsideOfPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
         .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
         .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_ADDRESS_FORMATTING_PACKAGE)
+
+    @ArchTest
+    val `only googledrive repository package may access Google Drive libraries`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_GOOGLE_DRIVE_REPOSITORY_PACKAGE)
+        .should().accessClassesThat().resideInAnyPackage(
+            EXT_GOOGLE_DRIVE_GMS_PACKAGE,
+            EXT_GOOGLE_DRIVE_API_PACKAGE,
+            EXT_CREDENTIALS_PACKAGE,
+        )
+
+    @ArchTest
+    val `only googledrive repository package may access itself`: ArchRule = noClasses()
+        .that().resideOutsideOfPackage(INFRASTRUCTURE_GOOGLE_DRIVE_REPOSITORY_PACKAGE)
+        .and().resideOutsideOfPackage(APPLICATION_PACKAGE)
+        .should().accessClassesThat().resideInAPackage(INFRASTRUCTURE_GOOGLE_DRIVE_REPOSITORY_PACKAGE)
 
     private fun layers() = Architectures.layeredArchitecture().consideringAllDependencies()
         .layer(APPLICATION_LAYER).definedBy(APPLICATION_PACKAGE)

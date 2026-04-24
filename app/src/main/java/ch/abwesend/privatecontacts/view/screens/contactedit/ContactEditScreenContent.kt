@@ -91,7 +91,6 @@ import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import ch.abwesend.privatecontacts.view.util.joinFilteredGroupsToString
-import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 

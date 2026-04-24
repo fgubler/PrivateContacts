@@ -11,12 +11,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
-import ch.abwesend.privatecontacts.view.viewmodel.ContactDetailViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ContactEditViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.ContactListViewModel
-import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
+import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 
 /**
  * The idea of these interfaces is to improve information-hiding and deliver to each screen
@@ -57,6 +57,7 @@ interface ISettingsScreenContext : IScreenContextBase {
 interface IContactImportExportScreenContext : IScreenContextBase {
     val exportViewModel: ContactExportViewModel
     val importViewModel: ContactImportViewModel
+    fun navigateToSettingsScreen(): Boolean
 }
 
 interface IScreenContext :

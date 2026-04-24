@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,22 +44,30 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import ch.abwesend.privatecontacts.BuildConfig
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.appearance.SecondTabMode
+import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
+import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupContactScope
-import ch.abwesend.privatecontacts.domain.model.importexport.BackupFrequency
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
+import ch.abwesend.privatecontacts.domain.util.FlavorConstants
 import ch.abwesend.privatecontacts.domain.util.callIdentificationPossible
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.ErrorDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialogTexts
 import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
@@ -77,7 +86,6 @@ import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategory
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCategorySpacer
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckbox
-import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsCheckboxWithInfoButton
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsDropDown
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsEntryDivider
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsComponents.SettingsLabel
@@ -86,7 +94,6 @@ import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
-import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
@@ -277,11 +284,13 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_block_unknown_calls,
                 description = R.string.settings_entry_block_unknown_calls_description,
-                infoDialogTitle = R.string.settings_entry_block_unknown_calls_info_dialog_title,
-                infoDialogText = R.string.settings_entry_block_unknown_calls_info_dialog_message,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_block_unknown_calls_info_dialog_title,
+                    text = R.string.settings_entry_block_unknown_calls_info_dialog_message,
+                ),
                 value = currentSettings.observeIncomingCalls &&
                     currentSettings.blockIncomingCallsFromUnknownNumbers,
                 enabled = currentSettings.observeIncomingCalls,
@@ -342,11 +351,13 @@ object SettingsScreen {
 
             SettingsEntryDivider()
 
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_show_third_party_contact_accounts,
                 description = R.string.settings_entry_show_third_party_contact_accounts_description,
-                infoDialogTitle = R.string.settings_entry_show_third_party_accounts_info_dialog_title,
-                infoDialogText = R.string.settings_entry_show_third_party_accounts_info_dialog_message,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_show_third_party_accounts_info_dialog_title,
+                    text = R.string.settings_entry_show_third_party_accounts_info_dialog_message,
+                ),
                 value = currentSettings.showThirdPartyContactAccounts,
                 enabled = currentSettings.showAndroidContacts,
             ) { newValue ->
@@ -533,11 +544,13 @@ object SettingsScreen {
             }
         }
 
-        SettingsCheckboxWithInfoButton(
+        SettingsCheckbox(
             label = R.string.settings_entry_enable_authentication,
             description = R.string.settings_entry_enable_authentication_description,
-            infoDialogTitle = R.string.settings_entry_enable_authentication,
-            infoDialogText = R.string.settings_entry_enable_authentication_info_dialog,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.settings_entry_enable_authentication,
+                text = R.string.settings_entry_enable_authentication_info_dialog,
+            ),
             enabled = fieldEnabled,
             value = currentSettings.authenticationRequired,
             onValueChanged = onValueChanged,
@@ -572,78 +585,127 @@ object SettingsScreen {
             )
 
             if (currentSettings.backupFrequency != BackupFrequency.DISABLED) {
-                val contactScopeOptions = remember {
-                    BackupContactScope.entries.map {
-                        ResDropDownOption(
-                            labelRes = it.label,
-                            value = it
-                        )
-                    }
-                }
-                var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
-
-                SettingsDropDown(
-                    label = R.string.backup_contact_type_label,
-                    description = null,
-                    value = currentSettings.backupContactScope,
-                    options = contactScopeOptions,
-                    onValueChanged = {
-                        if (!it.permissionRequired) {
-                            settingsRepository.backupContactScope = it
-                        } else {
-                            requestPermissionsFor = it
-                        }
-                    },
-                )
-
-                val targetScope = requestPermissionsFor
-                if (targetScope != null) {
-                    permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
-                        logger.debug("Android contact permission result: $it")
-                        requestPermissionsFor = null
-                        if (it.usable) {
-                            settingsRepository.backupContactScope = targetScope
-                        }
-                    }
-                }
-
-                BackupFolderField(settingsRepository, currentSettings.backupFolder)
-
-                SettingsEntryDivider()
-
-                BackupEncryptionField(
+                PeriodicBackupCategoryContent(
+                    permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    encryptionEnabled = currentSettings.backupEncryptionEnabled,
+                    currentSettings = currentSettings,
                     viewModel = viewModel,
                 )
+            }
+        }
+    }
 
-                Spacer(Modifier.height(10.dp))
+    @Composable
+    private fun PeriodicBackupCategoryContent(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+    ) {
+        val contactScopeOptions = remember {
+            BackupContactScope.entries.map {
+                ResDropDownOption(
+                    labelRes = it.label,
+                    value = it
+                )
+            }
+        }
+        var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
 
-                val context = LocalContext.current
-                val backupFolderSelected = remember(currentSettings.backupFolder) {
-                    currentSettings.backupFolder.isNotBlank()
+        SettingsDropDown(
+            label = R.string.backup_contact_type_label,
+            description = null,
+            value = currentSettings.backupContactScope,
+            options = contactScopeOptions,
+            onValueChanged = {
+                if (!it.permissionRequired) {
+                    settingsRepository.backupContactScope = it
+                } else {
+                    requestPermissionsFor = it
                 }
+            },
+        )
 
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    TextButton(
-                        enabled = backupFolderSelected,
-                        onClick = {
-                            viewModel.triggerOneTimeBackup()
-                            Toast.makeText(
-                                context,
-                                R.string.backup_trigger_once_announcement,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    ) {
-                        RefreshIcon()
-                        Spacer(modifier = Modifier.padding(end = 5.dp))
-                        Text(text = stringResource(id = R.string.backup_trigger_once_label))
-                    }
+        val targetScope = requestPermissionsFor
+        if (targetScope != null) {
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                logger.debug("Android contact permission result: $it")
+                requestPermissionsFor = null
+                if (it.usable) {
+                    settingsRepository.backupContactScope = targetScope
                 }
+            }
+        }
+
+        BackupFolderField(settingsRepository, currentSettings.backupFolder)
+
+        SettingsEntryDivider()
+
+        val numberOfBackupsToKeepOptions = remember {
+            NumberOfBackupsToKeep.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
+        }
+        SettingsDropDown(
+            label = R.string.backup_number_to_keep_label,
+            description = null,
+            value = currentSettings.numberOfBackupsToKeep,
+            options = numberOfBackupsToKeepOptions,
+            onValueChanged = { settingsRepository.numberOfBackupsToKeep = it },
+        )
+
+        SettingsEntryDivider()
+
+        BackupEncryptionField(
+            settingsRepository = settingsRepository,
+            encryptionEnabled = currentSettings.backupEncryptionEnabled,
+            viewModel = viewModel,
+        )
+
+        @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
+        if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {
+            SettingsEntryDivider()
+            GoogleDriveBackupSubSection(
+                currentSettings = currentSettings,
+                viewModel = viewModel,
+            )
+        }
+
+        SettingsEntryDivider()
+        TriggerBackupButton(
+            backupFolder = currentSettings.backupFolder,
+            viewModel = viewModel,
+        )
+    }
+
+    @Composable
+    private fun TriggerBackupButton(
+        backupFolder: String,
+        viewModel: SettingsViewModel,
+    ) {
+        Spacer(Modifier.height(10.dp))
+
+        val context = LocalContext.current
+        val backupFolderSelected = remember(backupFolder) {
+            backupFolder.isNotBlank()
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            TextButton(
+                enabled = backupFolderSelected,
+                onClick = {
+                    viewModel.triggerOneTimeBackup()
+                    Toast.makeText(
+                        context,
+                        R.string.backup_trigger_once_announcement,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            ) {
+                RefreshIcon()
+                Spacer(modifier = Modifier.padding(end = 5.dp))
+                Text(text = stringResource(id = R.string.backup_trigger_once_label))
             }
         }
     }
@@ -656,11 +718,13 @@ object SettingsScreen {
     ) {
         var showPasswordDialog by remember { mutableStateOf(false) }
 
-        SettingsCheckboxWithInfoButton(
+        SettingsCheckbox(
             label = R.string.backup_encryption_enabled_label,
             description = R.string.backup_encryption_enabled_description,
-            infoDialogTitle = R.string.backup_encryption_info_dialog_title,
-            infoDialogText = R.string.backup_encryption_info_dialog_message,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.backup_encryption_info_dialog_title,
+                text = R.string.backup_encryption_info_dialog_message,
+            ),
             value = encryptionEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {
@@ -675,9 +739,10 @@ object SettingsScreen {
             PasswordInputDialog(
                 title = R.string.backup_encryption_password_dialog_title,
                 label = R.string.backup_encryption_password_label,
+                confirmationRequired = true,
                 onConfirm = { password ->
                     showPasswordDialog = false
-                    viewModel.encryptBackupPassword(password)
+                    viewModel.encryptAndSaveBackupPassword(password)
                 },
                 onCancel = {
                     showPasswordDialog = false
@@ -736,6 +801,86 @@ object SettingsScreen {
     }
 
     @Composable
+    private fun GoogleDriveBackupSubSection(
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+    ) {
+        SettingsCheckbox(
+            label = R.string.drive_backup_title,
+            description = R.string.drive_backup_description,
+            infoDialogTexts = OkDialogTexts(
+                title = R.string.drive_backup_info_dialog_title,
+                text = R.string.drive_backup_info_dialog_message,
+            ),
+            value = currentSettings.googleDriveBackupEnabled,
+            onValueChanged = { newValue ->
+                if (newValue) {
+                    viewModel.requestGoogleDriveAuthorization()
+                } else {
+                    viewModel.disableGoogleDriveBackup()
+                }
+            },
+        )
+
+        DriveSetupProgressAndResultHandler(viewModel = viewModel)
+
+        if (currentSettings.googleDriveBackupEnabled) {
+            Spacer(modifier = Modifier.height(10.dp))
+            SettingsLabel(labelRes = R.string.drive_backup_account_label)
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = currentSettings.googleDriveAccountEmail.ifEmpty { "—" },
+                style = MaterialTheme.typography.body2,
+                fontStyle = FontStyle.Italic,
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            SettingsLabel(labelRes = R.string.drive_backup_folder_label)
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = currentSettings.googleDriveFolderName.ifEmpty { "—" },
+                style = MaterialTheme.typography.body2,
+                fontStyle = FontStyle.Italic,
+            )
+        }
+    }
+
+    @Composable
+    private fun DriveSetupProgressAndResultHandler(viewModel: SettingsViewModel) {
+        val setupState by viewModel.driveSetupState.collectAsStateWithLifecycle()
+
+        val authorizationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            viewModel.handleGoogleDriveConsentResponse(result.data)
+        }
+
+        when (val state = setupState) {
+            is GoogleDriveSetupState.Loading -> {
+                SimpleProgressDialog(
+                    title = R.string.drive_backup_setup_in_progress,
+                    allowRunningInBackground = false,
+                )
+            }
+            is GoogleDriveSetupState.Error -> {
+                ErrorDialog(
+                    errorMessage = stringResource(id = state.error.errorMessageRes),
+                    title = R.string.drive_backup_setup_failed_title,
+                    onClose = { viewModel.resetDriveSetupState() },
+                )
+            }
+            is GoogleDriveSetupState.ConsentRequired -> {
+                LaunchedEffect(state) {
+                    val request = IntentSenderRequest.Builder(state.intent).build()
+                    authorizationLauncher.launch(request)
+                }
+            }
+            is GoogleDriveSetupState.Inactive -> { /* nothing to do */ }
+        }
+    }
+
+    @Composable
     private fun PrivacyCategory(
         settingsRepository: SettingsRepository,
         currentSettings: ISettingsState,
@@ -743,11 +888,13 @@ object SettingsScreen {
     ) {
         val context = LocalContext.current
         SettingsCategory(titleRes = R.string.settings_category_privacy) {
-            SettingsCheckboxWithInfoButton(
+            SettingsCheckbox(
                 label = R.string.settings_entry_use_alternative_icon,
                 description = R.string.settings_entry_use_alternative_icon_description,
-                infoDialogTitle = R.string.settings_entry_use_alternative_icon,
-                infoDialogText = R.string.settings_entry_use_alternative_icon_info_dialog_text,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.settings_entry_use_alternative_icon,
+                    text = R.string.settings_entry_use_alternative_icon_info_dialog_text,
+                ),
                 value = currentSettings.useAlternativeAppIcon,
                 onValueChanged = {
                     settingsRepository.useAlternativeAppIcon = it

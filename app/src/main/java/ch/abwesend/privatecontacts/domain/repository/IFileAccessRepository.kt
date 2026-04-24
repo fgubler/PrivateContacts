@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.repository
 
 import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
 import ch.abwesend.privatecontacts.domain.model.importexport.BinaryFileContent
 import ch.abwesend.privatecontacts.domain.model.importexport.TextFileContent
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
@@ -21,8 +22,14 @@ interface IFileAccessRepository {
      */
     suspend fun writeFile(fileContent: TextFileContent, file: Uri, requestPermission: Boolean = true): FileWriteResult
 
-    /** Checks whether the file at [fileUri] exists and is empty. If so, deletes it. */
-    fun deleteFileIfEmpty(fileUri: Uri)
+    /**
+     * Checks whether the file at [fileUri] exists and is empty. If so, deletes it.
+     * @return true if the file existed and was deleted, false otherwise
+     */
+    fun deleteFileIfEmpty(fileUri: Uri): Boolean
+
+    /** @return true if the file existed and was deleted, false otherwise */
+    fun deleteFileIfEmpty(file: DocumentFile): Boolean
 }
 
 typealias BinaryFileReadResult = BinaryResult<BinaryFileContent, Exception>
