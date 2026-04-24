@@ -14,7 +14,6 @@ import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
-import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.repository.IDatabaseRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
@@ -40,6 +39,7 @@ import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
+import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService

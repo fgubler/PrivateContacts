@@ -8,6 +8,7 @@ package ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository
 
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFile
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolderInfo
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolder
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
@@ -68,7 +69,7 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
             }
         }
 
-    override suspend fun findExistingFiles(folderId: String, fileName: String): List<DriveFile> =
+    override suspend fun findExistingFiles(folderId: String, fileName: String): List<GoogleDriveFile> =
         withContext(dispatchers.io) {
             val query = "'$folderId' in parents and name = '$fileName' and trashed = false"
             drive.files().list()
@@ -78,9 +79,12 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
                 .execute()
                 .files
                 .orEmpty()
+                .mapNotNull { file ->
+                    file.id?.let { id -> file.name?.let { name -> GoogleDriveFile(id, name) } }
+                }
         }
 
-    override suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): DriveFile =
+    override suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile? =
         withContext(dispatchers.io) {
             val metadata = DriveFile().apply {
                 name = localFile.name
@@ -91,7 +95,7 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
                 .setFields("id, name")
                 .execute()
             logger.info("Uploaded file to Google Drive: ${uploaded.name} (${uploaded.id})")
-            uploaded
+            uploaded.id?.let { id -> uploaded.name?.let { name -> GoogleDriveFile(id, name) } }
         }
 
     private fun createFolder(): GoogleDriveFolderInfo {
