@@ -434,6 +434,18 @@
     <string name="backup_encryption_password_label">Passwort</string>
     <string name="backup_encryption_password_empty_error">Bitte geben Sie ein Passwort ein, um die Verschlüsselung zu aktivieren.</string>
     <string name="backup_decryption_password_dialog_title">Entschlüsselungspasswort eingeben</string>
+
+    <string name="drive_backup_title">Google Drive Backup</string>
+    <string name="drive_backup_description">Lokale Backups auf Google Drive hochladen für zusätzliche Sicherheit</string>
+    <string name="drive_backup_info_dialog_title">Google Drive Backup</string>
+    <string name="drive_backup_info_dialog_message">Das jeweils neueste lokale Backup wird regelmässig auf Google Drive hochgeladen.\n\nWir empfehlen, Google Drive Backup nur zusammen mit der Backup-Verschlüsselung zu aktivieren, um die Privatsphäre besser zu schützen.\n\nDie App erstellt einen neuen Ordner in deinem Google Drive, um die Backups dort zu speichern. Keine anderen Dateien oder Ordner werden berührt.\n\nDas Deaktivieren von Google Drive Backup löscht keine bestehenden Backups in deinem Google Drive.\n\nUm die Backups auf ein anderes Google Drive Konto zu wechseln, deaktiviere Google Drive Backup und aktiviere es erneut.\n\nDie E-Mail-Adresse des Google Drive Kontos wird nur lokal gespeichert, um hier angezeigt zu werden. Sie wird niemals an einen Server gesendet.</string>
+    <string name="drive_backup_enabled_label">Backups auf Google Drive hochladen</string>
+    <string name="drive_backup_enabled_description">Lokale Backups automatisch auf Google Drive hochladen</string>
+    <string name="drive_backup_account_label">Google-Konto</string>
+    <string name="drive_backup_account_not_selected">Kein Konto ausgewählt</string>
+    <string name="drive_backup_account_select">Konto auswählen</string>
+    <string name="drive_backup_folder_label">Drive-Ordner</string>
+    <string name="drive_backup_folder_creating">Ordner wird erstellt...</string>
     <string name="drive_backup_folder_not_configured_warning">Google Drive Backup übersprungen: kein Drive-Ordner konfiguriert.</string>
     <string name="drive_backup_account_not_signed_in_error">Google Drive Backup fehlgeschlagen: kein Google-Konto angemeldet.</string>
     <string name="drive_backup_local_folder_not_configured_warning">Google Drive Backup übersprungen: kein lokaler Backup-Ordner konfiguriert.</string>
@@ -443,6 +455,7 @@
     <string name="drive_backup_upload_file_failed_error">Google Drive Backup: Datei konnte nicht hochgeladen werden: %1$s</string>
     <string name="drive_backup_sign_in_failed">Anmeldung beim Google-Konto fehlgeschlagen.</string>
     <string name="drive_backup_folder_creation_failed">Google Drive-Ordner konnte nicht erstellt werden.</string>
+    <string name="disable">Deaktivieren</string>
     <string name="show_password">Passwort anzeigen</string>
     <string name="hide_password">Passwort verbergen</string>
 
