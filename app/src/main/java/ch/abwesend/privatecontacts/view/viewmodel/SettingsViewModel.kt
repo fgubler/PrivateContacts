@@ -136,7 +136,7 @@ class SettingsViewModel : ViewModel() {
 
     private suspend fun createDriveBackupFolder(repository: IGoogleDriveRepository): GoogleDriveSetupState {
         when (val folderCreationRequired = isFolderCreationRequired(repository)) {
-            is ErrorResult -> folderCreationRequired.error.toDriveSetupState()
+            is ErrorResult -> return folderCreationRequired.error.toDriveSetupState()
             is SuccessResult -> {
                 if (!folderCreationRequired.value) {
                     settingsRepository.googleDriveBackupEnabled = true
