@@ -31,6 +31,8 @@
         tools:targetApi="tiramisu"
         android:theme="@style/Theme.PrivateContacts">
 
+        <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
+
         <activity
             android:name=".view.MainActivity"
             android:exported="true"
