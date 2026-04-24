@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
-import ch.abwesend.privatecontacts.view.screens.importexport.ExportCategoryComponent.ExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportCategoryComponent.ImportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.export.ExportCategoryComponent.ExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportCategoryComponent.ImportCategory
 import ch.abwesend.privatecontacts.view.screens.importexport.PeriodicBackupCategoryComponent.PeriodicBackupCategory
 import kotlin.contracts.ExperimentalContracts
 

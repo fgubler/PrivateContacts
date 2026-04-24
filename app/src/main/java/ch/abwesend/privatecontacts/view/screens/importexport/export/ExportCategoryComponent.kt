@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.export
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,12 +41,10 @@ import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
 import ch.abwesend.privatecontacts.view.filepicker.CreateFileFilePickerLauncher.Companion.rememberCreateFileLauncher
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportSuccessDialog
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
-import ch.abwesend.privatecontacts.view.viewmodel.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ActionWithContactPermission.Companion.rememberActionWithContactPermission
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportScreenComponents
 import java.time.LocalDate
 import kotlin.contracts.ExperimentalContracts
 
@@ -55,7 +53,7 @@ import kotlin.contracts.ExperimentalContracts
 object ExportCategoryComponent {
     @Composable
     fun ExportCategory(viewModel: ContactExportViewModel, permissionProvider: IPermissionProvider) {
-        ImportExportCategory(title = R.string.export_title) {
+        ImportExportScreenComponents.ImportExportCategory(title = R.string.export_title) {
             ExportCategoryContent(viewModel = viewModel, permissionProvider = permissionProvider)
         }
 
@@ -167,7 +165,7 @@ object ExportCategoryComponent {
         val hasErrorDetails = data.failedContacts.isNotEmpty()
 
         if (showOverview) {
-            ImportExportSuccessDialog(
+            ImportExportScreenComponents.ImportExportSuccessDialog(
                 title = R.string.export_complete_title,
                 secondButtonText = R.string.import_show_error_details,
                 secondButtonVisible = hasErrorDetails,
@@ -175,7 +173,7 @@ object ExportCategoryComponent {
                 onClose = onClose
             ) { SuccessResultOverview(data = data) }
         } else {
-            ImportExportSuccessDialog(
+            ImportExportScreenComponents.ImportExportSuccessDialog(
                 title = R.string.import_error_details_title,
                 secondButtonText = R.string.import_show_result_overview,
                 secondButtonVisible = true,

@@ -35,9 +35,10 @@ import ch.abwesend.privatecontacts.view.components.dialogs.ResourceFlowProgressA
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExportScreenContext
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.ALL_BACKUP_MIME_TYPES
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.ALL_BACKUP_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportScreenComponents
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
@@ -48,7 +49,7 @@ object PeriodicBackupCategoryComponent {
     fun PeriodicBackupCategory(screenContext: IContactImportExportScreenContext) {
         val viewModel = screenContext.importViewModel
 
-        ImportExportCategory(title = R.string.backup_title) {
+        ImportExportScreenComponents.ImportExportCategory(title = R.string.backup_title) {
             Text(text = stringResource(id = R.string.backup_manage_in_settings_description))
             Spacer(modifier = Modifier.height(10.dp))
             SecondaryButton(
@@ -74,7 +75,7 @@ object PeriodicBackupCategoryComponent {
     }
 
     @Composable
-    private fun ValidateBackupButton(viewModel: ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel) {
+    private fun ValidateBackupButton(viewModel: ContactImportViewModel) {
         var showFilePickerErrorDialog: Boolean by remember { mutableStateOf(false) }
         var showPasswordDialog: Boolean by remember { mutableStateOf(false) }
         var pendingFileUri: Uri? by remember { mutableStateOf(null) }

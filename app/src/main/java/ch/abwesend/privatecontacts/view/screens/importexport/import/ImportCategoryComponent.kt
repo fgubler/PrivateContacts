@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.view.screens.importexport
+package ch.abwesend.privatecontacts.view.screens.importexport.import
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Spacer
@@ -28,14 +28,10 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
 import ch.abwesend.privatecontacts.view.filepicker.OpenFileFilePickerLauncher.Companion.rememberOpenFileLauncher
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ProgressAndResultHandler
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.ReplaceExistingContactsCheckBox
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportComponents.TargetTypeFields
-import ch.abwesend.privatecontacts.view.screens.importexport.ImportExportScreenComponents.ImportExportCategory
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ActionWithContactPermission.Companion.rememberActionWithContactPermission
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.ALL_BACKUP_MIME_TYPES
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.viewmodel.ContactImportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportScreenComponents
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ActionWithContactPermission.Companion.rememberActionWithContactPermission
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.ALL_BACKUP_MIME_TYPES
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalMaterialApi
@@ -48,8 +44,8 @@ object ImportCategoryComponent {
         val selectedAccount = viewModel.targetAccount.value ?: defaultAccount
         var replaceExistingContacts: Boolean by remember { mutableStateOf(false) }
 
-        ImportExportCategory(title = R.string.import_title) {
-            TargetTypeFields(
+        ImportExportScreenComponents.ImportExportCategory(title = R.string.import_title) {
+            ImportComponents.TargetTypeFields(
                 targetType = targetType,
                 selectedAccount = selectedAccount,
                 onTargetTypeChanged = { viewModel.selectTargetType(it) },
@@ -58,16 +54,22 @@ object ImportCategoryComponent {
 
             if (targetType == ContactType.SECRET) {
                 Spacer(modifier = Modifier.height(10.dp))
-                ReplaceExistingContactsCheckBox(replaceExistingContacts) {
+                ImportComponents.ReplaceExistingContactsCheckBox(replaceExistingContacts) {
                     replaceExistingContacts = !replaceExistingContacts
                 }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-            ImportButton(viewModel, permissionProvider, targetType, selectedAccount, replaceExistingContacts)
+            ImportButton(
+                viewModel,
+                permissionProvider,
+                targetType,
+                selectedAccount,
+                replaceExistingContacts
+            )
         }
 
-        ProgressAndResultHandler(
+        ImportComponents.ProgressAndResultHandler(
             importResult = viewModel.importResult,
             onResetResult = { viewModel.resetImportResult() }
         )

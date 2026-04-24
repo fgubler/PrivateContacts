@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2023.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.importexport.export
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
@@ -31,14 +25,17 @@ import kotlinx.coroutines.launch
 class ContactExportViewModel : ViewModel() {
     private val exportService: ContactExportService by injectAnywhere()
 
-    private val _sourceType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
+    private val _sourceType: MutableState<ContactType> =
+        mutableStateOf(Settings.current.defaultContactType)
     val sourceType: State<ContactType> = _sourceType
 
-    private val _vCardVersion: MutableState<VCardVersion> = mutableStateOf(Settings.current.defaultVCardVersion)
+    private val _vCardVersion: MutableState<VCardVersion> =
+        mutableStateOf(Settings.current.defaultVCardVersion)
     val vCardVersion: State<VCardVersion> = _vCardVersion
 
     /** implemented as a resource to show a loading-indicator during export */
-    private val _exportResult = mutableResourceStateFlow<BinaryResult<ContactExportData, VCardExportError>>()
+    private val _exportResult =
+        mutableResourceStateFlow<BinaryResult<ContactExportData, VCardExportError>>()
     val exportResult: ResourceFlow<BinaryResult<ContactExportData, VCardExportError>> = _exportResult
 
     fun selectSourceType(contactType: ContactType) {

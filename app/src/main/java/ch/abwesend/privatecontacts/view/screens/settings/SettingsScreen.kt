@@ -94,7 +94,7 @@ import ch.abwesend.privatecontacts.view.util.canUseBiometrics
 import ch.abwesend.privatecontacts.view.util.getCurrentActivity
 import ch.abwesend.privatecontacts.view.util.normalContentColor
 import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
-import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts

@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2022.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
@@ -37,9 +31,7 @@ import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
-import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.NOT_AUTHENTICATED
-import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.SUCCESS
-import ch.abwesend.privatecontacts.view.viewmodel.model.ParseVcfFromIntentResult
+import ch.abwesend.privatecontacts.view.model.result.ParseVcfFromIntentResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -58,17 +50,19 @@ class MainViewModel : ViewModel() {
 
     val initializationState: State<InitializationState> = _initializationState
 
-    private val _authenticationStatus: MutableState<AuthenticationStatus> = mutableStateOf(NOT_AUTHENTICATED)
+    private val _authenticationStatus: MutableState<AuthenticationStatus> =
+        mutableStateOf(AuthenticationStatus.NOT_AUTHENTICATED)
     val authenticationStatus: State<AuthenticationStatus> = _authenticationStatus
 
-    private val _vcfParsingResult = EventFlow.createShared<ParseVcfFromIntentResult>()
+    private val _vcfParsingResult = EventFlow.Companion.createShared<ParseVcfFromIntentResult>()
     val vcfParsingResult: Flow<ParseVcfFromIntentResult> = _vcfParsingResult
 
     /**
      * Implemented as a resource to show a loading-indicator during import.
-     * The [BinaryResult] would not be necessary in this case but lets us re-use the components from the Import-Screen
+     * The [ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult] would not be necessary in this case but lets us re-use the components from the Import-Screen
      */
-    private val _contactImportResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    private val _contactImportResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
     val contactImportResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _contactImportResult
 
     fun updateAppStatistics(settings: ISettingsState) {
@@ -100,7 +94,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun grantAccessWithoutAuthentication() {
-        _authenticationStatus.value = SUCCESS
+        _authenticationStatus.value = AuthenticationStatus.SUCCESS
     }
 
     fun parseVcfFile(fileUri: Uri) {

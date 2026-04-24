@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2022.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.settings
 
 import android.content.Intent
 import androidx.lifecycle.ViewModel
@@ -41,14 +35,15 @@ class SettingsViewModel : ViewModel() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
     private val driveSetupService: GoogleDriveSetupService by injectAnywhere()
 
-    private val _driveSetupState = MutableStateFlow<GoogleDriveSetupState>(GoogleDriveSetupState.Inactive)
+    private val _driveSetupState =
+        MutableStateFlow<GoogleDriveSetupState>(GoogleDriveSetupState.Inactive)
     val driveSetupState: StateFlow<GoogleDriveSetupState> = _driveSetupState.asStateFlow()
 
     fun initialize(settingsRepository: SettingsRepository) {
         if (!permissionService.hasContactReadPermission()) {
             settingsRepository.blockIncomingCallsFromUnknownNumbers = false
             settingsRepository.showAndroidContacts = false
-            settingsRepository.defaultContactType = ContactType.default
+            settingsRepository.defaultContactType = ContactType.Companion.default
         }
     }
 

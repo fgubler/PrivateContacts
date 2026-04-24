@@ -32,10 +32,10 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.PUBLIC_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.SECRET_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.extensions.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
 import java.io.File
 import java.util.UUID
 

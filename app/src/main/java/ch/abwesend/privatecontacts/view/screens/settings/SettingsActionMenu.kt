@@ -40,7 +40,7 @@ import ch.abwesend.privatecontacts.view.model.DatabaseResetState.INITIAL
 import ch.abwesend.privatecontacts.view.model.DatabaseResetState.RUNNING
 import ch.abwesend.privatecontacts.view.model.DatabaseResetState.RUNNING_IN_BACKGROUND
 import ch.abwesend.privatecontacts.view.model.DatabaseResetState.SUCCESSFUL
-import ch.abwesend.privatecontacts.view.viewmodel.SettingsViewModel
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

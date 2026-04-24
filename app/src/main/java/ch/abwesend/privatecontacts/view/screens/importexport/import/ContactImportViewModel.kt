@@ -1,10 +1,4 @@
-/*
- * Private Contacts
- * Copyright (c) 2023.
- * Florian Gubler
- */
-
-package ch.abwesend.privatecontacts.view.viewmodel
+package ch.abwesend.privatecontacts.view.screens.importexport.import
 
 import android.net.Uri
 import androidx.compose.runtime.MutableState
@@ -21,7 +15,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportData
-import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData.ParsedData
+import ch.abwesend.privatecontacts.domain.model.importexport.ContactImportPartialData
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardImportError
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.service.ContactImportService
@@ -32,19 +26,22 @@ import kotlinx.coroutines.launch
 class ContactImportViewModel : ViewModel() {
     private val importService: ContactImportService by injectAnywhere()
 
-    private val _targetType: MutableState<ContactType> = mutableStateOf(Settings.current.defaultContactType)
+    private val _targetType: MutableState<ContactType> =
+        mutableStateOf(Settings.current.defaultContactType)
     val targetType: State<ContactType> = _targetType
 
     private val _targetAccount: MutableState<ContactAccount?> = mutableStateOf(null)
     val targetAccount: State<ContactAccount?> = _targetAccount
 
     /** implemented as a resource to show a loading-indicator during import */
-    private val _importResult = mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
+    private val _importResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportData, VCardImportError>>()
     val importResult: ResourceFlow<BinaryResult<ContactImportData, VCardImportError>> = _importResult
 
     /** result of a backup validation (read + decrypt + parse, but no import) */
-    private val _validationResult = mutableResourceStateFlow<BinaryResult<ParsedData, VCardImportError>>()
-    val validationResult: ResourceFlow<BinaryResult<ParsedData, VCardImportError>> = _validationResult
+    private val _validationResult =
+        mutableResourceStateFlow<BinaryResult<ContactImportPartialData.ParsedData, VCardImportError>>()
+    val validationResult: ResourceFlow<BinaryResult<ContactImportPartialData.ParsedData, VCardImportError>> = _validationResult
 
     fun selectTargetType(contactType: ContactType) {
         _targetType.value = contactType
