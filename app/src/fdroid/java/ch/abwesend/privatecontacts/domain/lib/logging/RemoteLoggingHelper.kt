@@ -8,4 +8,8 @@ class RemoteLoggingHelper : IRemoteLoggingHelper {
     override fun logMessageToCrashlytics(message: String) {
         // Do nothing: crashlytics is not available
     }
+
+    override fun enableCrashlytics(enable: Boolean) {
+        // Do nothing: crashlytics is not available
+    }
 }

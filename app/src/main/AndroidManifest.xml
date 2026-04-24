@@ -31,6 +31,9 @@
         tools:targetApi="tiramisu"
         android:theme="@style/Theme.PrivateContacts">
 
+        <!-- Crashlytics is disabled by default: may be enabled at startup based on settings -->
+        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
+        <!-- We only have analytics for better error-reports: disable all tracking, etc. -->
         <meta-data android:name="firebase_analytics_collection_enabled" android:value="false" />
 
         <activity

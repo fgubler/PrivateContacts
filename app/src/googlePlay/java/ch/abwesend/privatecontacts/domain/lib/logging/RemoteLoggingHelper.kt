@@ -15,4 +15,8 @@ class RemoteLoggingHelper : IRemoteLoggingHelper {
             FirebaseCrashlytics.getInstance().log(message)
         }
     }
+
+    override fun enableCrashlytics(enable: Boolean) {
+        FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = enable
+    }
 }
