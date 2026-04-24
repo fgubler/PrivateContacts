@@ -13,7 +13,11 @@ import com.google.api.services.drive.model.File as DriveFile
 
 /** Abstracts Google Drive file operations given a valid, authenticated session. */
 interface IGoogleDriveRepository {
-    fun createBackupFolder(): BinaryResult<GoogleDriveSetupData, Exception>
-    fun findExistingFiles(folderId: String, fileName: String): List<DriveFile>
-    fun uploadFile(folderId: String, localFile: File, mimeType: String): DriveFile
+    suspend fun createBackupFolder(): BinaryResult<GoogleDriveSetupData, Exception>
+
+    /** @return true if the folder exists and is accessible for read & write. */
+    suspend fun checkFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception>
+
+    suspend fun findExistingFiles(folderId: String, fileName: String): List<DriveFile>
+    suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): DriveFile
 }
