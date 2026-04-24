@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolderInfo
-import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupData
+import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveFolder
 import ch.abwesend.privatecontacts.domain.model.result.generic.BinaryResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveRepository
@@ -29,14 +29,24 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
         private const val FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
     }
 
-    override suspend fun createBackupFolder(): BinaryResult<GoogleDriveSetupData, Exception> =
+    override suspend fun getAccountEmail(): BinaryResult<String, Exception> =
+        withContext(dispatchers.io) {
+            runCatchingAsResult {
+                drive.about().get()
+                    .setFields("user")
+                    .execute()
+                    .user
+                    .emailAddress
+            }
+        }
+
+    override suspend fun createBackupFolder(): BinaryResult<GoogleDriveFolder, Exception> =
         withContext(dispatchers.io) {
             runCatchingAsResult {
                 val folderInfo = createFolder()
                 logger.info("Google Drive backup configured with folder: $folderInfo")
 
-                GoogleDriveSetupData(
-                    accountEmail = "",
+                GoogleDriveFolder(
                     folderId = folderInfo.id,
                     folderName = folderInfo.name,
                 )

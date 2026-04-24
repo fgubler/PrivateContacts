@@ -6,8 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.model.importexport.googledrive
 
-data class GoogleDriveSetupData(
-    val accountEmail: String,
+data class GoogleDriveFolder(
     val folderId: String,
     val folderName: String,
 )

@@ -74,10 +74,13 @@ class GoogleDriveAuthenticationRepository(private val context: Context) : IGoogl
         ).setApplicationName(APP_NAME).build()
     }
 
-    private fun buildAuthorizationRequest(): AuthorizationRequest =
-        AuthorizationRequest.builder()
-            .setRequestedScopes(listOf(Scope(DriveScopes.DRIVE_FILE)))
-            .build()
+    private fun buildAuthorizationRequest(): AuthorizationRequest {
+        val scopes = listOf(
+            Scope(DriveScopes.DRIVE_FILE),
+            Scope("email"),
+        )
+        return AuthorizationRequest.builder().setRequestedScopes(scopes).build()
+    }
 
     /**
      * Authorizes via the modern AuthorizationClient API.
