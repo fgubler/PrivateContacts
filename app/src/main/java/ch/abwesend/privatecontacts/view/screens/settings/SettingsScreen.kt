@@ -572,78 +572,104 @@ object SettingsScreen {
             )
 
             if (currentSettings.backupFrequency != BackupFrequency.DISABLED) {
-                val contactScopeOptions = remember {
-                    BackupContactScope.entries.map {
-                        ResDropDownOption(
-                            labelRes = it.label,
-                            value = it
-                        )
-                    }
-                }
-                var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
-
-                SettingsDropDown(
-                    label = R.string.backup_contact_type_label,
-                    description = null,
-                    value = currentSettings.backupContactScope,
-                    options = contactScopeOptions,
-                    onValueChanged = {
-                        if (!it.permissionRequired) {
-                            settingsRepository.backupContactScope = it
-                        } else {
-                            requestPermissionsFor = it
-                        }
-                    },
-                )
-
-                val targetScope = requestPermissionsFor
-                if (targetScope != null) {
-                    permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
-                        logger.debug("Android contact permission result: $it")
-                        requestPermissionsFor = null
-                        if (it.usable) {
-                            settingsRepository.backupContactScope = targetScope
-                        }
-                    }
-                }
-
-                BackupFolderField(settingsRepository, currentSettings.backupFolder)
-
-                SettingsEntryDivider()
-
-                BackupEncryptionField(
+                PeriodicBackupCategoryContent(
+                    permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
-                    encryptionEnabled = currentSettings.backupEncryptionEnabled,
+                    currentSettings = currentSettings,
                     viewModel = viewModel,
                 )
+            }
+        }
+    }
 
-                Spacer(Modifier.height(10.dp))
+    @Composable
+    private fun PeriodicBackupCategoryContent(
+        permissionProvider: IPermissionProvider,
+        settingsRepository: SettingsRepository,
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+    ) {
+        val contactScopeOptions = remember {
+            BackupContactScope.entries.map {
+                ResDropDownOption(
+                    labelRes = it.label,
+                    value = it
+                )
+            }
+        }
+        var requestPermissionsFor: BackupContactScope? by remember { mutableStateOf(null) }
 
-                val context = LocalContext.current
-                val backupFolderSelected = remember(currentSettings.backupFolder) {
-                    currentSettings.backupFolder.isNotBlank()
+        SettingsDropDown(
+            label = R.string.backup_contact_type_label,
+            description = null,
+            value = currentSettings.backupContactScope,
+            options = contactScopeOptions,
+            onValueChanged = {
+                if (!it.permissionRequired) {
+                    settingsRepository.backupContactScope = it
+                } else {
+                    requestPermissionsFor = it
                 }
+            },
+        )
 
-                Row(
-                    horizontalArrangement = Arrangement.End,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    TextButton(
-                        enabled = backupFolderSelected,
-                        onClick = {
-                            viewModel.triggerOneTimeBackup()
-                            Toast.makeText(
-                                context,
-                                R.string.backup_trigger_once_announcement,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    ) {
-                        RefreshIcon()
-                        Spacer(modifier = Modifier.padding(end = 5.dp))
-                        Text(text = stringResource(id = R.string.backup_trigger_once_label))
-                    }
+        val targetScope = requestPermissionsFor
+        if (targetScope != null) {
+            permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
+                logger.debug("Android contact permission result: $it")
+                requestPermissionsFor = null
+                if (it.usable) {
+                    settingsRepository.backupContactScope = targetScope
                 }
+            }
+        }
+
+        BackupFolderField(settingsRepository, currentSettings.backupFolder)
+
+        SettingsEntryDivider()
+
+        BackupEncryptionField(
+            settingsRepository = settingsRepository,
+            encryptionEnabled = currentSettings.backupEncryptionEnabled,
+            viewModel = viewModel,
+        )
+
+        TriggerBackupButton(
+            backupFolder = currentSettings.backupFolder,
+            viewModel = viewModel,
+        )
+    }
+
+    @Composable
+    private fun TriggerBackupButton(
+        backupFolder: String,
+        viewModel: SettingsViewModel,
+    ) {
+        Spacer(Modifier.height(10.dp))
+
+        val context = LocalContext.current
+        val backupFolderSelected = remember(backupFolder) {
+            backupFolder.isNotBlank()
+        }
+
+        Row(
+            horizontalArrangement = Arrangement.End,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            TextButton(
+                enabled = backupFolderSelected,
+                onClick = {
+                    viewModel.triggerOneTimeBackup()
+                    Toast.makeText(
+                        context,
+                        R.string.backup_trigger_once_announcement,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            ) {
+                RefreshIcon()
+                Spacer(modifier = Modifier.padding(end = 5.dp))
+                Text(text = stringResource(id = R.string.backup_trigger_once_label))
             }
         }
     }
