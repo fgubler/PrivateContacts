@@ -149,8 +149,8 @@ dependencies {
     ksp "androidx.room:room-compiler:$roomVersion"
 
     // Android Review
-    implementation "com.google.android.play:review:${androidReviewVersion}"
-    implementation "com.google.android.play:review-ktx:${androidReviewVersion}"
+    googlePlayImplementation "com.google.android.play:review:${androidReviewVersion}"
+    googlePlayImplementation "com.google.android.play:review-ktx:${androidReviewVersion}"
 
     // Google Drive
     googlePlayImplementation "com.google.android.gms:play-services-auth:21.5.1"
