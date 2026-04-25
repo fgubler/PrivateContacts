@@ -1,0 +1,51 @@
+Categories:
+  - Phone & SMS
+  - Security
+License: Apache-2.0
+AuthorName: Florian Gubler
+AuthorEmail: 2Gusoft@gmail.com
+AuthorWebSite: https://github.com/fgubler/PrivateContacts
+SourceCode: https://github.com/fgubler/PrivateContacts
+IssueTracker: https://github.com/fgubler/PrivateContacts/issues
+
+AutoName: Private Contacts
+
+Summary: Manage sensitive contacts privately, hidden from other apps
+
+Description: |-
+  Private Contacts is an Android app to manage your contacts with additional
+  features for privacy and data protection not offered by your phone's default
+  contacts app.
+
+  When any app (e.g. a messenger like WhatsApp) asks for permission to access
+  your phone's contacts, the choice is purely binary: you either give it access
+  to all your contacts or none of them. Private Contacts solves this by storing
+  selected contacts in its own private database where no other app can read them.
+
+  Features:
+  * Store secret contacts in a private database invisible to other apps
+  * Display and edit normal (public) contacts alongside secret ones
+  * Move contacts between the public Android database and the private store
+  * Caller detection: shows a notification when a secret contact is calling
+  * Import and export contacts in VCF format
+  * Periodic automatic backups to a local folder of your choice
+  * Encrypted backups protected with a user-supplied password (AES-256-GCM)
+  * Protect the app with biometric authentication (fingerprint, face ID, PIN)
+  * Hide the app by changing its name and icon to "Pocket Calculator"
+  * Block calls from unknown numbers (Android 10+)
+
+RepoType: git
+Repo: https://github.com/fgubler/PrivateContacts.git
+
+Builds:
+  - versionName: 5.8.0
+    versionCode: 104
+    commit: v5.8.0
+    subdir: app
+    gradle:
+      - fdroid
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 5.8.0
+CurrentVersionCode: 104
