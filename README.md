@@ -20,6 +20,8 @@ Additional features
 - Protecting the app with biometric prompt
 - Hiding the app by changing the app-name and -icon to "Pocket Calculator" with a calculator-icon.
 - Periodic backups of secret and public contacts
+  - Encrypted backups for better privacy
+  - Backups to Google Drive (we recommend to only store encrypted backups on Google Drive)
 
 ## What the app will be able to do in the future
 
@@ -80,10 +82,14 @@ All settings in this section define defaults which can be overridden by the user
 This section controls automatic, scheduled backups of your contacts to a local folder of your choice.
 
 - _Backup frequency_: how often the backup should run automatically. Options are _Disabled_ (no automatic backup), _Daily_, _Weekly_, and _Monthly_.
-- _Contact scope_: which contacts should be included in the backup. Options are _Secret contacts only_, _Public contacts only_, or _All contacts_. Note: including public contacts requires the contacts permission.
-- _Backup folder_: the folder where backup files will be written. Tap the edit-icon to pick a folder. The app will request persistent read/write access to the chosen folder. A backup folder must be selected before automatic backups can run.
-- _Encrypt backups_: if enabled, backup files are encrypted with a password you supply. The encrypted file uses the `.vcf.crypt` extension instead of the usual `.vcf`. When you later import an encrypted backup, you will be asked for the password.
+- _Contact scope_: which contacts should be included in the backup. Options are _Secret contacts only_, _Public contacts only_, or _All contacts_. Note: including public contacts requires the contacts permission. This field is only shown if periodic backups are enabled.
+- _Backup folder_: the folder where backup files will be written. Tap the edit-icon to pick a folder. The app will request persistent read/write access to the chosen folder. A backup folder must be selected before automatic backups can run. This field is only shown if periodic backups are enabled.
+- _Encrypt backups_: if enabled, backup files are encrypted with a password you supply. The encrypted file uses the `.vcf.crypt` extension instead of the usual `.vcf`. When you later import an encrypted backup, you will be asked for the password. This field is only shown if periodic backups are enabled.
   - **Important**: if you forget the password, the backup cannot be recovered. There is no password-reset mechanism.
+- _Google Drive Backup_: if enabled, future backup files will be uploaded to a folder in your Google Drive for additional safety, in case you lose access to your phone.
+  - We recommend to only enable this in concert with backup encryption.
+- _Google Account_: shows the Google account which is used for your Google Drive backup. This field is only shown if Google Drive backup is enabled.
+- _Drive folder_: shows the name of the created backup folder in your Google Drive. The folder-name always ends in a cryptic combination of letters and numbers to make sure that it is unique. If you have the app installed on more than one device, the devices may create separate folders.
 
 #### Section "Privacy"
 - _Hide app name and icon_: changes the name and icon of the app on the home-screen and in the app-overview. The app pretends to be a simple calculator app named "Pocket Calculator" (the name was chosen to start with the same letter so the app can be more easily found in alphabetical sorting).
