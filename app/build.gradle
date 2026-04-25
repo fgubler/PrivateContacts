@@ -47,8 +47,8 @@ android {
          *   - creating an fdroid release
          *   - adding release-notes in the fastlane/metadata folder
          */
-        versionCode = 104
-        versionName = "5.8.0"
+        versionCode = 105
+        versionName = "5.8.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
