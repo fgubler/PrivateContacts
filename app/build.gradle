@@ -13,9 +13,15 @@ plugins {
     id 'androidx.room'
     id 'org.jetbrains.kotlin.plugin.compose'
     id 'org.jetbrains.kotlin.plugin.serialization' version "${kotlinVersion}"
+}
 
-    id "com.google.gms.google-services"
-    id "com.google.firebase.crashlytics"
+def isFDroidBuild = gradle.startParameter.taskRequests.any {
+    it.args.any { arg -> arg.toLowerCase().contains('fdroid') }
+}
+
+if (!isFDroidBuild) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
 }
 
 ktlint {
@@ -39,6 +45,7 @@ android {
          * When incrementing the version, consider
          *   - writing release-notes
          *   - creating an fdroid release
+         *   - adding release-notes in the fastlane/metadata folder
          */
         versionCode = 104
         versionName = "5.8.0"
