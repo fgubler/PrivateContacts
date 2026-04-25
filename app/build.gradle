@@ -35,9 +35,13 @@ android {
         minSdk 24
         targetSdk 36
 
-        // consider writing release-notes when incrementing the version
-        versionCode 104
-        versionName "5.8.0"
+        /*
+         * When incrementing the version, consider
+         *   - writing release-notes
+         *   - creating an fdroid release
+         */
+        versionCode = 104
+        versionName = "5.8.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

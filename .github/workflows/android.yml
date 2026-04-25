@@ -103,7 +103,7 @@ jobs:
 
       - name: Get version name
         run: |
-          VERSION_NAME=$(grep "versionName" app/build.gradle | awk -F'"' '{print $2}')
+          VERSION_NAME=$(grep "versionName" app/build.gradle | grep -oP '(?<=")\d+\.\d+\.\d+(?=")')
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
 
       - name: Check if version tag already exists
