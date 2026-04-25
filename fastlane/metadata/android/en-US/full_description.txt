@@ -1,0 +1,15 @@
+Private Contacts is an Android app to manage your contacts with additional features for privacy and data protection not offered by your phone's default contacts app.
+
+When any app (e.g. a messenger like WhatsApp) asks for permission to access your phone's contacts, the choice is purely binary: You either give it access to all your contacts or none of them. However, what about the phone number of your doctor, your therapist, etc.? Do you really want to provide that information to everyone asking?
+
+Features:
+- Store contacts privately, hidden from other apps
+- Caller detection for known private contacts
+- Display and edit normal phone contacts
+- Move contacts between the standard Android database and Private Contacts
+- Import/Export in VCF format
+- Periodic, automatic backups to a local folder of your choice
+- Encrypted backups for better privacy
+- Backups to Google Drive (encrypted backups recommended)
+- Protect the app with biometric prompt
+- Hide the app by changing its name and icon to "Pocket Calculator"
