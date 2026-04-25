@@ -32,6 +32,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.PUBLIC_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.SECRET_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.WorkerErrorHandler
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
@@ -47,23 +48,33 @@ class GoogleDriveBackupWorker(
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
     private val backupNotificationRepository: BackupNotificationRepository by injectAnywhere()
 
+    companion object {
+        private val errorHandler = WorkerErrorHandler()
+    }
+
     private suspend fun addErrorMessage(text: String, severity: BackupMessageSeverity) {
         backupMessageRepository.addDriveMessage(BackupMessage(text = text, severity = severity))
     }
 
     override suspend fun doWork(): Result {
-        return try {
+        return errorHandler.doWorkWithErrorHandling(
+            workDescription = "Google Drive backup upload",
+            addPersistedErrorMessage = { textRes, args ->
+                val text = applicationContext.getString(textRes, *args)
+                addErrorMessage(text = text, severity = BackupMessageSeverity.ERROR)
+            }
+        ) {
             logger.debug("Starting Google Drive backup upload")
             val settings = Settings.nextOrDefault()
 
             val metaData = when (val result = checkPreConditions(settings)) {
                 is SuccessResult -> result.value
-                is ErrorResult -> return result.error
+                is ErrorResult -> return@doWorkWithErrorHandling result.error
             }
 
             val driveRepository = when (val result = getGoogleDriveRepository()) {
                 is SuccessResult -> result.value
-                is ErrorResult -> return result.error
+                is ErrorResult -> return@doWorkWithErrorHandling result.error
             }
 
             val contactTypes = settings.backupContactScope.resolveContactTypes()
@@ -80,13 +91,6 @@ class GoogleDriveBackupWorker(
                 logger.debug("Google Drive backup upload completed successfully")
                 Result.success()
             }
-        } catch (e: Exception) {
-            logger.error("Google Drive backup upload failed", e)
-            addErrorMessage(
-                text = applicationContext.getString(R.string.drive_backup_upload_failed_error),
-                severity = BackupMessageSeverity.ERROR,
-            )
-            Result.retry()
         }
     }
 
