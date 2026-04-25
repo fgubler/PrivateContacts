@@ -166,6 +166,7 @@ dependencies {
     googlePlayImplementation("com.google.api-client:google-api-client-android:2.9.0")
     googlePlayImplementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
     googlePlayImplementation("androidx.credentials:credentials:1.6.0")
+    googlePlayImplementation("androidx.credentials:credentials-play-services-auth:1.6.0")
 
     implementation("com.google.http-client:google-http-client-gson:2.1.0")
 
