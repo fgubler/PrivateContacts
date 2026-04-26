@@ -1,0 +1,2 @@
+5.8.2
+Improvements for google drive backups and to prepare the app for a release on FDroid

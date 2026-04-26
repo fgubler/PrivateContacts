@@ -437,6 +437,7 @@
     <string name="backup_completed_with_failures_warning">Automatisches Backup abgeschlossen, aber einige Kontakte konnten nicht exportiert werden.</string>
     <string name="backup_permission_missing_warning">Automatisches Backup für öffentliche Kontakte übersprungen: Berechtigung zum Lesen von Kontakten fehlt.</string>
     <string name="backup_file_creation_failed_error">Automatisches Backup fehlgeschlagen: Sicherungsdatei konnte nicht erstellt werden.</string>
+    <string name="backup_worker_failed_unexpectedly_error">%1$s ist unerwartet fehlgeschlagen.</string>
     <string name="backup_encryption_enabled_label">Backups verschlüsseln</string>
     <string name="backup_encryption_enabled_description">Sicherungsdateien mit einem Passwort schützen</string>
     <string name="backup_encryption_info_dialog_title">Verschlüsselte Backups</string>

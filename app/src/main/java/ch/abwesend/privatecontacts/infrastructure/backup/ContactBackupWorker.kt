@@ -39,7 +39,6 @@ import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExport
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
-import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -56,8 +55,7 @@ class ContactBackupWorker(
 
     companion object {
         const val OVERRIDE_BACKUP_FREQUENCY = "overrideBackupFrequency"
-        const val MAX_RETRY_COUNT = 20
-        private var retryCounter = 0 // the counter will be reset on garbage-collection
+        private val errorHandler = WorkerErrorHandler()
     }
 
     private suspend fun addErrorMessage(@StringRes textRes: Int, severity: BackupMessageSeverity) {
@@ -71,7 +69,13 @@ class ContactBackupWorker(
     }
 
     override suspend fun doWork(): Result {
-        return try {
+        return errorHandler.doWorkWithErrorHandling(
+            workDescription = "Periodic backup",
+            addPersistedErrorMessage = { textRes, args ->
+                val text = applicationContext.getString(textRes, *args)
+                addErrorMessage(text = text, severity = BackupMessageSeverity.ERROR)
+            },
+        ) {
             logger.debug("Starting periodic backup")
             backupMessageRepository.clearLocalMessages() // a new start with a clean slate
             val settings = Settings.nextOrDefault()
@@ -79,7 +83,7 @@ class ContactBackupWorker(
 
             if (settings.backupFrequency == BackupFrequency.DISABLED) {
                 logger.debug("Periodic backup is disabled, skipping")
-                return Result.success()
+                return@doWorkWithErrorHandling Result.success()
             }
 
             val backupFolder = settings.backupFolder
@@ -89,12 +93,12 @@ class ContactBackupWorker(
                     textRes = R.string.backup_folder_not_configured_warning,
                     severity = BackupMessageSeverity.WARNING
                 )
-                return Result.failure()
+                return@doWorkWithErrorHandling Result.failure()
             }
 
             if (!overrideFrequency && !isBackupDue(settings.backupFrequency, settings.lastBackupDate)) {
                 logger.debug("Backup not yet due, skipping")
-                return Result.success()
+                return@doWorkWithErrorHandling Result.success()
             }
 
             val folderUri = backupFolder.toUri()
@@ -105,7 +109,7 @@ class ContactBackupWorker(
                     textRes = R.string.backup_folder_not_writable_error,
                     severity = BackupMessageSeverity.WARNING
                 )
-                return Result.failure()
+                return@doWorkWithErrorHandling Result.failure()
             }
 
             val vCardVersion = VCardVersion.V4 // always use v4 for backups (no loss)
@@ -117,7 +121,6 @@ class ContactBackupWorker(
             }.all { it }
 
             Settings.repository.lastBackupDate = LocalDate.now()
-            retryCounter = 0
 
             if (success) {
                 logger.debug("Periodic backup completed successfully")
@@ -131,23 +134,6 @@ class ContactBackupWorker(
                 )
                 Result.failure()
             }
-        } catch (e: CancellationException) {
-            logger.debug("Periodic backup cancelled", e)
-            retryCounter++
-
-            // randomness to avoid an infinite loop if JVM resets retryCounter
-            if (retryCounter < MAX_RETRY_COUNT && Math.random() > 0.01) {
-                logger.warning("Periodic backup cancelled in attempt $retryCounter: re-trying")
-                Result.retry()
-            } else {
-                logger.error("Periodic backup failed due to cancellation in attempt $retryCounter", e)
-                retryCounter = 0
-                Result.failure()
-            }
-        } catch (e: Exception) {
-            retryCounter = 0
-            logger.error("Periodic backup failed", e)
-            Result.failure()
         }
     }
 

@@ -46,9 +46,10 @@ android {
          *   - writing release-notes
          *   - creating an fdroid release
          *   - adding release-notes in the fastlane/metadata folder
+         * consider using the prepare-release junie-skill to automate this
          */
-        versionCode = 105
-        versionName = "5.8.1"
+        versionCode = 106
+        versionName = "5.8.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -165,6 +166,7 @@ dependencies {
     googlePlayImplementation("com.google.api-client:google-api-client-android:2.9.0")
     googlePlayImplementation("com.google.apis:google-api-services-drive:v3-rev20240123-2.0.0")
     googlePlayImplementation("androidx.credentials:credentials:1.6.0")
+    googlePlayImplementation("androidx.credentials:credentials-play-services-auth:1.6.0")
 
     implementation("com.google.http-client:google-http-client-gson:2.1.0")
 
