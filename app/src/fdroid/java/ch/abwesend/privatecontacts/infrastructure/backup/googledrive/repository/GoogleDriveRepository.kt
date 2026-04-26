@@ -24,6 +24,8 @@ class GoogleDriveRepository : IGoogleDriveRepository {
         ErrorResult(unsupported)
 
     override suspend fun findExistingFiles(folderId: String, fileName: String): List<GoogleDriveFile> = emptyList()
+    override suspend fun listAllFiles(folderId: String): List<GoogleDriveFile> = emptyList()
+    override suspend fun deleteFile(fileId: String): Boolean = false
 
     override suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile? = null
 }

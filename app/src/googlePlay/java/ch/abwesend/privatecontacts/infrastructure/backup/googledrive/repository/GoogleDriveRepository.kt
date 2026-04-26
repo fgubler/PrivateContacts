@@ -84,6 +84,33 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
                 }
         }
 
+    override suspend fun listAllFiles(folderId: String): List<GoogleDriveFile> =
+        withContext(dispatchers.io) {
+            val query = "'$folderId' in parents and trashed = false"
+            drive.files().list()
+                .setQ(query)
+                .setFields("files(id, name)")
+                .setSpaces("drive")
+                .execute()
+                .files
+                .orEmpty()
+                .mapNotNull { file ->
+                    file.id?.let { id -> file.name?.let { name -> GoogleDriveFile(id, name) } }
+                }
+        }
+
+    override suspend fun deleteFile(fileId: String): Boolean =
+        withContext(dispatchers.io) {
+            try {
+                drive.files().delete(fileId).execute()
+                logger.info("Deleted file from Google Drive: $fileId")
+                true
+            } catch (e: Exception) {
+                logger.warning("Failed to delete file from Google Drive: $fileId", e)
+                false
+            }
+        }
+
     override suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile? =
         withContext(dispatchers.io) {
             val metadata = DriveFile().apply {
