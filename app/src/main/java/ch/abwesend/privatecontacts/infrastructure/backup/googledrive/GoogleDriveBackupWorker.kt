@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 import ch.abwesend.privatecontacts.domain.model.backup.BackupMessageSeverity
+import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.backup.resolveContactTypes
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveAuthResult
@@ -29,10 +30,9 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveReposit
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.PUBLIC_BACKUP_PREFIX
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants.SECRET_BACKUP_PREFIX
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.WorkerErrorHandler
+import ch.abwesend.privatecontacts.infrastructure.backup.util.backupFilenamePrefix
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
@@ -89,6 +89,7 @@ class GoogleDriveBackupWorker(
                 Result.retry()
             } else {
                 logger.debug("Google Drive backup upload completed successfully")
+                cleanupOldDriveBackups(driveRepository, metaData.folderId, settings.numberOfBackupsToKeep)
                 Result.success()
             }
         }
@@ -196,15 +197,40 @@ class GoogleDriveBackupWorker(
         return if (success) UploadResult.SUCCESS else UploadResult.RETRY
     }
 
+    private suspend fun cleanupOldDriveBackups(
+        driveRepository: IGoogleDriveRepository,
+        folderId: String,
+        numberOfBackupsToKeep: NumberOfBackupsToKeep,
+    ) {
+        ContactType.entries.forEach { type ->
+            try {
+                val prefix = type.backupFilenamePrefix
+                val backupFiles = driveRepository.listAllFiles(folderId)
+                    .filter { it.name.startsWith(prefix) }
+                    .sortedBy { it.name } // date-based naming ensures lexicographic = chronological
+
+                val toDelete = (backupFiles.size - numberOfBackupsToKeep.maxCount).coerceAtLeast(0)
+                backupFiles.take(toDelete).forEach { file ->
+                    logger.debug("Deleting old Drive backup: ${file.name}")
+                    driveRepository.deleteFile(file.id)
+                }
+                logger.info("Deleted $toDelete old Drive backups for $type")
+            } catch (e: Exception) {
+                logger.warning("Failed to delete old Drive backups for $type", e)
+                addErrorMessage(
+                    text = applicationContext.getString(R.string.backup_delete_old_failed_warning),
+                    severity = BackupMessageSeverity.WARNING,
+                )
+            }
+        }
+    }
+
     private fun findNewestLocalBackup(
         folder: DocumentFile,
         type: ContactType,
         encrypted: Boolean,
     ): DocumentFile? {
-        val prefix = when (type) {
-            ContactType.SECRET -> SECRET_BACKUP_PREFIX
-            ContactType.PUBLIC -> PUBLIC_BACKUP_PREFIX
-        }
+        val prefix = type.backupFilenamePrefix
         val extension = if (encrypted) CRYPT_FILE_EXTENSION else VCF_FILE_EXTENSION
 
         return folder.listFiles()
