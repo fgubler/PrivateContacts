@@ -47,10 +47,10 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
-import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupMessageRepository
-import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
 import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository.GoogleDriveAuthorizationRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupMessageRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.CallNotificationRepository
 import ch.abwesend.privatecontacts.infrastructure.calldetection.IncomingCallHelper
 import ch.abwesend.privatecontacts.infrastructure.launcher.LauncherAppearanceRepository
