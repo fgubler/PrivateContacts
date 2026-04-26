@@ -4,9 +4,9 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.util
 
-import androidx.work.ListenableWorker.Result
+import androidx.work.ListenableWorker
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import kotlinx.coroutines.CancellationException
@@ -21,8 +21,8 @@ class WorkerErrorHandler {
     suspend fun doWorkWithErrorHandling(
         workDescription: String,
         addPersistedErrorMessage: suspend (Int, Array<out String>) -> Unit,
-        block: suspend () -> Result
-    ): Result = try {
+        block: suspend () -> ListenableWorker.Result
+    ): ListenableWorker.Result = try {
         block().also {
             retryCounter = 0 // reset the counter after a run without exception
         }
@@ -33,16 +33,16 @@ class WorkerErrorHandler {
         // randomness to avoid an infinite loop if JVM resets retryCounter
         if (retryCounter < MAX_RETRY_COUNT && Math.random() > 0.01) {
             logger.warning("$workDescription cancelled in attempt $retryCounter: re-trying")
-            Result.retry()
+            ListenableWorker.Result.retry()
         } else {
             logger.error("$workDescription failed due to cancellation in attempt $retryCounter", e)
             retryCounter = 0
-            Result.failure()
+            ListenableWorker.Result.failure()
         }
     } catch (e: Exception) {
         retryCounter = 0
         logger.error("$workDescription failed", e)
         addPersistedErrorMessage(R.string.backup_worker_failed_unexpectedly_error, arrayOf(workDescription))
-        Result.failure()
+        ListenableWorker.Result.failure()
     }
 }

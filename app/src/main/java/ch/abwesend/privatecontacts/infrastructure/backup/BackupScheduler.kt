@@ -17,7 +17,8 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
-import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.GoogleDriveBackupWorker
+import ch.abwesend.privatecontacts.infrastructure.backup.worker.ContactBackupWorker
+import ch.abwesend.privatecontacts.infrastructure.backup.worker.GoogleDriveBackupWorker
 import java.util.concurrent.TimeUnit
 
 class BackupScheduler(private val context: Context) : IBackupScheduler {

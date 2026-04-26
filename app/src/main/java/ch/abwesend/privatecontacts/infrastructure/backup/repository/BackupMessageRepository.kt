@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore

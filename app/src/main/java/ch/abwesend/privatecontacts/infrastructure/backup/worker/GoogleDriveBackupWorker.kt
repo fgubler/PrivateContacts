@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup.googledrive
+package ch.abwesend.privatecontacts.infrastructure.backup.worker
 
 import android.content.Context
 import androidx.core.net.toUri
@@ -30,8 +30,8 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveReposit
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupNotificationRepository
-import ch.abwesend.privatecontacts.infrastructure.backup.WorkerErrorHandler
+import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotificationRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.util.WorkerErrorHandler
 import ch.abwesend.privatecontacts.infrastructure.backup.util.backupFilenamePrefix
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE

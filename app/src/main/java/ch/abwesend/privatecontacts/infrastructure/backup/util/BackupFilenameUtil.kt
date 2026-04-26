@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.infrastructure.backup.util
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
-import ch.abwesend.privatecontacts.infrastructure.backup.BackupConstants
+import ch.abwesend.privatecontacts.infrastructure.backup.util.BackupConstants
 
 val ContactType.backupFilenamePrefix: String
     get() = when (this) {
