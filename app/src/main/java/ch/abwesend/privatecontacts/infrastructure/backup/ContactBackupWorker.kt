@@ -35,6 +35,7 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.infrastructure.backup.util.backupFilenamePrefix
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
@@ -173,7 +174,7 @@ class ContactBackupWorker(
         }
 
         val extension = if (encryptionPassword == null) VCF_FILE_EXTENSION else CRYPT_FILE_EXTENSION
-        val fileNamePrefix = getFilenamePrefix(type)
+        val fileNamePrefix = type.backupFilenamePrefix
         val fileName = "$fileNamePrefix$dateString.$extension"
         cleanupExistingFile(documentFolder, fileName)
 
@@ -243,7 +244,7 @@ class ContactBackupWorker(
     private suspend fun cleanupOldBackups(numberOfBackupsToKeep: NumberOfBackupsToKeep, documentFolder: DocumentFile) {
         ContactType.entries.forEach { type ->
             try {
-                val prefix = getFilenamePrefix(type)
+                val prefix = type.backupFilenamePrefix
                 val backupFiles = documentFolder.listFiles()
                     .filterNotNull()
                     .filter { it.name?.startsWith(prefix) == true }
@@ -286,11 +287,6 @@ class ContactBackupWorker(
             BackupFrequency.WEEKLY -> ChronoUnit.DAYS.between(lastBackupDate, today) >= 7
             BackupFrequency.MONTHLY -> ChronoUnit.MONTHS.between(lastBackupDate, today) >= 1
         }
-    }
-
-    private fun getFilenamePrefix(type: ContactType): String = when (type) {
-        ContactType.SECRET -> "backup_secret_"
-        ContactType.PUBLIC -> "backup_public_"
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
