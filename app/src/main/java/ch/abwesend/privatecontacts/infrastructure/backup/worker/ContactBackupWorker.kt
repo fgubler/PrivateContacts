@@ -39,6 +39,7 @@ import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotifi
 import ch.abwesend.privatecontacts.infrastructure.backup.util.WorkerErrorHandler
 import ch.abwesend.privatecontacts.infrastructure.backup.util.backupFilenamePrefix
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants
+import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -190,6 +191,8 @@ class ContactBackupWorker(
         try {
             val existingFile = documentFolder.findFile(fileName)
             existingFile?.let { fileAccessRepository.deleteFileIfEmpty(it) }
+        } catch (e: CancellationException) {
+            throw e // do not catch coroutine-cancellations
         } catch (e: Exception) {
             logger.warning("Failed to potentially delete empty pre-existing backup file", e)
         }
@@ -267,6 +270,8 @@ class ContactBackupWorker(
                     file.delete()
                 }
                 logger.info("Deleted $toDelete old backups for $type")
+            } catch (e: CancellationException) {
+                throw e // do not catch coroutine-cancellations
             } catch (e: Exception) {
                 logger.warning("Failed to delete old backups for $type", e)
                 addErrorMessage(

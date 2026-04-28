@@ -37,6 +37,7 @@ import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExport
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import kotlinx.coroutines.CancellationException
 import java.io.File
 import java.util.UUID
 
@@ -256,6 +257,9 @@ class GoogleDriveBackupWorker(
             } finally {
                 tempFile.delete()
             }
+        } catch (e: CancellationException) {
+            logger.warning("Interrupted while uploading ${documentFile.name} to Google Drive")
+            throw e // do not catch coroutine-cancellations
         } catch (e: Exception) {
             logger.error("Failed to upload ${documentFile.name} to Google Drive", e)
             addErrorMessage(

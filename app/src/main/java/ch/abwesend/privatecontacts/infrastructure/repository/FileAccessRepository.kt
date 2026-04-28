@@ -27,6 +27,7 @@ import ch.abwesend.privatecontacts.domain.repository.FileReadResult
 import ch.abwesend.privatecontacts.domain.repository.FileWriteResult
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -109,8 +110,9 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
                     logger.debug("File written successfully with non-zero size")
                     SuccessResult(value = Unit)
                 }
+            } catch (e: CancellationException) {
+                throw e // do not catch coroutine-cancellations
             } catch (e: Exception) {
-                logger.warning("Failed to write to file", e)
                 deleteFileOnError(contentResolver, file)
                 ErrorResult(error = e)
             }
