@@ -57,7 +57,7 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
                 val driveRepository = authorizationResult.buildDriveRepository()
                 GoogleDriveAuthResult.Authorized(data = driveRepository)
             }
-        } catch(e: CancellationException) {
+        } catch (e: CancellationException) {
             logger.warning("Interrupted while requesting authorization.")
             throw e
         } catch (e: Exception) {
