@@ -13,6 +13,7 @@ enum class ContactChangeError(@StringRes val label: Int) {
     UNABLE_TO_DELETE_CONTACT(R.string.unable_to_delete_contact),
     UNABLE_TO_RESOLVE_CONTACT(R.string.unable_to_resolve_contact),
     UNABLE_TO_SAVE_CONTACT(R.string.unable_to_save_contact),
+    UNABLE_TO_SAVE_CONTACT_LOCAL_ACCOUNT_WITH_CLOUD_DEFAULT(R.string.unable_to_save_contact_local_account_with_cloud_default),
     UNABLE_TO_RESOLVE_EXISTING_CONTACT(R.string.unable_to_resolve_existing_contact),
 
     UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE(R.string.type_change_create_new_contact_error),

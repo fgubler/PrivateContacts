@@ -61,6 +61,7 @@
     <string name="validation_errors">Errores de validación</string>
     <string name="unable_to_delete_contact">No se pudo eliminar el contacto</string>
     <string name="unable_to_save_contact">No se pudo guardar el contacto</string>
+    <string name="unable_to_save_contact_local_account_with_cloud_default">No se pudo guardar el contacto: la configuración del sistema Android no permite guardar contactos localmente porque una cuenta en la nube (p. ej. Google) está configurada como destino predeterminado para nuevos contactos. Por favor, guarda este contacto en esa cuenta en la nube o cambia la cuenta predeterminada en la configuración del sistema Android.</string>
     <string name="unable_to_resolve_existing_contact">No se pudo resolver el contacto existente</string>
     <string name="unable_to_resolve_contact">No se pudo cargar el contacto</string>
     <string name="unable_to_create_contact_groups">Uno o varios grupos de contacto no se pudieron añadir</string>

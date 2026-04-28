@@ -60,6 +60,7 @@
     <string name="validation_errors">Validation errors</string>
     <string name="unable_to_delete_contact">The contact could not be deleted</string>
     <string name="unable_to_save_contact">The contact could not be saved</string>
+    <string name="unable_to_save_contact_local_account_with_cloud_default">The contact could not be saved: your Android system settings do not allow saving contacts locally because a cloud account (e.g. Google) is set as the default target for new contacts. Please either store this contact in that cloud account or change the default account in your Android system settings.</string>
     <string name="unable_to_resolve_existing_contact">The existing contact could not be resolved</string>
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
     <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
