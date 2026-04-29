@@ -216,6 +216,8 @@ class GoogleDriveBackupWorker(
                     driveRepository.deleteFile(file.id)
                 }
                 logger.info("Deleted $toDelete old Drive backups for $type")
+            } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.warning("Failed to delete old Drive backups for $type", e)
                 addErrorMessage(

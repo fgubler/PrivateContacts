@@ -20,6 +20,7 @@ import com.google.api.services.drive.Drive
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 import com.google.api.services.drive.model.File as DriveFile
 
 class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
@@ -105,6 +106,8 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
                 drive.files().delete(fileId).execute()
                 logger.info("Deleted file from Google Drive: $fileId")
                 true
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.warning("Failed to delete file from Google Drive: $fileId", e)
                 false

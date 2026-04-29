@@ -34,6 +34,7 @@ import ezvcard.property.Nickname
 import ezvcard.property.Note
 import ezvcard.property.StructuredName
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 
 class ContactToVCardMapper {
     private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
@@ -78,6 +79,8 @@ class ContactToVCardMapper {
 
             vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
             SuccessResult(vCard)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.warning("Failed to map contact '${contact.id}'", e)
             ErrorResult(contact)

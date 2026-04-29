@@ -141,6 +141,8 @@ class FileAccessRepository(private val context: Context) : IFileAccessRepository
         try {
             logger.debug("Deleting file after write error")
             DocumentsContract.deleteDocument(contentResolver, file)
+        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.warning("Failed to delete file after write error", e)
         }

@@ -31,6 +31,7 @@ import ch.abwesend.privatecontacts.domain.repository.IContactRepository
 import ch.abwesend.privatecontacts.domain.util.getAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import java.time.LocalDate
+import kotlin.coroutines.cancellation.CancellationException
 
 class DatabaseInitializer {
     suspend fun initializeDatabase(contactDao: ContactDao): Boolean = try {
@@ -47,6 +48,8 @@ class DatabaseInitializer {
         }
 
         true
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         logger.error("Failed to initialize database", e)
         false

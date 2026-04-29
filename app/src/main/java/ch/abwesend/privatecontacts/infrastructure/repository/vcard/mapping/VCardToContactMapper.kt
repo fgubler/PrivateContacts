@@ -33,6 +33,7 @@ import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.conta
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyMappingService
 import ezvcard.VCard
 import ezvcard.property.Related
+import kotlin.coroutines.cancellation.CancellationException
 
 class VCardToContactMapper {
     private val addressMapper: ToPhysicalAddressMapper by injectAnywhere()
@@ -73,6 +74,8 @@ class VCardToContactMapper {
             // TODO figure out how to handle the name of companies/organizations
 
             SuccessResult(contact)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.warning("Failed to map contact '${vCard.uid}'", e)
             ErrorResult(Unit)

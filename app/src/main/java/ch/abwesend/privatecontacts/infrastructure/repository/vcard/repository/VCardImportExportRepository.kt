@@ -55,6 +55,8 @@ class VCardImportExportRepository : IVCardImportExportRepository {
     override suspend fun parseContacts(fileContent: TextFileContent, targetType: ContactType): ContactParseResult {
         val vCards = try {
             repository.importVCards(fileContent)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
             return ErrorResult(VCF_PARSING_FAILED)

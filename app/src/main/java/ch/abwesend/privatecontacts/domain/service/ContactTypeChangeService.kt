@@ -35,6 +35,7 @@ import ch.abwesend.privatecontacts.domain.model.result.errorsOrEmpty
 import ch.abwesend.privatecontacts.domain.model.result.validationErrorsOrEmpty
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 class ContactTypeChangeService {
     private val loadService: ContactLoadService by injectAnywhere()
@@ -104,6 +105,8 @@ class ContactTypeChangeService {
         return try {
             val contactEditable = contact.asEditable()
             changeContactContent(contactEditable, strategy)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to change contact type for ${contact.id}", e)
             Failure(UNKNOWN_ERROR)

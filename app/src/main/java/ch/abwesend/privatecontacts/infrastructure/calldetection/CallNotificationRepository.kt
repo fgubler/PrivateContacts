@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -49,6 +50,8 @@ class CallNotificationRepository {
                     context.notificationManager.cancelAll()
                     potentiallyActiveNotifications = mutableSetOf()
                 }
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.warning("Failed to cancel notifications", e)
             }
