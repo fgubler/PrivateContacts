@@ -26,6 +26,14 @@ import org.koin.core.logger.Level
 class PrivateContactsApplication : Application(), KoinComponent {
     private val backupScheduler: IBackupScheduler by injectAnywhere()
 
+    private fun createLogger(logToCrashlytics: Boolean): LogcatLogger {
+        return LogcatLogger(
+            loggingTag = "PrivateContacts",
+            prefix = "PrivateContactsApplication",
+            logToCrashlytics = { logToCrashlytics },
+        )
+    }
+
     override fun onCreate() {
         super.onCreate()
         initializeKoin()
@@ -43,7 +51,7 @@ class PrivateContactsApplication : Application(), KoinComponent {
                 // TODO for some reason, it crashes with a lower one: see https://github.com/InsertKoinIO/koin/issues/1188
                 androidLogger(Level.ERROR) // use android logger for koin-internal logging
             } catch (e: Exception) {
-                LogcatLogger("PrivateContactsApplication", { true })
+                createLogger(logToCrashlytics = true)
                     .error("Failed to register android logger on koin", e)
             }
             androidContext(context)
@@ -57,11 +65,11 @@ class PrivateContactsApplication : Application(), KoinComponent {
                 val settings = Settings.nextOrDefault()
                 val enableCrashlytics = settings.sendErrorsToCrashlytics
                 RemoteLoggingHelper().enableCrashlytics(settings.sendErrorsToCrashlytics)
-                LogcatLogger("PrivateContactsApplication", { false })
+                createLogger(logToCrashlytics = false)
                     .info("Crashlytics ${if (enableCrashlytics) "enabled" else "disabled"}")
             }
         } catch (e: Exception) {
-            LogcatLogger("PrivateContactsApplication", { false })
+            createLogger(logToCrashlytics = false)
                 .error("Failed to initialize Crashlytics", e)
         }
     }
