@@ -35,7 +35,7 @@ class WorkerErrorHandler {
             logger.warning("$workDescription cancelled in attempt $retryCounter: re-trying")
             ListenableWorker.Result.retry()
         } else {
-            logger.error("$workDescription failed due to cancellation in attempt $retryCounter", e)
+            logger.warning("$workDescription failed due to cancellation in attempt $retryCounter")
             retryCounter = 0
             ListenableWorker.Result.failure()
         }
