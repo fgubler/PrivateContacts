@@ -119,7 +119,7 @@ class ContactTypeChangeService {
     ): ContactSaveResult {
         val oldContact = contact.toContactBase()
         // the ID of the correct type will be set automatically, while saving
-        val newContact = contact.deepCopy(isContactNew = true)
+        val newContact = contact.deepCopy(isContactNew = true, replaceId = true)
 
         newContact.type = strategy.correspondingContactType
         newContact.updateModelStatus()
