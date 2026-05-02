@@ -10,7 +10,7 @@ import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R
 import java.util.Locale
 
-enum class AppLanguage(@StringRes val labelRes: Int, val locale: Locale?) {
+enum class AppLanguage(@param:StringRes val labelRes: Int, val locale: Locale?) {
     SYSTEM_DEFAULT(R.string.system_default, null),
     ENGLISH(R.string.language_english, Locale.ENGLISH),
     GERMAN(R.string.language_german, Locale.GERMAN),

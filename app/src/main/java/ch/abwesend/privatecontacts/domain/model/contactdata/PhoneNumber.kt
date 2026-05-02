@@ -54,8 +54,8 @@ data class PhoneNumber(
 
     companion object {
         val icon = Icons.Default.Phone
-        const val labelSingular = R.string.phone_number
-        const val labelPlural = R.string.phone_numbers
+        val labelSingular = R.string.phone_number
+        val labelPlural = R.string.phone_numbers
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Mobile,

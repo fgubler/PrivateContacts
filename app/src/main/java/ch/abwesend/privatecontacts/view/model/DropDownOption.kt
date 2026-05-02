@@ -30,7 +30,7 @@ data class StringDropDownOption<T>(private val label: String, override val value
     override fun getLabel() = label
 }
 
-data class ResDropDownOption<T>(@StringRes private val labelRes: Int, override val value: T) : DropDownOption<T> {
+data class ResDropDownOption<T>(@param:StringRes private val labelRes: Int, override val value: T) : DropDownOption<T> {
     @Composable
     override fun getLabel() = stringResource(id = labelRes)
 }

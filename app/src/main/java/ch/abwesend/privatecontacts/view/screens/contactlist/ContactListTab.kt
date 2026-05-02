@@ -15,7 +15,7 @@ import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 
 enum class ContactListTab(
     val index: Int, // ascending
-    @StringRes val label: Int,
+    @param:StringRes val label: Int,
     val icon: ImageVector,
     val showContactTypeIcons: Boolean,
     val requiresPermission: Boolean,

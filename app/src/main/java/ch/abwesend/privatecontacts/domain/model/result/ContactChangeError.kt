@@ -9,7 +9,7 @@ package ch.abwesend.privatecontacts.domain.model.result
 import androidx.annotation.StringRes
 import ch.abwesend.privatecontacts.R
 
-enum class ContactChangeError(@StringRes val label: Int) {
+enum class ContactChangeError(@param:StringRes val label: Int) {
     UNABLE_TO_DELETE_CONTACT(R.string.unable_to_delete_contact),
     UNABLE_TO_RESOLVE_CONTACT(R.string.unable_to_resolve_contact),
     UNABLE_TO_SAVE_CONTACT(R.string.unable_to_save_contact),
