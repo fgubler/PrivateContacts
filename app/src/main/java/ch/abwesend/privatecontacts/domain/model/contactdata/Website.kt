@@ -50,8 +50,8 @@ data class Website(
 
     companion object {
         val icon = Icons.Default.Language
-        const val labelPlural = R.string.websites
-        const val labelSingular = R.string.website
+        val labelPlural = R.string.websites
+        val labelSingular = R.string.website
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Personal,

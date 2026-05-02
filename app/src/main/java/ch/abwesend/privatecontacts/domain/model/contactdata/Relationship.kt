@@ -61,8 +61,8 @@ data class Relationship(
 
     companion object {
         val icon = Icons.Default.Group
-        const val labelSingular = R.string.relationship
-        const val labelPlural = R.string.relationships
+        val labelSingular = R.string.relationship
+        val labelPlural = R.string.relationships
 
         private val defaultAllowedTypes = listOf(
             RelationshipFather,

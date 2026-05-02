@@ -50,8 +50,8 @@ data class PhysicalAddress(
 
     companion object {
         val icon = Icons.Default.Home
-        const val labelPlural = R.string.physical_addresses
-        const val labelSingular = R.string.physical_address
+        val labelPlural = R.string.physical_addresses
+        val labelSingular = R.string.physical_address
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Personal,

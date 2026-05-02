@@ -82,8 +82,8 @@ data class EventDate(
 
     companion object {
         val icon = Icons.Default.EditCalendar
-        const val labelSingular = R.string.event
-        const val labelPlural = R.string.events
+        val labelSingular = R.string.event
+        val labelPlural = R.string.events
 
         private val serializationDateFormatter: DateTimeFormatter by lazy {
             DateTimeFormatter.ISO_LOCAL_DATE
