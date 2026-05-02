@@ -61,6 +61,7 @@
     <string name="validation_errors">Validierungsfehler</string>
     <string name="unable_to_delete_contact">Kontakt konnte nicht gelöscht werden</string>
     <string name="unable_to_save_contact">Kontakt konnte nicht gespeichert werden</string>
+    <string name="unable_to_save_contact_local_account_with_cloud_default">Der Kontakt konnte nicht gespeichert werden: die Android-Systemeinstellungen erlauben es nicht, Kontakte lokal zu speichern, da ein Cloud-Konto (z.B. Google) als Standard für neue Kontakte festgelegt ist. Bitte speichere diesen Kontakt in diesem Cloud-Konto oder ändere das Standard-Konto in den Android-Systemeinstellungen.</string>
     <string name="unable_to_resolve_existing_contact">Der vorhandene Kontakt konnte nicht aufgelöst werden</string>
     <string name="unable_to_resolve_contact">Kontakt konnte nicht geladen werden</string>
     <string name="unable_to_create_contact_groups">Eine oder mehrere Kontaktgruppen konnten nicht hinzugefügt werden.</string>

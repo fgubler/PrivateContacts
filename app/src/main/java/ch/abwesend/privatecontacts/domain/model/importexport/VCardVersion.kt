@@ -10,7 +10,7 @@ import ch.abwesend.privatecontacts.R
  *  - anniversaries
  * Beware: [V4] is not supported by the Google Contacts app (it seems).
  */
-enum class VCardVersion(@StringRes val label: Int) {
+enum class VCardVersion(@param:StringRes val label: Int) {
     V3(R.string.vcard_v3_label),
     V4(R.string.vcard_v4_label);
 

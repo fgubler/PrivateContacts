@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlin.coroutines.cancellation.CancellationException
 
 typealias ResourceFlow<T> = Flow<AsyncResource<T>>
 typealias ResourceFlowCollector<T> = FlowCollector<AsyncResource<T>>
@@ -39,6 +40,8 @@ suspend fun <T> MutableResourceStateFlow<T>.withLoadingState(loader: suspend () 
             val result = loader()
             emitReady(result)
             result
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             emitError(e)
             logger.error("Failed to load data", e)
@@ -63,6 +66,8 @@ fun <T> Flow<T>.toResourceFlow(): ResourceFlow<T> = flow {
             }
 
         emitAll(innerFlow)
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         emitError(e)
         logger.error("Failed to transform Flow to ResourceFlow", e)

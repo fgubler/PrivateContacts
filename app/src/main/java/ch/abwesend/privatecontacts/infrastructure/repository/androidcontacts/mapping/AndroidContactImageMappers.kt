@@ -5,10 +5,13 @@ import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import com.alexstyl.contactstore.Contact
 import com.alexstyl.contactstore.thumbnailUri
+import kotlin.coroutines.cancellation.CancellationException
 
 fun Contact.getImage(): ContactImage {
     val thumbnailUriString = try {
         thumbnailUri.toString()
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         logger.warning("Failed to get thumbnailUri for contact $contactId")
         null

@@ -10,7 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contactdata.EmailAddress
@@ -31,7 +30,7 @@ fun Intent.tryStartActivity(context: Context) {
     logger.debug("Trying to start intent to '$data'")
 
     try {
-        ContextCompat.startActivity(context, this, null)
+        context.startActivity(this)
     } catch (t: Throwable) {
         logger.warning("No app found for schema '${data?.scheme}'", t)
         Toast

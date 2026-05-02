@@ -50,8 +50,8 @@ data class EmailAddress(
 
     companion object {
         val icon = Icons.Default.Email
-        const val labelPlural = R.string.email_addresses
-        const val labelSingular = R.string.email_address
+        val labelPlural = R.string.email_addresses
+        val labelSingular = R.string.email_address
 
         private val defaultAllowedTypes = listOf(
             ContactDataType.Personal,

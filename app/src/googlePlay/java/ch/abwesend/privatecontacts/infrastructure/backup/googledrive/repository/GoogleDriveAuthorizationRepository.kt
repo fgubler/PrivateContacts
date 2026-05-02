@@ -29,6 +29,7 @@ import com.google.api.client.http.javanet.NetHttpTransport
 import com.google.api.client.json.gson.GsonFactory
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
 
 class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogleDriveAuthorizationRepository {
@@ -56,6 +57,9 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
                 val driveRepository = authorizationResult.buildDriveRepository()
                 GoogleDriveAuthResult.Authorized(data = driveRepository)
             }
+        } catch (e: CancellationException) {
+            logger.warning("Interrupted while requesting authorization.")
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to request authorization", e)
             GoogleDriveAuthResult.Error

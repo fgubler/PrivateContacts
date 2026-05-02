@@ -61,6 +61,7 @@
     <string name="validation_errors">Erreurs de validation</string>
     <string name="unable_to_delete_contact">Le contact n\'a pas pu être supprimé</string>
     <string name="unable_to_save_contact">Le contact n\'a pas pu être enregistré</string>
+    <string name="unable_to_save_contact_local_account_with_cloud_default">Le contact n\'a pas pu être enregistré : les paramètres système Android n\'autorisent pas l\'enregistrement local des contacts car un compte cloud (ex. Google) est défini comme cible par défaut pour les nouveaux contacts. Veuillez soit enregistrer ce contact dans ce compte cloud, soit modifier le compte par défaut dans les paramètres système Android.</string>
     <string name="unable_to_resolve_existing_contact">Le contact existant n\'a pas pu être résolu</string>
     <string name="unable_to_resolve_contact">Le contact n\'a pas pu être chargé</string>
     <string name="unable_to_create_contact_groups">Un ou plusieurs groupes de contacts n\'ont pas pu être ajoutés.</string>

@@ -17,8 +17,10 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
-import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.GoogleDriveBackupWorker
+import ch.abwesend.privatecontacts.infrastructure.backup.worker.ContactBackupWorker
+import ch.abwesend.privatecontacts.infrastructure.backup.worker.GoogleDriveBackupWorker
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.cancellation.CancellationException
 
 class BackupScheduler(private val context: Context) : IBackupScheduler {
     private companion object {
@@ -56,6 +58,8 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
             )
 
             logger.info("Periodic backup work scheduled")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to schedule periodic backup", e)
         }
@@ -80,6 +84,8 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
                 .enqueue()
 
             logger.info("One-time backup work triggered (local + drive) with 10s delay")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to trigger one-time backup", e)
         }
@@ -102,6 +108,8 @@ class BackupScheduler(private val context: Context) : IBackupScheduler {
             )
 
             logger.info("Periodic Drive backup work scheduled")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to schedule periodic Drive backup", e)
         }

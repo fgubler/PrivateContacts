@@ -19,7 +19,7 @@ interface IIconButtonConfig<T> {
 }
 
 data class IconButtonConfigGeneric<T>(
-    @StringRes override val label: Int,
+    @param:StringRes override val label: Int,
     override val icon: ImageVector,
     override val onClick: (T) -> Unit,
 ) : IIconButtonConfig<T>

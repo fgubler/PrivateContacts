@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.screens.settings
 
+import android.content.ClipData
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
@@ -19,11 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogCache
@@ -152,13 +152,16 @@ private fun DatabaseResetStateDialog(state: DatabaseResetState, changeState: (Da
 
 @Composable
 private fun CopyLogToClipBoardEntry(onCloseMenu: () -> Unit) {
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     DropdownMenuItem(
         onClick = {
             val logs = LogCache.getLog()
-            clipboardManager.setText(AnnotatedString(logs))
+            coroutineScope.launch {
+                clipboard.setClipEntry(ClipData.newPlainText(logs, logs).toClipEntry())
+            }
             Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
             onCloseMenu()
         },

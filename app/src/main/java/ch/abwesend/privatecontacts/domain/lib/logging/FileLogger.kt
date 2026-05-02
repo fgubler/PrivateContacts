@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.coroutines.cancellation.CancellationException
 
 private const val LOG_DIRECTORY = "logs"
 
@@ -100,6 +101,8 @@ class FileLogger(
                     if (logDir.exists() && logDir.isDirectory) {
                         cleanLogFilesDirectory(logDir)
                     }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     logcatLogger.warning("Failed to clean old log files", e)
                 }
@@ -118,6 +121,8 @@ class FileLogger(
                     if (file.isFile && file.lastModified() < thirtyDaysAgo.time) {
                         file.delete()
                     }
+                } catch (e: CancellationException) {
+                    throw e
                 } catch (e: Exception) {
                     logcatLogger.warning("Failed to delete log file '${file.name}'", e)
                 }

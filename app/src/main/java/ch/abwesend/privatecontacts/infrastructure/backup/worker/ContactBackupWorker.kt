@@ -4,9 +4,9 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.worker
 
-import android.Manifest.permission.READ_CONTACTS
+import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.StringRes
@@ -35,10 +35,11 @@ import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
-import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_FILE_EXTENSION
-import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants.VCF_MAIN_MIME_TYPE
+import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotificationRepository
+import ch.abwesend.privatecontacts.infrastructure.backup.util.WorkerErrorHandler
+import ch.abwesend.privatecontacts.infrastructure.backup.util.backupFilenamePrefix
+import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportConstants
+import kotlinx.coroutines.CancellationException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -172,8 +173,8 @@ class ContactBackupWorker(
             return false
         }
 
-        val extension = if (encryptionPassword == null) VCF_FILE_EXTENSION else CRYPT_FILE_EXTENSION
-        val fileNamePrefix = getFilenamePrefix(type)
+        val extension = if (encryptionPassword == null) ImportExportConstants.VCF_FILE_EXTENSION else ImportExportConstants.CRYPT_FILE_EXTENSION
+        val fileNamePrefix = type.backupFilenamePrefix
         val fileName = "$fileNamePrefix$dateString.$extension"
         cleanupExistingFile(documentFolder, fileName)
 
@@ -190,13 +191,15 @@ class ContactBackupWorker(
         try {
             val existingFile = documentFolder.findFile(fileName)
             existingFile?.let { fileAccessRepository.deleteFileIfEmpty(it) }
+        } catch (e: CancellationException) {
+            throw e // do not catch coroutine-cancellations
         } catch (e: Exception) {
             logger.warning("Failed to potentially delete empty pre-existing backup file", e)
         }
     }
 
     private fun hasAndroidContactsPermission(): Boolean {
-        val response = ContextCompat.checkSelfPermission(applicationContext, READ_CONTACTS)
+        val response = ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.READ_CONTACTS)
         return response == PackageManager.PERMISSION_GRANTED
     }
 
@@ -207,7 +210,7 @@ class ContactBackupWorker(
         vCardVersion: VCardVersion,
         encryptionPassword: String?,
     ): Boolean {
-        val mimeType = if (encryptionPassword == null) VCF_MAIN_MIME_TYPE else CRYPT_PRETENDING_MIME_TYPE
+        val mimeType = if (encryptionPassword == null) ImportExportConstants.VCF_MAIN_MIME_TYPE else ImportExportConstants.CRYPT_PRETENDING_MIME_TYPE
         val file = folder.createFile(mimeType, fileName)
         if (file == null) {
             logger.warning("Failed to create backup file: $fileName")
@@ -243,7 +246,7 @@ class ContactBackupWorker(
     private suspend fun cleanupOldBackups(numberOfBackupsToKeep: NumberOfBackupsToKeep, documentFolder: DocumentFile) {
         ContactType.entries.forEach { type ->
             try {
-                val prefix = getFilenamePrefix(type)
+                val prefix = type.backupFilenamePrefix
                 val backupFiles = documentFolder.listFiles()
                     .filterNotNull()
                     .filter { it.name?.startsWith(prefix) == true }
@@ -267,6 +270,8 @@ class ContactBackupWorker(
                     file.delete()
                 }
                 logger.info("Deleted $toDelete old backups for $type")
+            } catch (e: CancellationException) {
+                throw e // do not catch coroutine-cancellations
             } catch (e: Exception) {
                 logger.warning("Failed to delete old backups for $type", e)
                 addErrorMessage(
@@ -286,11 +291,6 @@ class ContactBackupWorker(
             BackupFrequency.WEEKLY -> ChronoUnit.DAYS.between(lastBackupDate, today) >= 7
             BackupFrequency.MONTHLY -> ChronoUnit.MONTHS.between(lastBackupDate, today) >= 1
         }
-    }
-
-    private fun getFilenamePrefix(type: ContactType): String = when (type) {
-        ContactType.SECRET -> "backup_secret_"
-        ContactType.PUBLIC -> "backup_public_"
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {

@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -17,6 +17,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupMessage
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import kotlin.coroutines.cancellation.CancellationException
 
 private val Context.backupMessageDataStore: DataStore<Preferences>
     by preferencesDataStore(name = "backup_messages")
@@ -49,6 +50,8 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
                 preferences[key] = json.encodeToString(listSerializer, updated)
             }
             logger.debug("Persisted backup message (${key.name}): $message")
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to persist backup message (${key.name})", e)
         }
@@ -65,6 +68,8 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
             }
             logger.debug("Read backup messages (${key.name}) before clearing them: ${messages.size}")
             messages.distinctBy { it.text + it.severity.name }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to read backup messages (${key.name})", e)
             emptyList()
@@ -76,6 +81,8 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
             context.backupMessageDataStore.edit { preferences ->
                 preferences.remove(key)
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.warning("Failed to clear backup messages (${key.name})", e)
         }
@@ -86,6 +93,8 @@ class BackupMessageRepository(private val context: Context) : IBackupMessageRepo
         else {
             try {
                 json.decodeFromString(listSerializer, raw)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.error("Failed to parse backup messages: $raw", e)
                 emptyList()

@@ -16,14 +16,14 @@ buildscript {
 
         kspVersion = '2.3.5'
         ktlintVersion = "11.3.1"
-        koinVersion = "4.1.1"
+        koinVersion = "4.2.1"
         roomVersion = "2.8.4"
         pagingVersion = "3.3.2"
         contactStoreVersion = "1.7.0"
 
         junitJupiterVersion = "6.0.3"
         junit5AndroidVersion = "2.0.1"
-        archUnitVersion = "1.4.1"
+        archUnitVersion = "1.4.2"
         mockkVersion = "1.13.4" // version 1.13.9 introduces strange bugs with IContactIdInternal
     }
     repositories {

@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
  * Config for a button which shows a text and maybe also an icon
  */
 data class ButtonConfig(
-    @StringRes val label: Int,
+    @param:StringRes val label: Int,
     val icon: ImageVector?,
     val onClick: () -> Unit,
 )

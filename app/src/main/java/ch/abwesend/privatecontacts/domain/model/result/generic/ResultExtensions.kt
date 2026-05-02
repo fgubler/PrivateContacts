@@ -6,9 +6,13 @@
 
 package ch.abwesend.privatecontacts.domain.model.result.generic
 
+import kotlinx.coroutines.CancellationException
+
 inline fun <T> runCatchingAsResult(block: () -> T): BinaryResult<T, Exception> {
     return try {
         SuccessResult(block())
+    } catch (e: CancellationException) {
+        throw e // do not catch coroutine-cancellations
     } catch (e: Exception) {
         ErrorResult(e)
     }
@@ -17,6 +21,8 @@ inline fun <T> runCatchingAsResult(block: () -> T): BinaryResult<T, Exception> {
 inline fun <T> runCatchingOnResult(block: () -> BinaryResult<T, Exception>): BinaryResult<T, Exception> {
     return try {
         block()
+    } catch (e: CancellationException) {
+        throw e // do not catch coroutine-cancellations
     } catch (e: Exception) {
         ErrorResult(e)
     }

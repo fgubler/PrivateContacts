@@ -12,6 +12,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT_LOCAL_ACCOUNT_WITH_CLOUD_DEFAULT
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactBatchChangeErrors
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
@@ -146,6 +147,9 @@ class AndroidContactSaveService : IAndroidContactSaveService {
 
             contactSaveRepository.createContact(mutableContact, account)
             contactGroupResult // save the rest of the contact if the contact-groups fail but at least notify the user
+        } catch (e: IllegalArgumentException) {
+            logger.warning("Failed to create contact ${contact.id}", e)
+            ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT_LOCAL_ACCOUNT_WITH_CLOUD_DEFAULT)
         } catch (e: Exception) {
             logger.error("Failed to create contact ${contact.id}", e)
             ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)

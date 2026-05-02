@@ -30,3 +30,7 @@
 #-keep interface ezvcard.** { *; }
 #-keepclassmembers class ezvcard.** { *; }
 -keepclassmembernames class ezvcard.** { *; }
+# Keep class and method names from google_address_lib for readable Crashlytics stack traces.
+# The module uses the java plugin (not com.android.library), so it has no consumerProguardFiles
+# and its symbols would otherwise be minified without a mapping entry.
+-keepnames class com.google.i18n.addressinput.** { *; }

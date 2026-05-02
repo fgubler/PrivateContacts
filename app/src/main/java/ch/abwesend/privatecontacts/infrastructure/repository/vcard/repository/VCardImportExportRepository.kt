@@ -24,6 +24,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.ContactToVCardMapper
 import ch.abwesend.privatecontacts.infrastructure.repository.vcard.mapping.VCardToContactMapper
 import ezvcard.VCard
+import kotlinx.coroutines.CancellationException
 
 class VCardImportExportRepository : IVCardImportExportRepository {
     private val repository: VCardRepository by injectAnywhere()
@@ -43,6 +44,8 @@ class VCardImportExportRepository : IVCardImportExportRepository {
                 val partialResult = ContactExportPartialData.CreatedVCards(fileContent, failedContacts)
                 SuccessResult(partialResult)
             }
+        } catch (e: CancellationException) {
+            throw e // do not catch coroutine-cancellations
         } catch (e: Exception) {
             logger.error("Failed to export vcf file", e)
             ErrorResult(VCardExportError.VCF_SERIALIZATION_FAILED)
@@ -52,6 +55,8 @@ class VCardImportExportRepository : IVCardImportExportRepository {
     override suspend fun parseContacts(fileContent: TextFileContent, targetType: ContactType): ContactParseResult {
         val vCards = try {
             repository.importVCards(fileContent)
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             logger.error("Failed to import vcf file", e)
             return ErrorResult(VCF_PARSING_FAILED)

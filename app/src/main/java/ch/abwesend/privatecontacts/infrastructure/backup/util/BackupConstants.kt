@@ -4,7 +4,7 @@
  * Florian Gubler
  */
 
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.util
 
 object BackupConstants {
     const val SECRET_BACKUP_PREFIX = "backup_secret_"

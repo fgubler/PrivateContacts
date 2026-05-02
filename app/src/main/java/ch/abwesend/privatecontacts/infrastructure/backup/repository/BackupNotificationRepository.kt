@@ -1,4 +1,4 @@
-package ch.abwesend.privatecontacts.infrastructure.backup
+package ch.abwesend.privatecontacts.infrastructure.backup.repository
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

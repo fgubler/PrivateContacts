@@ -33,6 +33,7 @@ import com.alexstyl.contactstore.ContactPredicate
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlin.coroutines.cancellation.CancellationException
 import kotlin.system.measureTimeMillis
 
 /**
@@ -68,6 +69,8 @@ class AndroidContactLoadService : IAndroidContactLoadService {
         return contactIds.mapAsyncChunked { contactId ->
             try {
                 resolveContact(contactId)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 logger.warning("Failed to resolve contact $contactId")
                 null

@@ -10,6 +10,6 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 
 data class IconConfig(
-    @StringRes val label: Int,
+    @param:StringRes val label: Int,
     val icon: ImageVector,
 )

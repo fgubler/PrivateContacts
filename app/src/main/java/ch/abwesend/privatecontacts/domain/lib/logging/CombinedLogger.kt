@@ -1,5 +1,5 @@
 /*
- * Swiss Drone Maps
+ * Private Contacts
  * Copyright (c) 2021
  * Florian Gubler & Raphael Gubler
  */

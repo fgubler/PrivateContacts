@@ -20,6 +20,6 @@ sealed interface ContactValidationResult {
     }
 }
 
-enum class ContactValidationError(@StringRes val label: Int) {
+enum class ContactValidationError(@param:StringRes val label: Int) {
     NAME_NOT_SET(R.string.contact_validation_error_name_empty)
 }

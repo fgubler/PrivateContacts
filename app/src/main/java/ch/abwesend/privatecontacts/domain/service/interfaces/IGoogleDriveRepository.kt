@@ -21,5 +21,7 @@ interface IGoogleDriveRepository {
     suspend fun hasFolderAccess(folderId: String, folderName: String): BinaryResult<Boolean, Exception>
 
     suspend fun findExistingFiles(folderId: String, fileName: String): List<GoogleDriveFile>
+    suspend fun listAllFiles(folderId: String): List<GoogleDriveFile>
+    suspend fun deleteFile(fileId: String): Boolean
     suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile?
 }
