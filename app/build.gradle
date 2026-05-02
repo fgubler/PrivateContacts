@@ -6,7 +6,6 @@
 
 plugins {
     id "com.android.application"
-    id "kotlin-android"
     id "de.mannodermaus.android-junit5"
     id "org.jlleitschuh.gradle.ktlint"
     id 'com.google.devtools.ksp' version "${kspVersion}"
@@ -88,10 +87,6 @@ android {
         targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
-    kotlinOptions {
-        jvmTarget = "17"
-//        useIR = true // gradle build fails with this option set to true...
-    }
     buildFeatures {
         compose true
         buildConfig true
@@ -105,6 +100,10 @@ android {
         }
     }
     namespace 'ch.abwesend.privatecontacts'
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {
