@@ -26,6 +26,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOW
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Success
+import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
@@ -66,6 +67,9 @@ class ContactTypeChangeServiceTest : TestBase() {
     @MockK
     private lateinit var contactGroupRepository: IContactGroupRepository
 
+    @MockK
+    private lateinit var androidContactSaveService: IAndroidContactSaveService
+
     private lateinit var underTest: ContactTypeChangeService
 
     override fun setup() {
@@ -73,6 +77,7 @@ class ContactTypeChangeServiceTest : TestBase() {
         underTest = ContactTypeChangeService()
 
         coJustRun { contactGroupRepository.createMissingContactGroups(any()) }
+        coEvery { androidContactSaveService.createMissingContactGroups(any(), any()) } returns Success
     }
 
     override fun setupKoinModule(module: Module) {
@@ -80,6 +85,7 @@ class ContactTypeChangeServiceTest : TestBase() {
         module.single { saveService }
         module.single { loadService }
         module.single { contactGroupRepository }
+        module.single { androidContactSaveService }
     }
 
     @Test
@@ -245,7 +251,7 @@ class ContactTypeChangeServiceTest : TestBase() {
             someExternalContactId(contactNo = 789), // error when deleting
             someExternalContactId(contactNo = 666), // throws an exception
         )
-        `should change the type of multiple contacts - shared implementation`(contactIds)
+        `should change the type of multiple contacts - shared implementation`(contactIds, SECRET)
     }
 
     @Test
@@ -257,24 +263,29 @@ class ContactTypeChangeServiceTest : TestBase() {
             someContactId(), // error when deleting
             someContactId(), // throws an exception
         )
-        `should change the type of multiple contacts - shared implementation`(contactIds)
+        `should change the type of multiple contacts - shared implementation`(contactIds, PUBLIC)
     }
 
     /** expectation: the list contains exactly five ids */
-    private fun `should change the type of multiple contacts - shared implementation`(contactIds: List<ContactId>) {
+    private fun `should change the type of multiple contacts - shared implementation`(
+        contactIds: List<ContactId>,
+        targetType: ContactType
+    ) {
         assertThat(contactIds)
             .withFailMessage("Invalid setup: need 5 IDs but got ${contactIds.size}")
             .hasSize(5)
-        val contacts = contactIds.map { someContactEditableByIdType(id = it) }
+        val contacts = contactIds.mapIndexed { index, id ->
+            someContactEditableByIdType(id = id, firstName = "contact-$index")
+        }
         val resolvedContacts = contacts
             .associateBy { it.id }
             .mapValues { (_, contact) -> contact.takeUnless { it.id == contactIds[1] } }
         coEvery { loadService.resolveContactsWithAccountInformation(any()) } returns resolvedContacts
         coEvery { saveService.saveContact(any()) } answers {
             val contact = firstArg<IContactEditable>()
-            when (contact.id) {
-                in listOf(contactIds[0], contactIds[3]) -> Success
-                contactIds[4] -> throw Exception("Some Test Exception")
+            when (contact.firstName) {
+                in listOf("contact-0", "contact-3") -> Success
+                "contact-4" -> throw Exception("Some Test Exception")
                 else -> Failure(UNKNOWN_ERROR)
             }
         }
@@ -284,7 +295,7 @@ class ContactTypeChangeServiceTest : TestBase() {
             else ContactDeleteResult.Failure(UNKNOWN_ERROR)
         }
 
-        val result = runBlocking { underTest.changeContactType(contacts, SECRET) }
+        val result = runBlocking { underTest.changeContactType(contacts, targetType) }
 
         assertThat(result.completelyFailed).isFalse
         assertThat(result.completelySuccessful).isFalse

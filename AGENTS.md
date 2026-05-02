@@ -28,3 +28,7 @@ The app can also display and edit "normal" contacts (called "public" in the code
 
 ## Folder Structure
 Follow the existing patterns in the project.
+
+## How to proceed
+- Always prefer using IDE API's rather thane terminal/cli commands
+- Always prefer proceeding in a way that does not require user permission
