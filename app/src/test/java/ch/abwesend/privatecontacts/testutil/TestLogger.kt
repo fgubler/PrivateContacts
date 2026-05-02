@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.testutil
 
+import android.content.Context
 import ch.abwesend.privatecontacts.domain.lib.logging.AbstractLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.IRemoteLoggingHelper
 
@@ -56,7 +57,7 @@ class TestRemoteLoggingHelper : IRemoteLoggingHelper {
         println("Test logging message to crashlytics: $message")
     }
 
-    override fun enableCrashlytics(enable: Boolean) {
+    override fun enableCrashlytics(context: Context, enable: Boolean) {
         println("Test enabling crashlytics: $enable")
     }
 }
