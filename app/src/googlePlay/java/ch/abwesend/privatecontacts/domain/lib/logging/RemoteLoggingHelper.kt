@@ -1,6 +1,8 @@
 package ch.abwesend.privatecontacts.domain.lib.logging
 
+import android.content.Context
 import ch.abwesend.privatecontacts.BuildConfig
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class RemoteLoggingHelper : IRemoteLoggingHelper {
@@ -16,7 +18,8 @@ class RemoteLoggingHelper : IRemoteLoggingHelper {
         }
     }
 
-    override fun enableCrashlytics(enable: Boolean) {
+    override fun enableCrashlytics(context: Context, enable: Boolean) {
         FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = enable
+        FirebaseAnalytics.getInstance(context).setAnalyticsCollectionEnabled(enable)
     }
 }
