@@ -34,12 +34,12 @@ ktlint {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
 
     defaultConfig {
-        applicationId "ch.abwesend.privatecontacts"
-        minSdk 24
-        targetSdk 36
+        applicationId = "ch.abwesend.privatecontacts"
+        minSdk = 24
+        targetSdk = 36
 
         /*
          * When incrementing the version, consider
@@ -116,10 +116,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${kotlinVersion}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 
     // Android Core
-    implementation "androidx.core:core-ktx:1.17.0"
+    implementation "androidx.core:core-ktx:1.18.0"
     implementation "androidx.appcompat:appcompat:1.7.1"
     implementation "com.google.android.material:material:1.13.0"
 
@@ -132,21 +132,21 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:${androidLifecycleVersion}"
 
     // Android Jetpack Compose
-    Dependency composeBom = platform('androidx.compose:compose-bom:2026.02.01')
+    Dependency composeBom = platform('androidx.compose:compose-bom:2026.04.01')
     implementation composeBom
     implementation "androidx.compose.ui:ui"
     implementation "androidx.compose.material:material"
     implementation "androidx.compose.material:material-icons-extended"
     implementation "androidx.compose.ui:ui-tooling-preview"
     implementation "androidx.compose.runtime:runtime"
-    implementation "androidx.activity:activity-compose:1.12.4"
-    implementation "androidx.navigation:navigation-compose:2.9.7"
+    implementation "androidx.activity:activity-compose:1.13.0"
+    implementation "androidx.navigation:navigation-compose:2.9.8"
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     debugImplementation "androidx.compose.ui:ui-tooling"
 
     // Firebase
-    googlePlayImplementation platform("com.google.firebase:firebase-bom:34.10.0")
+    googlePlayImplementation platform("com.google.firebase:firebase-bom:34.12.0")
     googlePlayImplementation 'com.google.firebase:firebase-crashlytics' // does not need a version because of firebase-bom
     googlePlayImplementation("com.google.firebase:firebase-analytics")
 
