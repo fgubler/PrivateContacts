@@ -63,6 +63,15 @@ class ContactEditViewModel : ViewModel() {
     fun saveContact(contact: IContactEditable) {
         viewModelScope.launch {
             val result = saveService.saveContact(contact)
+
+            when (result) {
+                is ContactSaveResult.Success -> {
+                    // make sure that it is not saved as "new" a second time
+                    selectedContact = contact.deepCopy(isContactNew = false).wrap()
+                }
+                is ContactSaveResult.Failure,
+                is ContactSaveResult.ValidationFailure -> Unit
+            }
             _saveResult.emit(result)
         }
     }
