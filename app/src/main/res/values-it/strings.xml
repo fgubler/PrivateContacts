@@ -63,6 +63,7 @@
     <string name="unable_to_save_contact">Impossibile salvare il contatto</string>
     <string name="unable_to_save_contact_local_account_with_cloud_default">Impossibile salvare il contatto: le impostazioni di sistema Android non consentono di salvare i contatti localmente perché un account cloud (es. Google) è impostato come destinazione predefinita per i nuovi contatti. Salva questo contatto in quell\'account cloud oppure modifica l\'account predefinito nelle impostazioni di sistema Android.</string>
     <string name="unable_to_resolve_existing_contact">Impossibile elaborare il contatto esistente</string>
+    <string name="contact_creation_id_collision">Esiste già un contatto con questo ID: probabilmente si tratta di un problema interno all\'app. Ci scusiamo per l\'inconveniente.</string>
     <string name="unable_to_resolve_contact">Impossibile caricare il contatto</string>
     <string name="unable_to_create_contact_groups">Impossibile aggiungere uno o più gruppi di contatti</string>
     <string name="not_yet_implemented_for_external_error">Questa funzione non è ancora disponibile per i contatti Android “normali”.</string>
