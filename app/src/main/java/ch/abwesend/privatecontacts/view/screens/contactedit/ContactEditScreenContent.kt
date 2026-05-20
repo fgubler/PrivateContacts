@@ -78,6 +78,7 @@ import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDo
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Companies
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EmailAddresses
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.EventDates
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhoneNumbers
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.PhysicalAddresses
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Relationships
@@ -162,6 +163,11 @@ object ContactEditScreenContent {
                 onChanged = onChanged
             )
             Relationships(
+                contact = contact,
+                waitForCustomType = waitForCustomContactDataType,
+                onChanged = onChanged
+            )
+            EventDates(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
                 onChanged = onChanged

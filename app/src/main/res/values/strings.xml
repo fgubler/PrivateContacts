@@ -142,6 +142,9 @@
     <string name="relationships">Relationships</string>
     <string name="event">Event</string>
     <string name="events">Events</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="year_optional">Year (optional)</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 

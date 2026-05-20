@@ -22,11 +22,11 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.format.FormatStyle
+import java.util.Locale
 
 /**
  * The year 0 is set if no year was entered
  */
-private const val DUMMY_YEAR_STRING = "0000"
 private const val DUMMY_YEAR_INT = 0
 
 data class EventDate(
@@ -47,8 +47,12 @@ data class EventDate(
     val isYearSet: Boolean = value != null && value.year != DUMMY_YEAR_INT
 
     override val displayValue: String by lazy {
-        value?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)).orEmpty()
-            .replace(oldValue = DUMMY_YEAR_STRING, newValue = "")
+        val date = value ?: return@lazy ""
+        if (isYearSet) {
+            date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+        } else {
+            date.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault()))
+        }
     }
 
     override fun overrideStatus(newStatus: ModelStatus): ContactData = copy(modelStatus = newStatus)

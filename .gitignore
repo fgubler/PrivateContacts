@@ -24,3 +24,7 @@
 # Local properties
 /local.properties
 local.properties
+
+# Claude Code
+.claude/
+CLAUDE.md
