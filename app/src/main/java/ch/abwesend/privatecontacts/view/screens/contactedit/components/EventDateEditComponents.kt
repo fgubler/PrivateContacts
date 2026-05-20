@@ -16,8 +16,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -86,6 +86,7 @@ object EventDateEditComponents {
         ContactCategory(
             categoryTitle = EventDate.labelPlural,
             icon = EventDate.icon,
+            initiallyExpanded = false,
         ) {
             Column {
                 dataEntriesToDisplay.forEachIndexed { index, eventDate ->

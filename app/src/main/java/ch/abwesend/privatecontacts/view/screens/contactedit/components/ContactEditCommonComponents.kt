@@ -40,7 +40,7 @@ object ContactEditCommonComponents {
         @StringRes categoryTitle: Int,
         icon: ImageVector,
         modifier: Modifier = Modifier,
-        initiallyExpanded: Boolean = false,
+        initiallyExpanded: Boolean = true,
         alignContentWithTitle: Boolean = true,
         content: @Composable () -> Unit
     ) {
