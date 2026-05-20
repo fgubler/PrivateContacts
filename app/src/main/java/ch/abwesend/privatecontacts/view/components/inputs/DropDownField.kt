@@ -38,6 +38,7 @@ fun <T> DropDownField(
     @StringRes labelRes: Int,
     selectedOption: DropDownOption<T>?,
     options: List<DropDownOption<T>>,
+    isError: Boolean = false,
     onValueChanged: (T) -> Unit,
 ) {
     DropDownComponent(
@@ -49,6 +50,7 @@ fun <T> DropDownField(
             value = selectedOption?.getLabel().orEmpty(),
             readOnly = true,
             onValueChange = { }, // read-only...
+            isError = isError,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDownExpanded)
             },

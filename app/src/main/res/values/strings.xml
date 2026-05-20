@@ -145,6 +145,7 @@
     <string name="month">Month</string>
     <string name="day">Day</string>
     <string name="year_optional">Year (optional)</string>
+    <string name="invalid_date">Invalid date</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 

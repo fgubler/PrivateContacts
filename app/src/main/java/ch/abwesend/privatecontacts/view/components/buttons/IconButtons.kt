@@ -20,8 +20,8 @@ import ch.abwesend.privatecontacts.view.components.SaveIcon
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 
 @Composable
-fun SaveIconButton(onClick: () -> Unit) {
-    IconButton(onClick = onClick) { SaveIcon() }
+fun SaveIconButton(enabled: Boolean = true, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) { SaveIcon() }
 }
 
 @Composable

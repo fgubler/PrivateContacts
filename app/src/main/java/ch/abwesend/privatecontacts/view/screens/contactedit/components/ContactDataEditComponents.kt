@@ -143,11 +143,13 @@ object ContactDataEditComponents {
         contact: IContactEditable,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
+        onValidationChanged: (Boolean) -> Unit = {},
     ) {
         EventDateCategory(
             contact = contact,
             waitForCustomType = waitForCustomType,
             onChanged = onChanged,
+            onValidationChanged = onValidationChanged,
         )
     }
 }

@@ -74,6 +74,7 @@ object ContactEditScreen {
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
+        var hasInvalidDate: Boolean by remember { mutableStateOf(false) }
 
         selectedContact?.let {
             LaunchedEffect(it.id) { viewModel.loadAllContactGroups(it.type) }
@@ -97,6 +98,7 @@ object ContactEditScreen {
                     ContactEditTopBar(
                         screenContext = screenContext,
                         contact = contact,
+                        saveEnabled = !hasInvalidDate,
                         showDiscardConfirmationDialog = { showDiscardConfirmationDialog = true },
                     )
                 }
@@ -106,11 +108,12 @@ object ContactEditScreen {
                     ContactEditContent(
                         viewModel = screenContext.contactEditViewModel,
                         contact = contact,
-                        modifier = Modifier.weight(1F)
+                        modifier = Modifier.weight(1F),
+                        onValidationChanged = { hasInvalidDate = it },
                     )
 
                     if (screenContext.settings.showExtraButtonsInEditScreen) {
-                        ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+                        ButtonFooter(screenContext, contact, saveEnabled = !hasInvalidDate) { showDiscardConfirmationDialog = true }
                     }
                 }
 
@@ -145,6 +148,7 @@ object ContactEditScreen {
     private fun ButtonFooter(
         screenContext: IContactEditScreenContext,
         contact: IContactEditable,
+        saveEnabled: Boolean = true,
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
     ) {
@@ -165,6 +169,7 @@ object ContactEditScreen {
             Spacer(modifier = Modifier.width(10.dp))
             Button(
                 onClick = { onSave(screenContext.contactEditViewModel, contact) },
+                enabled = saveEnabled,
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.save))
@@ -176,6 +181,7 @@ object ContactEditScreen {
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
         contact: IContactEditable,
+        saveEnabled: Boolean,
         showDiscardConfirmationDialog: () -> Unit,
     ) {
         @StringRes val title = if (contact.isNew) R.string.screen_contact_edit_create
@@ -187,7 +193,7 @@ object ContactEditScreen {
                 CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
             },
             actions = {
-                SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
+                SaveIconButton(enabled = saveEnabled) { onSave(screenContext.contactEditViewModel, contact) }
             }
         )
     }

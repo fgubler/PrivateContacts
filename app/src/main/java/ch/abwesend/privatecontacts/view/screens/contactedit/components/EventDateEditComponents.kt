@@ -16,13 +16,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataId
 import ch.abwesend.privatecontacts.domain.model.contactdata.EventDate
 import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.StringDropDownOption
@@ -60,6 +64,7 @@ object EventDateEditComponents {
         contact: IContactEditable,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (IContactEditable) -> Unit,
+        onValidationChanged: (Boolean) -> Unit = {},
     ) {
         val onEntryChanged: (EventDate) -> Unit = remember(contact) {
             { newEntry ->
@@ -70,6 +75,12 @@ object EventDateEditComponents {
 
         val dataEntriesToDisplay = remember(contact) {
             contact.contactDataForDisplay(factory = { EventDate.createEmpty(it) })
+        }
+
+        val validationByEntryId = remember { mutableStateMapOf<ContactDataId, Boolean>() }
+        val hasInvalidEntry = dataEntriesToDisplay.any { validationByEntryId[it.id] == true }
+        LaunchedEffect(hasInvalidEntry) {
+            onValidationChanged(hasInvalidEntry)
         }
 
         ContactCategory(
@@ -84,6 +95,7 @@ object EventDateEditComponents {
                         isLastElement = isLast,
                         waitForCustomType = waitForCustomType,
                         onChanged = onEntryChanged,
+                        onValidationChanged = { isInvalid -> validationByEntryId[eventDate.id] = isInvalid },
                     )
                     if (!isLast) {
                         Spacer(modifier = Modifier.height(10.dp))
@@ -99,6 +111,7 @@ object EventDateEditComponents {
         isLastElement: Boolean,
         waitForCustomType: (ContactData) -> Unit,
         onChanged: (EventDate) -> Unit,
+        onValidationChanged: (Boolean) -> Unit,
     ) {
         val initialDate = eventDate.value
 
@@ -124,12 +137,18 @@ object EventDateEditComponents {
             selectedMonth?.let { m -> monthOptions.find { it.value == m } }
         }
 
+        val isDateInvalid = dayText.toIntOrNull() != null && selectedMonth != null &&
+            EventDate.createDate(day = dayText.toIntOrNull(), month = selectedMonth, year = yearText.toIntOrNull()) == null
+        LaunchedEffect(isDateInvalid) {
+            onValidationChanged(isDateInvalid)
+        }
+
         fun updateDate(day: String = dayText, month: Int? = selectedMonth, year: String = yearText) {
-            onChanged(eventDate.changeValue(EventDate.createDate(
-                day = day.toIntOrNull(),
-                month = month,
-                year = year.toIntOrNull(),
-            )))
+            val dayNum = day.toIntOrNull()
+            val newDate = EventDate.createDate(day = dayNum, month = month, year = year.toIntOrNull())
+            if (dayNum == null || month == null || newDate != null) {
+                onChanged(eventDate.changeValue(newDate))
+            }
         }
 
         Column {
@@ -142,6 +161,7 @@ object EventDateEditComponents {
                             dayText = input.filter { it.isDigit() }.take(2)
                             updateDate(day = dayText)
                         },
+                        isError = isDateInvalid,
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
@@ -155,6 +175,7 @@ object EventDateEditComponents {
                             selectedMonth = newMonth
                             updateDate(month = newMonth)
                         },
+                        isError = isDateInvalid,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -164,10 +185,18 @@ object EventDateEditComponents {
                             yearText = input.filter { it.isDigit() }.take(4)
                             updateDate(year = yearText)
                         },
+                        isError = isDateInvalid,
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
                     )
+                    if (isDateInvalid) {
+                        Text(
+                            text = stringResource(R.string.invalid_date),
+                            color = MaterialTheme.colors.error,
+                            style = MaterialTheme.typography.caption,
+                        )
+                    }
                 }
 
                 Box(modifier = secondaryIconModifier) {

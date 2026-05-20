@@ -105,6 +105,7 @@ object ContactEditScreenContent {
         viewModel: ContactEditViewModel,
         contact: IContactEditable,
         modifier: Modifier = Modifier,
+        onValidationChanged: (Boolean) -> Unit = {},
     ) {
         val onChanged = { newContact: IContactEditable ->
             viewModel.changeContact(newContact)
@@ -170,7 +171,8 @@ object ContactEditScreenContent {
             EventDates(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
+                onValidationChanged = onValidationChanged,
             )
             Websites(
                 contact = contact,
