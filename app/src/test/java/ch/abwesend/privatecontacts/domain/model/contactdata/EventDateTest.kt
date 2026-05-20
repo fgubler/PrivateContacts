@@ -14,6 +14,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @ExperimentalCoroutinesApi
 @ExtendWith(MockKExtension::class)
@@ -65,5 +67,38 @@ class EventDateTest : TestBase() {
         val result = underTest.serializedValue()
 
         assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @Test
+    fun `displayValue with year set should contain the year`() {
+        val date = LocalDate.of(2022, 5, 15)
+        val underTest = someEventDate(value = date)
+
+        assertThat(underTest.isYearSet).isTrue()
+        assertThat(underTest.displayValue).contains("2022")
+    }
+
+    @Test
+    fun `displayValue without year set should show day and month but not the year`() {
+        val date = EventDate.createDate(day = 15, month = 3, year = null)!!
+        val underTest = someEventDate(value = date)
+        val expected = date.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault()))
+
+        assertThat(underTest.isYearSet).isFalse()
+        assertThat(underTest.displayValue).isEqualTo(expected)
+    }
+
+    @Test
+    fun `createDate should return null for an impossible date`() {
+        val result = EventDate.createDate(day = 31, month = 2, year = null)
+
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `createDate should return null for an out-of-range day`() {
+        val result = EventDate.createDate(day = 32, month = 1, year = null)
+
+        assertThat(result).isNull()
     }
 }
