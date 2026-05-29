@@ -142,6 +142,13 @@
     <string name="relationships">Liens</string>
     <string name="event">Événement</string>
     <string name="events">Événements</string>
+    <string name="month">Mois</string>
+    <string name="day">Jour</string>
+    <string name="year_optional">Année (facultatif)</string>
+    <string name="invalid_date">Date invalide</string>
+    <string name="add_event_date">Ajouter une date d\'événement</string>
+    <string name="edit_event_date">Modifier la date d\'événement</string>
+    <string name="no_year">Sans année</string>
     <string name="company">Entreprise</string>
     <string name="companies">Entreprises</string>
 

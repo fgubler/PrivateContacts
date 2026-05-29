@@ -142,6 +142,13 @@
     <string name="relationships">Beziehungen</string>
     <string name="event">Ereignis</string>
     <string name="events">Ereignisse</string>
+    <string name="month">Monat</string>
+    <string name="day">Tag</string>
+    <string name="year_optional">Jahr (optional)</string>
+    <string name="invalid_date">Ungültiges Datum</string>
+    <string name="add_event_date">Ereignisdatum hinzufügen</string>
+    <string name="edit_event_date">Ereignisdatum bearbeiten</string>
+    <string name="no_year">Kein Jahr</string>
     <string name="company">Firma</string>
     <string name="companies">Firmen</string>
 

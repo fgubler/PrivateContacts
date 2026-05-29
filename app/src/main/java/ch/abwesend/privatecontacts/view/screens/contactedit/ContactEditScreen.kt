@@ -109,7 +109,6 @@ object ContactEditScreen {
                         viewModel = screenContext.contactEditViewModel,
                         contact = contact,
                         modifier = Modifier.weight(1F),
-                        onValidationChanged = { hasInvalidDate = it },
                     )
 
                     if (screenContext.settings.showExtraButtonsInEditScreen) {

@@ -146,6 +146,9 @@
     <string name="day">Day</string>
     <string name="year_optional">Year (optional)</string>
     <string name="invalid_date">Invalid date</string>
+    <string name="add_event_date">Add event date</string>
+    <string name="edit_event_date">Edit event date</string>
+    <string name="no_year">No year</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 
