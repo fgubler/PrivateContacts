@@ -22,9 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
@@ -83,7 +82,6 @@ const val UTF_8 = "utf-8"
 const val IMAGE_MAX_SIZE_DP = 750
 
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 object ContactDetailScreenContent {
     @Composable

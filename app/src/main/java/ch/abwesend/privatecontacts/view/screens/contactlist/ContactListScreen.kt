@@ -10,18 +10,18 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.LeadingIconTab
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -65,7 +65,6 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRE
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @ExperimentalComposeUiApi
 @FlowPreview
@@ -75,7 +74,7 @@ object ContactListScreen {
 
     @Composable
     fun Screen(screenContext: IContactListScreenContext) {
-        val scaffoldState = rememberScaffoldState()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
         val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
         val permissionProvider = screenContext.permissionProvider
@@ -86,11 +85,11 @@ object ContactListScreen {
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
             allowFullNavigation = true,
-            scaffoldState = scaffoldState,
+            drawerState = drawerState,
             topBar = {
                 ContactListTopBar(
                     viewModel = viewModel,
-                    scaffoldState = scaffoldState,
+                    drawerState = drawerState,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
@@ -138,7 +137,7 @@ object ContactListScreen {
         if (androidContactsEnabled) {
             val selectedTab = viewModel.selectedTab.value
 
-            TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
+            TabRow(selectedTabIndex = selectedTab.index, containerColor = MaterialTheme.colorScheme.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
                     if (tab.isVisible(settings)) {
                         Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
@@ -157,7 +156,7 @@ object ContactListScreen {
     ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
-        LeadingIconTab(
+        Tab(
             selected = selectedTab == tab,
             text = { Text(text = stringResource(id = tab.label)) },
             icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
@@ -190,7 +189,6 @@ object ContactListScreen {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.create_contact),
-                tint = MaterialTheme.colors.onSecondary,
             )
         }
     }

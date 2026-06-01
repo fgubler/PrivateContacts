@@ -7,15 +7,15 @@
 package ch.abwesend.privatecontacts.view.components.inputs
 
 import androidx.annotation.StringRes
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuDefaults
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
-@ExperimentalMaterialApi
 @Composable
 fun <T> DropDownField(
     @StringRes labelRes: Int,
@@ -32,7 +32,6 @@ fun <T> DropDownField(
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun <T> DropDownField(
     @StringRes labelRes: Int,
@@ -44,17 +43,19 @@ fun <T> DropDownField(
     DropDownComponent(
         options = options,
         onValueChanged = onValueChanged
-    ) { dropDownExpanded, modifier ->
+    ) { _, _ ->
         OutlinedTextField(
             label = { Text(stringResource(id = labelRes)) },
             value = selectedOption?.getLabel().orEmpty(),
             readOnly = true,
-            onValueChange = { }, // read-only...
+            onValueChange = { },
             isError = isError,
             trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropDownExpanded)
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                )
             },
-            modifier = modifier,
         )
     }
 }

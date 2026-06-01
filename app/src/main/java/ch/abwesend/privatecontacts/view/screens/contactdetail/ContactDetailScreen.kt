@@ -14,12 +14,12 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
@@ -73,7 +73,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @ExperimentalComposeUiApi
 @FlowPreview
 @ExperimentalContracts
@@ -182,6 +181,7 @@ object ContactDetailScreen {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ContactDetailTopBar(
         screenContext: IContactDetailScreenContext,
@@ -230,18 +230,18 @@ object ContactDetailScreen {
         val hasWritePermission = remember { viewModel.hasContactWritePermission }
         DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
             DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.refresh)) },
                 onClick = {
                     viewModel.reloadContact(contact)
                     onCloseMenu()
                 },
-                content = { Text(stringResource(id = R.string.refresh)) },
             )
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ContactImageMenuItems(viewModel, contact, onCloseMenu)
             }
 
-            Divider()
+            HorizontalDivider()
             ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
@@ -252,7 +252,7 @@ object ContactDetailScreen {
                 )
             }
             DeleteMenuItem(viewModel, contact, onCloseMenu)
-            Divider()
+            HorizontalDivider()
             ExportMenuItem(viewModel, contact, onCloseMenu)
         }
     }
@@ -272,16 +272,16 @@ object ContactDetailScreen {
         val changeButtonTextRes = remember(contact) { if (hasFullImage) R.string.change_contact_image else R.string.add_contact_image }
 
         DropdownMenuItem(
+            text = { Text(stringResource(id = changeButtonTextRes)) },
             onClick = { launcher.launch(PickVisualMediaRequest(PickVisualMedia.ImageOnly)) },
-            content = { Text(stringResource(id = changeButtonTextRes)) },
         )
 
         if (hasFullImage) {
             var showConfirmationDialog: Boolean by remember { mutableStateOf(false) }
 
             DropdownMenuItem(
+                text = { Text(stringResource(id = R.string.remove_contact_image)) },
                 onClick = { showConfirmationDialog = true },
-                content = { Text(stringResource(id = R.string.remove_contact_image)) },
             )
 
             if (showConfirmationDialog) {

@@ -17,12 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -63,7 +63,6 @@ import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalComposeUiApi
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactEditScreen {
     @Composable
@@ -172,6 +171,7 @@ object ContactEditScreen {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
@@ -286,7 +286,7 @@ object ContactEditScreen {
         onChangeToNewContact: () -> Unit,
     ) {
         Spacer(modifier = Modifier.height(10.dp))
-        Divider()
+        HorizontalDivider()
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(id = R.string.saving_data_error_change_to_new_contact))
         Spacer(modifier = Modifier.height(10.dp))

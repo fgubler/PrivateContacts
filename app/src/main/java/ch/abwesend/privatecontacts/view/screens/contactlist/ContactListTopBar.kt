@@ -10,16 +10,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,19 +56,19 @@ import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import kotlinx.coroutines.FlowPreview
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterial3Api::class)
 @FlowPreview
 @ExperimentalComposeUiApi
 @Composable
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
-    scaffoldState: ScaffoldState,
+    drawerState: DrawerState,
 ) {
     val screenStateState = viewModel.screenState
 
     when (val screenState = screenStateState.value) {
         is Normal -> NormalTopBar(
-            scaffoldState = scaffoldState,
+            drawerState = drawerState,
             reloadContacts = { viewModel.reloadContacts() },
             showSearch = { viewModel.showSearch() }
         )
@@ -85,9 +85,10 @@ fun ContactListTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NormalTopBar(
-    scaffoldState: ScaffoldState,
+    drawerState: DrawerState,
     reloadContacts: () -> Unit,
     showSearch: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,7 +96,7 @@ private fun NormalTopBar(
     val coroutineScope = rememberCoroutineScope()
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
-        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
+        navigationIcon = { MenuButton(drawerState = drawerState, coroutineScope = coroutineScope) },
         modifier = modifier,
         actions = {
             RefreshIconButton { reloadContacts() }
@@ -104,6 +105,7 @@ private fun NormalTopBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @Composable
 private fun SearchTopBar(
@@ -112,9 +114,8 @@ private fun SearchTopBar(
     changeSearchText: (String) -> Unit,
     resetSearch: () -> Unit
 ) {
-    val backgroundColor = MaterialTheme.colors.background
+    val backgroundColor = MaterialTheme.colorScheme.background
     TopAppBar(
-        backgroundColor = backgroundColor,
         title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
         modifier = modifier,
@@ -122,7 +123,7 @@ private fun SearchTopBar(
     BackHandler { resetSearch() }
 }
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
@@ -150,7 +151,6 @@ private fun BulkModeTopBar(
     BackHandler { disableBulkMode() }
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun BulkModeActionsMenu(
     viewModel: ContactListViewModel,
@@ -160,14 +160,16 @@ fun BulkModeActionsMenu(
 ) {
     val hasWritePermission = remember { viewModel.hasContactWritePermission }
     DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-        DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
-            Text(stringResource(id = R.string.select_all))
-        }
-        DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
-            Text(stringResource(id = R.string.deselect_all))
-        }
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.select_all)) },
+            onClick = { viewModel.selectAllContacts() }
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.deselect_all)) },
+            onClick = { viewModel.deselectAllContacts() }
+        )
         if (selectedContacts.isNotEmpty()) {
-            Divider()
+            HorizontalDivider()
             ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
@@ -178,13 +180,12 @@ fun BulkModeActionsMenu(
                 )
             }
             DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
-            Divider()
+            HorizontalDivider()
             ExportMenuItem(viewModel, selectedContacts, onCloseMenu)
         }
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 private fun ChangeContactTypeMenuItem(
     viewModel: ContactListViewModel,
@@ -227,7 +228,6 @@ private fun DeleteMenuItem(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 private fun ExportMenuItem(
     viewModel: ContactListViewModel,
@@ -244,6 +244,7 @@ private fun ExportMenuItem(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @Composable
 private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
@@ -254,7 +255,12 @@ private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (
         value = query,
         onValueChange = onQueryChanged,
         maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = backgroundColor),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = backgroundColor,
+            unfocusedContainerColor = backgroundColor,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+        ),
         modifier = Modifier.focusRequester(focusRequester),
         placeholder = { Text(text = stringResource(id = R.string.search)) },
         leadingIcon = { SearchIcon() },

@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.view.routing
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
@@ -34,7 +34,6 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalFoundationApi
 @FlowPreview
 @ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @ExperimentalContracts
 @Composable
 fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {

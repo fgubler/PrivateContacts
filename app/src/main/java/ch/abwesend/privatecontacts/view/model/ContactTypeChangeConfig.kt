@@ -9,8 +9,7 @@ package ch.abwesend.privatecontacts.view.model
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +40,6 @@ sealed interface ContactTypeChangeMenuConfig {
         changeSaveButtonState: (enabled: Boolean) -> Unit,
     ) {}
 
-    @ExperimentalMaterialApi
     companion object {
         fun fromTargetType(targetType: ContactType): ContactTypeChangeMenuConfig =
             when (targetType) {
@@ -65,7 +63,6 @@ object ContactTypeChangeToSecretMenuConfig : ContactTypeChangeMenuConfig {
     @StringRes override val confirmationDialogTextRes: Int = R.string.make_contact_secret_text
 }
 
-@ExperimentalMaterialApi
 object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
     override val targetType: ContactType = ContactType.PUBLIC
 
@@ -88,7 +85,7 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
         var selectedAccount: ContactAccount by remember {
             val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
             logger.debug("The default account type is '${defaultAccount.type}'")
-            contacts.forEach { it.saveInAccount = defaultAccount } // needed if the user just clicks "ok"
+            contacts.forEach { it.saveInAccount = defaultAccount }
             mutableStateOf(defaultAccount)
         }
 
