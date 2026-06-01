@@ -47,12 +47,13 @@ data class EventDate(
     val isYearSet: Boolean = value != null && value.year != DUMMY_YEAR_INT
 
     override val displayValue: String by lazy {
-        val date = value ?: return@lazy ""
-        if (isYearSet) {
-            date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
-        } else {
-            date.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault()))
-        }
+        value?.let { date ->
+            if (isYearSet) {
+                date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG))
+            } else {
+                date.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault()))
+            }
+        } ?: ""
     }
 
     override fun overrideStatus(newStatus: ModelStatus): ContactData = copy(modelStatus = newStatus)

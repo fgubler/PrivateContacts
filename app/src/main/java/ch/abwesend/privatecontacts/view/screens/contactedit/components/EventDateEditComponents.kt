@@ -167,12 +167,12 @@ object EventDateEditComponents {
     ) {
         val initialDate = eventDate.value
 
-        var selectedDay: Int? by remember { mutableStateOf(initialDate?.dayOfMonth) }
-        var selectedMonth: Month? by remember { mutableStateOf(initialDate?.month) }
-        var selectedYear: Int? by remember {
+        var selectedDay: Int? by remember(initialDate) { mutableStateOf(initialDate?.dayOfMonth) }
+        var selectedMonth: Month? by remember(initialDate) { mutableStateOf(initialDate?.month) }
+        var selectedYear: Int? by remember(initialDate) {
             mutableStateOf(if (initialDate != null && eventDate.isYearSet) initialDate.year else null)
         }
-        var currentEventDate by remember { mutableStateOf(eventDate) }
+        var currentEventDate by remember(eventDate) { mutableStateOf(eventDate) }
 
         val maxDaysInMonth: Int = remember(selectedMonth, selectedYear) {
             when {
@@ -186,7 +186,7 @@ object EventDateEditComponents {
         }
         LaunchedEffect(maxDaysInMonth) {
             if ((selectedDay ?: 0) > maxDaysInMonth) {
-                selectedDay = null
+                selectedDay = maxDaysInMonth
             }
         }
         val dayOptions: List<StringDropDownOption<Int>> = remember(maxDaysInMonth) {
@@ -207,7 +207,7 @@ object EventDateEditComponents {
         }
         val noYearLabel = stringResource(R.string.no_year)
         val currentYear = remember { LocalDate.now().year }
-        val yearOptions: List<StringDropDownOption<Int?>> = remember(noYearLabel, currentYear) {
+        val yearOptions: List<StringDropDownOption<Int?>> = remember(currentYear) {
             val noYearOption = StringDropDownOption<Int?>(label = noYearLabel, value = null)
             val yearEntries = (currentYear downTo 1900).map { year ->
                 StringDropDownOption<Int?>(label = year.toString(), value = year)

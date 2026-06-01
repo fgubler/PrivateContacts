@@ -74,7 +74,6 @@ object ContactEditScreen {
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
         var savingErrors: List<ContactChangeError> by remember { mutableStateOf(emptyList()) }
         var validationErrors: List<ContactValidationError> by remember { mutableStateOf(emptyList()) }
-        var hasInvalidDate: Boolean by remember { mutableStateOf(false) }
 
         selectedContact?.let {
             LaunchedEffect(it.id) { viewModel.loadAllContactGroups(it.type) }
@@ -98,7 +97,6 @@ object ContactEditScreen {
                     ContactEditTopBar(
                         screenContext = screenContext,
                         contact = contact,
-                        saveEnabled = !hasInvalidDate,
                         showDiscardConfirmationDialog = { showDiscardConfirmationDialog = true },
                     )
                 }
@@ -112,7 +110,7 @@ object ContactEditScreen {
                     )
 
                     if (screenContext.settings.showExtraButtonsInEditScreen) {
-                        ButtonFooter(screenContext, contact, saveEnabled = !hasInvalidDate) { showDiscardConfirmationDialog = true }
+                        ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
                     }
                 }
 
@@ -180,7 +178,6 @@ object ContactEditScreen {
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
         contact: IContactEditable,
-        saveEnabled: Boolean,
         showDiscardConfirmationDialog: () -> Unit,
     ) {
         @StringRes val title = if (contact.isNew) R.string.screen_contact_edit_create
@@ -192,7 +189,7 @@ object ContactEditScreen {
                 CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
             },
             actions = {
-                SaveIconButton(enabled = saveEnabled) { onSave(screenContext.contactEditViewModel, contact) }
+                SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
             }
         )
     }
