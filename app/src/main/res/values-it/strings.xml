@@ -543,5 +543,5 @@
     <string name="release_notes_v102_1">I vecchi backup periodici possono ora essere eliminati automaticamente dall\'app.</string>
     <string name="release_notes_v102_2">I backup e i file esportati possono ora essere validati senza importarli.</string>
     <string name="release_notes_v104">L\'app ora consente di caricare automaticamente i backup periodici su Google Drive.</string>
-
+    <string name="release_notes_v111">Aggiunta la funzionalità per modificare i valori di eventi e date.</string>
 </resources>

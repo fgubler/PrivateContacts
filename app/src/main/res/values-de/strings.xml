@@ -543,5 +543,5 @@
     <string name="release_notes_v102_1">Alte, periodische Backups können jetzt automatisch von der App bereinigt werden.</string>
     <string name="release_notes_v102_2">Backups und exportierte Dateien können jetzt validiert werden, ohne sie tatsächlich zu importieren.</string>
     <string name="release_notes_v104">Die App ermöglicht es jetzt, periodische Backups automatisch auf Google Drive hochzuladen.</string>
-
+    <string name="release_notes_v111">Funktionalität zum Bearbeiten von Werten für Ereignisse und Datumswerten hinzugefügt.</string>
 </resources>
