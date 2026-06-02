@@ -5,7 +5,7 @@
  */
 
 package ch.abwesend.privatecontacts.infrastructure.repository
-
+import android.database.sqlite.SQLiteConstraintException
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsyncChunked
 import ch.abwesend.privatecontacts.domain.lib.flow.ResourceFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.toResourceFlow
@@ -19,6 +19,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
@@ -34,6 +35,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toContactBase
 import ch.abwesend.privatecontacts.infrastructure.room.contact.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.database.AppDatabase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.map
 
 class ContactRepository : RepositoryBase(), IContactRepository {
@@ -172,7 +174,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             try {
                 resolveContact(contactId)
             } catch (e: Exception) {
-                logger.warning("Failed to resolve contact $contactId")
+                logger.warning("Failed to resolve contact $contactId", e)
                 null
             }
         }.filterNotNull()
@@ -187,8 +189,13 @@ class ContactRepository : RepositoryBase(), IContactRepository {
                 contactImageRepository.storeImage(contactId, contact.image)
                 ContactSaveResult.Success
             }
+        } catch(e: CancellationException) {
+            throw e
+        } catch(e: SQLiteConstraintException) {
+            logger.error("Failed to create contact: this ID $contactId is already used", e)
+            ContactSaveResult.Failure(ContactChangeError.CONTACT_CREATION_ID_COLLISION)
         } catch (e: Exception) {
-            logger.error("Failed to create contact ${contact.id}", e)
+            logger.error("Failed to create contact $contactId", e)
             rollBackContactCreation(contactId)
             ContactSaveResult.Failure(UNKNOWN_ERROR)
         }

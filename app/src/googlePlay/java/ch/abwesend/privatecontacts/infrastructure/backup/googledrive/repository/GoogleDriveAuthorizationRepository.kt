@@ -31,6 +31,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 
 class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogleDriveAuthorizationRepository {
     private val dispatchers: IDispatchers by injectAnywhere()
@@ -59,6 +60,9 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
             }
         } catch (e: CancellationException) {
             logger.warning("Interrupted while requesting authorization.")
+            throw e
+        } catch(e: UnknownHostException) {
+            logger.warning("Failed to request authorization due to lack of internet connection")
             throw e
         } catch (e: Exception) {
             logger.error("Failed to request authorization", e)

@@ -10,6 +10,7 @@ import androidx.work.ListenableWorker
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import kotlinx.coroutines.CancellationException
+import java.net.UnknownHostException
 
 class WorkerErrorHandler {
     companion object {
@@ -36,6 +37,19 @@ class WorkerErrorHandler {
             ListenableWorker.Result.retry()
         } else {
             logger.warning("$workDescription failed due to cancellation in attempt $retryCounter")
+            retryCounter = 0
+            ListenableWorker.Result.failure()
+        }
+    } catch(e: UnknownHostException) {
+        logger.debug("$workDescription failed for lack of internet connection", e)
+        retryCounter++
+
+        // randomness to avoid an infinite loop if JVM resets retryCounter
+        if (retryCounter < MAX_RETRY_COUNT && Math.random() > 0.01) {
+            logger.warning("$workDescription failed without internet in attempt $retryCounter: re-trying")
+            ListenableWorker.Result.retry()
+        } else {
+            logger.warning("$workDescription failed due to lack of internet in attempt $retryCounter")
             retryCounter = 0
             ListenableWorker.Result.failure()
         }

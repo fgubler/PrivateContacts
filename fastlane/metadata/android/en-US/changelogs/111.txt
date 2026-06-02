@@ -1,0 +1,2 @@
+5.8.7
+Bugfixes for bug while saving a contact.
