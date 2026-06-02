@@ -43,7 +43,7 @@ object ReleaseNotes {
             textResourceIds = listOf(R.string.release_notes_v104)
         ),
         ReleaseNote(
-            versionCode = 111,
+            versionCode = 112,
             textResourceIds = listOf(R.string.release_notes_v111)
         ),
         // Add more release notes as needed

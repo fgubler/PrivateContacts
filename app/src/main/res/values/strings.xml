@@ -63,6 +63,7 @@
     <string name="unable_to_save_contact_local_account_with_cloud_default">The contact could not be saved: your Android system settings do not allow saving contacts locally because a cloud account (e.g. Google) is set as the default target for new contacts. Please either store this contact in that cloud account or change the default account in your Android system settings.</string>
     <string name="unable_to_resolve_existing_contact">The existing contact could not be resolved</string>
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
+    <string name="contact_creation_id_collision">A contact with this ID already exists: this is likely an internal problem of the app. We apologize for the inconvenience.</string>
     <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
