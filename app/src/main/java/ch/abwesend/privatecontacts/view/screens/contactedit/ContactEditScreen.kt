@@ -145,7 +145,6 @@ object ContactEditScreen {
     private fun ButtonFooter(
         screenContext: IContactEditScreenContext,
         contact: IContactEditable,
-        saveEnabled: Boolean = true,
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
     ) {
@@ -166,7 +165,6 @@ object ContactEditScreen {
             Spacer(modifier = Modifier.width(10.dp))
             Button(
                 onClick = { onSave(screenContext.contactEditViewModel, contact) },
-                enabled = saveEnabled,
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.save))
