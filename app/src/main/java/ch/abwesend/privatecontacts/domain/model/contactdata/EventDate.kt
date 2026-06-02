@@ -122,7 +122,7 @@ data class EventDate(
             EventDate(
                 id = createContactDataId(),
                 sortOrder = sortOrder,
-                type = Other,
+                type = Birthday,
                 value = null,
                 isMain = (sortOrder == 0),
                 modelStatus = ModelStatus.NEW,
