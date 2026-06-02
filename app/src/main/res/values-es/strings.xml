@@ -143,6 +143,13 @@
     <string name="relationships">Relaciones</string>
     <string name="event">Evento</string>
     <string name="events">Eventos</string>
+    <string name="month">Mes</string>
+    <string name="day">Día</string>
+    <string name="year_optional">Año (opcional)</string>
+    <string name="invalid_date">Fecha inválida</string>
+    <string name="add_event_date">Añadir fecha de evento</string>
+    <string name="edit_event_date">Editar fecha de evento</string>
+    <string name="no_year">Sin año</string>
     <string name="company">Empresa</string>
     <string name="companies">Empresas</string>
 
@@ -537,5 +544,5 @@
     <string name="release_notes_v102_1">Las copias de seguridad periódicas antiguas ahora pueden ser limpiadas automáticamente por la app.</string>
     <string name="release_notes_v102_2">Las copias de seguridad y los archivos exportados ahora se pueden validar sin necesidad de importarlos.</string>
     <string name="release_notes_v104">La app ahora permite subir automáticamente las copias de seguridad periódicas a Google Drive.</string>
-
+    <string name="release_notes_v111">Se ha añadido la funcionalidad para editar los valores de eventos y fechas.</string>
 </resources>

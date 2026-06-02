@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.Relationship
 import ch.abwesend.privatecontacts.domain.model.contactdata.Website
 import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditCommonComponents.ContactDataCategory
+import ch.abwesend.privatecontacts.view.screens.contactedit.components.EventDateEditComponents.EventDateCategory
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
@@ -133,6 +134,19 @@ object ContactDataEditComponents {
             factory = { Company.createEmpty(it) },
             waitForCustomType = waitForCustomType,
             onChanged = onChanged
+        )
+    }
+
+    @Composable
+    fun EventDates(
+        contact: IContactEditable,
+        waitForCustomType: (ContactData) -> Unit,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
+        EventDateCategory(
+            contact = contact,
+            waitForCustomType = waitForCustomType,
+            onChanged = onChanged,
         )
     }
 }

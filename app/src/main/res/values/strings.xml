@@ -143,6 +143,13 @@
     <string name="relationships">Relationships</string>
     <string name="event">Event</string>
     <string name="events">Events</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="year_optional">Year (optional)</string>
+    <string name="invalid_date">Invalid date</string>
+    <string name="add_event_date">Add event date</string>
+    <string name="edit_event_date">Edit event date</string>
+    <string name="no_year">No year</string>
     <string name="company">Company</string>
     <string name="companies">Companies</string>
 
@@ -542,4 +549,5 @@
     <string name="release_notes_v102_1">Old, periodic backups can now be cleaned up automatically by the app.</string>
     <string name="release_notes_v102_2">Backups and exported files can now be validated without actually importing them.</string>
     <string name="release_notes_v104">The app now allows to upload periodic backups automatically to Google Drive.</string>
+    <string name="release_notes_v111">Added the functionality to edit the values of events and dates.</string>
 </resources>

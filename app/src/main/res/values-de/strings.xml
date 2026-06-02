@@ -143,6 +143,13 @@
     <string name="relationships">Beziehungen</string>
     <string name="event">Ereignis</string>
     <string name="events">Ereignisse</string>
+    <string name="month">Monat</string>
+    <string name="day">Tag</string>
+    <string name="year_optional">Jahr (optional)</string>
+    <string name="invalid_date">Ungültiges Datum</string>
+    <string name="add_event_date">Ereignisdatum hinzufügen</string>
+    <string name="edit_event_date">Ereignisdatum bearbeiten</string>
+    <string name="no_year">Kein Jahr</string>
     <string name="company">Firma</string>
     <string name="companies">Firmen</string>
 
@@ -537,5 +544,5 @@
     <string name="release_notes_v102_1">Alte, periodische Backups können jetzt automatisch von der App bereinigt werden.</string>
     <string name="release_notes_v102_2">Backups und exportierte Dateien können jetzt validiert werden, ohne sie tatsächlich zu importieren.</string>
     <string name="release_notes_v104">Die App ermöglicht es jetzt, periodische Backups automatisch auf Google Drive hochzuladen.</string>
-
+    <string name="release_notes_v111">Funktionalität zum Bearbeiten von Werten für Ereignisse und Datumswerten hinzugefügt.</string>
 </resources>

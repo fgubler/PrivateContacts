@@ -143,6 +143,13 @@
     <string name="relationships">Relazioni</string>
     <string name="event">Evento</string>
     <string name="events">Eventi</string>
+    <string name="month">Mese</string>
+    <string name="day">Giorno</string>
+    <string name="year_optional">Anno (facoltativo)</string>
+    <string name="invalid_date">Data non valida</string>
+    <string name="add_event_date">Aggiungi data evento</string>
+    <string name="edit_event_date">Modifica data evento</string>
+    <string name="no_year">Nessun anno</string>
     <string name="company">Azienda</string>
     <string name="companies">Aziende</string>
 
@@ -537,5 +544,5 @@
     <string name="release_notes_v102_1">I vecchi backup periodici possono ora essere eliminati automaticamente dall\'app.</string>
     <string name="release_notes_v102_2">I backup e i file esportati possono ora essere validati senza importarli.</string>
     <string name="release_notes_v104">L\'app ora consente di caricare automaticamente i backup periodici su Google Drive.</string>
-
+    <string name="release_notes_v111">Aggiunta la funzionalità per modificare i valori di eventi e date.</string>
 </resources>
