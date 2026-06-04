@@ -164,8 +164,14 @@ object ContactDataEditCommonComponents {
                 }
             }
 
-            ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
-                onChanged(contactData.changeType(newType))
+            Row {
+                Box(modifier = Modifier.weight(1.0f)) {
+                    ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
+                        onChanged(contactData.changeType(newType))
+                    }
+                }
+                //necessary so that both dropdown and input have the same width
+                Spacer(modifier = secondaryIconModifier)
             }
         }
     }

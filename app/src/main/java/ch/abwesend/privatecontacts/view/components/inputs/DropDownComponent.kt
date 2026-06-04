@@ -23,10 +23,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
-/**
- * Component to put a drop-down on any kind of content (not just a text-field).
- * Uses a transparent overlay to capture clicks before inner composables consume them.
- */
 @Composable
 fun <T> DropDownComponent(
     options: List<DropDownOption<T>>,
@@ -43,7 +39,7 @@ fun <T> DropDownComponent(
         focusManager.clearFocus()
     }
 
-    Box {
+    Box(modifier = if (enabled) Modifier.clickable { dropdownExpanded = true } else Modifier) {
         content(dropdownExpanded, Modifier)
         DropdownMenu(
             expanded = dropdownExpanded,
@@ -59,9 +55,6 @@ fun <T> DropDownComponent(
                     }
                 )
             }
-        }
-        if (enabled) {
-            Box(modifier = Modifier.matchParentSize().clickable { dropdownExpanded = !dropdownExpanded })
         }
     }
 }
