@@ -23,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import ch.abwesend.privatecontacts.view.components.SideDrawerContent
 import ch.abwesend.privatecontacts.view.components.buttons.MenuBackButton
+import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.model.screencontext.IScreenContextBase
 import ch.abwesend.privatecontacts.view.model.screencontext.isGenericNavigationAllowed
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.util.setMainContentSafeAreaPadding
-import ch.abwesend.privatecontacts.view.util.setTopBarSafeAreaPadding
 import kotlinx.coroutines.CoroutineScope
 import kotlin.contracts.ExperimentalContracts
 
@@ -80,7 +80,6 @@ fun BaseScreen(
             topBar = if (invertTopAndBottomBars) hidden else topBar,
             bottomBar = if (invertTopAndBottomBars) topBar else hidden,
             modifier = Modifier
-                .setTopBarSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false)
                 .setMainContentSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false),
             floatingActionButton = floatingActionButton,
             content = { padding -> content(padding) },
@@ -108,5 +107,6 @@ private fun BaseTopBar(
             }
         },
         actions = actions,
+        colors = appTopAppBarColors(),
     )
 }

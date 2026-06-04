@@ -20,6 +20,10 @@ internal val LightColorScheme = lightColorScheme(
     primary = primaryOnLight,
     primaryContainer = primaryVariant,
     secondary = secondary,
+    background = Color.White,
+    surface = Color.White,
+    surfaceTint = Color.Transparent,
+    onSurfaceVariant = Color(0xFF757575),
 )
 
 internal val DarkColorScheme = darkColorScheme(

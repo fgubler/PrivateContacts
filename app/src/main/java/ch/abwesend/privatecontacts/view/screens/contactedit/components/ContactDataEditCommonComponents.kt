@@ -10,33 +10,23 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -51,6 +41,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.isExternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactdata.StringBasedContactDataGeneric
+import ch.abwesend.privatecontacts.view.components.inputs.DropDownField
 import ch.abwesend.privatecontacts.view.model.StringDropDownOption
 import ch.abwesend.privatecontacts.view.model.config.TextFieldConfig
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
@@ -186,42 +177,22 @@ object ContactDataEditCommonComponents {
         onChanged: (ContactDataType) -> Unit,
     ) {
         val context = LocalContext.current
-        var expanded by remember { mutableStateOf(false) }
-
-        val selectedLabel = data.type.getTitle(context)
+        val selectedOption = with(data.type) {
+            StringDropDownOption(label = getTitle(context), value = this)
+        }
         val options = data.allowedTypes.map { type ->
             StringDropDownOption(label = type.getTitle(context), value = type)
         }
 
-        Box {
-            TextButton(
-                onClick = { expanded = true },
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
-            ) {
-                Text(
-                    text = selectedLabel,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                )
-            }
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                options.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option.getLabel()) },
-                        onClick = {
-                            expanded = false
-                            if (option.value == ContactDataType.Custom) {
-                                waitForCustomType(data)
-                            } else {
-                                onChanged(option.value)
-                            }
-                        }
-                    )
-                }
+        DropDownField(
+            labelRes = R.string.type,
+            selectedOption = selectedOption,
+            options = options,
+        ) { newValue ->
+            if (newValue == ContactDataType.Custom) {
+                waitForCustomType(data)
+            } else {
+                onChanged(newValue)
             }
         }
     }

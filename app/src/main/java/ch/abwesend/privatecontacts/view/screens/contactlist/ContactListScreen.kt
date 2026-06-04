@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -158,6 +160,8 @@ object ContactListScreen {
 
         Tab(
             selected = selectedTab == tab,
+            selectedContentColor = MaterialTheme.colorScheme.primary,
+            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             text = { Text(text = stringResource(id = tab.label)) },
             icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
             onClick = {
@@ -185,6 +189,9 @@ object ContactListScreen {
         FloatingActionButton(
             modifier = Modifier.offset(x = -ALPHABETIC_SCROLLBAR_WIDTH_DP.dp, y = verticalOffset.dp),
             onClick = { createContact(screenContext) },
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = Color.White,
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

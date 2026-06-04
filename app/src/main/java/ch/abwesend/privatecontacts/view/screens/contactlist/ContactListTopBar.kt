@@ -39,6 +39,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.view.components.CancelIcon
+import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
@@ -101,7 +102,8 @@ private fun NormalTopBar(
         actions = {
             RefreshIconButton { reloadContacts() }
             SearchIconButton { showSearch() }
-        }
+        },
+        colors = appTopAppBarColors(),
     )
 }
 
@@ -114,11 +116,13 @@ private fun SearchTopBar(
     changeSearchText: (String) -> Unit,
     resetSearch: () -> Unit
 ) {
-    val backgroundColor = MaterialTheme.colorScheme.background
+    val backgroundColor = MaterialTheme.colorScheme.primary
+    val contentColor = MaterialTheme.colorScheme.onPrimary
     TopAppBar(
-        title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
+        title = { SearchField(searchText, backgroundColor, contentColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
         modifier = modifier,
+        colors = appTopAppBarColors(),
     )
     BackHandler { resetSearch() }
 }
@@ -137,6 +141,7 @@ private fun BulkModeTopBar(
         title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
         navigationIcon = { CancelIconButton { disableBulkMode() } },
         modifier = modifier,
+        colors = appTopAppBarColors(),
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
             BulkModeActionsMenu(
@@ -247,7 +252,7 @@ private fun ExportMenuItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @Composable
-private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
+private fun SearchField(query: String, backgroundColor: Color, contentColor: Color, onQueryChanged: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val manager = createKeyboardAndFocusManager()
 
@@ -260,6 +265,15 @@ private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (
             unfocusedContainerColor = backgroundColor,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
+            focusedTextColor = contentColor,
+            unfocusedTextColor = contentColor,
+            focusedPlaceholderColor = contentColor.copy(alpha = 0.7f),
+            unfocusedPlaceholderColor = contentColor.copy(alpha = 0.7f),
+            focusedLeadingIconColor = contentColor,
+            unfocusedLeadingIconColor = contentColor,
+            focusedTrailingIconColor = contentColor,
+            unfocusedTrailingIconColor = contentColor,
+            cursorColor = contentColor,
         ),
         modifier = Modifier.focusRequester(focusRequester),
         placeholder = { Text(text = stringResource(id = R.string.search)) },

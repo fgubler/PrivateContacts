@@ -58,6 +58,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
+import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import kotlin.contracts.ExperimentalContracts
 
@@ -188,7 +189,8 @@ object ContactEditScreen {
             },
             actions = {
                 SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
-            }
+            },
+            colors = appTopAppBarColors(),
         )
     }
 

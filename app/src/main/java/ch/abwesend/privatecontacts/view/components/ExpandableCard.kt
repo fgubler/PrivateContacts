@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -33,7 +36,12 @@ fun ExpandableCard(
     header: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    Card(modifier = modifier.padding(all = 5.dp)) {
+    Card(
+        modifier = modifier.padding(all = 5.dp),
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+    ) {
         Surface(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
             Column {
                 ExpandableCardHeader(customHeader = header, expanded = expanded) {
