@@ -34,8 +34,7 @@ import kotlin.contracts.ExperimentalContracts
 
 private val hidden: @Composable () -> Unit = {}
 
-@OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalContracts
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalContracts::class)
 @Composable
 fun BaseScreen(
     screenContext: IScreenContextBase,
