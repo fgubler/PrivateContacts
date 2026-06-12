@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -42,7 +41,6 @@ import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 object ContactDetailCommonComponents {
     private val primaryIconModifier = Modifier.width(40.dp)
     private val iconHorizontalPadding = 10.dp

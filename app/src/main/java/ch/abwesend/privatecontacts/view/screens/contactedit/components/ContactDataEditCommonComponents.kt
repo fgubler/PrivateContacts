@@ -28,7 +28,6 @@ import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -56,7 +55,6 @@ import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @ExperimentalContracts
 object ContactDataEditCommonComponents {
     @Composable

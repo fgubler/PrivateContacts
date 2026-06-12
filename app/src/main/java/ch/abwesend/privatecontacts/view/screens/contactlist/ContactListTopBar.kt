@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -58,7 +57,6 @@ import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
-@ExperimentalComposeUiApi
 @Composable
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
@@ -107,7 +105,6 @@ private fun NormalTopBar(
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalComposeUiApi
 @Composable
 private fun SearchTopBar(
     searchText: String,
@@ -248,7 +245,6 @@ private fun ExportMenuItem(
     )
 }
 
-@ExperimentalComposeUiApi
 @Composable
 private fun SearchField(query: String, backgroundColor: Color, contentColor: Color, onQueryChanged: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }

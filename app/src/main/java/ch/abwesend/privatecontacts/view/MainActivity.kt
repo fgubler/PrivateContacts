@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -87,7 +86,6 @@ import kotlin.contracts.ExperimentalContracts
 private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @ExperimentalContracts
 @FlowPreview
 class MainActivity : AppCompatActivity() {

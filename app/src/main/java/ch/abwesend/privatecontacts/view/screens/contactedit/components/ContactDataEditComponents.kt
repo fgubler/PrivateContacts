@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.view.screens.contactedit.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
@@ -25,7 +24,6 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.EventDate
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @ExperimentalContracts
 object ContactDataEditComponents {
 
