@@ -62,7 +62,7 @@ fun <T> DropDownField(
             label = { Text(stringResource(id = labelRes)) },
             value = selectedOption?.getLabel().orEmpty(),
             readOnly = true,
-            onValueChange = {},
+            onValueChange = {}, // read-only...
             isError = isError,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
