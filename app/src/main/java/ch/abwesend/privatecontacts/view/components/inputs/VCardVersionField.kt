@@ -49,8 +49,6 @@ fun VCardVersionField(
     onValueChanged: (VCardVersion) -> Unit,
     DropDownFieldProvider: VCardVersionDropDownFieldProvider,
 ) {
-    var showInfoDialog: Boolean by remember { mutableStateOf(false) }
-
     val selectedOption = ResDropDownOption(labelRes = selectedVersion.label, value = selectedVersion)
     val options = VCardVersion.entries.map {
         ResDropDownOption(labelRes = it.label, value = it)
@@ -61,8 +59,15 @@ fun VCardVersionField(
             DropDownFieldProvider(options, selectedOption, onValueChanged)
         }
 
-        InfoIconButton { showInfoDialog = true }
+        VCardVersionInfoButton()
     }
+}
+
+@Composable
+fun VCardVersionInfoButton() {
+    var showInfoDialog: Boolean by remember { mutableStateOf(false) }
+
+    InfoIconButton { showInfoDialog = true }
 
     if (showInfoDialog) {
         VCardVersionInfoDialog { showInfoDialog = false }

@@ -52,6 +52,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -69,7 +70,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
-import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
+import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionInfoButton
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
@@ -484,18 +485,18 @@ object SettingsScreen {
 
     @Composable
     private fun DefaultVCardVersionField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        VCardVersionField(
-            selectedVersion = currentSettings.defaultVCardVersion,
-            onValueChanged = { settingsRepository.defaultVCardVersion = it },
-        ) { options, selectedOption, onOptionSelected ->
-            SettingsDropDown(
-                label = R.string.settings_entry_default_vcard_version,
-                description = R.string.settings_entry_default_vcard_version_description,
-                value = selectedOption.value,
-                options = options,
-                onValueChanged = onOptionSelected,
-            )
+        val options = remember {
+            VCardVersion.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
         }
+
+        SettingsDropDown(
+            label = R.string.settings_entry_default_vcard_version,
+            description = R.string.settings_entry_default_vcard_version_description,
+            value = currentSettings.defaultVCardVersion,
+            options = options,
+            trailingContent = { VCardVersionInfoButton() },
+            onValueChanged = { settingsRepository.defaultVCardVersion = it },
+        )
     }
 
     @Composable

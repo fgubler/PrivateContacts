@@ -30,6 +30,7 @@ internal val LightColorScheme = lightColorScheme(
     surfaceContainer = Color.White,
     surfaceContainerHigh = Color(0xFFEBEBEB),
     surfaceContainerHighest = Color(0xFFE5E5E5),
+    onSurface = Color(0xFF212121),
 )
 
 internal val DarkColorScheme = darkColorScheme(
@@ -42,6 +43,7 @@ internal val DarkColorScheme = darkColorScheme(
     surfaceContainer = Color(0xFF2A2A2A),
     surfaceContainerHigh = Color(0xFF323232),
     surfaceContainerHighest = Color(0xFF3A3A3A),
+    onSurface = Color(0xFFEEEEEE),
 )
 
 val ColorScheme.selectedElement: Color

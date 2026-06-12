@@ -7,9 +7,13 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerValue
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
@@ -162,8 +166,6 @@ object ContactListScreen {
             selected = selectedTab == tab,
             selectedContentColor = MaterialTheme.colorScheme.primary,
             unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            text = { Text(text = stringResource(id = tab.label)) },
-            icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
             onClick = {
                 if (tab.requiresPermission) {
                     requestPermissions = true
@@ -171,7 +173,17 @@ object ContactListScreen {
                     viewModel.selectTab(tab)
                 }
             },
-        )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(vertical = 20.dp),
+            ) {
+                Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label))
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = stringResource(id = tab.label))
+            }
+        }
 
         if (requestPermissions) {
             permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {

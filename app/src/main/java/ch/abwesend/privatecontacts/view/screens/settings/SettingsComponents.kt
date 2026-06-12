@@ -43,7 +43,6 @@ import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 import ch.abwesend.privatecontacts.view.util.disabledContentColor
 import ch.abwesend.privatecontacts.view.util.normalContentColor
-import kotlin.contracts.ExperimentalContracts
 
 object SettingsComponents {
     @Composable
@@ -141,6 +140,7 @@ object SettingsComponents {
         options: List<DropDownOption<T>>,
         enabled: Boolean = true,
         labelAndValueHorizontal: Boolean = true,
+        trailingContent: (@Composable () -> Unit)? = null,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
@@ -179,6 +179,7 @@ object SettingsComponents {
                     Spacer(modifier = Modifier.height(5.dp))
                     description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
                 }
+                trailingContent?.invoke()
                 if (enabled) {
                     EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
                 }

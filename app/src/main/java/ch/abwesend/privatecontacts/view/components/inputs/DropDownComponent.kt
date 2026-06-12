@@ -6,11 +6,12 @@
 
 package ch.abwesend.privatecontacts.view.components.inputs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,16 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> DropDownComponent(
     options: List<DropDownOption<T>>,
     onValueChanged: (T) -> Unit,
     enabled: Boolean = true,
-    maxMenuItemWidth: Dp = Dp.Unspecified,
     content: @Composable (dropDownExpanded: Boolean, modifier: Modifier) -> Unit,
 ) {
     var dropdownExpanded by remember { mutableStateOf(false) }
@@ -39,12 +38,17 @@ fun <T> DropDownComponent(
         focusManager.clearFocus()
     }
 
-    Box(modifier = if (enabled) Modifier.clickable { dropdownExpanded = true } else Modifier) {
-        content(dropdownExpanded, Modifier)
-        DropdownMenu(
+    ExposedDropdownMenuBox(
+        expanded = dropdownExpanded,
+        onExpandedChange = { dropdownExpanded = it },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Box(modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = enabled).fillMaxWidth()) {
+            content(dropdownExpanded, Modifier)
+        }
+        ExposedDropdownMenu(
             expanded = dropdownExpanded,
             onDismissRequest = closeDropdown,
-            modifier = Modifier.widthIn(min = 100.dp, max = maxMenuItemWidth),
         ) {
             options.forEach { option ->
                 DropdownMenuItem(

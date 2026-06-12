@@ -10,6 +10,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +56,7 @@ fun EditTextDialog(
             )
         },
         dismissButton = {
-            Button(onClick = onCancel) {
+            OutlinedButton(onClick = onCancel) {
                 Text(stringResource(id = R.string.cancel))
             }
         },
