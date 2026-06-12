@@ -85,7 +85,7 @@ object ContactTypeChangeToPublicMenuConfig : ContactTypeChangeMenuConfig {
         var selectedAccount: ContactAccount by remember {
             val defaultAccount = ContactAccount.currentDefaultForContactType(targetType)
             logger.debug("The default account type is '${defaultAccount.type}'")
-            contacts.forEach { it.saveInAccount = defaultAccount }
+            contacts.forEach { it.saveInAccount = defaultAccount } // needed if the user just clicks "ok"
             mutableStateOf(defaultAccount)
         }
 

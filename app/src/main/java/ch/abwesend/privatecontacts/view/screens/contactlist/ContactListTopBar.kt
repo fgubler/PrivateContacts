@@ -57,7 +57,6 @@ import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import kotlinx.coroutines.FlowPreview
 
-@OptIn(ExperimentalMaterial3Api::class)
 @FlowPreview
 @ExperimentalComposeUiApi
 @Composable
@@ -249,7 +248,6 @@ private fun ExportMenuItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalComposeUiApi
 @Composable
 private fun SearchField(query: String, backgroundColor: Color, contentColor: Color, onQueryChanged: (String) -> Unit) {
@@ -263,8 +261,6 @@ private fun SearchField(query: String, backgroundColor: Color, contentColor: Col
         colors = TextFieldDefaults.colors(
             focusedContainerColor = backgroundColor,
             unfocusedContainerColor = backgroundColor,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
             focusedTextColor = contentColor,
             unfocusedTextColor = contentColor,
             focusedPlaceholderColor = contentColor.copy(alpha = 0.7f),

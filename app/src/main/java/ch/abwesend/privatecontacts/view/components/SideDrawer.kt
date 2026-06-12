@@ -191,7 +191,6 @@ private fun createElementClickListener(
     return { screen: Screen ->
         if (screen == selectedScreen) {
             logger.info("Screen '${screen.key}' is already selected")
-            coroutineScope.launch { drawerState.close() }
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             navigate(screen)
