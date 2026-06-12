@@ -11,9 +11,9 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +52,6 @@ fun OkDialog(
                 Text(stringResource(id = okButtonLabel))
             }
         },
-        dismissButton = {},
     )
 
     BackHandler { onClose() }
@@ -74,7 +73,6 @@ fun OkDialog(
                 Text(stringResource(id = okButtonLabel))
             }
         },
-        dismissButton = {},
     )
 
     BackHandler { onClose() }
@@ -104,7 +102,6 @@ fun OkDoNotShowAgainDialog(
                 Text(stringResource(id = R.string.ok))
             }
         },
-        dismissButton = {},
     )
 
     BackHandler { onClose(doNotShowAgain) }

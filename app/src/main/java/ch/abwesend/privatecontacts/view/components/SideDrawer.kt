@@ -22,12 +22,12 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,12 +49,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun SideDrawerContent(selectedScreen: Screen, scaffoldState: ScaffoldState, navigate: (Screen) -> Unit) {
+fun SideDrawerContent(selectedScreen: Screen, drawerState: DrawerState, navigate: (Screen) -> Unit) {
     val scrollState = rememberScrollState()
     val clickListener = createElementClickListener(
         selectedScreen = selectedScreen,
         coroutineScope = rememberCoroutineScope(),
-        scaffoldState = scaffoldState,
+        drawerState = drawerState,
         navigate = navigate,
     )
 
@@ -65,7 +65,7 @@ fun SideDrawerContent(selectedScreen: Screen, scaffoldState: ScaffoldState, navi
     ) {
         SideDrawerHeader()
 
-        Divider(modifier = Modifier.padding(bottom = 20.dp))
+        HorizontalDivider(modifier = Modifier.padding(bottom = 20.dp))
 
         SideDrawerElements(selectedScreen, clickListener)
 
@@ -91,8 +91,8 @@ fun SideDrawerHeader() {
         Text(
             text = stringResource(id = R.string.app_name),
             modifier = Modifier.padding(top = 10.dp),
-            color = MaterialTheme.colors.primary,
-            style = MaterialTheme.typography.h6
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.titleLarge
         )
     }
 }
@@ -134,15 +134,6 @@ fun SideDrawerElements(selectedScreen: Screen, clickListener: (Screen) -> Unit) 
 }
 
 @Composable
-private fun SideDrawerListHeader(@StringRes titleRes: Int) {
-    Text(
-        text = stringResource(id = titleRes),
-        style = MaterialTheme.typography.subtitle1,
-        modifier = Modifier.padding(start = 5.dp, bottom = 5.dp)
-    )
-}
-
-@Composable
 private fun SideDrawerElement(
     @StringRes titleRes: Int,
     icon: ImageVector,
@@ -150,12 +141,12 @@ private fun SideDrawerElement(
     onClick: () -> Unit,
 ) {
     val color =
-        if (isSelected) MaterialTheme.colors.primary
-        else Color.Transparent // just show the background of the parent
+        if (isSelected) MaterialTheme.colorScheme.primary
+        else Color.Transparent
 
     val fontColor =
-        if (isSelected) MaterialTheme.colors.onPrimary
-        else MaterialTheme.colors.onBackground
+        if (isSelected) MaterialTheme.colorScheme.onPrimary
+        else MaterialTheme.colorScheme.onBackground
 
     val fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
 
@@ -193,7 +184,7 @@ private fun SideDrawerElement(
 private fun createElementClickListener(
     selectedScreen: Screen,
     coroutineScope: CoroutineScope,
-    scaffoldState: ScaffoldState,
+    drawerState: DrawerState,
     navigate: (Screen) -> Unit,
 ): (Screen) -> Unit {
     val logger = selectedScreen.logger
@@ -203,7 +194,7 @@ private fun createElementClickListener(
         } else {
             logger.info("Navigating from screen '${selectedScreen.key}' to '$screen.key'")
             navigate(screen)
-            coroutineScope.launch { scaffoldState.drawerState.close() }
+            coroutineScope.launch { drawerState.close() }
         }
     }
 }

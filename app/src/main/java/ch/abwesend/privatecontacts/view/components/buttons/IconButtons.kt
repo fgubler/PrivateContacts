@@ -6,7 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.components.buttons
 
-import androidx.compose.material.IconButton
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import ch.abwesend.privatecontacts.view.components.BackIcon
 import ch.abwesend.privatecontacts.view.components.CancelIcon

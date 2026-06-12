@@ -17,16 +17,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Card
-import androidx.compose.material.ContentAlpha
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -42,21 +41,24 @@ import ch.abwesend.privatecontacts.view.util.getTitle
 import ch.abwesend.privatecontacts.view.util.longClickForCopyToClipboard
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 object ContactDetailCommonComponents {
     private val primaryIconModifier = Modifier.width(40.dp)
     private val iconHorizontalPadding = 10.dp
 
     @Composable
-    fun labelColor() = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+    fun labelColor() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
 
     @Composable
     fun ContactCategoryWithoutHeader(
         iconConfig: IconConfig,
         content: @Composable () -> Unit
     ) {
-        Card(modifier = Modifier.padding(all = 5.dp)) {
+        Card(
+            modifier = Modifier.padding(all = 5.dp),
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        ) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Row {
                     Icon(
@@ -80,7 +82,12 @@ object ContactDetailCommonComponents {
         modifier: Modifier = Modifier,
         content: @Composable () -> Unit
     ) {
-        Card(modifier = modifier.padding(all = 5.dp)) {
+        Card(
+            modifier = modifier.padding(all = 5.dp),
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
+        ) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Column {
                     ContactCategoryHeader(

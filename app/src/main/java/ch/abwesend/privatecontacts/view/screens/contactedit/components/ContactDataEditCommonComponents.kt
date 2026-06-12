@@ -17,11 +17,10 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -29,7 +28,6 @@ import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -57,8 +55,6 @@ import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactDataEditCommonComponents {
     @Composable
@@ -166,8 +162,14 @@ object ContactDataEditCommonComponents {
                 }
             }
 
-            ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
-                onChanged(contactData.changeType(newType))
+            Row {
+                Box(modifier = Modifier.weight(1.0f)) {
+                    ContactDataTypeDropDown(data = contactData, waitForCustomType) { newType ->
+                        onChanged(contactData.changeType(newType))
+                    }
+                }
+                //necessary so that both dropdown and input have the same width
+                Spacer(modifier = secondaryIconModifier)
             }
         }
     }
@@ -182,12 +184,10 @@ object ContactDataEditCommonComponents {
         val selectedOption = with(data.type) {
             StringDropDownOption(label = getTitle(context), value = this)
         }
-        val options = data.allowedTypes.map {
-            StringDropDownOption(
-                label = it.getTitle(context),
-                value = it
-            )
+        val options = data.allowedTypes.map { type ->
+            StringDropDownOption(label = type.getTitle(context), value = type)
         }
+
         DropDownField(
             labelRes = R.string.type,
             selectedOption = selectedOption,

@@ -22,9 +22,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Favorite
@@ -184,8 +184,8 @@ private fun Contact(
     onLongClicked: (IContactBase) -> Unit,
 ) {
     val background =
-        if (selected) MaterialTheme.colors.selectedElement
-        else MaterialTheme.colors.background
+        if (selected) MaterialTheme.colorScheme.selectedElement
+        else MaterialTheme.colorScheme.background
 
     Row(
         verticalAlignment = Alignment.CenterVertically,

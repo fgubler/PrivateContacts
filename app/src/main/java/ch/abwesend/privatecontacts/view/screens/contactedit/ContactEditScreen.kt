@@ -17,12 +17,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -58,12 +57,11 @@ import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
 import ch.abwesend.privatecontacts.view.theme.GlobalModifiers
+import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalComposeUiApi
 @ExperimentalFoundationApi
-@ExperimentalMaterialApi
 @ExperimentalContracts
 object ContactEditScreen {
     @Composable
@@ -172,6 +170,7 @@ object ContactEditScreen {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
@@ -188,7 +187,8 @@ object ContactEditScreen {
             },
             actions = {
                 SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
-            }
+            },
+            colors = appTopAppBarColors(),
         )
     }
 
@@ -286,7 +286,7 @@ object ContactEditScreen {
         onChangeToNewContact: () -> Unit,
     ) {
         Spacer(modifier = Modifier.height(10.dp))
-        Divider()
+        HorizontalDivider()
         Spacer(modifier = Modifier.height(10.dp))
         Text(text = stringResource(id = R.string.saving_data_error_change_to_new_contact))
         Spacer(modifier = Modifier.height(10.dp))

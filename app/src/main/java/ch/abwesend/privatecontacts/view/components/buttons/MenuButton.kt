@@ -6,10 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.components.buttons
 
-import androidx.compose.material.DrawerState
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.ScaffoldState
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
@@ -19,10 +18,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MenuButton(scaffoldState: ScaffoldState, coroutineScope: CoroutineScope) {
+fun MenuButton(drawerState: DrawerState, coroutineScope: CoroutineScope) {
     IconButton(onClick = {
         coroutineScope.launch {
-            scaffoldState.drawerState.toggle()
+            drawerState.toggle()
         }
     }) {
         Icon(

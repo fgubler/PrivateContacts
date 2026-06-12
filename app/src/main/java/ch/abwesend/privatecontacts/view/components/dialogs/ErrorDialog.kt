@@ -7,7 +7,7 @@
 package ch.abwesend.privatecontacts.view.components.dialogs
 
 import androidx.annotation.StringRes
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import ch.abwesend.privatecontacts.R
 

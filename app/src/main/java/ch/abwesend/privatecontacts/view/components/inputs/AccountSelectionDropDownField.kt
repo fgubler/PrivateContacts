@@ -6,7 +6,6 @@
 
 package ch.abwesend.privatecontacts.view.components.inputs
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -22,7 +21,6 @@ import ch.abwesend.privatecontacts.view.model.DropDownOption
 import ch.abwesend.privatecontacts.view.model.DynamicStringDropDownOption
 
 /** Dropdown to select from the available accounts on the device into which contacts can be saved */
-@ExperimentalMaterialApi
 @Composable
 fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChanged: (ContactAccount) -> Unit) =
     AccountSelectionDropDownField(
@@ -36,7 +34,6 @@ fun AccountSelectionDropDownField(selectedAccount: ContactAccount, onValueChange
         ) { newValue -> onOptionSelected(newValue) }
     }
 
-@ExperimentalMaterialApi
 @Composable
 fun AccountSelectionDropDownField(
     selectedAccount: ContactAccount,
