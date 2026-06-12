@@ -20,9 +20,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
@@ -143,7 +143,7 @@ object ContactListScreen {
         if (androidContactsEnabled) {
             val selectedTab = viewModel.selectedTab.value
 
-            TabRow(selectedTabIndex = selectedTab.index, containerColor = MaterialTheme.colorScheme.surface) {
+            SecondaryTabRow(selectedTabIndex = selectedTab.index, containerColor = MaterialTheme.colorScheme.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
                     if (tab.isVisible(settings)) {
                         Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
@@ -294,8 +294,7 @@ object ContactListScreen {
             onCloseDialog = { viewModel.resetExportResult() },
             ProgressDialog = { ExportContactsLoadingDialog(exportMultiple = progressForMultiple) },
             ResultDialog = { bulkOperationResult, onClose ->
-                val result = bulkOperationResult.result
-                val numberOfFailed = when (result) {
+                val numberOfFailed = when (val result = bulkOperationResult.result) {
                     is ErrorResult -> bulkOperationResult.numberOfSelectedContacts
                     is SuccessResult -> result.value.failedContacts.size
                 }
