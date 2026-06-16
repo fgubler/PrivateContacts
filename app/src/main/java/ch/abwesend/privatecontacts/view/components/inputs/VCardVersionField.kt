@@ -5,9 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +24,6 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.inputs.helper.DropDownFieldProvider
 import ch.abwesend.privatecontacts.view.model.ResDropDownOption
 
-@ExperimentalMaterialApi
 @Composable
 fun VCardVersionField(
     selectedVersion: VCardVersion,
@@ -45,15 +43,12 @@ fun VCardVersionField(
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun VCardVersionField(
     selectedVersion: VCardVersion,
     onValueChanged: (VCardVersion) -> Unit,
     DropDownFieldProvider: VCardVersionDropDownFieldProvider,
 ) {
-    var showInfoDialog: Boolean by remember { mutableStateOf(false) }
-
     val selectedOption = ResDropDownOption(labelRes = selectedVersion.label, value = selectedVersion)
     val options = VCardVersion.entries.map {
         ResDropDownOption(labelRes = it.label, value = it)
@@ -64,8 +59,15 @@ fun VCardVersionField(
             DropDownFieldProvider(options, selectedOption, onValueChanged)
         }
 
-        InfoIconButton { showInfoDialog = true }
+        VCardVersionInfoButton()
     }
+}
+
+@Composable
+fun VCardVersionInfoButton() {
+    var showInfoDialog: Boolean by remember { mutableStateOf(false) }
+
+    InfoIconButton { showInfoDialog = true }
 
     if (showInfoDialog) {
         VCardVersionInfoDialog { showInfoDialog = false }

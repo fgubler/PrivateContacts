@@ -10,16 +10,16 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -39,6 +38,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.withAccountInformation
 import ch.abwesend.privatecontacts.view.components.CancelIcon
+import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
@@ -56,19 +56,17 @@ import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.util.createKeyboardAndFocusManager
 import kotlinx.coroutines.FlowPreview
 
-@ExperimentalMaterialApi
 @FlowPreview
-@ExperimentalComposeUiApi
 @Composable
 fun ContactListTopBar(
     viewModel: ContactListViewModel,
-    scaffoldState: ScaffoldState,
+    drawerState: DrawerState,
 ) {
     val screenStateState = viewModel.screenState
 
     when (val screenState = screenStateState.value) {
         is Normal -> NormalTopBar(
-            scaffoldState = scaffoldState,
+            drawerState = drawerState,
             reloadContacts = { viewModel.reloadContacts() },
             showSearch = { viewModel.showSearch() }
         )
@@ -85,9 +83,10 @@ fun ContactListTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NormalTopBar(
-    scaffoldState: ScaffoldState,
+    drawerState: DrawerState,
     reloadContacts: () -> Unit,
     showSearch: () -> Unit,
     modifier: Modifier = Modifier,
@@ -95,16 +94,17 @@ private fun NormalTopBar(
     val coroutineScope = rememberCoroutineScope()
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.screen_contact_list)) },
-        navigationIcon = { MenuButton(scaffoldState = scaffoldState, coroutineScope = coroutineScope) },
+        navigationIcon = { MenuButton(drawerState = drawerState, coroutineScope = coroutineScope) },
         modifier = modifier,
         actions = {
             RefreshIconButton { reloadContacts() }
             SearchIconButton { showSearch() }
-        }
+        },
+        colors = appTopAppBarColors(),
     )
 }
 
-@ExperimentalComposeUiApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchTopBar(
     searchText: String,
@@ -112,17 +112,18 @@ private fun SearchTopBar(
     changeSearchText: (String) -> Unit,
     resetSearch: () -> Unit
 ) {
-    val backgroundColor = MaterialTheme.colors.background
+    val backgroundColor = MaterialTheme.colorScheme.primary
+    val contentColor = MaterialTheme.colorScheme.onPrimary
     TopAppBar(
-        backgroundColor = backgroundColor,
-        title = { SearchField(searchText, backgroundColor) { changeSearchText(it) } },
+        title = { SearchField(searchText, backgroundColor, contentColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
         modifier = modifier,
+        colors = appTopAppBarColors(),
     )
     BackHandler { resetSearch() }
 }
 
-@ExperimentalMaterialApi
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BulkModeTopBar(
     viewModel: ContactListViewModel,
@@ -136,6 +137,7 @@ private fun BulkModeTopBar(
         title = { Text(text = stringResource(id = R.string.contact_list_bulk_mode_title, selectedContacts.size)) },
         navigationIcon = { CancelIconButton { disableBulkMode() } },
         modifier = modifier,
+        colors = appTopAppBarColors(),
         actions = {
             MoreActionsIconButton { dropDownMenuExpanded = true }
             BulkModeActionsMenu(
@@ -150,7 +152,6 @@ private fun BulkModeTopBar(
     BackHandler { disableBulkMode() }
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun BulkModeActionsMenu(
     viewModel: ContactListViewModel,
@@ -160,14 +161,16 @@ fun BulkModeActionsMenu(
 ) {
     val hasWritePermission = remember { viewModel.hasContactWritePermission }
     DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
-        DropdownMenuItem(onClick = { viewModel.selectAllContacts() }) {
-            Text(stringResource(id = R.string.select_all))
-        }
-        DropdownMenuItem(onClick = { viewModel.deselectAllContacts() }) {
-            Text(stringResource(id = R.string.deselect_all))
-        }
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.select_all)) },
+            onClick = { viewModel.selectAllContacts() }
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(id = R.string.deselect_all)) },
+            onClick = { viewModel.deselectAllContacts() }
+        )
         if (selectedContacts.isNotEmpty()) {
-            Divider()
+            HorizontalDivider()
             ContactType.entries.forEach { targetType ->
                 ChangeContactTypeMenuItem(
                     viewModel = viewModel,
@@ -178,13 +181,12 @@ fun BulkModeActionsMenu(
                 )
             }
             DeleteMenuItem(viewModel, selectedContacts, onCloseMenu)
-            Divider()
+            HorizontalDivider()
             ExportMenuItem(viewModel, selectedContacts, onCloseMenu)
         }
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 private fun ChangeContactTypeMenuItem(
     viewModel: ContactListViewModel,
@@ -227,7 +229,6 @@ private fun DeleteMenuItem(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 private fun ExportMenuItem(
     viewModel: ContactListViewModel,
@@ -244,9 +245,8 @@ private fun ExportMenuItem(
     )
 }
 
-@ExperimentalComposeUiApi
 @Composable
-private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (String) -> Unit) {
+private fun SearchField(query: String, backgroundColor: Color, contentColor: Color, onQueryChanged: (String) -> Unit) {
     val focusRequester = remember { FocusRequester() }
     val manager = createKeyboardAndFocusManager()
 
@@ -254,7 +254,19 @@ private fun SearchField(query: String, backgroundColor: Color, onQueryChanged: (
         value = query,
         onValueChange = onQueryChanged,
         maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = backgroundColor),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = backgroundColor,
+            unfocusedContainerColor = backgroundColor,
+            focusedTextColor = contentColor,
+            unfocusedTextColor = contentColor,
+            focusedPlaceholderColor = contentColor.copy(alpha = 0.7f),
+            unfocusedPlaceholderColor = contentColor.copy(alpha = 0.7f),
+            focusedLeadingIconColor = contentColor,
+            unfocusedLeadingIconColor = contentColor,
+            focusedTrailingIconColor = contentColor,
+            unfocusedTrailingIconColor = contentColor,
+            cursorColor = contentColor,
+        ),
         modifier = Modifier.focusRequester(focusRequester),
         placeholder = { Text(text = stringResource(id = R.string.search)) },
         leadingIcon = { SearchIcon() },

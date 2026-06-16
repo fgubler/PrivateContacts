@@ -11,10 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Checkbox
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -57,12 +57,12 @@ object ImportComponents {
                 Text(
                     text = stringResource(id = R.string.replace_existing_contacts_label),
                     fontWeight = FontWeight.Companion.SemiBold,
-                    style = MaterialTheme.typography.body1,
+                    style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
                     text = stringResource(id = R.string.replace_existing_contacts_description),
                     fontStyle = FontStyle.Companion.Italic,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
             Checkbox(
@@ -73,7 +73,6 @@ object ImportComponents {
         }
     }
 
-    @ExperimentalMaterialApi
     @Composable
     fun TargetTypeFields(
         targetType: ContactType,

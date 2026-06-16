@@ -23,11 +23,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,6 +52,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupContactScope
 import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -70,7 +70,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.PasswordInputDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SimpleProgressDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
-import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionField
+import ch.abwesend.privatecontacts.view.components.inputs.VCardVersionInfoButton
 import ch.abwesend.privatecontacts.view.initialization.CallPermissionHandler
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus.CANCELLED
@@ -99,7 +99,6 @@ import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
-@ExperimentalMaterialApi
 @ExperimentalContracts
 object SettingsScreen {
     @Composable
@@ -418,9 +417,9 @@ object SettingsScreen {
     ) {
         SettingsCategory(titleRes = R.string.settings_category_default_values) {
             DefaultContactTypeField(permissionProvider, settingsRepository, currentSettings)
-            Divider()
+            HorizontalDivider()
             DefaultContactAccountField(settingsRepository, currentSettings)
-            Divider()
+            HorizontalDivider()
             DefaultVCardVersionField(settingsRepository, currentSettings)
         }
     }
@@ -486,18 +485,18 @@ object SettingsScreen {
 
     @Composable
     private fun DefaultVCardVersionField(settingsRepository: SettingsRepository, currentSettings: ISettingsState) {
-        VCardVersionField(
-            selectedVersion = currentSettings.defaultVCardVersion,
-            onValueChanged = { settingsRepository.defaultVCardVersion = it },
-        ) { options, selectedOption, onOptionSelected ->
-            SettingsDropDown(
-                label = R.string.settings_entry_default_vcard_version,
-                description = R.string.settings_entry_default_vcard_version_description,
-                value = selectedOption.value,
-                options = options,
-                onValueChanged = onOptionSelected,
-            )
+        val options = remember {
+            VCardVersion.entries.map { ResDropDownOption(labelRes = it.label, value = it) }
         }
+
+        SettingsDropDown(
+            label = R.string.settings_entry_default_vcard_version,
+            description = R.string.settings_entry_default_vcard_version_description,
+            value = currentSettings.defaultVCardVersion,
+            options = options,
+            trailingContent = { VCardVersionInfoButton() },
+            onValueChanged = { settingsRepository.defaultVCardVersion = it },
+        )
     }
 
     @Composable
@@ -775,7 +774,7 @@ object SettingsScreen {
             currentFolderUri?.let { getFileOrFolderName(it) ?: currentFolder }
         } ?: stringResource(id = R.string.backup_folder_not_selected)
 
-        val textColor = if (currentFolder.isNotBlank()) normalContentColor() else MaterialTheme.colors.error
+        val textColor = if (currentFolder.isNotBlank()) normalContentColor() else MaterialTheme.colorScheme.error
 
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -792,7 +791,7 @@ object SettingsScreen {
                     text = folderDisplayName,
                     color = textColor,
                     fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.body2,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
 
@@ -830,7 +829,7 @@ object SettingsScreen {
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = currentSettings.googleDriveAccountEmail.ifEmpty { "—" },
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 fontStyle = FontStyle.Italic,
             )
 
@@ -840,7 +839,7 @@ object SettingsScreen {
             Spacer(modifier = Modifier.height(5.dp))
             Text(
                 text = currentSettings.googleDriveFolderName.ifEmpty { "—" },
-                style = MaterialTheme.typography.body2,
+                style = MaterialTheme.typography.bodyMedium,
                 fontStyle = FontStyle.Italic,
             )
         }

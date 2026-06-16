@@ -6,8 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.util
 
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
@@ -15,4 +14,4 @@ import androidx.compose.ui.graphics.Color
 fun normalContentColor(): Color = LocalContentColor.current
 
 @Composable
-fun disabledContentColor(): Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current / 2)
+fun disabledContentColor(): Color = LocalContentColor.current.copy(alpha = 0.38f)

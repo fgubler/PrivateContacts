@@ -22,15 +22,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -87,8 +86,6 @@ import kotlin.contracts.ExperimentalContracts
 private const val FILE_PERMISSION_FLAG = Intent.FLAG_GRANT_READ_URI_PERMISSION
 
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 @ExperimentalContracts
 @FlowPreview
 class MainActivity : AppCompatActivity() {
@@ -263,8 +260,8 @@ class MainActivity : AppCompatActivity() {
             Text(
                 text = stringResource(id = R.string.app_name),
                 modifier = Modifier.padding(top = 10.dp),
-                color = MaterialTheme.colors.primary,
-                style = MaterialTheme.typography.h6
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.titleLarge
             )
             Spacer(modifier = Modifier.height(20.dp))
             LoadingIndicatorFullWidth(loadingIndicatorSize = 75.dp)

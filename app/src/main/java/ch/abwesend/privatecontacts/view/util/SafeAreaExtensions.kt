@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.primarySurface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -41,7 +40,7 @@ fun Modifier.setTopBarSafeAreaPadding(
     addHorizontalPadding: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
-    return background(MaterialTheme.colors.primarySurface)
+    return background(MaterialTheme.colorScheme.surface)
         .padding(
             top = if (invertTopAndBottomBars) 0.dp else getSafeAreaPaddingTop(safeArea),
             start = if (addHorizontalPadding) getSafeAreaPaddingStart(safeArea) else 0.dp,
@@ -56,7 +55,7 @@ fun Modifier.setMainContentSafeAreaPadding(
     addHorizontalPadding: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
-    return background(MaterialTheme.colors.background)
+    return background(MaterialTheme.colorScheme.background)
         .padding(
             top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
             start = if (addHorizontalPadding) getSafeAreaPaddingStart(safeArea) else 0.dp,

@@ -16,11 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,15 +43,13 @@ import ch.abwesend.privatecontacts.view.components.text.SectionSubtitle
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 import ch.abwesend.privatecontacts.view.util.disabledContentColor
 import ch.abwesend.privatecontacts.view.util.normalContentColor
-import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalContracts
 object SettingsComponents {
     @Composable
     fun SettingsCategorySpacer() = Spacer(modifier = Modifier.height(10.dp))
 
     @Composable
-    fun SettingsEntryDivider() = Divider(modifier = Modifier.padding(vertical = 10.dp))
+    fun SettingsEntryDivider() = HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
 
     @Composable
     fun SettingsCategory(
@@ -135,7 +132,6 @@ object SettingsComponents {
         }
     }
 
-    @ExperimentalMaterialApi
     @Composable
     fun <T> SettingsDropDown(
         @StringRes label: Int,
@@ -144,6 +140,7 @@ object SettingsComponents {
         options: List<DropDownOption<T>>,
         enabled: Boolean = true,
         labelAndValueHorizontal: Boolean = true,
+        trailingContent: (@Composable () -> Unit)? = null,
         onValueChanged: (T) -> Unit,
     ) {
         val selectedOption = remember(value) { options.find { it.value == value } }
@@ -182,6 +179,7 @@ object SettingsComponents {
                     Spacer(modifier = Modifier.height(5.dp))
                     description?.let { SettingsDescription(descriptionRes = it, textColor = textColor) }
                 }
+                trailingContent?.invoke()
                 if (enabled) {
                     EditIcon(modifier = Modifier.padding(horizontal = 10.dp))
                 }
@@ -198,7 +196,7 @@ object SettingsComponents {
         Text(
             text = stringResource(id = labelRes),
             fontWeight = FontWeight.SemiBold,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyLarge,
             modifier = modifier,
             color = textColor,
         )
@@ -213,7 +211,7 @@ object SettingsComponents {
         Text(
             text = stringResource(id = descriptionRes),
             fontStyle = FontStyle.Italic,
-            style = MaterialTheme.typography.body2,
+            style = MaterialTheme.typography.bodyMedium,
             color = textColor,
             modifier = modifier,
         )
