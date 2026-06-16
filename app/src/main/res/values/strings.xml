@@ -550,4 +550,5 @@
     <string name="release_notes_v102_2">Backups and exported files can now be validated without actually importing them.</string>
     <string name="release_notes_v104">The app now allows to upload periodic backups automatically to Google Drive.</string>
     <string name="release_notes_v111">Added the functionality to edit the values of events and dates.</string>
+    <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
 </resources>

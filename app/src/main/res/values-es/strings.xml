@@ -545,4 +545,5 @@
     <string name="release_notes_v102_2">Las copias de seguridad y los archivos exportados ahora se pueden validar sin necesidad de importarlos.</string>
     <string name="release_notes_v104">La app ahora permite subir automáticamente las copias de seguridad periódicas a Google Drive.</string>
     <string name="release_notes_v111">Se ha añadido la funcionalidad para editar los valores de eventos y fechas.</string>
+    <string name="release_notes_v113">Actualización a Material 3 para un aspecto más moderno.</string>
 </resources>

@@ -546,4 +546,5 @@
     <string name="release_notes_v102_2">Les sauvegardes et les fichiers exportés peuvent désormais être validés sans les importer.</string>
     <string name="release_notes_v104">L\'application permet désormais de téléverser automatiquement les sauvegardes périodiques sur Google Drive.</string>
     <string name="release_notes_v111">Ajout de la fonctionnalité permettant de modifier les valeurs des événements et des dates.</string>
+    <string name="release_notes_v113">Passage à Material 3 pour une apparence plus moderne.</string>
 </resources>
