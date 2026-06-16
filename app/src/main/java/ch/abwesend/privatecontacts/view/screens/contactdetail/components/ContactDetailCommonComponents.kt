@@ -17,10 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactData
+import ch.abwesend.privatecontacts.view.components.CustomCard
 import ch.abwesend.privatecontacts.view.model.config.IconButtonConfigGeneric
 import ch.abwesend.privatecontacts.view.model.config.IconConfig
 import ch.abwesend.privatecontacts.view.theme.AppColors
@@ -53,12 +51,7 @@ object ContactDetailCommonComponents {
         iconConfig: IconConfig,
         content: @Composable () -> Unit
     ) {
-        Card(
-            modifier = Modifier.padding(all = 5.dp),
-            shape = RectangleShape,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        ) {
+        CustomCard {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Row {
                     Icon(
@@ -82,12 +75,7 @@ object ContactDetailCommonComponents {
         modifier: Modifier = Modifier,
         content: @Composable () -> Unit
     ) {
-        Card(
-            modifier = modifier.padding(all = 5.dp),
-            shape = RectangleShape,
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        ) {
+        CustomCard(modifier = modifier) {
             Box(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
                 Column {
                     ContactCategoryHeader(
