@@ -1,0 +1,2 @@
+6.0.0
+Upgrade to Material 3 for a more modern look and feel.
