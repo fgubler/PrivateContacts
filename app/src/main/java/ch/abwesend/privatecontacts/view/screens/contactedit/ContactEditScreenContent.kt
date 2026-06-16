@@ -23,18 +23,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Checkbox
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.res.stringResource
@@ -97,8 +96,6 @@ import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
-@ExperimentalMaterialApi
 object ContactEditScreenContent {
     @Composable
     fun ContactEditContent(
@@ -117,7 +114,7 @@ object ContactEditScreenContent {
             if (contactDataWaitingForCustomType != null) {
                 logger.warning(
                     "overwriting contact data waiting for custom type: " +
-                        "from $contactDataWaitingForCustomType to $contactData"
+                            "from $contactDataWaitingForCustomType to $contactData",
                 )
             }
             contactDataWaitingForCustomType = contactData
@@ -138,7 +135,7 @@ object ContactEditScreenContent {
         val allContactGroups by viewModel.allContactGroups.collectAsStateWithLifecycle(initialValue = InactiveResource())
 
         Column(
-            modifier = modifier.verticalScroll(scrollState)
+            modifier = modifier.verticalScroll(scrollState),
         ) {
             PersonalInformation(contact, onChanged)
             AdditionalInformation(contact, onChanged)
@@ -150,22 +147,22 @@ object ContactEditScreenContent {
             PhoneNumbers(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
             EmailAddresses(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
             PhysicalAddresses(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
             Relationships(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
             EventDates(
                 contact = contact,
@@ -175,12 +172,12 @@ object ContactEditScreenContent {
             Websites(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
             Companies(
                 contact = contact,
                 waitForCustomType = waitForCustomContactDataType,
-                onChanged = onChanged
+                onChanged = onChanged,
             )
 
             Groups(contact, onChanged, allContactGroups, viewModel::createContactGroup)
@@ -189,7 +186,7 @@ object ContactEditScreenContent {
                 visible = contactDataWaitingForCustomType != null,
                 initialText = customTypeInitialText,
                 hideDialog = { contactDataWaitingForCustomType = null },
-                onCustomTypeDefined = onCustomTypeDefined
+                onCustomTypeDefined = onCustomTypeDefined,
             )
         }
     }
@@ -197,7 +194,7 @@ object ContactEditScreenContent {
     @Composable
     private fun PersonalInformation(
         contact: IContactEditable,
-        onChanged: (IContactEditable) -> Unit
+        onChanged: (IContactEditable) -> Unit,
     ) {
         val manager = createKeyboardAndFocusManager()
 
@@ -217,7 +214,7 @@ object ContactEditScreenContent {
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Text,
                         imeAction = ImeAction.Next,
-                        capitalization = Words
+                        capitalization = Words,
                     ),
                     modifier = textFieldModifier,
                 )
@@ -231,9 +228,11 @@ object ContactEditScreenContent {
                     singleLine = true,
                     modifier = textFieldModifier,
                     keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
-                    keyboardActions = KeyboardActions(onDone = {
-                        manager.closeKeyboardAndClearFocus()
-                    }),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            manager.closeKeyboardAndClearFocus()
+                        },
+                    ),
                 )
             }
         }
@@ -242,7 +241,7 @@ object ContactEditScreenContent {
     @Composable
     private fun AdditionalInformation(
         contact: IContactEditable,
-        onChanged: (IContactEditable) -> Unit
+        onChanged: (IContactEditable) -> Unit,
     ) {
         val manager = createKeyboardAndFocusManager()
 
@@ -266,7 +265,7 @@ object ContactEditScreenContent {
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 keyboardType = KeyboardType.Text,
                                 imeAction = ImeAction.Next,
-                                capitalization = Words
+                                capitalization = Words,
                             ),
                             modifier = textFieldModifier,
                         )
@@ -283,9 +282,11 @@ object ContactEditScreenContent {
                     singleLine = true,
                     modifier = textFieldModifier,
                     keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
-                    keyboardActions = KeyboardActions(onDone = {
-                        manager.closeKeyboardAndClearFocus()
-                    }),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            manager.closeKeyboardAndClearFocus()
+                        },
+                    ),
                 )
                 OutlinedTextField(
                     label = { Text(stringResource(id = R.string.name_prefix)) },
@@ -297,9 +298,11 @@ object ContactEditScreenContent {
                     singleLine = true,
                     modifier = textFieldModifier,
                     keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
-                    keyboardActions = KeyboardActions(onDone = {
-                        manager.closeKeyboardAndClearFocus()
-                    }),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            manager.closeKeyboardAndClearFocus()
+                        },
+                    ),
                 )
                 OutlinedTextField(
                     label = { Text(stringResource(id = R.string.name_suffix)) },
@@ -311,9 +314,11 @@ object ContactEditScreenContent {
                     singleLine = true,
                     modifier = textFieldModifier,
                     keyboardOptions = KeyboardOptions.Default.copy(capitalization = Words),
-                    keyboardActions = KeyboardActions(onDone = {
-                        manager.closeKeyboardAndClearFocus()
-                    }),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            manager.closeKeyboardAndClearFocus()
+                        },
+                    ),
                 )
             }
         }
@@ -344,7 +349,11 @@ object ContactEditScreenContent {
         }
     }
 
-    private fun adaptSaveInAccount(contact: IContactEditable, oldType: ContactType, newType: ContactType) {
+    private fun adaptSaveInAccount(
+        contact: IContactEditable,
+        oldType: ContactType,
+        newType: ContactType,
+    ) {
         if (oldType != newType) {
             val newAccount = ContactAccount.currentDefaultForContactType(newType)
             contact.saveInAccount = newAccount
@@ -352,7 +361,10 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun AccountSelectionField(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
+    private fun AccountSelectionField(
+        contact: IContactEditable,
+        onChanged: (IContactEditable) -> Unit,
+    ) {
         if (contact.type.accountSelectionRequired) {
             AccountSelectionDropDownField(selectedAccount = contact.saveInAccount) { newValue ->
                 contact.saveInAccount = newValue
@@ -374,7 +386,7 @@ object ContactEditScreenContent {
                 label = R.string.type,
                 initialValue = initialText,
                 onCancel = hideDialog,
-                onSave = onCustomTypeDefined
+                onSave = onCustomTypeDefined,
             )
         }
     }
@@ -406,7 +418,7 @@ object ContactEditScreenContent {
                     fontStyle = FontStyle.Italic.takeIf { hasNoGroups },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f)
+                        .weight(1f),
                 )
                 EditIconButton { showDialog = true }
             }
@@ -444,7 +456,7 @@ object ContactEditScreenContent {
                         contact.contactGroups.addAll(contactGroups)
                         onChanged(contact)
                         showDialog = false
-                    }
+                    },
                 )
             }
         }
@@ -476,7 +488,7 @@ object ContactEditScreenContent {
     @Composable
     private fun CreateGroupButton(
         existingGroups: Collection<IContactGroup>,
-        onCreateContactGroup: (IContactGroup) -> Unit
+        onCreateContactGroup: (IContactGroup) -> Unit,
     ) {
         var showDialog by remember { mutableStateOf(false) }
 
@@ -496,7 +508,10 @@ object ContactEditScreenContent {
 
             val groupValidity = when {
                 contactGroup.id.name.isBlank() -> ContactGroupValidity.EMPTY_NAME
-                existingGroups.any { it.id.name.equals(contactGroup.id.name, ignoreCase = true) } -> ContactGroupValidity.DUPLICATE_NAME
+                existingGroups.any {
+                    it.id.name.equals(contactGroup.id.name, ignoreCase = true,)
+                } -> ContactGroupValidity.DUPLICATE_NAME
+
                 else -> ContactGroupValidity.VALID
             }
 
@@ -510,7 +525,7 @@ object ContactEditScreenContent {
                 onSave = {
                     onCreateContactGroup(contactGroup)
                     showDialog = false
-                }
+                },
             )
         }
     }
@@ -540,10 +555,20 @@ object ContactEditScreenContent {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(start = 10.dp)
+            modifier = Modifier.padding(start = 10.dp),
         ) {
-            Icon(Icons.Default.Groups, contentDescription = stringResource(R.string.contact_group))
-            Text(text = groupName, modifier = Modifier.weight(1f).padding(start = 20.dp, end = 20.dp))
+            Icon(
+                Icons.Default.Groups,
+                contentDescription = stringResource(R.string.contact_group),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                text = groupName,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 20.dp, end = 20.dp),
+            )
             Checkbox(checked = selected, onCheckedChange = { onToggle() })
         }
     }
@@ -551,7 +576,7 @@ object ContactEditScreenContent {
     @Composable
     private fun Notes(
         contact: IContactEditable,
-        onChanged: (IContactEditable) -> Unit
+        onChanged: (IContactEditable) -> Unit,
     ) {
         val viewRequester = remember { BringIntoViewRequester() }
         val coroutineScope = rememberCoroutineScope()
@@ -581,7 +606,7 @@ object ContactEditScreenContent {
                                 viewRequester.bringIntoViewDelayed()
                             }
                         }
-                    }
+                    },
             )
         }
     }

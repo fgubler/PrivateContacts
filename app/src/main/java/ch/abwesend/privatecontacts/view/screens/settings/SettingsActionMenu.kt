@@ -10,10 +10,10 @@ import android.content.ClipData
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,20 +54,20 @@ fun SettingsActions(viewModel: SettingsViewModel) {
     MoreActionsIconButton { expanded = true }
     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
         DropdownMenuItem(
-            content = { Text(stringResource(id = R.string.settings_action_restore_default)) },
+            text = { Text(stringResource(id = R.string.settings_action_restore_default)) },
             onClick = {
                 showRestoreConfirmation = true
                 expanded = false
             },
         )
         DropdownMenuItem(
-            content = { Text(stringResource(id = R.string.settings_action_reset_database)) },
+            text = { Text(stringResource(id = R.string.settings_action_reset_database)) },
             onClick = {
                 showDatabaseResetConfirmation = true
                 expanded = false
             }
         )
-        Divider()
+        HorizontalDivider()
         CopyLogToClipBoardEntry { expanded = false }
         ExportLogFileEntry { expanded = false }
     }
@@ -157,6 +157,7 @@ private fun CopyLogToClipBoardEntry(onCloseMenu: () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
 
     DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.settings_action_copy_logs)) },
         onClick = {
             val logs = LogCache.getLog()
             coroutineScope.launch {
@@ -165,7 +166,6 @@ private fun CopyLogToClipBoardEntry(onCloseMenu: () -> Unit) {
             Toast.makeText(context, R.string.copied_to_clipboard, Toast.LENGTH_SHORT).show()
             onCloseMenu()
         },
-        content = { Text(stringResource(id = R.string.settings_action_copy_logs)) }
     )
 }
 
@@ -183,8 +183,8 @@ private fun ExportLogFileEntry(onCloseMenu: () -> Unit) {
     )
 
     DropdownMenuItem(
+        text = { Text(stringResource(id = R.string.export_logfile_today)) },
         onClick = { launcher.launch() },
-        content = { Text(stringResource(id = R.string.export_logfile_today)) }
     )
 }
 

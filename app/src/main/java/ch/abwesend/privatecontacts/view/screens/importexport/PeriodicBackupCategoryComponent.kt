@@ -9,9 +9,9 @@ package ch.abwesend.privatecontacts.view.screens.importexport
 import android.net.Uri
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +41,6 @@ import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExport
 import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExportScreenComponents
 import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalMaterialApi
 @ExperimentalContracts
 object PeriodicBackupCategoryComponent {
 
@@ -60,7 +59,7 @@ object PeriodicBackupCategoryComponent {
             )
 
             Spacer(modifier = Modifier.height(5.dp))
-            Divider()
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(5.dp))
 
             Text(text = stringResource(id = R.string.backup_validate_description))

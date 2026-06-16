@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.ExperimentalMaterialApi
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +31,6 @@ import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportCompon
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportComponents.TargetTypeFields
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 
-@ExperimentalMaterialApi
 object ImportContactsFromIntentComponents {
     @Composable
     fun ObserveVcfImportResult(

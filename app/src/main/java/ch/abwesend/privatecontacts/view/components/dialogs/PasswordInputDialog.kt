@@ -11,10 +11,10 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -91,8 +91,8 @@ fun PasswordInputDialog(
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(
                             text = stringResource(id = R.string.password_confirmation_mismatch_error),
-                            color = MaterialTheme.colors.error,
-                            style = MaterialTheme.typography.caption,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelSmall,
                         )
                     }
                 }

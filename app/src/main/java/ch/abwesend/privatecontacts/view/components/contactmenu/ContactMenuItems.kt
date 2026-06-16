@@ -2,9 +2,8 @@ package ch.abwesend.privatecontacts.view.components.contactmenu
 
 import android.net.Uri
 import androidx.annotation.StringRes
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,9 +28,11 @@ fun ChangeContactTypeMenuItem(
 
     var confirmationDialogVisible: Boolean by remember { mutableStateOf(false) }
 
-    DropdownMenuItem(enabled = enabled, onClick = { confirmationDialogVisible = true }) {
-        Text(stringResource(id = labelRes))
-    }
+    DropdownMenuItem(
+        text = { Text(stringResource(id = labelRes)) },
+        enabled = enabled,
+        onClick = { confirmationDialogVisible = true }
+    )
 
     ChangeContactTypeConfirmationDialog(
         contacts = contacts,
@@ -52,10 +53,13 @@ fun DeleteContactMenuItem(
     var dialogVisible: Boolean by remember { mutableStateOf(false) }
     val multipleContacts = numberOfContacts > 1
 
-    DropdownMenuItem(onClick = { dialogVisible = true }) {
-        @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
-        Text(stringResource(id = text))
-    }
+    DropdownMenuItem(
+        text = {
+            @StringRes val text = if (multipleContacts) R.string.delete_contacts else R.string.delete_contact
+            Text(stringResource(id = text))
+        },
+        onClick = { dialogVisible = true }
+    )
 
     DeleteContactConfirmationDialog(
         numberOfContacts = numberOfContacts,
@@ -67,7 +71,6 @@ fun DeleteContactMenuItem(
     )
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun ExportContactsMenuItem(
     contacts: Set<IContactBase>,
@@ -77,10 +80,13 @@ fun ExportContactsMenuItem(
     var dialogVisible: Boolean by remember { mutableStateOf(false) }
     val multipleContacts = contacts.size > 1
 
-    DropdownMenuItem(onClick = { dialogVisible = true }) {
-        @StringRes val text = if (multipleContacts) R.string.export_contacts else R.string.export_contact
-        Text(stringResource(id = text))
-    }
+    DropdownMenuItem(
+        text = {
+            @StringRes val text = if (multipleContacts) R.string.export_contacts else R.string.export_contact
+            Text(stringResource(id = text))
+        },
+        onClick = { dialogVisible = true }
+    )
 
     ExportContactConfirmationDialog(
         contacts = contacts,

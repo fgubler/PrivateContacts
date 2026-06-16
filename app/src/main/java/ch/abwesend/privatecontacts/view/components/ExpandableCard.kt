@@ -8,9 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -33,7 +32,7 @@ fun ExpandableCard(
     header: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-    Card(modifier = modifier.padding(all = 5.dp)) {
+    CustomCard(modifier = modifier) {
         Surface(modifier = Modifier.padding(horizontal = 5.dp, vertical = 10.dp)) {
             Column {
                 ExpandableCardHeader(customHeader = header, expanded = expanded) {

@@ -7,21 +7,27 @@
 package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.LeadingIconTab
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.DrawerValue
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryTabRow
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +35,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -65,9 +70,7 @@ import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListTab.SECRE
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
-@ExperimentalMaterialApi
 @ExperimentalFoundationApi
-@ExperimentalComposeUiApi
 @FlowPreview
 @ExperimentalContracts
 object ContactListScreen {
@@ -75,7 +78,7 @@ object ContactListScreen {
 
     @Composable
     fun Screen(screenContext: IContactListScreenContext) {
-        val scaffoldState = rememberScaffoldState()
+        val drawerState = rememberDrawerState(DrawerValue.Closed)
         val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
         val permissionProvider = screenContext.permissionProvider
@@ -86,11 +89,11 @@ object ContactListScreen {
             screenContext = screenContext,
             selectedScreen = Screen.ContactList,
             allowFullNavigation = true,
-            scaffoldState = scaffoldState,
+            drawerState = drawerState,
             topBar = {
                 ContactListTopBar(
                     viewModel = viewModel,
-                    scaffoldState = scaffoldState,
+                    drawerState = drawerState,
                 )
             },
             floatingActionButton = { AddContactButton(screenContext) }
@@ -138,7 +141,7 @@ object ContactListScreen {
         if (androidContactsEnabled) {
             val selectedTab = viewModel.selectedTab.value
 
-            TabRow(selectedTabIndex = selectedTab.index, backgroundColor = MaterialTheme.colors.surface) {
+            SecondaryTabRow(selectedTabIndex = selectedTab.index, containerColor = MaterialTheme.colorScheme.surface) {
                 ContactListTab.valuesSorted.forEach { tab ->
                     if (tab.isVisible(settings)) {
                         Tab(tab = tab, selectedTab = selectedTab, viewModel = viewModel, permissionProvider = permissions)
@@ -157,10 +160,10 @@ object ContactListScreen {
     ) {
         var requestPermissions: Boolean by remember { mutableStateOf(false) }
 
-        LeadingIconTab(
+        Tab(
             selected = selectedTab == tab,
-            text = { Text(text = stringResource(id = tab.label)) },
-            icon = { Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label)) },
+            selectedContentColor = MaterialTheme.colorScheme.primary,
+            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             onClick = {
                 if (tab.requiresPermission) {
                     requestPermissions = true
@@ -168,7 +171,17 @@ object ContactListScreen {
                     viewModel.selectTab(tab)
                 }
             },
-        )
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(vertical = 20.dp),
+            ) {
+                Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label))
+                Spacer(modifier = Modifier.width(10.dp))
+                Text(text = stringResource(id = tab.label))
+            }
+        }
 
         if (requestPermissions) {
             permissionProvider.contactPermissionHelper.requestAndroidContactPermissions {
@@ -186,11 +199,13 @@ object ContactListScreen {
         FloatingActionButton(
             modifier = Modifier.offset(x = -ALPHABETIC_SCROLLBAR_WIDTH_DP.dp, y = verticalOffset.dp),
             onClick = { createContact(screenContext) },
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = Color.White,
+            shape = CircleShape,
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(id = R.string.create_contact),
-                tint = MaterialTheme.colors.onSecondary,
             )
         }
     }
@@ -277,8 +292,7 @@ object ContactListScreen {
             onCloseDialog = { viewModel.resetExportResult() },
             ProgressDialog = { ExportContactsLoadingDialog(exportMultiple = progressForMultiple) },
             ResultDialog = { bulkOperationResult, onClose ->
-                val result = bulkOperationResult.result
-                val numberOfFailed = when (result) {
+                val numberOfFailed = when (val result = bulkOperationResult.result) {
                     is ErrorResult -> bulkOperationResult.numberOfSelectedContacts
                     is SuccessResult -> result.value.failedContacts.size
                 }

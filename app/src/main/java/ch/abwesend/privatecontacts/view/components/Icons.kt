@@ -6,9 +6,8 @@
 
 package ch.abwesend.privatecontacts.view.components
 
-import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Help
@@ -67,7 +66,7 @@ fun InfoIcon() {
     Icon(
         imageVector = Icons.AutoMirrored.Default.Help,
         contentDescription = stringResource(id = R.string.info),
-        tint = LocalContentColor.current.copy(alpha = LocalContentAlpha.current / 2)
+        tint = LocalContentColor.current.copy(alpha = 0.5f)
     )
 }
 

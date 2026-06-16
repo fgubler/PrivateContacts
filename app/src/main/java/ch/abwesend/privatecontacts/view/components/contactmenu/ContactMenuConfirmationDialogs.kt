@@ -3,8 +3,7 @@ package ch.abwesend.privatecontacts.view.components.contactmenu
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -74,7 +73,6 @@ fun DeleteContactConfirmationDialog(
     }
 }
 
-@ExperimentalMaterialApi
 @Composable
 fun ExportContactConfirmationDialog(
     contacts: Set<IContactBase>,
