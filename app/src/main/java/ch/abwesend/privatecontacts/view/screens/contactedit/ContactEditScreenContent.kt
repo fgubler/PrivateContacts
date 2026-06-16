@@ -509,10 +509,7 @@ object ContactEditScreenContent {
             val groupValidity = when {
                 contactGroup.id.name.isBlank() -> ContactGroupValidity.EMPTY_NAME
                 existingGroups.any {
-                    it.id.name.equals(
-                        contactGroup.id.name,
-                        ignoreCase = true,
-                    )
+                    it.id.name.equals(contactGroup.id.name, ignoreCase = true,)
                 } -> ContactGroupValidity.DUPLICATE_NAME
 
                 else -> ContactGroupValidity.VALID

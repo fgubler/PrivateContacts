@@ -22,6 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import ch.abwesend.privatecontacts.view.model.DropDownOption
 
+/**
+ * Component to put a drop-down on any kind of content (not just a text-field)
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> DropDownComponent(

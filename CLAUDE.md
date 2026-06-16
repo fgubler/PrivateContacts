@@ -119,6 +119,7 @@ Four rules are disabled project-wide: `trailing-comma-on-declaration-site`, `tra
 ## Code Output
 - No docstrings or comments on code that was not changed.
 - Inline comments only where logic is non-obvious.
+- Do not remove existing comments, unless they are no longer correct.
 - Read the file before modifying it. Never edit blind.
 
 ## Session Memory
