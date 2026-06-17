@@ -56,12 +56,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
-    # Release job needs specific permissions for creating releases
+    # Release job needs specific permissions for creating and pushing tags/releases
     permissions:
-      contents: write  # Required to create tags (tag_name creates a git tag if it doesn't exist)
+      contents: write  # Required to push git tags and create releases
       # Note: GitHub doesn't have a separate 'releases: write' permission
       # Creating releases requires 'contents: write' because:
-      # 1. The action creates a git tag if tag_name doesn't exist
+      # 1. We push git tags ourselves before creating a draft release
       # 2. Releases are considered part of repository contents in GitHub's permission model
 
     steps:
@@ -101,21 +101,34 @@ jobs:
           echo "All APK files found:"
           find ./app/build/outputs/apk -name "*.apk" -type f -exec ls -la {} \; || echo "No APK files to list"
 
-      - name: Get version name
+      - name: Get version name and code
         run: |
-          VERSION_NAME=$(grep "versionName" app/build.gradle | grep -oP '(?<=")\d+\.\d+\.\d+(?=")')
+          VERSION_NAME=$(grep "versionName" app/build.gradle | grep -oP '(?<=")([^"]+)(?=")')
+          VERSION_CODE=$(grep "versionCode" app/build.gradle | grep -oP '(?<=\=\s)\d+')
           echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
 
       - name: Check if version tag already exists
         run: |
-          TAG="v${VERSION_NAME}"
-          git fetch --tags
-          if git tag -l "$TAG" | grep -q "^${TAG}$"; then
+          # Tag scheme combines versionName + versionCode, e.g. v6.0.0-113.
+          # This keeps tags readable while ensuring uniqueness per versionCode.
+          TAG="v${VERSION_NAME}-${VERSION_CODE}"
+          if git ls-remote --tags origin "refs/tags/${TAG}" | grep -q "refs/tags/${TAG}$"; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
           fi
           echo "VERSION_TAG=$TAG" >> $GITHUB_ENV
+
+      - name: Create and push version tag immediately
+        if: env.TAG_EXISTS == 'false'
+        run: |
+          # Important: push the git tag before creating the draft release.
+          # Draft releases alone do not always create a visible/findable git ref.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "${VERSION_TAG}" -m "Release ${VERSION_TAG}"
+          git push origin "refs/tags/${VERSION_TAG}"
 
       - name: Verify APK files exist
         run: |
@@ -145,9 +158,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.VERSION_TAG }}
-          name: Automated Release for v${{ env.VERSION_NAME }} on ${{ env.date_today }}
+          name: Automated Release for v${{ env.VERSION_NAME }} (${{ env.VERSION_CODE }}) on ${{ env.date_today }}
           body: |
-            Automated release for version ${{ env.VERSION_NAME }}
+            Automated release for version ${{ env.VERSION_NAME }} (versionCode ${{ env.VERSION_CODE }})
 
             Built on: ${{ env.date_today }}
 
