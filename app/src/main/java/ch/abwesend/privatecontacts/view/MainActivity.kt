@@ -7,9 +7,12 @@
 package ch.abwesend.privatecontacts.view
 
 import android.content.Intent
+import android.graphics.Color.TRANSPARENT
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -103,6 +106,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.auto(lightScrim = TRANSPARENT, darkScrim = TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.auto(
+                lightScrim = TRANSPARENT,
+                darkScrim = TRANSPARENT
+            ),
+        )
         logger.info("Main activity started")
 
         callPermissionHelper.setupObservers(this)

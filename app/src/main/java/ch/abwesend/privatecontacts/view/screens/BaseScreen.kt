@@ -6,10 +6,20 @@
 
 package ch.abwesend.privatecontacts.view.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -77,9 +87,28 @@ fun BaseScreen(
     ) {
         Scaffold(
             topBar = if (invertTopAndBottomBars) hidden else topBar,
-            bottomBar = if (invertTopAndBottomBars) topBar else hidden,
+            bottomBar = if (invertTopAndBottomBars) {
+                {
+                    Column {
+                        topBar()
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .windowInsetsBottomHeight(WindowInsets.navigationBars)
+                                .background(MaterialTheme.colorScheme.primary)
+                        )
+                    }
+                }
+            } else hidden,
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             modifier = Modifier
-                .setMainContentSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false),
+                .setMainContentSafeAreaPadding(invertTopAndBottomBars, addHorizontalPadding = false)
+                // when the bar sits at the bottom, consume the status-bar inset so the bottom-placed
+                // TopAppBar does not add its default top inset as spurious padding
+                .then(
+                    if (invertTopAndBottomBars) Modifier.consumeWindowInsets(WindowInsets.statusBars)
+                    else Modifier
+                ),
             floatingActionButton = floatingActionButton,
             content = { padding -> content(padding) },
         )

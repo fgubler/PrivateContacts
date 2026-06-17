@@ -363,7 +363,7 @@
 
     <string name="secret_contacts_tab_title">Geheime Kontakte</string>
     <string name="all_contacts_tab_title">Alle Kontakte</string>
-    <string name="public_contacts_tab_title">Öffentliche Kontakte</string>
+    <string name="public_contacts_tab_title">Öffentliche</string>
 
     <string name="target_account">Zielkonto</string>
     <string name="app_internal">In dieser App</string>
