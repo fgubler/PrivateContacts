@@ -37,7 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
@@ -179,7 +181,11 @@ object ContactListScreen {
             ) {
                 Icon(imageVector = tab.icon, contentDescription = stringResource(id = tab.label))
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(text = stringResource(id = tab.label))
+                Text(
+                    text = stringResource(id = tab.label),
+                    textAlign = TextAlign.Center,
+                    fontSize = 13.sp,
+                )
             }
         }
 
