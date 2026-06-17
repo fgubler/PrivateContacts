@@ -184,7 +184,8 @@ object ContactListScreen {
                 Text(
                     text = stringResource(id = tab.label),
                     textAlign = TextAlign.Center,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 13.sp,
                 )
             }
         }
