@@ -127,7 +127,7 @@ jobs:
           # Draft releases alone do not always create a visible/findable git ref.
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag -a "${VERSION_TAG}" -m "Release ${VERSION_TAG}"
+          git tag "${VERSION_TAG}"
           git push origin "refs/tags/${VERSION_TAG}"
 
       - name: Verify APK files exist
