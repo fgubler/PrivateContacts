@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContent
 import androidx.compose.material3.MaterialTheme
@@ -55,11 +56,19 @@ fun Modifier.setMainContentSafeAreaPadding(
     addHorizontalPadding: Boolean,
     safeArea: PaddingValues = getSafeAreaPadding()
 ): Modifier {
+    // In inverted mode the nav bar is handled by a Spacer inside the bottom bar, so only add
+    // IME padding to push the content above the keyboard. In normal mode safeArea already unions
+    // the IME inset, so its bottom padding covers the keyboard case.
+    val bottomPadding = if (invertTopAndBottomBars) {
+        WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    } else {
+        safeArea.calculateBottomPadding()
+    }
     return background(MaterialTheme.colorScheme.background)
         .padding(
             top = if (invertTopAndBottomBars) safeArea.calculateTopPadding() else 0.dp,
             start = if (addHorizontalPadding) getSafeAreaPaddingStart(safeArea) else 0.dp,
             end = if (addHorizontalPadding) getSafeAreaPaddingEnd(safeArea) else 0.dp,
-            bottom = if (invertTopAndBottomBars) 0.dp else safeArea.calculateBottomPadding(),
+            bottom = bottomPadding,
         )
 }
