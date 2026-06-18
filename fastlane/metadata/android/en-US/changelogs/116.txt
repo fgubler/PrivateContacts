@@ -1,0 +1,3 @@
+6.0.2
+Upgrade to Material 3 for a more modern look and feel.
+With some more bug-fixes.
