@@ -59,6 +59,11 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     googleDriveAccountEmail = getValue(googleDriveAccountEmailEntry),
     googleDriveFolderId = getValue(googleDriveFolderIdEntry),
     googleDriveFolderName = getValue(googleDriveFolderNameEntry),
+    syncEnabled = getValue(syncEnabledEntry),
+    syncDeviceId = getValue(syncDeviceIdEntry),
+    syncAccountId = getValue(syncAccountIdEntry),
+    syncPasswordEncrypted = getValue(syncPasswordEncryptedEntry),
+    lastSyncDate = tryGetDateValue(lastSyncDateEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =

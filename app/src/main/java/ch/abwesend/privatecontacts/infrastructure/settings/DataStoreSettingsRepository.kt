@@ -177,6 +177,28 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.googleDriveFolderName
         set(value) = dataStore.setValue(googleDriveFolderNameEntry, value)
 
+    override var syncEnabled: Boolean
+        get() = currentSettings.syncEnabled
+        set(value) = dataStore.setValue(syncEnabledEntry, value)
+
+    override var syncDeviceId: String
+        get() = currentSettings.syncDeviceId
+        set(value) = dataStore.setValue(syncDeviceIdEntry, value)
+
+    override var syncAccountId: String
+        get() = currentSettings.syncAccountId
+        set(value) = dataStore.setValue(syncAccountIdEntry, value)
+
+    override var syncPasswordEncrypted: String
+        get() = currentSettings.syncPasswordEncrypted
+        set(value) = dataStore.setValue(syncPasswordEncryptedEntry, value)
+
+    override var lastSyncDate: LocalDate
+        get() = currentSettings.lastSyncDate
+        set(value) {
+            dataStore.setDateValue(lastSyncDateEntry, value)
+        }
+
     override var currentVersion: Int
         get() = currentSettings.currentVersion
         set(value) = dataStore.setValue(currentVersionEntry, value)
@@ -245,6 +267,9 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         googleDriveAccountEmail = settings.googleDriveAccountEmail
         googleDriveFolderId = settings.googleDriveFolderId
         googleDriveFolderName = settings.googleDriveFolderName
+        syncEnabled = settings.syncEnabled
+        syncPasswordEncrypted = settings.syncPasswordEncrypted
+        lastSyncDate = settings.lastSyncDate
         appLanguage = settings.appLanguage
 
         /*
@@ -253,6 +278,11 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
                - previousVersion
                - numberOfAppStarts
                - latestUserPromptAtStartup
+
+           device-identity is deliberately NOT copied, so restoring a settings-backup never clones
+           another device's sync identity:
+               - syncDeviceId
+               - syncAccountId
          */
 
         // TODO add new properties here

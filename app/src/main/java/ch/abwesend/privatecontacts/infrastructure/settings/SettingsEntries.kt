@@ -181,6 +181,26 @@ internal val googleDriveFolderNameEntry = SettingsEntry(
     key = stringPreferencesKey("googleDriveFolderName"),
     defaultValue = defaultSettings.googleDriveFolderName
 )
+internal val syncEnabledEntry = SettingsEntry(
+    key = booleanPreferencesKey("syncEnabled"),
+    defaultValue = defaultSettings.syncEnabled
+)
+internal val syncDeviceIdEntry = SettingsEntry(
+    key = stringPreferencesKey("syncDeviceId"),
+    defaultValue = defaultSettings.syncDeviceId
+)
+internal val syncAccountIdEntry = SettingsEntry(
+    key = stringPreferencesKey("syncAccountId"),
+    defaultValue = defaultSettings.syncAccountId
+)
+internal val syncPasswordEncryptedEntry = SettingsEntry(
+    key = stringPreferencesKey("syncPasswordEncrypted"),
+    defaultValue = defaultSettings.syncPasswordEncrypted
+)
+internal val lastSyncDateEntry = DateSettingsEntry(
+    key = stringPreferencesKey("lastSyncDate"),
+    defaultValue = LocalDate.MIN
+)
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`
 // in DataStoreSettingsRepository.

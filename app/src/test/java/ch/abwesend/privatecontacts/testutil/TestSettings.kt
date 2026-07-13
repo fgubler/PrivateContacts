@@ -63,6 +63,11 @@ data class TestSettings(
     override var googleDriveAccountEmail: String = currentSettings.googleDriveAccountEmail
     override var googleDriveFolderId: String = currentSettings.googleDriveFolderId
     override var googleDriveFolderName: String = currentSettings.googleDriveFolderName
+    override var syncEnabled: Boolean = currentSettings.syncEnabled
+    override var syncDeviceId: String = currentSettings.syncDeviceId
+    override var syncAccountId: String = currentSettings.syncAccountId
+    override var syncPasswordEncrypted: String = currentSettings.syncPasswordEncrypted
+    override var lastSyncDate: LocalDate = currentSettings.lastSyncDate
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings

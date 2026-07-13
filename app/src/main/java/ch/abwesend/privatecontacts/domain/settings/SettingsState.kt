@@ -91,6 +91,19 @@ interface ISettingsState {
     val googleDriveFolderId: String
     val googleDriveFolderName: String
 
+    // Contact Sync (Google Drive)
+    val syncEnabled: Boolean
+
+    /** random per-install UUID; excluded from settings-restore so identities are never cloned */
+    val syncDeviceId: String
+
+    /** the Google account sync was enabled against; excluded from settings-restore */
+    val syncAccountId: String
+
+    /** the sync passphrase, wrapped by the device KeyStore (the value must match across devices) */
+    val syncPasswordEncrypted: String
+    val lastSyncDate: LocalDate
+
     // Others
     val currentVersion: Int
     val previousVersion: Int
@@ -144,6 +157,12 @@ data class SettingsState(
     override val googleDriveFolderId: String,
     override val googleDriveFolderName: String,
 
+    override val syncEnabled: Boolean,
+    override val syncDeviceId: String,
+    override val syncAccountId: String,
+    override val syncPasswordEncrypted: String,
+    override val lastSyncDate: LocalDate,
+
     override val currentVersion: Int,
     override val previousVersion: Int,
     override val numberOfAppStarts: Int,
@@ -181,6 +200,11 @@ data class SettingsState(
             googleDriveAccountEmail = "",
             googleDriveFolderId = "",
             googleDriveFolderName = "",
+            syncEnabled = false,
+            syncDeviceId = "",
+            syncAccountId = "",
+            syncPasswordEncrypted = "",
+            lastSyncDate = LocalDate.MIN,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,

@@ -74,6 +74,13 @@ interface SettingsRepository : ISettingsState {
     override var googleDriveFolderId: String
     override var googleDriveFolderName: String
 
+    // Contact Sync (Google Drive)
+    override var syncEnabled: Boolean
+    override var syncDeviceId: String
+    override var syncAccountId: String
+    override var syncPasswordEncrypted: String
+    override var lastSyncDate: LocalDate
+
     // Others
     override var currentVersion: Int
     override var previousVersion: Int
