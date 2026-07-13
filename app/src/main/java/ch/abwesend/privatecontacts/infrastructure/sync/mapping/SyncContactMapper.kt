@@ -31,6 +31,9 @@ import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
 import ch.abwesend.privatecontacts.domain.model.sync.SyncContact
 import ch.abwesend.privatecontacts.domain.model.sync.SyncContactData
 import ch.abwesend.privatecontacts.domain.model.sync.SyncContactImage
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncContactMapper
+import ch.abwesend.privatecontacts.infrastructure.sync.syncJson
+import kotlinx.serialization.encodeToString
 import java.util.Base64
 
 /**
@@ -39,8 +42,14 @@ import java.util.Base64
  * Remote-applied contacts are always produced with [ModelStatus.NEW] so that the create-path
  * (delete-then-create in the pull-worker) persists the whole object (contact-data, groups, image).
  */
-class SyncContactMapper {
-    fun toSyncContact(contact: IContact, syncId: String): SyncContact =
+class SyncContactMapper : ISyncContactMapper {
+    override fun serializeContact(contact: SyncContact): String =
+        syncJson.encodeToString(contact)
+
+    override fun deserializeContact(payload: String): SyncContact =
+        syncJson.decodeFromString(payload)
+
+    override fun toSyncContact(contact: IContact, syncId: String): SyncContact =
         SyncContact(
             syncId = syncId,
             firstName = contact.firstName,
@@ -57,7 +66,7 @@ class SyncContactMapper {
             image = contact.image.toSyncContactImage(),
         )
 
-    fun toContact(syncContact: SyncContact, contactId: IContactIdInternal): IContactEditable =
+    override fun toContact(syncContact: SyncContact, contactId: IContactIdInternal): IContactEditable =
         ContactEditable(
             id = contactId,
             importId = null,

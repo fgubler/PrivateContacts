@@ -24,9 +24,11 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Validat
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationResult.Failure
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.model.result.batch.flattenedErrors
+import ch.abwesend.privatecontacts.domain.model.sync.SyncCommandOperation
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncCommandService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 
 class ContactSaveService {
@@ -35,6 +37,7 @@ class ContactSaveService {
     private val contactRepository: IContactRepository by injectAnywhere()
     private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val androidContactService: IAndroidContactSaveService by injectAnywhere()
+    private val syncCommandService: ISyncCommandService by injectAnywhere()
 
     // TODO use proper bulk-processing
     suspend fun saveContacts(contacts: List<IContactEditable>): Map<IContactEditable, ContactSaveResult> {
@@ -89,8 +92,15 @@ class ContactSaveService {
             contact.changeContactDataIdsToInternal()
         }
 
-        return if (contactIdChanged || contact.isNew) contactRepository.createContact(newContactId, contact)
+        val isCreate = contactIdChanged || contact.isNew
+        val internalResult = if (isCreate) contactRepository.createContact(newContactId, contact)
         else contactRepository.updateContact(newContactId, contact)
+
+        if (internalResult is ContactSaveResult.Success) {
+            val operation = if (isCreate) SyncCommandOperation.CREATE else SyncCommandOperation.UPDATE
+            syncCommandService.enqueueUpsert(newContactId, contact, operation)
+        }
+        return internalResult
     }
 
     private suspend fun saveContactExternally(contact: IContactEditable): ContactSaveResult {
@@ -140,6 +150,11 @@ class ContactSaveService {
         val internalResult = if (internalContactIds.isNotEmpty()) {
             contactRepository.deleteContacts(internalContactIds)
         } else ContactIdBatchChangeResult.empty()
+
+        val deletedInternalIds = internalResult.successfulChanges.filterIsInstance<IContactIdInternal>()
+        if (deletedInternalIds.isNotEmpty()) {
+            syncCommandService.enqueueDeletes(deletedInternalIds)
+        }
 
         val externalResult = if (externalContactIds.isNotEmpty()) {
             androidContactService.deleteContacts(externalContactIds)
