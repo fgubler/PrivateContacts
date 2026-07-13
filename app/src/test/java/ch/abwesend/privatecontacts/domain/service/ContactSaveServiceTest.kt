@@ -22,6 +22,7 @@ import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChang
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactSaveService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.domain.repository.IContactRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncCommandService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditableGeneric
@@ -68,6 +69,9 @@ class ContactSaveServiceTest : TestBase() {
     @MockK
     private lateinit var sanitizingService: ContactSanitizingService
 
+    @MockK
+    private lateinit var syncCommandService: ISyncCommandService
+
     @SpyK
     private var underTest: ContactSaveService = ContactSaveService()
 
@@ -75,6 +79,8 @@ class ContactSaveServiceTest : TestBase() {
         super.setup()
         every { sanitizingService.sanitizeContact(any()) } just runs
         coEvery { contactGroupRepository.createMissingContactGroups(any()) } returns ContactSaveResult.Success
+        coEvery { syncCommandService.enqueueUpsert(any(), any(), any()) } just runs
+        coEvery { syncCommandService.enqueueDeletes(any()) } just runs
     }
 
     override fun setupKoinModule(module: Module) {
@@ -84,6 +90,7 @@ class ContactSaveServiceTest : TestBase() {
         module.single { androidContactSaveService }
         module.single { validationService }
         module.single { sanitizingService }
+        module.single { syncCommandService }
     }
 
     // TODO replace this test when proper batch-processing is introduced
