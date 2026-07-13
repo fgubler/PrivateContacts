@@ -20,10 +20,18 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.Cont
 import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactimage.ContactImageDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactimage.ContactImageEntity
+import ch.abwesend.privatecontacts.infrastructure.room.sync.ContactSyncStateDao
+import ch.abwesend.privatecontacts.infrastructure.room.sync.ContactSyncStateEntity
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncConflictDao
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncConflictEntity
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncCursorDao
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncCursorEntity
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncOutboxDao
+import ch.abwesend.privatecontacts.infrastructure.room.sync.SyncOutboxEntity
 import java.util.concurrent.atomic.AtomicBoolean
 
 @Database(
-    version = 28,
+    version = 29,
     exportSchema = true,
     entities = [
         ContactEntity::class,
@@ -31,6 +39,10 @@ import java.util.concurrent.atomic.AtomicBoolean
         ContactGroupEntity::class,
         ContactGroupRelationEntity::class,
         ContactImageEntity::class,
+        ContactSyncStateEntity::class,
+        SyncOutboxEntity::class,
+        SyncCursorEntity::class,
+        SyncConflictEntity::class,
     ],
     autoMigrations = [
         AutoMigration(from = 18, to = 19),
@@ -43,6 +55,7 @@ import java.util.concurrent.atomic.AtomicBoolean
         AutoMigration(from = 25, to = 26),
         AutoMigration(from = 26, to = 27),
         AutoMigration(from = 27, to = 28),
+        AutoMigration(from = 28, to = 29),
     ]
 )
 @TypeConverters(AppTypeConverters::class)
@@ -55,4 +68,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun contactGroupDao(): ContactGroupDao
     abstract fun contactGroupRelationDao(): ContactGroupRelationDao
     abstract fun contactImageDao(): ContactImageDao
+    abstract fun contactSyncStateDao(): ContactSyncStateDao
+    abstract fun syncOutboxDao(): SyncOutboxDao
+    abstract fun syncCursorDao(): SyncCursorDao
+    abstract fun syncConflictDao(): SyncConflictDao
 }

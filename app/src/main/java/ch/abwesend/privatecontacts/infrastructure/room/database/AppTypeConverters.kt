@@ -10,6 +10,8 @@ import androidx.room.TypeConverter
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
+import ch.abwesend.privatecontacts.domain.model.sync.ConflictKind
+import ch.abwesend.privatecontacts.domain.model.sync.SyncCommandOperation
 import java.util.UUID
 
 object AppTypeConverters {
@@ -55,5 +57,27 @@ object AppTypeConverters {
     @TypeConverter
     fun deserializeContactDataType(value: String?): ContactDataType.Key? {
         return value?.let { ContactDataType.Key.valueOf(it) }
+    }
+
+    // SyncCommandOperation
+    @TypeConverter
+    fun serializeSyncCommandOperation(operation: SyncCommandOperation?): String? {
+        return operation?.name
+    }
+
+    @TypeConverter
+    fun deserializeSyncCommandOperation(value: String?): SyncCommandOperation? {
+        return value?.let { SyncCommandOperation.valueOf(it) }
+    }
+
+    // ConflictKind
+    @TypeConverter
+    fun serializeConflictKind(kind: ConflictKind?): String? {
+        return kind?.name
+    }
+
+    @TypeConverter
+    fun deserializeConflictKind(value: String?): ConflictKind? {
+        return value?.let { ConflictKind.valueOf(it) }
     }
 }

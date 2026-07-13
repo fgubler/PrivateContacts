@@ -1,0 +1,542 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 29,
+    "identityHash": "161007daef9424c785e31f7111c67804",
+    "entities": [
+      {
+        "tableName": "ContactEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `externalContactNo` INTEGER, `importId` TEXT, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `nickname` TEXT NOT NULL, `middleName` TEXT NOT NULL DEFAULT '', `namePrefix` TEXT NOT NULL DEFAULT '', `nameSuffix` TEXT NOT NULL DEFAULT '', `type` TEXT NOT NULL, `notes` TEXT NOT NULL, `fullTextSearch` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "rawId",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "externalContactNo",
+            "columnName": "externalContactNo",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "importId",
+            "columnName": "importId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "firstName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "lastName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nickname",
+            "columnName": "nickname",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "middleName",
+            "columnName": "middleName",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "namePrefix",
+            "columnName": "namePrefix",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "nameSuffix",
+            "columnName": "nameSuffix",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fullTextSearch",
+            "columnName": "fullTextSearch",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "ContactDataEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `contactId` TEXT NOT NULL, `category` TEXT NOT NULL, `isMain` INTEGER NOT NULL, `valueRaw` TEXT NOT NULL, `valueFormatted` TEXT NOT NULL, `valueForMatching` TEXT NOT NULL, `sortOrder` INTEGER NOT NULL, `typekey` TEXT NOT NULL, `typecustomValue` TEXT, PRIMARY KEY(`id`), FOREIGN KEY(`contactId`) REFERENCES `ContactEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "contactId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isMain",
+            "columnName": "isMain",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valueRaw",
+            "columnName": "valueRaw",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valueFormatted",
+            "columnName": "valueFormatted",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valueForMatching",
+            "columnName": "valueForMatching",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortOrder",
+            "columnName": "sortOrder",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type.key",
+            "columnName": "typekey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type.customValue",
+            "columnName": "typecustomValue",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ContactDataEntity_contactId",
+            "unique": false,
+            "columnNames": [
+              "contactId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactDataEntity_contactId` ON `${TABLE_NAME}` (`contactId`)"
+          },
+          {
+            "name": "index_ContactDataEntity_category_valueForMatching",
+            "unique": false,
+            "columnNames": [
+              "category",
+              "valueForMatching"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactDataEntity_category_valueForMatching` ON `${TABLE_NAME}` (`category`, `valueForMatching`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ContactEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contactId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ContactGroupEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`name` TEXT NOT NULL, `notes` TEXT NOT NULL, PRIMARY KEY(`name`))",
+        "fields": [
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notes",
+            "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "name"
+          ]
+        }
+      },
+      {
+        "tableName": "ContactGroupRelationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contactGroupName` TEXT NOT NULL, `contactId` TEXT NOT NULL, PRIMARY KEY(`contactGroupName`, `contactId`), FOREIGN KEY(`contactId`) REFERENCES `ContactEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`contactGroupName`) REFERENCES `ContactGroupEntity`(`name`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "contactGroupName",
+            "columnName": "contactGroupName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contactId",
+            "columnName": "contactId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "contactGroupName",
+            "contactId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ContactGroupRelationEntity_contactId",
+            "unique": false,
+            "columnNames": [
+              "contactId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactGroupRelationEntity_contactId` ON `${TABLE_NAME}` (`contactId`)"
+          },
+          {
+            "name": "index_ContactGroupRelationEntity_contactId_contactGroupName",
+            "unique": false,
+            "columnNames": [
+              "contactId",
+              "contactGroupName"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ContactGroupRelationEntity_contactId_contactGroupName` ON `${TABLE_NAME}` (`contactId`, `contactGroupName`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ContactEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contactId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "ContactGroupEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contactGroupName"
+            ],
+            "referencedColumns": [
+              "name"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ContactImageEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contactId` TEXT NOT NULL, `thumbnailUri` TEXT, `fullImage` BLOB, PRIMARY KEY(`contactId`), FOREIGN KEY(`contactId`) REFERENCES `ContactEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "contactId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUri",
+            "columnName": "thumbnailUri",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "fullImage",
+            "columnName": "fullImage",
+            "affinity": "BLOB"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "contactId"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "ContactEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "contactId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ContactSyncStateEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`contactId` TEXT NOT NULL, `syncGuid` TEXT NOT NULL, `localRevision` TEXT NOT NULL, `lastSyncedRevision` TEXT, `dirty` INTEGER NOT NULL, `deleted` INTEGER NOT NULL, `deleteSyncedAtUtcMillis` INTEGER, PRIMARY KEY(`contactId`))",
+        "fields": [
+          {
+            "fieldPath": "contactId",
+            "columnName": "contactId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncGuid",
+            "columnName": "syncGuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localRevision",
+            "columnName": "localRevision",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastSyncedRevision",
+            "columnName": "lastSyncedRevision",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "dirty",
+            "columnName": "dirty",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deleted",
+            "columnName": "deleted",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deleteSyncedAtUtcMillis",
+            "columnName": "deleteSyncedAtUtcMillis",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "contactId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ContactSyncStateEntity_syncGuid",
+            "unique": true,
+            "columnNames": [
+              "syncGuid"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_ContactSyncStateEntity_syncGuid` ON `${TABLE_NAME}` (`syncGuid`)"
+          }
+        ]
+      },
+      {
+        "tableName": "SyncOutboxEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sequenceNo` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `commandId` TEXT NOT NULL, `syncGuid` TEXT NOT NULL, `operation` TEXT NOT NULL, `plaintextPayload` TEXT NOT NULL, `payloadFileRef` TEXT, `baseRevision` TEXT, `newRevision` TEXT NOT NULL, `createdAtUtcMillis` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "sequenceNo",
+            "columnName": "sequenceNo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commandId",
+            "columnName": "commandId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncGuid",
+            "columnName": "syncGuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "operation",
+            "columnName": "operation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plaintextPayload",
+            "columnName": "plaintextPayload",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "payloadFileRef",
+            "columnName": "payloadFileRef",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "baseRevision",
+            "columnName": "baseRevision",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "newRevision",
+            "columnName": "newRevision",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAtUtcMillis",
+            "columnName": "createdAtUtcMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "sequenceNo"
+          ]
+        }
+      },
+      {
+        "tableName": "SyncCursorEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`deviceId` TEXT NOT NULL, `lastAppliedSequenceNo` INTEGER NOT NULL, `updatedAtUtcMillis` INTEGER NOT NULL, PRIMARY KEY(`deviceId`))",
+        "fields": [
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastAppliedSequenceNo",
+            "columnName": "lastAppliedSequenceNo",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAtUtcMillis",
+            "columnName": "updatedAtUtcMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "deviceId"
+          ]
+        }
+      },
+      {
+        "tableName": "SyncConflictEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`syncGuid` TEXT NOT NULL, `localContactId` TEXT, `forkContactId` TEXT NOT NULL, `remoteDeviceId` TEXT NOT NULL, `conflictKind` TEXT NOT NULL, `detectedAtUtcMillis` INTEGER NOT NULL, PRIMARY KEY(`syncGuid`))",
+        "fields": [
+          {
+            "fieldPath": "syncGuid",
+            "columnName": "syncGuid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "localContactId",
+            "columnName": "localContactId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "forkContactId",
+            "columnName": "forkContactId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "remoteDeviceId",
+            "columnName": "remoteDeviceId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "conflictKind",
+            "columnName": "conflictKind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "detectedAtUtcMillis",
+            "columnName": "detectedAtUtcMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "syncGuid"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '161007daef9424c785e31f7111c67804')"
+    ]
+  }
+}
