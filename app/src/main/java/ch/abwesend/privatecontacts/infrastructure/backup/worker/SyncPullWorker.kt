@@ -138,6 +138,7 @@ class SyncPullWorker(
 
         settingsRepository.lastSyncDate = LocalDate.now()
         maybeWriteSnapshot(driveRepository, passphrase, files, myDeviceId)
+        cleanupFoldedLogsAndOldSnapshots(driveRepository, passphrase)
         return Result.success()
     }
 
@@ -232,17 +233,32 @@ class SyncPullWorker(
         files: List<GoogleDriveFile>,
         passphrase: String,
     ): SyncSnapshot? {
-        val newestIndex = files
+        val newestIndex = listSnapshotIndicesNewestFirst(driveRepository, files).firstOrNull()?.first
+            ?: return null
+        return loadSnapshotForIndex(driveRepository, files, newestIndex, passphrase)
+    }
+
+    /** the plaintext snapshot sidecars newest-first, paired with their Drive file (for deletion) */
+    private suspend fun listSnapshotIndicesNewestFirst(
+        driveRepository: IGoogleDriveRepository,
+        files: List<GoogleDriveFile>,
+    ): List<Pair<SyncSnapshotIndex, GoogleDriveFile>> =
+        files
             .filter { it.name.startsWith(SyncFileNames.SNAPSHOT_INDEX_PREFIX) }
             .mapNotNull { file ->
                 downloadRaw(driveRepository, file)?.let { raw ->
-                    runCatching { syncJson.decodeFromString<SyncSnapshotIndex>(raw) }.getOrNull()
+                    runCatching { syncJson.decodeFromString<SyncSnapshotIndex>(raw) }.getOrNull()?.let { it to file }
                 }
             }
-            .maxByOrNull { it.createdAtUtcMillis }
-            ?: return null
+            .sortedByDescending { it.first.createdAtUtcMillis }
 
-        val snapshotFile = files.firstOrNull { it.name == SyncFileNames.snapshotFileName(newestIndex.snapshotId) }
+    private suspend fun loadSnapshotForIndex(
+        driveRepository: IGoogleDriveRepository,
+        files: List<GoogleDriveFile>,
+        index: SyncSnapshotIndex,
+        passphrase: String,
+    ): SyncSnapshot? {
+        val snapshotFile = files.firstOrNull { it.name == SyncFileNames.snapshotFileName(index.snapshotId) }
             ?: return null
         val ciphertext = downloadRaw(driveRepository, snapshotFile) ?: return null
         return when (val decrypted = encryptionRepository.decrypt(ciphertext, passphrase)) {
@@ -251,6 +267,51 @@ class SyncPullWorker(
                 reportDecryptionError(decrypted.error, snapshotFile.name)
                 null
             }
+        }
+    }
+
+    /**
+     * Grace-window cleanup: any device may delete any device's `cmd_`/`batch_` files folded at or
+     * below the 2nd-newest snapshot's high-water (safe even if racy - the data lives in a snapshot),
+     * and snapshots older than the newest two. Keeping the 2nd-newest ensures a device mid-bootstrap
+     * against it is not stranded.
+     */
+    private suspend fun cleanupFoldedLogsAndOldSnapshots(
+        driveRepository: IGoogleDriveRepository,
+        passphrase: String,
+    ) {
+        try {
+            val files = driveRepository.listAppDataFiles()
+            val snapshots = listSnapshotIndicesNewestFirst(driveRepository, files)
+            if (snapshots.size < 2) {
+                return
+            }
+
+            val watermarkSnapshot = loadSnapshotForIndex(driveRepository, files, snapshots[1].first, passphrase)
+                ?: return
+            val watermark = watermarkSnapshot.perDeviceHighWater
+
+            var deletedLogs = 0
+            files.forEach { file ->
+                val parsed = SyncFileNames.parseLogFile(file.name)
+                val deviceWatermark = parsed?.let { watermark[it.deviceId] }
+                if (parsed != null && deviceWatermark != null && parsed.toSequence <= deviceWatermark) {
+                    if (driveRepository.deleteFile(file.id)) {
+                        deletedLogs++
+                    }
+                }
+            }
+
+            snapshots.drop(2).forEach { (index, indexFile) ->
+                files.firstOrNull { it.name == SyncFileNames.snapshotFileName(index.snapshotId) }
+                    ?.let { driveRepository.deleteFile(it.id) }
+                driveRepository.deleteFile(indexFile.id)
+            }
+            logger.info("Sync cleanup: deleted $deletedLogs folded log files and ${(snapshots.size - 2).coerceAtLeast(0)} old snapshots")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.warning("Failed to clean up old sync data", e)
         }
     }
 
