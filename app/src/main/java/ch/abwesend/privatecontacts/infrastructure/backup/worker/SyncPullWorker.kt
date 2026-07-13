@@ -68,6 +68,7 @@ class SyncPullWorker(
     companion object {
         private val errorHandler = WorkerErrorHandler()
         private const val SNAPSHOT_THRESHOLD = 500
+        private const val COMPACTION_THRESHOLD = 50
     }
 
     private data class LogFile(val file: GoogleDriveFile, val parsed: SyncFileNames.ParsedLogFile)
@@ -139,6 +140,7 @@ class SyncPullWorker(
         settingsRepository.lastSyncDate = LocalDate.now()
         maybeWriteSnapshot(driveRepository, passphrase, files, myDeviceId)
         cleanupFoldedLogsAndOldSnapshots(driveRepository, passphrase)
+        compactOwnLog(driveRepository, passphrase, myDeviceId)
         return Result.success()
     }
 
@@ -358,13 +360,80 @@ class SyncPullWorker(
         }
     }
 
-    private suspend fun uploadText(driveRepository: IGoogleDriveRepository, fileName: String, content: String) {
+    private suspend fun uploadText(
+        driveRepository: IGoogleDriveRepository,
+        fileName: String,
+        content: String,
+    ): Boolean {
         val tempFile = File(applicationContext.cacheDir, fileName)
-        try {
+        return try {
             tempFile.writeText(content)
-            driveRepository.uploadToAppData(tempFile, CRYPT_PRETENDING_MIME_TYPE)
+            driveRepository.uploadToAppData(tempFile, CRYPT_PRETENDING_MIME_TYPE) != null
         } finally {
             tempFile.delete()
+        }
+    }
+
+    /**
+     * Bounds the file count between snapshots: rewrites this device's own `cmd_` files into a single
+     * encrypted JSONL `batch_`. Only own-device files are touched (no cross-device append race), and
+     * the batch is uploaded and confirmed BEFORE the originals are deleted, so a partial failure never
+     * loses commands (it leaves harmless duplicate representations that the cursor de-duplicates).
+     */
+    private suspend fun compactOwnLog(
+        driveRepository: IGoogleDriveRepository,
+        passphrase: String,
+        myDeviceId: String,
+    ) {
+        try {
+            val files = driveRepository.listAppDataFiles()
+            val ownCommandFiles = files
+                .filter { it.name.startsWith(SyncFileNames.CMD_PREFIX) }
+                .mapNotNull { file ->
+                    SyncFileNames.parseLogFile(file.name)
+                        ?.takeIf { it.deviceId == myDeviceId }
+                        ?.let { file to it.toSequence }
+                }
+                .sortedBy { it.second }
+            if (ownCommandFiles.size <= COMPACTION_THRESHOLD) {
+                return
+            }
+
+            val envelopeLines = mutableListOf<String>()
+            for ((file, _) in ownCommandFiles) {
+                val ciphertext = downloadRaw(driveRepository, file) ?: return // abort: do not risk data loss
+                val plaintext = when (val decrypted = encryptionRepository.decrypt(ciphertext, passphrase)) {
+                    is SuccessResult -> decrypted.value.trim()
+                    is ErrorResult -> {
+                        reportDecryptionError(decrypted.error, file.name)
+                        return
+                    }
+                }
+                envelopeLines.add(plaintext)
+            }
+
+            val fromSequence = ownCommandFiles.first().second
+            val toSequence = ownCommandFiles.last().second
+            val batchPlaintext = envelopeLines.joinToString(separator = "\n")
+            val batchCiphertext = when (val encrypted = encryptionRepository.encrypt(batchPlaintext, passphrase)) {
+                is SuccessResult -> encrypted.value
+                is ErrorResult -> {
+                    logger.error("Failed to encrypt compacted batch", encrypted.error)
+                    return
+                }
+            }
+
+            val batchName = SyncFileNames.batchFileName(myDeviceId, fromSequence, toSequence)
+            if (!uploadText(driveRepository, batchName, batchCiphertext)) {
+                logger.warning("Failed to upload compacted batch $batchName - keeping original command files")
+                return
+            }
+            ownCommandFiles.forEach { (file, _) -> driveRepository.deleteFile(file.id) }
+            logger.info("Compacted ${ownCommandFiles.size} command files into $batchName")
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.warning("Failed to compact own sync log", e)
         }
     }
 
