@@ -19,6 +19,7 @@ import com.google.api.client.http.FileContent
 import com.google.api.services.drive.Drive
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 import com.google.api.services.drive.model.File as DriveFile
@@ -29,6 +30,8 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
     companion object {
         private const val BACKUPS_FOLDER_NAME_PREFIX = "PrivateContacts_Backups"
         private const val FOLDER_MIME_TYPE = "application/vnd.google-apps.folder"
+        private const val APP_DATA_FOLDER = "appDataFolder"
+        private const val APP_DATA_PAGE_SIZE = 1000
     }
 
     override suspend fun getAccountEmail(): BinaryResult<String, Exception> =
@@ -126,6 +129,50 @@ class GoogleDriveRepository(private val drive: Drive) : IGoogleDriveRepository {
                 .execute()
             logger.info("Uploaded file to Google Drive: ${uploaded.name} (${uploaded.id})")
             uploaded.id?.let { id -> uploaded.name?.let { name -> GoogleDriveFile(id, name) } }
+        }
+
+    override suspend fun downloadFile(fileId: String, destination: File): BinaryResult<File, Exception> =
+        withContext(dispatchers.io) {
+            runCatchingAsResult {
+                FileOutputStream(destination).use { outputStream ->
+                    drive.files().get(fileId).executeMediaAndDownloadTo(outputStream)
+                }
+                destination
+            }
+        }
+
+    override suspend fun uploadToAppData(localFile: File, mimeType: String): GoogleDriveFile? =
+        withContext(dispatchers.io) {
+            val metadata = DriveFile().apply {
+                name = localFile.name
+                parents = listOf(APP_DATA_FOLDER)
+            }
+            val content = FileContent(mimeType, localFile)
+            val uploaded = drive.files().create(metadata, content)
+                .setFields("id, name")
+                .execute()
+            logger.info("Uploaded file to Google Drive app-data: ${uploaded.name} (${uploaded.id})")
+            uploaded.id?.let { id -> uploaded.name?.let { name -> GoogleDriveFile(id, name) } }
+        }
+
+    override suspend fun listAppDataFiles(): List<GoogleDriveFile> =
+        withContext(dispatchers.io) {
+            val allFiles = mutableListOf<GoogleDriveFile>()
+            var pageToken: String? = null
+            do {
+                val response = drive.files().list()
+                    .setSpaces(APP_DATA_FOLDER)
+                    .setFields("nextPageToken, files(id, name)")
+                    .setPageSize(APP_DATA_PAGE_SIZE)
+                    .setPageToken(pageToken)
+                    .execute()
+                response.files.orEmpty().mapNotNullTo(allFiles) { file ->
+                    file.id?.let { id -> file.name?.let { name -> GoogleDriveFile(id, name) } }
+                }
+                pageToken = response.nextPageToken
+            } while (pageToken != null)
+            logger.info("Listed ${allFiles.size} files in Google Drive app-data folder")
+            allFiles
         }
 
     private fun createFolder(): GoogleDriveFolderInfo {

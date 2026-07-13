@@ -95,6 +95,7 @@ class GoogleDriveAuthorizationRepository(private val context: Context) : IGoogle
     private fun buildAuthorizationRequest(): AuthorizationRequest {
         val scopes = listOf(
             Scope(DriveScopes.DRIVE_FILE),
+            Scope(DriveScopes.DRIVE_APPDATA), // for contact-sync (app-private folder)
             Scope("email"),
         )
         return AuthorizationRequest.builder().setRequestedScopes(scopes).build()

@@ -28,4 +28,11 @@ class GoogleDriveRepository : IGoogleDriveRepository {
     override suspend fun deleteFile(fileId: String): Boolean = false
 
     override suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile? = null
+
+    override suspend fun downloadFile(fileId: String, destination: File): BinaryResult<File, Exception> =
+        ErrorResult(unsupported)
+
+    override suspend fun uploadToAppData(localFile: File, mimeType: String): GoogleDriveFile? = null
+
+    override suspend fun listAppDataFiles(): List<GoogleDriveFile> = emptyList()
 }

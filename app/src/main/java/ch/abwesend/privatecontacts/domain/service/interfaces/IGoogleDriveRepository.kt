@@ -24,4 +24,10 @@ interface IGoogleDriveRepository {
     suspend fun listAllFiles(folderId: String): List<GoogleDriveFile>
     suspend fun deleteFile(fileId: String): Boolean
     suspend fun uploadFile(folderId: String, localFile: File, mimeType: String): GoogleDriveFile?
+
+    // App-data folder operations (used by contact-sync; require the drive.appdata scope).
+    suspend fun downloadFile(fileId: String, destination: File): BinaryResult<File, Exception>
+    suspend fun uploadToAppData(localFile: File, mimeType: String): GoogleDriveFile?
+    /** Lists all files in the app-data folder, paging through the full result set. */
+    suspend fun listAppDataFiles(): List<GoogleDriveFile>
 }
