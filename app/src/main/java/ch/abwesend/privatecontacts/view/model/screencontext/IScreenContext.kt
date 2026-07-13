@@ -49,7 +49,7 @@ interface IContactEditScreenContext : IScreenContextBase {
     fun returnToContactDetailScreen(contact: IContactBase? = null): Boolean
 }
 
-interface ISettingsScreenContext : IScreenContextBase {
+interface ISettingsScreenContext : IScreenContextWithGenericNavigation {
     val settingsViewModel: SettingsViewModel
     fun refreshSettingsScreen(): Boolean
 }

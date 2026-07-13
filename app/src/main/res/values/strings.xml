@@ -551,4 +551,29 @@
     <string name="release_notes_v104">The app now allows to upload periodic backups automatically to Google Drive.</string>
     <string name="release_notes_v111">Added the functionality to edit the values of events and dates.</string>
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
+
+    <!-- Contact synchronization via Google Drive -->
+    <string name="settings_category_sync">Contact synchronization</string>
+    <string name="sync_enabled_label">Synchronize secret contacts</string>
+    <string name="sync_enabled_description">Keep your secret contacts in sync across your own devices using your Google Drive. Everything is end-to-end encrypted.</string>
+    <string name="sync_info_dialog_title">Contact synchronization</string>
+    <string name="sync_info_dialog_message">Your secret contacts are encrypted with a passphrase and stored in your own Google Drive (in a private app folder). You must enter the identical passphrase on every device. Google never sees your unencrypted data. If you lose the passphrase, the synchronized history can no longer be read.</string>
+    <string name="sync_passphrase_dialog_title">Synchronization passphrase</string>
+    <string name="sync_passphrase_label">Passphrase</string>
+    <string name="sync_same_passphrase_hint">Enter the identical passphrase on every device.</string>
+    <string name="sync_account_label">Synchronizing with account: %1$s</string>
+    <string name="sync_now_button">Synchronize now</string>
+    <string name="sync_last_synced">Last synchronized: %1$s</string>
+    <string name="sync_conflicts_button">Review synchronization conflicts (%1$d)</string>
+    <string name="screen_sync_conflicts">Synchronization conflicts</string>
+    <string name="sync_conflicts_screen_title">Synchronization conflicts</string>
+    <string name="sync_conflicts_empty">No synchronization conflicts.</string>
+    <string name="sync_conflicts_explanation">The same contact was edited on two devices. A duplicate copy was kept so no data is lost. Review the pair and delete the copy you do not need.</string>
+    <string name="sync_conflict_original_label">Kept contact</string>
+    <string name="sync_conflict_delete_copy">Delete copy</string>
+    <string name="sync_conflict_resolve">Mark as resolved</string>
+    <string name="sync_passphrase_unavailable_error">Contact synchronization failed: the passphrase could not be read on this device.</string>
+    <string name="sync_wrong_passphrase_error">Contact synchronization failed: wrong passphrase. Enter the same passphrase as on your other devices.</string>
+    <string name="sync_enable_wrong_passphrase_error">Wrong passphrase: it does not match the one used on your other devices.</string>
+    <string name="sync_enable_failed_error">Could not enable contact synchronization. Please try again.</string>
 </resources>

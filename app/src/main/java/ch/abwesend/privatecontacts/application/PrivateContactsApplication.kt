@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.RemoteLoggingHelper
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncScheduler
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -25,6 +26,7 @@ import org.koin.core.logger.Level
 
 class PrivateContactsApplication : Application(), KoinComponent {
     private val backupScheduler: IBackupScheduler by injectAnywhere()
+    private val syncScheduler: ISyncScheduler by injectAnywhere()
 
     private fun createLogger(logToCrashlytics: Boolean): LogcatLogger {
         return LogcatLogger(
@@ -40,6 +42,8 @@ class PrivateContactsApplication : Application(), KoinComponent {
         ContactDetailInitializationWorkaround.hasOpenedContact = false
         FileLogger.tryCleanOldLogFilesAsync(applicationContext)
         backupScheduler.schedulePeriodicBackup()
+        syncScheduler.schedulePeriodicPull()
+        syncScheduler.triggerPullNow()
         initializeCrashlytics()
     }
 

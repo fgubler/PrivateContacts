@@ -67,6 +67,14 @@ enum class Screen(
         showInSideDrawer = true,
     ),
 
+    SyncConflicts(
+        titleRes = R.string.screen_sync_conflicts,
+        icon = Icons.Default.Settings,
+        key = "SyncConflictsScreen",
+        selfInitializing = true,
+        showInSideDrawer = false,
+    ),
+
     ContactDetail(
         titleRes = R.string.screen_contact_details,
         icon = Icons.Default.ContactPage,

@@ -54,6 +54,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
+import ch.abwesend.privatecontacts.domain.model.sync.SyncSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -97,6 +98,7 @@ import ch.abwesend.privatecontacts.view.util.tryChangeAppLanguage
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlin.contracts.ExperimentalContracts
+import ch.abwesend.privatecontacts.view.routing.Screen.SyncConflicts
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScreen
 
 @ExperimentalContracts
@@ -157,6 +159,16 @@ object SettingsScreen {
                     viewModel = screenContext.settingsViewModel,
                 )
                 SettingsCategorySpacer()
+
+                @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
+                if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {
+                    SyncCategory(
+                        currentSettings = currentSettings,
+                        viewModel = screenContext.settingsViewModel,
+                        onOpenConflicts = { screenContext.navigateToSelfInitializingScreen(SyncConflicts) },
+                    )
+                    SettingsCategorySpacer()
+                }
 
                 PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
@@ -876,6 +888,118 @@ object SettingsScreen {
                 }
             }
             is GoogleDriveSetupState.Inactive -> { /* nothing to do */ }
+        }
+    }
+
+    @Composable
+    private fun SyncCategory(
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+        onOpenConflicts: () -> Unit,
+    ) {
+        var showPassphraseDialog by remember { mutableStateOf(false) }
+        val conflictCount by viewModel.syncConflictCount.collectAsStateWithLifecycle()
+
+        SettingsCategory(titleRes = R.string.settings_category_sync) {
+            SettingsCheckbox(
+                label = R.string.sync_enabled_label,
+                description = R.string.sync_enabled_description,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.sync_info_dialog_title,
+                    text = R.string.sync_info_dialog_message,
+                ),
+                value = currentSettings.syncEnabled,
+                onValueChanged = { newValue ->
+                    if (newValue) {
+                        showPassphraseDialog = true
+                    } else {
+                        viewModel.disableSync()
+                    }
+                },
+            )
+
+            SyncSetupProgressAndResultHandler(viewModel = viewModel)
+
+            if (showPassphraseDialog) {
+                PasswordInputDialog(
+                    title = R.string.sync_passphrase_dialog_title,
+                    label = R.string.sync_passphrase_label,
+                    confirmationRequired = true,
+                    onConfirm = { passphrase ->
+                        showPassphraseDialog = false
+                        viewModel.enableSyncWithPassphrase(passphrase)
+                    },
+                    onCancel = { showPassphraseDialog = false },
+                )
+            }
+
+            if (currentSettings.syncEnabled) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(id = R.string.sync_same_passphrase_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontStyle = FontStyle.Italic,
+                )
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = stringResource(
+                        id = R.string.sync_account_label,
+                        currentSettings.syncAccountId.ifEmpty { "—" },
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = stringResource(
+                        id = R.string.sync_last_synced,
+                        currentSettings.lastSyncDate.let {
+                            if (it == java.time.LocalDate.MIN) "—" else it.toString()
+                        },
+                    ),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                TextButton(onClick = { viewModel.triggerSyncNow() }) {
+                    Text(text = stringResource(id = R.string.sync_now_button))
+                }
+                if (conflictCount > 0) {
+                    TextButton(onClick = onOpenConflicts) {
+                        Text(text = stringResource(id = R.string.sync_conflicts_button, conflictCount))
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun SyncSetupProgressAndResultHandler(viewModel: SettingsViewModel) {
+        val setupState by viewModel.syncSetupState.collectAsStateWithLifecycle()
+
+        val authorizationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            viewModel.handleSyncConsentResponse(result.data)
+        }
+
+        when (val state = setupState) {
+            is SyncSetupState.Loading -> {
+                SimpleProgressDialog(
+                    title = R.string.drive_backup_setup_in_progress,
+                    allowRunningInBackground = false,
+                )
+            }
+            is SyncSetupState.Error -> {
+                ErrorDialog(
+                    errorMessage = stringResource(id = state.error.errorMessageRes),
+                    title = R.string.drive_backup_setup_failed_title,
+                    onClose = { viewModel.resetSyncSetupState() },
+                )
+            }
+            is SyncSetupState.ConsentRequired -> {
+                LaunchedEffect(state) {
+                    val request = IntentSenderRequest.Builder(state.intent).build()
+                    authorizationLauncher.launch(request)
+                }
+            }
+            is SyncSetupState.Inactive -> { /* nothing to do */ }
         }
     }
 

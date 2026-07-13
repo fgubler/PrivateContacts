@@ -20,6 +20,10 @@ import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
 import ch.abwesend.privatecontacts.domain.repository.ILauncherAppearanceRepository
+import ch.abwesend.privatecontacts.domain.repository.ISyncConflictRepository
+import ch.abwesend.privatecontacts.domain.repository.ISyncCursorRepository
+import ch.abwesend.privatecontacts.domain.repository.ISyncOutboxRepository
+import ch.abwesend.privatecontacts.domain.repository.ISyncStateRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.service.ContactGroupService
 import ch.abwesend.privatecontacts.domain.service.ContactImageService
@@ -36,10 +40,16 @@ import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
 import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
+import ch.abwesend.privatecontacts.domain.service.SyncCommandService
+import ch.abwesend.privatecontacts.domain.service.SyncSetupService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncCommandService
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncContactMapper
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncKeyCheckService
+import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncScheduler
 import ch.abwesend.privatecontacts.domain.service.interfaces.IVCardImportExportRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
@@ -48,6 +58,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsRepository
 import ch.abwesend.privatecontacts.domain.util.ResourcesBasedStringProvider
 import ch.abwesend.privatecontacts.domain.util.StringProvider
 import ch.abwesend.privatecontacts.infrastructure.backup.BackupScheduler
+import ch.abwesend.privatecontacts.infrastructure.backup.SyncScheduler
 import ch.abwesend.privatecontacts.infrastructure.backup.googledrive.repository.GoogleDriveAuthorizationRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupMessageRepository
 import ch.abwesend.privatecontacts.infrastructure.backup.repository.BackupNotificationRepository
@@ -90,7 +101,14 @@ import ch.abwesend.privatecontacts.infrastructure.service.AndroidContactCompanyM
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidPermissionService
 import ch.abwesend.privatecontacts.infrastructure.service.AndroidTelephoneService
 import ch.abwesend.privatecontacts.infrastructure.service.addressformatting.AddressFormattingService
+import ch.abwesend.privatecontacts.infrastructure.repository.sync.SyncConflictRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.sync.SyncCursorRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.sync.SyncOutboxRepository
+import ch.abwesend.privatecontacts.infrastructure.repository.sync.SyncStateRepository
 import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepository
+import ch.abwesend.privatecontacts.infrastructure.sync.SyncApplyService
+import ch.abwesend.privatecontacts.infrastructure.sync.SyncKeyCheckService
+import ch.abwesend.privatecontacts.infrastructure.sync.mapping.SyncContactMapper
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
@@ -113,6 +131,12 @@ internal val koinModule = module {
     factory { ContactTypeChangeService() }
     factory { FileReadWriteService() }
     factory<IBackupScheduler> { BackupScheduler(androidContext()) }
+    factory<ISyncScheduler> { SyncScheduler(androidContext()) }
+    factory<ISyncCommandService> { SyncCommandService() }
+    factory<ISyncContactMapper> { SyncContactMapper() }
+    factory { SyncApplyService() }
+    factory { SyncSetupService() }
+    factory<ISyncKeyCheckService> { SyncKeyCheckService(androidContext()) }
     factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
     factory<PermissionService> { AndroidPermissionService() }
     factory<AccountService> { AndroidAccountService(androidContext()) }
@@ -153,6 +177,10 @@ internal val koinModule = module {
     factory { ContactDataRepository() }
     factory { ContactGroupRepository() }
     factory { ContactImageRepository() }
+    factory<ISyncStateRepository> { SyncStateRepository() }
+    factory<ISyncOutboxRepository> { SyncOutboxRepository() }
+    factory<ISyncCursorRepository> { SyncCursorRepository() }
+    factory<ISyncConflictRepository> { SyncConflictRepository() }
     single { CallNotificationRepository() }
     factory { BackupNotificationRepository(androidContext()) }
     factory { ToastRepository() }
