@@ -83,8 +83,17 @@ class SettingsViewModel : ViewModel() {
         MutableStateFlow<GoogleAccountConnectState>(GoogleAccountConnectState.Inactive)
     val googleAccountConnectState: StateFlow<GoogleAccountConnectState> = _googleAccountConnectState.asStateFlow()
 
+    /**
+     * non-null while the sync passphrase dialog should be shown. [requireConfirmation] is only true
+     * when initializing (no passphrase established on the account yet); joining devices skip the
+     * confirmation since a typo is caught by the keycheck verification anyway.
+     */
+    data class SyncPassphrasePromptState(val requireConfirmation: Boolean)
+    private val _syncPassphrasePrompt = MutableStateFlow<SyncPassphrasePromptState?>(null)
+    val syncPassphrasePrompt: StateFlow<SyncPassphrasePromptState?> = _syncPassphrasePrompt.asStateFlow()
+
     /** what to do once an account connection succeeds (feature auto-chain or a switch reconcile) */
-    private enum class AfterConnectAction { NONE, ENABLE_BACKUP, ENABLE_SYNC, RECONCILE_AFTER_SWITCH }
+    private enum class AfterConnectAction { NONE, ENABLE_BACKUP, PROMPT_SYNC_PASSPHRASE, RECONCILE_AFTER_SWITCH }
     private var pendingAfterConnect: AfterConnectAction = AfterConnectAction.NONE
 
     /** the passphrase captured before authorization, needed again after a consent round-trip */
@@ -214,7 +223,39 @@ class SettingsViewModel : ViewModel() {
         // the account connection is shared and stays untouched.
     }
 
+    /**
+     * Starts enabling sync: makes sure a Google account is connected, then determines whether a
+     * passphrase already exists on it and shows the passphrase dialog (with confirmation only when
+     * initializing a fresh passphrase).
+     */
+    fun beginSyncSetup() {
+        if (settingsRepository.connectedGoogleAccountEmail.isEmpty()) {
+            startAccountConnect(AfterConnectAction.PROMPT_SYNC_PASSPHRASE)
+        } else {
+            promptSyncPassphrase()
+        }
+    }
+
+    private fun promptSyncPassphrase() {
+        viewModelScope.launch {
+            _syncSetupState.value = SyncSetupState.Loading
+            val alreadyInitialized = try {
+                syncSetupService.isPassphraseInitialized()
+            } catch (exception: Exception) {
+                logger.warning("Failed to check whether a sync passphrase exists", exception)
+                false
+            }
+            _syncSetupState.value = SyncSetupState.Inactive
+            _syncPassphrasePrompt.value = SyncPassphrasePromptState(requireConfirmation = !alreadyInitialized)
+        }
+    }
+
+    fun dismissSyncPassphrasePrompt() {
+        _syncPassphrasePrompt.value = null
+    }
+
     fun enableSyncWithPassphrase(passphrase: String) {
+        _syncPassphrasePrompt.value = null
         when (val result = encryptionRepository.encryptPassword(passphrase, KeyStorePurpose.SYNC)) {
             is SuccessResult -> {
                 settingsRepository.syncPasswordEncrypted = result.value
@@ -222,11 +263,7 @@ class SettingsViewModel : ViewModel() {
                     settingsRepository.syncDeviceId = UUID.randomUUID().toString()
                 }
                 pendingSyncPassphrase = passphrase
-                if (settingsRepository.connectedGoogleAccountEmail.isEmpty()) {
-                    startAccountConnect(AfterConnectAction.ENABLE_SYNC)
-                } else {
-                    _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
-                }
+                _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
             }
             is ErrorResult -> {
                 logger.warning("Failed to encrypt sync passphrase", result.error)
@@ -345,12 +382,7 @@ class SettingsViewModel : ViewModel() {
         when (action) {
             AfterConnectAction.NONE -> { /* nothing to chain */ }
             AfterConnectAction.ENABLE_BACKUP -> setUpGoogleDriveBackup()
-            AfterConnectAction.ENABLE_SYNC -> {
-                val passphrase = pendingSyncPassphrase
-                if (passphrase != null) {
-                    _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
-                }
-            }
+            AfterConnectAction.PROMPT_SYNC_PASSPHRASE -> promptSyncPassphrase()
             AfterConnectAction.RECONCILE_AFTER_SWITCH -> reconcileFeaturesAfterAccountSwitch()
         }
     }

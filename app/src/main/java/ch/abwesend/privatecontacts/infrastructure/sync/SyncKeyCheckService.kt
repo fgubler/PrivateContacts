@@ -37,6 +37,9 @@ class SyncKeyCheckService(private val context: Context) : ISyncKeyCheckService {
         }
     }
 
+    override suspend fun keyCheckExists(driveRepository: IGoogleDriveRepository): Boolean =
+        driveRepository.listAppDataFiles().any { it.name == SyncFileNames.KEYCHECK_FILE }
+
     private suspend fun verify(
         driveRepository: IGoogleDriveRepository,
         fileId: String,

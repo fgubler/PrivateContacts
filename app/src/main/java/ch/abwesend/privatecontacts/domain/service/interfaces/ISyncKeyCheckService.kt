@@ -29,4 +29,7 @@ interface ISyncKeyCheckService {
         driveRepository: IGoogleDriveRepository,
         passphrase: String,
     ): Outcome
+
+    /** @return true if a keycheck already exists, i.e. a passphrase was already established on this account. */
+    suspend fun keyCheckExists(driveRepository: IGoogleDriveRepository): Boolean
 }

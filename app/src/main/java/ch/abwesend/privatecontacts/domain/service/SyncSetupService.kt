@@ -36,6 +36,18 @@ class SyncSetupService {
             is GoogleDriveAuthResult.Error -> SyncSetupError.AUTHORIZATION_FAILED.toSyncSetupState()
         }
 
+    /**
+     * @return true if a passphrase was already established on the connected account (a keycheck
+     * exists), meaning a new device is joining rather than initializing. Returns false when it
+     * cannot be determined (not authorized), so the caller safely defaults to requiring confirmation.
+     */
+    suspend fun isPassphraseInitialized(): Boolean =
+        when (val result = authRepository.authorize()) {
+            is GoogleDriveAuthResult.Authorized -> keyCheckService.keyCheckExists(result.data)
+            is GoogleDriveAuthResult.ConsentRequired,
+            is GoogleDriveAuthResult.Error -> false
+        }
+
     suspend fun handleConsentResponse(data: Intent?, passphrase: String): SyncIntermediateSetupState =
         when (val authResult = authRepository.authorizeFromIntent(data)) {
             is ErrorResult -> SyncSetupError.CONSENT_FAILED.toSyncSetupState()

@@ -1001,7 +1001,6 @@ object SettingsScreen {
         viewModel: SettingsViewModel,
         onOpenConflicts: () -> Unit,
     ) {
-        var showPassphraseDialog by remember { mutableStateOf(false) }
         var showResetConfirmation by remember { mutableStateOf(false) }
         val conflictCount by viewModel.syncConflictCount.collectAsStateWithLifecycle()
         val resetInProgress by viewModel.syncResetInProgress.collectAsStateWithLifecycle()
@@ -1017,7 +1016,7 @@ object SettingsScreen {
                 value = currentSettings.syncEnabled,
                 onValueChanged = { newValue ->
                     if (newValue) {
-                        showPassphraseDialog = true
+                        viewModel.beginSyncSetup()
                     } else {
                         viewModel.disableSync()
                     }
@@ -1026,17 +1025,17 @@ object SettingsScreen {
 
             SyncSetupProgressAndResultHandler(viewModel = viewModel)
 
-            if (showPassphraseDialog) {
+            val passphrasePrompt by viewModel.syncPassphrasePrompt.collectAsStateWithLifecycle()
+            passphrasePrompt?.let { prompt ->
                 PasswordInputDialog(
                     title = R.string.sync_passphrase_dialog_title,
                     label = R.string.sync_passphrase_label,
-                    confirmationRequired = true,
+                    confirmationRequired = prompt.requireConfirmation,
                     confirmationLabel = R.string.sync_passphrase_confirmation_label,
                     onConfirm = { passphrase ->
-                        showPassphraseDialog = false
                         viewModel.enableSyncWithPassphrase(passphrase)
                     },
-                    onCancel = { showPassphraseDialog = false },
+                    onCancel = { viewModel.dismissSyncPassphrasePrompt() },
                 )
             }
 
