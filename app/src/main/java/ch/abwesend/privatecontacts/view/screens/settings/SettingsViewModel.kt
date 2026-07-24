@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.googleaccount.GoogleAccountConnectIntermediateState
+import ch.abwesend.privatecontacts.domain.model.googleaccount.GoogleAccountConnectState
+import ch.abwesend.privatecontacts.domain.model.googleaccount.toGoogleAccountConnectState
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveIntermediateSetupState
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupError
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
@@ -24,6 +27,7 @@ import ch.abwesend.privatecontacts.domain.repository.ISyncStateRepository
 import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
+import ch.abwesend.privatecontacts.domain.service.GoogleAccountConnectionService
 import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.SyncResetService
@@ -54,6 +58,7 @@ class SettingsViewModel : ViewModel() {
     private val encryptionRepository: IEncryptionRepository by injectAnywhere()
     private val settingsRepository: SettingsRepository by injectAnywhere()
     private val driveSetupService: GoogleDriveSetupService by injectAnywhere()
+    private val accountConnectionService: GoogleAccountConnectionService by injectAnywhere()
     private val syncSetupService: SyncSetupService by injectAnywhere()
     private val syncResetService: SyncResetService by injectAnywhere()
     private val syncScheduler: ISyncScheduler by injectAnywhere()
@@ -73,6 +78,14 @@ class SettingsViewModel : ViewModel() {
 
     private val _syncResetInProgress = MutableStateFlow(false)
     val syncResetInProgress: StateFlow<Boolean> = _syncResetInProgress.asStateFlow()
+
+    private val _googleAccountConnectState =
+        MutableStateFlow<GoogleAccountConnectState>(GoogleAccountConnectState.Inactive)
+    val googleAccountConnectState: StateFlow<GoogleAccountConnectState> = _googleAccountConnectState.asStateFlow()
+
+    /** what to do once an account connection succeeds (feature auto-chain or a switch reconcile) */
+    private enum class AfterConnectAction { NONE, ENABLE_BACKUP, ENABLE_SYNC, RECONCILE_AFTER_SWITCH }
+    private var pendingAfterConnect: AfterConnectAction = AfterConnectAction.NONE
 
     /** the passphrase captured before authorization, needed again after a consent round-trip */
     private var pendingSyncPassphrase: String? = null
@@ -167,7 +180,19 @@ class SettingsViewModel : ViewModel() {
         encryptionRepository.deleteKeyStoreKey(KeyStorePurpose.BACKUP)
     }
 
-    fun requestGoogleDriveAuthorization() {
+    /**
+     * Enables Google Drive backup. If no Google account is connected yet, the connect flow runs
+     * first and backup setup continues automatically once an account is chosen.
+     */
+    fun enableGoogleDriveBackup() {
+        if (settingsRepository.connectedGoogleAccountEmail.isEmpty()) {
+            startAccountConnect(AfterConnectAction.ENABLE_BACKUP)
+        } else {
+            setUpGoogleDriveBackup()
+        }
+    }
+
+    private fun setUpGoogleDriveBackup() {
         _driveSetupState.withLoadingState {
             driveSetupService.requestGoogleDriveAuthorization()
         }
@@ -185,8 +210,8 @@ class SettingsViewModel : ViewModel() {
 
     fun disableGoogleDriveBackup() {
         settingsRepository.googleDriveBackupEnabled = false
-        settingsRepository.googleDriveAccountEmail = ""
-        // leave folderName and folderId intact to be able to use the same folder again
+        // leave folderName and folderId intact to be able to use the same folder again;
+        // the account connection is shared and stays untouched.
     }
 
     fun enableSyncWithPassphrase(passphrase: String) {
@@ -197,7 +222,11 @@ class SettingsViewModel : ViewModel() {
                     settingsRepository.syncDeviceId = UUID.randomUUID().toString()
                 }
                 pendingSyncPassphrase = passphrase
-                _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
+                if (settingsRepository.connectedGoogleAccountEmail.isEmpty()) {
+                    startAccountConnect(AfterConnectAction.ENABLE_SYNC)
+                } else {
+                    _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
+                }
             }
             is ErrorResult -> {
                 logger.warning("Failed to encrypt sync passphrase", result.error)
@@ -235,9 +264,9 @@ class SettingsViewModel : ViewModel() {
 
     /**
      * Fully resets synchronization: wipes all remote data from Google Drive and clears every local
-     * sync trace (passphrase, account, cursors, outbox, per-contact state, conflicts and the sync
-     * KeyStore key). Local contacts are left untouched. This is destructive - the previously
-     * synchronized history is not recoverable afterwards.
+     * sync trace (passphrase, cursors, outbox, per-contact state, conflicts and the sync KeyStore
+     * key). Local contacts and the connected account are left untouched. This is destructive - the
+     * previously synchronized history is not recoverable afterwards.
      */
     fun resetSync() {
         viewModelScope.launch {
@@ -253,7 +282,6 @@ class SettingsViewModel : ViewModel() {
 
             settingsRepository.syncEnabled = false
             settingsRepository.syncPasswordEncrypted = ""
-            settingsRepository.syncAccountId = ""
             settingsRepository.lastSyncDateTime = LocalDateTime.MIN
             encryptionRepository.deleteKeyStoreKey(KeyStorePurpose.SYNC)
             syncStateRepository.deleteAll()
@@ -261,6 +289,123 @@ class SettingsViewModel : ViewModel() {
             syncOutboxRepository.deleteAll()
             syncConflictRepository.deleteAll()
             _syncResetInProgress.value = false
+        }
+    }
+
+    /** Connect a Google account for the first time (no feature chaining). */
+    fun connectGoogleAccount() {
+        startAccountConnect(AfterConnectAction.NONE)
+    }
+
+    /** Switch to a different Google account, re-initializing any enabled feature on the new account. */
+    fun switchGoogleAccount() {
+        startAccountConnect(AfterConnectAction.RECONCILE_AFTER_SWITCH)
+    }
+
+    private fun startAccountConnect(afterConnect: AfterConnectAction) {
+        pendingAfterConnect = afterConnect
+        _googleAccountConnectState.withConnectLoadingState { accountConnectionService.connectAccount() }
+    }
+
+    fun handleGoogleAccountConsentResponse(data: Intent?) {
+        _googleAccountConnectState.withConnectLoadingState { accountConnectionService.handleConsentResponse(data) }
+    }
+
+    fun resetGoogleAccountConnectState() {
+        _googleAccountConnectState.value = GoogleAccountConnectState.Inactive
+    }
+
+    /**
+     * Disconnects the Google account: clears the cached authorization and turns off both backup and
+     * sync locally. Remote data is left in place (the sync passphrase is kept so reconnecting the
+     * same account resumes cleanly); the destructive remote wipe stays on the sync-reset action.
+     */
+    fun disconnectGoogleAccount() {
+        viewModelScope.launch {
+            try {
+                accountConnectionService.disconnectAccount()
+            } catch (exception: Exception) {
+                logger.warning("Failed to clear Google authorization during disconnect", exception)
+            }
+            settingsRepository.connectedGoogleAccountEmail = ""
+
+            settingsRepository.googleDriveBackupEnabled = false
+            settingsRepository.googleDriveFolderId = ""
+            settingsRepository.googleDriveFolderName = ""
+
+            settingsRepository.syncEnabled = false
+            syncCursorRepository.deleteAll()
+            syncOutboxRepository.deleteAll()
+        }
+    }
+
+    private fun onGoogleAccountConnected() {
+        val action = pendingAfterConnect
+        pendingAfterConnect = AfterConnectAction.NONE
+        when (action) {
+            AfterConnectAction.NONE -> { /* nothing to chain */ }
+            AfterConnectAction.ENABLE_BACKUP -> setUpGoogleDriveBackup()
+            AfterConnectAction.ENABLE_SYNC -> {
+                val passphrase = pendingSyncPassphrase
+                if (passphrase != null) {
+                    _syncSetupState.withSyncLoadingState { syncSetupService.enableSync(passphrase) }
+                }
+            }
+            AfterConnectAction.RECONCILE_AFTER_SWITCH -> reconcileFeaturesAfterAccountSwitch()
+        }
+    }
+
+    private fun reconcileFeaturesAfterAccountSwitch() {
+        if (settingsRepository.googleDriveBackupEnabled) {
+            setUpGoogleDriveBackup()
+        }
+        if (settingsRepository.syncEnabled) {
+            val decrypted = encryptionRepository.decryptPassword(settingsRepository.syncPasswordEncrypted, KeyStorePurpose.SYNC)
+            when (decrypted) {
+                is SuccessResult -> {
+                    val passphrase = decrypted.value
+                    _syncSetupState.withSyncLoadingState {
+                        // start fresh against the new (empty) account: drop the old bootstrap state
+                        syncCursorRepository.deleteAll()
+                        syncOutboxRepository.deleteAll()
+                        syncStateRepository.deleteAll()
+                        syncConflictRepository.deleteAll()
+                        syncSetupService.enableSync(passphrase)
+                    }
+                }
+                is ErrorResult -> {
+                    logger.warning("Cannot re-initialize sync after account switch: passphrase unavailable", decrypted.error)
+                    settingsRepository.syncEnabled = false
+                    settingsRepository.syncPasswordEncrypted = ""
+                    _syncSetupState.value = SyncSetupError.UNKNOWN.toSyncSetupState()
+                }
+            }
+        }
+    }
+
+    private fun MutableStateFlow<GoogleAccountConnectState>.withConnectLoadingState(
+        block: suspend () -> GoogleAccountConnectIntermediateState
+    ) {
+        viewModelScope.launch {
+            val newValue = try {
+                value = GoogleAccountConnectState.Loading
+                block()
+            } catch (e: Exception) {
+                logger.warning("Failed to connect Google account", e)
+                GoogleDriveSetupError.UNKNOWN.toGoogleAccountConnectState()
+            }
+
+            value = when (newValue) {
+                is GoogleAccountConnectState.ConsentRequired,
+                is GoogleAccountConnectState.Inactive,
+                is GoogleAccountConnectState.Loading,
+                is GoogleAccountConnectState.Error -> newValue
+                is GoogleAccountConnectIntermediateState.Success -> {
+                    settingsRepository.connectedGoogleAccountEmail = newValue.accountEmail
+                    onGoogleAccountConnected()
+                    GoogleAccountConnectState.Inactive
+                }
+            }
         }
     }
 
@@ -288,7 +433,6 @@ class SettingsViewModel : ViewModel() {
                 }
                 is SyncIntermediateSetupState.Success -> {
                     settingsRepository.syncEnabled = true
-                    settingsRepository.syncAccountId = newValue.accountEmail
                     pendingSyncPassphrase = null
                     syncScheduler.triggerPullNow()
                     SyncSetupState.Inactive
@@ -320,7 +464,6 @@ class SettingsViewModel : ViewModel() {
                 }
                 is GoogleDriveIntermediateSetupState.Success -> {
                     settingsRepository.googleDriveBackupEnabled = newValue.backupEnabled
-                    settingsRepository.googleDriveAccountEmail = newValue.accountEmail
                     settingsRepository.googleDriveFolderName = newValue.folderName
                     settingsRepository.googleDriveFolderId = newValue.folderId
                     GoogleDriveSetupState.Inactive

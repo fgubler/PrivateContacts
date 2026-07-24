@@ -37,6 +37,7 @@ import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.EasterEggService
 import ch.abwesend.privatecontacts.domain.service.FileReadWriteService
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
+import ch.abwesend.privatecontacts.domain.service.GoogleAccountConnectionService
 import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
@@ -138,6 +139,7 @@ internal val koinModule = module {
     factory { SyncApplyService() }
     factory { SyncSetupService() }
     factory { SyncResetService() }
+    factory { GoogleAccountConnectionService() }
     factory<ISyncKeyCheckService> { SyncKeyCheckService(androidContext()) }
     factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
     factory<PermissionService> { AndroidPermissionService() }

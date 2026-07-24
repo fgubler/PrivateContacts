@@ -60,13 +60,12 @@ data class TestSettings(
     override var backupEncryptionEnabled: Boolean = currentSettings.backupEncryptionEnabled
     override var backupPasswordEncrypted: String = currentSettings.backupPasswordEncrypted
     override var numberOfBackupsToKeep: NumberOfBackupsToKeep = currentSettings.numberOfBackupsToKeep
+    override var connectedGoogleAccountEmail: String = currentSettings.connectedGoogleAccountEmail
     override var googleDriveBackupEnabled: Boolean = currentSettings.googleDriveBackupEnabled
-    override var googleDriveAccountEmail: String = currentSettings.googleDriveAccountEmail
     override var googleDriveFolderId: String = currentSettings.googleDriveFolderId
     override var googleDriveFolderName: String = currentSettings.googleDriveFolderName
     override var syncEnabled: Boolean = currentSettings.syncEnabled
     override var syncDeviceId: String = currentSettings.syncDeviceId
-    override var syncAccountId: String = currentSettings.syncAccountId
     override var syncPasswordEncrypted: String = currentSettings.syncPasswordEncrypted
     override var lastSyncDateTime: LocalDateTime = currentSettings.lastSyncDateTime
 

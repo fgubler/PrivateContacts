@@ -86,9 +86,12 @@ interface ISettingsState {
     val backupPasswordEncrypted: String
     val numberOfBackupsToKeep: NumberOfBackupsToKeep
 
+    // Google Account (shared by Google Drive backup and contact sync)
+    /** the connected Google account email; excluded from settings-restore (tied to the device credential) */
+    val connectedGoogleAccountEmail: String
+
     // Google Drive Backup
     val googleDriveBackupEnabled: Boolean
-    val googleDriveAccountEmail: String
     val googleDriveFolderId: String
     val googleDriveFolderName: String
 
@@ -97,9 +100,6 @@ interface ISettingsState {
 
     /** random per-install UUID; excluded from settings-restore so identities are never cloned */
     val syncDeviceId: String
-
-    /** the Google account sync was enabled against; excluded from settings-restore */
-    val syncAccountId: String
 
     /** the sync passphrase, wrapped by the device KeyStore (the value must match across devices) */
     val syncPasswordEncrypted: String
@@ -153,14 +153,14 @@ data class SettingsState(
     override val backupPasswordEncrypted: String,
     override val numberOfBackupsToKeep: NumberOfBackupsToKeep,
 
+    override val connectedGoogleAccountEmail: String,
+
     override val googleDriveBackupEnabled: Boolean,
-    override val googleDriveAccountEmail: String,
     override val googleDriveFolderId: String,
     override val googleDriveFolderName: String,
 
     override val syncEnabled: Boolean,
     override val syncDeviceId: String,
-    override val syncAccountId: String,
     override val syncPasswordEncrypted: String,
     override val lastSyncDateTime: LocalDateTime,
 
@@ -197,13 +197,12 @@ data class SettingsState(
             backupEncryptionEnabled = false,
             backupPasswordEncrypted = "",
             numberOfBackupsToKeep = NumberOfBackupsToKeep.default,
+            connectedGoogleAccountEmail = "",
             googleDriveBackupEnabled = false,
-            googleDriveAccountEmail = "",
             googleDriveFolderId = "",
             googleDriveFolderName = "",
             syncEnabled = false,
             syncDeviceId = "",
-            syncAccountId = "",
             syncPasswordEncrypted = "",
             lastSyncDateTime = LocalDateTime.MIN,
             defaultContactType = ContactType.default,

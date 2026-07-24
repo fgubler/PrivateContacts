@@ -53,6 +53,7 @@ import ch.abwesend.privatecontacts.domain.model.backup.BackupFrequency
 import ch.abwesend.privatecontacts.domain.model.backup.NumberOfBackupsToKeep
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
+import ch.abwesend.privatecontacts.domain.model.googleaccount.GoogleAccountConnectState
 import ch.abwesend.privatecontacts.domain.model.importexport.googledrive.GoogleDriveSetupState
 import ch.abwesend.privatecontacts.domain.model.sync.SyncSetupState
 import ch.abwesend.privatecontacts.domain.settings.AppLanguage
@@ -151,6 +152,15 @@ object SettingsScreen {
 
                 SecurityCategory(settingsRepository, currentSettings)
                 SettingsCategorySpacer()
+
+                @Suppress("SimplifyBooleanWithConstants", "KotlinConstantConditions")
+                if (BuildConfig.FLAVOR == FlavorConstants.GOOGLE_PLAY) {
+                    GoogleAccountCategory(
+                        currentSettings = currentSettings,
+                        viewModel = screenContext.settingsViewModel,
+                    )
+                    SettingsCategorySpacer()
+                }
 
                 PeriodicBackupCategory(
                     permissionProvider = permissionProvider,
@@ -826,7 +836,7 @@ object SettingsScreen {
             value = currentSettings.googleDriveBackupEnabled,
             onValueChanged = { newValue ->
                 if (newValue) {
-                    viewModel.requestGoogleDriveAuthorization()
+                    viewModel.enableGoogleDriveBackup()
                 } else {
                     viewModel.disableGoogleDriveBackup()
                 }
@@ -837,16 +847,6 @@ object SettingsScreen {
 
         if (currentSettings.googleDriveBackupEnabled) {
             Spacer(modifier = Modifier.height(10.dp))
-            SettingsLabel(labelRes = R.string.drive_backup_account_label)
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = currentSettings.googleDriveAccountEmail.ifEmpty { "—" },
-                style = MaterialTheme.typography.bodyMedium,
-                fontStyle = FontStyle.Italic,
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
             SettingsLabel(labelRes = R.string.drive_backup_folder_label)
             Spacer(modifier = Modifier.height(5.dp))
             Text(
@@ -888,6 +888,110 @@ object SettingsScreen {
                 }
             }
             is GoogleDriveSetupState.Inactive -> { /* nothing to do */ }
+        }
+    }
+
+    @Composable
+    private fun GoogleAccountCategory(
+        currentSettings: ISettingsState,
+        viewModel: SettingsViewModel,
+    ) {
+        var showSwitchConfirmation by remember { mutableStateOf(false) }
+        var showDisconnectConfirmation by remember { mutableStateOf(false) }
+        val connected = currentSettings.connectedGoogleAccountEmail.isNotEmpty()
+        val featuresEnabled = currentSettings.googleDriveBackupEnabled || currentSettings.syncEnabled
+
+        SettingsCategory(titleRes = R.string.google_account_category) {
+            SettingsLabel(labelRes = R.string.google_account_label)
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = currentSettings.connectedGoogleAccountEmail.ifEmpty {
+                    stringResource(id = R.string.google_account_not_connected)
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                fontStyle = FontStyle.Italic,
+            )
+
+            GoogleAccountConnectProgressAndResultHandler(viewModel = viewModel)
+
+            if (connected) {
+                TextButton(
+                    onClick = {
+                        if (featuresEnabled) {
+                            showSwitchConfirmation = true
+                        } else {
+                            viewModel.switchGoogleAccount()
+                        }
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.google_account_switch_button))
+                }
+                TextButton(onClick = { showDisconnectConfirmation = true }) {
+                    Text(text = stringResource(id = R.string.google_account_disconnect_button))
+                }
+            } else {
+                TextButton(onClick = { viewModel.connectGoogleAccount() }) {
+                    Text(text = stringResource(id = R.string.google_account_connect_button))
+                }
+            }
+
+            if (showSwitchConfirmation) {
+                YesNoDialog(
+                    title = R.string.google_account_switch_warning_title,
+                    text = R.string.google_account_switch_warning_message,
+                    onYes = {
+                        showSwitchConfirmation = false
+                        viewModel.switchGoogleAccount()
+                    },
+                    onNo = { showSwitchConfirmation = false },
+                )
+            }
+
+            if (showDisconnectConfirmation) {
+                YesNoDialog(
+                    title = R.string.google_account_disconnect_warning_title,
+                    text = R.string.google_account_disconnect_warning_message,
+                    onYes = {
+                        showDisconnectConfirmation = false
+                        viewModel.disconnectGoogleAccount()
+                    },
+                    onNo = { showDisconnectConfirmation = false },
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun GoogleAccountConnectProgressAndResultHandler(viewModel: SettingsViewModel) {
+        val connectState by viewModel.googleAccountConnectState.collectAsStateWithLifecycle()
+
+        val authorizationLauncher = rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.StartIntentSenderForResult(),
+        ) { result ->
+            viewModel.handleGoogleAccountConsentResponse(result.data)
+        }
+
+        when (val state = connectState) {
+            is GoogleAccountConnectState.Loading -> {
+                SimpleProgressDialog(
+                    title = R.string.google_account_setup_in_progress,
+                    allowRunningInBackground = false,
+                )
+            }
+            is GoogleAccountConnectState.Error -> {
+                ErrorDialog(
+                    errorMessage = stringResource(id = state.error.errorMessageRes),
+                    title = R.string.drive_backup_setup_failed_title,
+                    onClose = { viewModel.resetGoogleAccountConnectState() },
+                )
+            }
+            is GoogleAccountConnectState.ConsentRequired -> {
+                LaunchedEffect(state) {
+                    val request = IntentSenderRequest.Builder(state.intent).build()
+                    authorizationLauncher.launch(request)
+                }
+            }
+            is GoogleAccountConnectState.Inactive -> { /* nothing to do */ }
         }
     }
 
@@ -944,13 +1048,6 @@ object SettingsScreen {
                     fontStyle = FontStyle.Italic,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = stringResource(
-                        id = R.string.sync_account_label,
-                        currentSettings.syncAccountId.ifEmpty { "—" },
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
                 Text(
                     text = stringResource(
                         id = R.string.sync_last_synced,

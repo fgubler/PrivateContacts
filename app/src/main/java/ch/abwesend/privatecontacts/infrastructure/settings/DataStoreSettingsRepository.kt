@@ -162,13 +162,13 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.numberOfBackupsToKeep
         set(value) = dataStore.setEnumValue(numberOfBackupsToKeepEntry, value)
 
+    override var connectedGoogleAccountEmail: String
+        get() = currentSettings.connectedGoogleAccountEmail
+        set(value) = dataStore.setValue(connectedGoogleAccountEmailEntry, value)
+
     override var googleDriveBackupEnabled: Boolean
         get() = currentSettings.googleDriveBackupEnabled
         set(value) = dataStore.setValue(googleDriveBackupEnabledEntry, value)
-
-    override var googleDriveAccountEmail: String
-        get() = currentSettings.googleDriveAccountEmail
-        set(value) = dataStore.setValue(googleDriveAccountEmailEntry, value)
 
     override var googleDriveFolderId: String
         get() = currentSettings.googleDriveFolderId
@@ -185,10 +185,6 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     override var syncDeviceId: String
         get() = currentSettings.syncDeviceId
         set(value) = dataStore.setValue(syncDeviceIdEntry, value)
-
-    override var syncAccountId: String
-        get() = currentSettings.syncAccountId
-        set(value) = dataStore.setValue(syncAccountIdEntry, value)
 
     override var syncPasswordEncrypted: String
         get() = currentSettings.syncPasswordEncrypted
@@ -265,9 +261,6 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         backupPasswordEncrypted = settings.backupPasswordEncrypted
         numberOfBackupsToKeep = settings.numberOfBackupsToKeep
         googleDriveBackupEnabled = settings.googleDriveBackupEnabled
-        googleDriveAccountEmail = settings.googleDriveAccountEmail
-        googleDriveFolderId = settings.googleDriveFolderId
-        googleDriveFolderName = settings.googleDriveFolderName
         syncEnabled = settings.syncEnabled
         syncPasswordEncrypted = settings.syncPasswordEncrypted
         lastSyncDateTime = settings.lastSyncDateTime
@@ -280,10 +273,12 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
                - numberOfAppStarts
                - latestUserPromptAtStartup
 
-           device-identity is deliberately NOT copied, so restoring a settings-backup never clones
-           another device's sync identity:
+           device-identity / connection state is deliberately NOT copied, so restoring a
+           settings-backup never clones another device's sync identity or claims an account is
+           connected on this device (the connection is tied to this device's Google credential):
                - syncDeviceId
-               - syncAccountId
+               - connectedGoogleAccountEmail
+               - googleDriveFolderId / googleDriveFolderName (account-scoped; re-validated on connect)
          */
 
         // TODO add new properties here

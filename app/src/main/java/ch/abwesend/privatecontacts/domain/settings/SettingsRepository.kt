@@ -69,16 +69,17 @@ interface SettingsRepository : ISettingsState {
     override var backupPasswordEncrypted: String
     override var numberOfBackupsToKeep: NumberOfBackupsToKeep
 
+    // Google Account (shared by Google Drive backup and contact sync)
+    override var connectedGoogleAccountEmail: String
+
     // Google Drive Backup
     override var googleDriveBackupEnabled: Boolean
-    override var googleDriveAccountEmail: String
     override var googleDriveFolderId: String
     override var googleDriveFolderName: String
 
     // Contact Sync (Google Drive)
     override var syncEnabled: Boolean
     override var syncDeviceId: String
-    override var syncAccountId: String
     override var syncPasswordEncrypted: String
     override var lastSyncDateTime: LocalDateTime
 

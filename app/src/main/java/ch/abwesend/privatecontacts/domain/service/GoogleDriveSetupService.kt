@@ -21,8 +21,12 @@ class GoogleDriveSetupService {
     private val authRepository: IGoogleDriveAuthorizationRepository by injectAnywhere()
     private val settingsState: ISettingsState by injectAnywhere()
 
+    /**
+     * Sets up Google Drive backup on the already-connected account. Authorization is silent (no
+     * account picker): connecting/switching the account is handled separately by
+     * [GoogleAccountConnectionService], which owns [IGoogleDriveAuthorizationRepository.clearAuthorization].
+     */
     suspend fun requestGoogleDriveAuthorization(): GoogleDriveIntermediateSetupState {
-        authRepository.clearAuthorization()
         val result = authRepository.authorize()
         return handleGoogleDriveAuthorizationResult(result)
     }

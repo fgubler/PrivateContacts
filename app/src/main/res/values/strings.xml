@@ -553,6 +553,17 @@
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
 
     <!-- Contact synchronization via Google Drive -->
+    <string name="google_account_category">Google account</string>
+    <string name="google_account_label">Connected account</string>
+    <string name="google_account_not_connected">No account connected</string>
+    <string name="google_account_connect_button">Connect account</string>
+    <string name="google_account_switch_button">Switch account</string>
+    <string name="google_account_disconnect_button">Disconnect account</string>
+    <string name="google_account_setup_in_progress">Connecting Google account...</string>
+    <string name="google_account_switch_warning_title">Switch Google account?</string>
+    <string name="google_account_switch_warning_message">Backup and synchronization will be set up freshly on the new account. Data on the previous account will no longer be used. Your contacts and your synchronization passphrase are kept.</string>
+    <string name="google_account_disconnect_warning_title">Disconnect Google account?</string>
+    <string name="google_account_disconnect_warning_message">Google Drive backup and contact synchronization will be turned off on this device. Your contacts and your synchronization passphrase are kept, and no data is deleted from Google Drive. You can reconnect the same account later to resume.</string>
     <string name="settings_category_sync">Contact synchronization</string>
     <string name="sync_enabled_label">Synchronize secret contacts</string>
     <string name="sync_enabled_description">Keep your secret contacts in sync across your own devices using your Google Drive. Everything is end-to-end encrypted.</string>

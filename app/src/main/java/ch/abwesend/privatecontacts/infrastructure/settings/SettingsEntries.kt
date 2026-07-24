@@ -167,13 +167,13 @@ internal val numberOfBackupsToKeepEntry = EnumSettingsEntry(
     key = stringPreferencesKey("numberOfBackupsToKeep"),
     defaultValue = defaultSettings.numberOfBackupsToKeep
 )
+internal val connectedGoogleAccountEmailEntry = SettingsEntry(
+    key = stringPreferencesKey("connectedGoogleAccountEmail"),
+    defaultValue = defaultSettings.connectedGoogleAccountEmail
+)
 internal val googleDriveBackupEnabledEntry = SettingsEntry(
     key = booleanPreferencesKey("googleDriveBackupEnabled"),
     defaultValue = defaultSettings.googleDriveBackupEnabled
-)
-internal val googleDriveAccountEmailEntry = SettingsEntry(
-    key = stringPreferencesKey("googleDriveAccountEmail"),
-    defaultValue = defaultSettings.googleDriveAccountEmail
 )
 internal val googleDriveFolderIdEntry = SettingsEntry(
     key = stringPreferencesKey("googleDriveFolderId"),
@@ -190,10 +190,6 @@ internal val syncEnabledEntry = SettingsEntry(
 internal val syncDeviceIdEntry = SettingsEntry(
     key = stringPreferencesKey("syncDeviceId"),
     defaultValue = defaultSettings.syncDeviceId
-)
-internal val syncAccountIdEntry = SettingsEntry(
-    key = stringPreferencesKey("syncAccountId"),
-    defaultValue = defaultSettings.syncAccountId
 )
 internal val syncPasswordEncryptedEntry = SettingsEntry(
     key = stringPreferencesKey("syncPasswordEncrypted"),
