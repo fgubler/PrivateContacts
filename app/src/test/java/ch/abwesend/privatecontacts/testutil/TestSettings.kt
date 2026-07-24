@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class TestSettings(
     private val currentSettings: ISettingsState = SettingsState.defaultSettings,
@@ -67,7 +68,7 @@ data class TestSettings(
     override var syncDeviceId: String = currentSettings.syncDeviceId
     override var syncAccountId: String = currentSettings.syncAccountId
     override var syncPasswordEncrypted: String = currentSettings.syncPasswordEncrypted
-    override var lastSyncDate: LocalDate = currentSettings.lastSyncDate
+    override var lastSyncDateTime: LocalDateTime = currentSettings.lastSyncDateTime
 
     override suspend fun nextSettings(): ISettingsState {
         return currentSettings

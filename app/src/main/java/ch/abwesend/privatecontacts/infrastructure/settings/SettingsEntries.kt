@@ -14,10 +14,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.accountProviderOrNull
 import ch.abwesend.privatecontacts.domain.model.contact.usernameOrNull
 import ch.abwesend.privatecontacts.domain.settings.SettingsState.Companion.defaultSettings
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 internal data class SettingsEntry<T>(val key: Preferences.Key<T>, val defaultValue: T)
 internal data class EnumSettingsEntry<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
 internal data class DateSettingsEntry(val key: Preferences.Key<String>, val defaultValue: LocalDate)
+internal data class DateTimeSettingsEntry(val key: Preferences.Key<String>, val defaultValue: LocalDateTime)
 
 internal val appThemeEntry = EnumSettingsEntry(
     key = stringPreferencesKey("appTheme"),
@@ -197,9 +199,9 @@ internal val syncPasswordEncryptedEntry = SettingsEntry(
     key = stringPreferencesKey("syncPasswordEncrypted"),
     defaultValue = defaultSettings.syncPasswordEncrypted
 )
-internal val lastSyncDateEntry = DateSettingsEntry(
-    key = stringPreferencesKey("lastSyncDate"),
-    defaultValue = LocalDate.MIN
+internal val lastSyncDateTimeEntry = DateTimeSettingsEntry(
+    key = stringPreferencesKey("lastSyncDateTime"),
+    defaultValue = LocalDateTime.MIN
 )
 // ==========================================
 // When adding a settings entry, don't forget to extend the method `overrideSettingsWith()`

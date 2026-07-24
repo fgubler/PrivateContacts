@@ -42,7 +42,7 @@ import ch.abwesend.privatecontacts.view.screens.importexport.shared.ImportExport
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.encodeToString
 import java.io.File
-import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.UUID
 
 /**
@@ -137,7 +137,7 @@ class SyncPullWorker(
         val effectiveCursors = cursorRepository.getAll().associate { it.deviceId to it.lastAppliedSequenceNo }
         tailReplay(driveRepository, passphrase, logFilesByDevice, effectiveCursors)
 
-        settingsRepository.lastSyncDate = LocalDate.now()
+        settingsRepository.lastSyncDateTime = LocalDateTime.now()
         maybeWriteSnapshot(driveRepository, passphrase, files, myDeviceId)
         cleanupFoldedLogsAndOldSnapshots(driveRepository, passphrase)
         compactOwnLog(driveRepository, passphrase, myDeviceId)

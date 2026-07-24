@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class DataStoreSettingsRepository(context: Context) : SettingsRepository {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
@@ -193,10 +194,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.syncPasswordEncrypted
         set(value) = dataStore.setValue(syncPasswordEncryptedEntry, value)
 
-    override var lastSyncDate: LocalDate
-        get() = currentSettings.lastSyncDate
+    override var lastSyncDateTime: LocalDateTime
+        get() = currentSettings.lastSyncDateTime
         set(value) {
-            dataStore.setDateValue(lastSyncDateEntry, value)
+            dataStore.setDateTimeValue(lastSyncDateTimeEntry, value)
         }
 
     override var currentVersion: Int
@@ -269,7 +270,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         googleDriveFolderName = settings.googleDriveFolderName
         syncEnabled = settings.syncEnabled
         syncPasswordEncrypted = settings.syncPasswordEncrypted
-        lastSyncDate = settings.lastSyncDate
+        lastSyncDateTime = settings.lastSyncDateTime
         appLanguage = settings.appLanguage
 
         /*

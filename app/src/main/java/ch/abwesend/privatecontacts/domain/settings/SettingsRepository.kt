@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface SettingsRepository : ISettingsState {
     val settings: Flow<ISettingsState>
@@ -79,7 +80,7 @@ interface SettingsRepository : ISettingsState {
     override var syncDeviceId: String
     override var syncAccountId: String
     override var syncPasswordEncrypted: String
-    override var lastSyncDate: LocalDate
+    override var lastSyncDateTime: LocalDateTime
 
     // Others
     override var currentVersion: Int

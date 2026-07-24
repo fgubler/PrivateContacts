@@ -36,6 +36,7 @@ fun PasswordInputDialog(
     onConfirm: (String) -> Unit,
     onCancel: () -> Unit,
     confirmationRequired: Boolean = false,
+    @StringRes confirmationLabel: Int = R.string.backup_encryption_password_confirmation_label,
 ) {
     val passwordFocusRequester = remember { FocusRequester() }
     val confirmationFocusRequester = remember { FocusRequester() }
@@ -79,7 +80,7 @@ fun PasswordInputDialog(
                     PasswordField(
                         value = confirmationValue,
                         onValueChange = { confirmationValue = it },
-                        label = R.string.backup_encryption_password_confirmation_label,
+                        label = confirmationLabel,
                         modifier = Modifier.focusRequester(confirmationFocusRequester),
                         onKeyboardDone = {
                             if (isConfirmButtonEnabled) {

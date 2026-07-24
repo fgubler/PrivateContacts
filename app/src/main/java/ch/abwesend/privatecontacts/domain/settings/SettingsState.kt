@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactAccount
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 interface ISettingsState {
     // UX
@@ -102,7 +103,7 @@ interface ISettingsState {
 
     /** the sync passphrase, wrapped by the device KeyStore (the value must match across devices) */
     val syncPasswordEncrypted: String
-    val lastSyncDate: LocalDate
+    val lastSyncDateTime: LocalDateTime
 
     // Others
     val currentVersion: Int
@@ -161,7 +162,7 @@ data class SettingsState(
     override val syncDeviceId: String,
     override val syncAccountId: String,
     override val syncPasswordEncrypted: String,
-    override val lastSyncDate: LocalDate,
+    override val lastSyncDateTime: LocalDateTime,
 
     override val currentVersion: Int,
     override val previousVersion: Int,
@@ -204,7 +205,7 @@ data class SettingsState(
             syncDeviceId = "",
             syncAccountId = "",
             syncPasswordEncrypted = "",
-            lastSyncDate = LocalDate.MIN,
+            lastSyncDateTime = LocalDateTime.MIN,
             defaultContactType = ContactType.default,
             defaultExternalContactAccount = ContactAccount.defaultForExternal,
             defaultVCardVersion = VCardVersion.default,

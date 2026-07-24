@@ -925,6 +925,7 @@ object SettingsScreen {
                     title = R.string.sync_passphrase_dialog_title,
                     label = R.string.sync_passphrase_label,
                     confirmationRequired = true,
+                    confirmationLabel = R.string.sync_passphrase_confirmation_label,
                     onConfirm = { passphrase ->
                         showPassphraseDialog = false
                         viewModel.enableSyncWithPassphrase(passphrase)
@@ -951,8 +952,17 @@ object SettingsScreen {
                 Text(
                     text = stringResource(
                         id = R.string.sync_last_synced,
-                        currentSettings.lastSyncDate.let {
-                            if (it == java.time.LocalDate.MIN) "—" else it.toString()
+                        currentSettings.lastSyncDateTime.let {
+                            if (it == java.time.LocalDateTime.MIN) {
+                                "—"
+                            } else {
+                                it.format(
+                                    java.time.format.DateTimeFormatter.ofLocalizedDateTime(
+                                        java.time.format.FormatStyle.LONG,
+                                        java.time.format.FormatStyle.SHORT,
+                                    )
+                                )
+                            }
                         },
                     ),
                     style = MaterialTheme.typography.bodyMedium,

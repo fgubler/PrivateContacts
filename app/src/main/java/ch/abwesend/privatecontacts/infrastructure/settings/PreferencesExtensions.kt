@@ -17,9 +17,11 @@ import ch.abwesend.privatecontacts.domain.settings.SettingsState
 import ch.abwesend.privatecontacts.domain.util.applicationScope
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 private val dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+private val dateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
 internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     appTheme = tryGetEnumValue(appThemeEntry),
@@ -63,7 +65,7 @@ internal fun Preferences.createSettingsState(): ISettingsState = SettingsState(
     syncDeviceId = getValue(syncDeviceIdEntry),
     syncAccountId = getValue(syncAccountIdEntry),
     syncPasswordEncrypted = getValue(syncPasswordEncryptedEntry),
-    lastSyncDate = tryGetDateValue(lastSyncDateEntry),
+    lastSyncDateTime = tryGetDateTimeValue(lastSyncDateTimeEntry),
 )
 
 internal fun <T> Preferences.getValue(settingsEntry: SettingsEntry<T>): T =
@@ -113,6 +115,26 @@ internal fun DataStore<Preferences>.setDateValue(settingsEntry: DateSettingsEntr
     applicationScope.launch {
         edit { preferences ->
             preferences[settingsEntry.key] = value.format(dateFormatter)
+        }
+    }
+}
+
+internal fun Preferences.tryGetDateTimeValue(
+    settingsEntry: DateTimeSettingsEntry
+): LocalDateTime {
+    val rawValue = this[settingsEntry.key]
+    val parsedValue = try {
+        rawValue?.let { LocalDateTime.parse(it, dateTimeFormatter) }
+    } catch (_: IllegalArgumentException) {
+        null
+    }
+    return parsedValue ?: settingsEntry.defaultValue
+}
+
+internal fun DataStore<Preferences>.setDateTimeValue(settingsEntry: DateTimeSettingsEntry, value: LocalDateTime) {
+    applicationScope.launch {
+        edit { preferences ->
+            preferences[settingsEntry.key] = value.format(dateTimeFormatter)
         }
     }
 }
