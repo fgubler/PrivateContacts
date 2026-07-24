@@ -22,20 +22,20 @@ interface IEncryptionRepository {
     fun decrypt(ciphertext: String, password: String): BinaryResult<String, DecryptionError>
 
     /**
-     * Encrypts [password] with a key stored in the Android KeyStore and returns the
+     * Encrypts [password] with the KeyStore key for [purpose] and returns the
      * result as a Base64-encoded string suitable for storage in DataStore.
      */
-    fun encryptPassword(password: String): BinaryResult<String, Exception>
+    fun encryptPassword(password: String, purpose: KeyStorePurpose): BinaryResult<String, Exception>
 
     /**
-     * Decrypts a password previously encrypted with [encryptPassword].
+     * Decrypts a password previously encrypted with [encryptPassword] for the same [purpose].
      * Returns an [ErrorResult] if decryption fails.
      */
-    fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception>
+    fun decryptPassword(encryptedPassword: String, purpose: KeyStorePurpose): BinaryResult<String, Exception>
 
     /**
-     * Deletes the KeyStore key used to protect the backup password.
+     * Deletes the KeyStore key protecting the password/passphrase of [purpose].
      * @return true if the key was successfully deleted.
      */
-    fun deleteKeyStoreKey(): Boolean
+    fun deleteKeyStoreKey(purpose: KeyStorePurpose): Boolean
 }

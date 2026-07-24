@@ -898,7 +898,9 @@ object SettingsScreen {
         onOpenConflicts: () -> Unit,
     ) {
         var showPassphraseDialog by remember { mutableStateOf(false) }
+        var showResetConfirmation by remember { mutableStateOf(false) }
         val conflictCount by viewModel.syncConflictCount.collectAsStateWithLifecycle()
+        val resetInProgress by viewModel.syncResetInProgress.collectAsStateWithLifecycle()
 
         SettingsCategory(titleRes = R.string.settings_category_sync) {
             SettingsCheckbox(
@@ -975,6 +977,28 @@ object SettingsScreen {
                         Text(text = stringResource(id = R.string.sync_conflicts_button, conflictCount))
                     }
                 }
+                TextButton(onClick = { showResetConfirmation = true }) {
+                    Text(text = stringResource(id = R.string.sync_reset_button))
+                }
+            }
+
+            if (showResetConfirmation) {
+                YesNoDialog(
+                    title = R.string.sync_reset_dialog_title,
+                    text = R.string.sync_reset_dialog_message,
+                    onYes = {
+                        showResetConfirmation = false
+                        viewModel.resetSync()
+                    },
+                    onNo = { showResetConfirmation = false },
+                )
+            }
+
+            if (resetInProgress) {
+                SimpleProgressDialog(
+                    title = R.string.sync_reset_in_progress,
+                    allowRunningInBackground = false,
+                )
             }
         }
     }

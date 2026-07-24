@@ -10,6 +10,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.testutil.TestBase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
@@ -128,10 +129,10 @@ class EncryptionRepositoryTest : TestBase() {
     fun `encryptPassword and decryptPassword should round-trip correctly`() {
         val password = "mySecretBackupPassword"
 
-        val result = underTest.encryptPassword(password)
+        val result = underTest.encryptPassword(password, KeyStorePurpose.BACKUP)
         assertThat(result).isInstanceOf(SuccessResult::class.java)
         val encrypted = (result as SuccessResult).value
-        val decryptResult = underTest.decryptPassword(encrypted)
+        val decryptResult = underTest.decryptPassword(encrypted, KeyStorePurpose.BACKUP)
         assertThat(decryptResult).isInstanceOf(SuccessResult::class.java)
         val decrypted = (decryptResult as SuccessResult).value
 
@@ -140,7 +141,7 @@ class EncryptionRepositoryTest : TestBase() {
 
     @Test
     fun `encryptPassword should return a JSON string with expected fields`() {
-        val result = underTest.encryptPassword("somePassword")
+        val result = underTest.encryptPassword("somePassword", KeyStorePurpose.BACKUP)
         assertThat(result).isInstanceOf(SuccessResult::class.java)
         val encrypted = (result as SuccessResult).value
 
@@ -154,8 +155,8 @@ class EncryptionRepositoryTest : TestBase() {
     fun `encryptPassword should produce different output each time (random IV)`() {
         val password = "samePassword"
 
-        val result1 = underTest.encryptPassword(password)
-        val result2 = underTest.encryptPassword(password)
+        val result1 = underTest.encryptPassword(password, KeyStorePurpose.BACKUP)
+        val result2 = underTest.encryptPassword(password, KeyStorePurpose.BACKUP)
 
         assertThat(result1).isInstanceOf(SuccessResult::class.java)
         assertThat(result2).isInstanceOf(SuccessResult::class.java)
@@ -167,17 +168,17 @@ class EncryptionRepositoryTest : TestBase() {
 
     @Test
     fun `decryptPassword should return ErrorResult for invalid input`() {
-        val result = underTest.decryptPassword("not-valid-json-at-all")
+        val result = underTest.decryptPassword("not-valid-json-at-all", KeyStorePurpose.BACKUP)
 
         assertThat(result).isInstanceOf(ErrorResult::class.java)
     }
 
     @Test
     fun `decryptPassword should return ErrorResult for tampered ciphertext`() {
-        val encrypted = (underTest.encryptPassword("originalPassword") as SuccessResult).value
+        val encrypted = (underTest.encryptPassword("originalPassword", KeyStorePurpose.BACKUP) as SuccessResult).value
         val tampered = encrypted.dropLast(10) + "AAAAAAAAAA"
 
-        val result = underTest.decryptPassword(tampered)
+        val result = underTest.decryptPassword(tampered, KeyStorePurpose.BACKUP)
 
         assertThat(result).isInstanceOf(ErrorResult::class.java)
     }
@@ -185,11 +186,16 @@ class EncryptionRepositoryTest : TestBase() {
 
 /** A pure JVM AES key provider — no Android KeyStore involved — for use in unit tests. */
 private class FakeKeyStoreRepository : IKeyStoreRepository {
-    private val secretKey: SecretKey by lazy {
-        KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
-    }
+    private val keysByPurpose = mutableMapOf<KeyStorePurpose, SecretKey>()
 
-    override fun getOrCreateKey(): SecretKey = secretKey
-    override fun getKey(): SecretKey? = secretKey
-    override fun deleteKey(): Boolean = true
+    override fun getOrCreateKey(purpose: KeyStorePurpose): SecretKey =
+        keysByPurpose.getOrPut(purpose) {
+            KeyGenerator.getInstance("AES").apply { init(256) }.generateKey()
+        }
+
+    override fun getKey(purpose: KeyStorePurpose): SecretKey? = keysByPurpose[purpose]
+    override fun deleteKey(purpose: KeyStorePurpose): Boolean {
+        keysByPurpose.remove(purpose)
+        return true
+    }
 }

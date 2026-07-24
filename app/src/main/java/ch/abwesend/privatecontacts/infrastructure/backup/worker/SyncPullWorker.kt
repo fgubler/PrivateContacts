@@ -25,6 +25,7 @@ import ch.abwesend.privatecontacts.domain.model.sync.SyncSnapshot
 import ch.abwesend.privatecontacts.domain.model.sync.SyncSnapshotIndex
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.repository.ISyncCursorRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncOutboxRepository
 import ch.abwesend.privatecontacts.domain.service.interfaces.IGoogleDriveAuthorizationRepository
@@ -89,7 +90,7 @@ class SyncPullWorker(
                 return@doWorkWithErrorHandling Result.success()
             }
 
-            val passphrase = when (val decrypted = encryptionRepository.decryptPassword(settings.syncPasswordEncrypted)) {
+            val passphrase = when (val decrypted = encryptionRepository.decryptPassword(settings.syncPasswordEncrypted, KeyStorePurpose.SYNC)) {
                 is SuccessResult -> decrypted.value
                 is ErrorResult -> {
                     logger.error("Failed to decrypt the sync passphrase", decrypted.error)

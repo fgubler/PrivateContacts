@@ -564,6 +564,10 @@
     <string name="sync_same_passphrase_hint">Enter the identical passphrase on every device.</string>
     <string name="sync_account_label">Synchronizing with account: %1$s</string>
     <string name="sync_now_button">Synchronize now</string>
+    <string name="sync_reset_button">Reset synchronization</string>
+    <string name="sync_reset_dialog_title">Reset synchronization?</string>
+    <string name="sync_reset_dialog_message">This deletes all synchronized data from your Google Drive and turns synchronization off on this device. Your contacts on this device are kept. The synchronized history cannot be recovered afterwards, and your other devices will stop synchronizing until you set them up again with a new passphrase.</string>
+    <string name="sync_reset_in_progress">Resetting synchronization...</string>
     <string name="sync_last_synced">Last synchronized: %1$s</string>
     <string name="sync_conflicts_button">Review synchronization conflicts (%1$d)</string>
     <string name="screen_sync_conflicts">Synchronization conflicts</string>

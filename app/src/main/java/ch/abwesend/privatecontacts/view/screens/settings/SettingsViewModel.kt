@@ -20,10 +20,13 @@ import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncConflictRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncCursorRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncOutboxRepository
+import ch.abwesend.privatecontacts.domain.repository.ISyncStateRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.DatabaseService
 import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
+import ch.abwesend.privatecontacts.domain.service.SyncResetService
 import ch.abwesend.privatecontacts.domain.service.SyncSetupService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IBackupScheduler
 import ch.abwesend.privatecontacts.domain.service.interfaces.ISyncScheduler
@@ -40,6 +43,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import java.util.UUID
 
 class SettingsViewModel : ViewModel() {
@@ -51,9 +55,11 @@ class SettingsViewModel : ViewModel() {
     private val settingsRepository: SettingsRepository by injectAnywhere()
     private val driveSetupService: GoogleDriveSetupService by injectAnywhere()
     private val syncSetupService: SyncSetupService by injectAnywhere()
+    private val syncResetService: SyncResetService by injectAnywhere()
     private val syncScheduler: ISyncScheduler by injectAnywhere()
     private val syncCursorRepository: ISyncCursorRepository by injectAnywhere()
     private val syncOutboxRepository: ISyncOutboxRepository by injectAnywhere()
+    private val syncStateRepository: ISyncStateRepository by injectAnywhere()
     private val syncConflictRepository: ISyncConflictRepository by injectAnywhere()
     private val contactRepository: IContactRepository by injectAnywhere()
     private val contactSaveService: ContactSaveService by injectAnywhere()
@@ -64,6 +70,9 @@ class SettingsViewModel : ViewModel() {
 
     private val _syncSetupState = MutableStateFlow<SyncSetupState>(SyncSetupState.Inactive)
     val syncSetupState: StateFlow<SyncSetupState> = _syncSetupState.asStateFlow()
+
+    private val _syncResetInProgress = MutableStateFlow(false)
+    val syncResetInProgress: StateFlow<Boolean> = _syncResetInProgress.asStateFlow()
 
     /** the passphrase captured before authorization, needed again after a consent round-trip */
     private var pendingSyncPassphrase: String? = null
@@ -143,7 +152,7 @@ class SettingsViewModel : ViewModel() {
     }
 
     fun encryptAndSaveBackupPassword(password: String) {
-        when (val result = encryptionRepository.encryptPassword(password)) {
+        when (val result = encryptionRepository.encryptPassword(password, KeyStorePurpose.BACKUP)) {
             is SuccessResult -> {
                 settingsRepository.backupPasswordEncrypted = result.value
                 settingsRepository.backupEncryptionEnabled = true
@@ -155,7 +164,7 @@ class SettingsViewModel : ViewModel() {
     fun disableBackupEncryption() {
         settingsRepository.backupEncryptionEnabled = false
         settingsRepository.backupPasswordEncrypted = ""
-        encryptionRepository.deleteKeyStoreKey()
+        encryptionRepository.deleteKeyStoreKey(KeyStorePurpose.BACKUP)
     }
 
     fun requestGoogleDriveAuthorization() {
@@ -181,7 +190,7 @@ class SettingsViewModel : ViewModel() {
     }
 
     fun enableSyncWithPassphrase(passphrase: String) {
-        when (val result = encryptionRepository.encryptPassword(passphrase)) {
+        when (val result = encryptionRepository.encryptPassword(passphrase, KeyStorePurpose.SYNC)) {
             is SuccessResult -> {
                 settingsRepository.syncPasswordEncrypted = result.value
                 if (settingsRepository.syncDeviceId.isEmpty()) {
@@ -222,6 +231,37 @@ class SettingsViewModel : ViewModel() {
     fun triggerSyncNow() {
         syncScheduler.triggerPullNow()
         syncScheduler.scheduleUploadDebounced()
+    }
+
+    /**
+     * Fully resets synchronization: wipes all remote data from Google Drive and clears every local
+     * sync trace (passphrase, account, cursors, outbox, per-contact state, conflicts and the sync
+     * KeyStore key). Local contacts are left untouched. This is destructive - the previously
+     * synchronized history is not recoverable afterwards.
+     */
+    fun resetSync() {
+        viewModelScope.launch {
+            _syncResetInProgress.value = true
+            try {
+                when (val result = syncResetService.deleteAllRemoteSyncData()) {
+                    is SuccessResult -> logger.info("Deleted ${result.value} remote sync files during reset")
+                    is ErrorResult -> logger.warning("Failed to wipe remote sync data during reset", result.error)
+                }
+            } catch (exception: Exception) {
+                logger.warning("Failed to wipe remote sync data during reset", exception)
+            }
+
+            settingsRepository.syncEnabled = false
+            settingsRepository.syncPasswordEncrypted = ""
+            settingsRepository.syncAccountId = ""
+            settingsRepository.lastSyncDateTime = LocalDateTime.MIN
+            encryptionRepository.deleteKeyStoreKey(KeyStorePurpose.SYNC)
+            syncStateRepository.deleteAll()
+            syncCursorRepository.deleteAll()
+            syncOutboxRepository.deleteAll()
+            syncConflictRepository.deleteAll()
+            _syncResetInProgress.value = false
+        }
     }
 
     private fun MutableStateFlow<SyncSetupState>.withSyncLoadingState(

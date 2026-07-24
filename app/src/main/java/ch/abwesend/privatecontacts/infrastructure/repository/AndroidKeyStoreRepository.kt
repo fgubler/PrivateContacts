@@ -10,6 +10,7 @@ import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -17,17 +18,24 @@ import javax.crypto.SecretKey
 class AndroidKeyStoreRepository : IKeyStoreRepository {
     companion object {
         private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
-        private const val KEYSTORE_KEY_ALIAS = "PrivateContactsBackupKey"
+        private const val BACKUP_KEY_ALIAS = "PrivateContactsBackupKey"
+        private const val SYNC_KEY_ALIAS = "PrivateContactsSyncKey"
         private const val AES_KEY_SIZE_BITS = 256
     }
 
-    override fun getOrCreateKey(): SecretKey {
-        val existing = withKeyStore { it.getKey(KEYSTORE_KEY_ALIAS, null) as? SecretKey }
+    private fun aliasFor(purpose: KeyStorePurpose): String = when (purpose) {
+        KeyStorePurpose.BACKUP -> BACKUP_KEY_ALIAS
+        KeyStorePurpose.SYNC -> SYNC_KEY_ALIAS
+    }
+
+    override fun getOrCreateKey(purpose: KeyStorePurpose): SecretKey {
+        val alias = aliasFor(purpose)
+        val existing = withKeyStore { it.getKey(alias, null) as? SecretKey }
         if (existing != null) return existing
 
         val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER)
         val spec = KeyGenParameterSpec.Builder(
-            KEYSTORE_KEY_ALIAS,
+            alias,
             KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT,
         )
             .setKeySize(AES_KEY_SIZE_BITS)
@@ -38,21 +46,22 @@ class AndroidKeyStoreRepository : IKeyStoreRepository {
         return keyGenerator.generateKey()
     }
 
-    override fun getKey(): SecretKey? = withKeyStore { keyStore ->
-        keyStore.getKey(KEYSTORE_KEY_ALIAS, null) as? SecretKey
+    override fun getKey(purpose: KeyStorePurpose): SecretKey? = withKeyStore { keyStore ->
+        keyStore.getKey(aliasFor(purpose), null) as? SecretKey
     }
 
-    override fun deleteKey(): Boolean {
+    override fun deleteKey(purpose: KeyStorePurpose): Boolean {
+        val alias = aliasFor(purpose)
         return try {
             withKeyStore { keyStore ->
-                if (keyStore.containsAlias(KEYSTORE_KEY_ALIAS)) {
-                    keyStore.deleteEntry(KEYSTORE_KEY_ALIAS)
-                    logger.debug("Deleted KeyStore key for backup encryption")
+                if (keyStore.containsAlias(alias)) {
+                    keyStore.deleteEntry(alias)
+                    logger.debug("Deleted KeyStore key for $purpose")
                 }
             }
             true
         } catch (e: Exception) {
-            logger.warning("Failed to delete KeyStore key", e)
+            logger.warning("Failed to delete KeyStore key for $purpose", e)
             false
         }
     }

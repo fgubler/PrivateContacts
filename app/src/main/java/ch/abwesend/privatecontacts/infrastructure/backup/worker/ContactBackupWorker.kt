@@ -30,6 +30,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.ErrorResult
 import ch.abwesend.privatecontacts.domain.model.result.generic.SuccessResult
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.repository.IFileAccessRepository
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -142,7 +143,7 @@ class ContactBackupWorker(
         return if (!settings.backupEncryptionEnabled || settings.backupPasswordEncrypted.isEmpty()) {
             null
         } else {
-            when (val result = encryptionRepository.decryptPassword(settings.backupPasswordEncrypted)) {
+            when (val result = encryptionRepository.decryptPassword(settings.backupPasswordEncrypted, KeyStorePurpose.BACKUP)) {
                 is SuccessResult -> result.value
                 is ErrorResult -> {
                     logger.warning("Failed to decrypt backup password; disabling encryption", result.error)

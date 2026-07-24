@@ -41,6 +41,7 @@ import ch.abwesend.privatecontacts.domain.service.GoogleDriveSetupService
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.LauncherAppearanceService
 import ch.abwesend.privatecontacts.domain.service.SyncCommandService
+import ch.abwesend.privatecontacts.domain.service.SyncResetService
 import ch.abwesend.privatecontacts.domain.service.SyncSetupService
 import ch.abwesend.privatecontacts.domain.service.interfaces.AccountService
 import ch.abwesend.privatecontacts.domain.service.interfaces.IAddressFormattingService
@@ -136,6 +137,7 @@ internal val koinModule = module {
     factory<ISyncContactMapper> { SyncContactMapper() }
     factory { SyncApplyService() }
     factory { SyncSetupService() }
+    factory { SyncResetService() }
     factory<ISyncKeyCheckService> { SyncKeyCheckService(androidContext()) }
     factory<TelephoneService> { AndroidTelephoneService(androidContext()) }
     factory<PermissionService> { AndroidPermissionService() }

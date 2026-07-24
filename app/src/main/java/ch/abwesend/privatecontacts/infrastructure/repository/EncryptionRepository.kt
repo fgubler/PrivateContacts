@@ -15,6 +15,7 @@ import ch.abwesend.privatecontacts.domain.model.result.generic.mapError
 import ch.abwesend.privatecontacts.domain.model.result.generic.runCatchingAsResult
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
 import ch.abwesend.privatecontacts.domain.repository.IKeyStoreRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -114,8 +115,8 @@ class EncryptionRepository : IEncryptionRepository {
 
     // ---- Password storage (KeyStore-backed AES-256-GCM) ----
 
-    override fun encryptPassword(password: String): BinaryResult<String, Exception> = runCatchingAsResult {
-        val key = keyStoreRepository.getOrCreateKey()
+    override fun encryptPassword(password: String, purpose: KeyStorePurpose): BinaryResult<String, Exception> = runCatchingAsResult {
+        val key = keyStoreRepository.getOrCreateKey(purpose)
         val cipher = Cipher.getInstance(AES_GCM_TRANSFORMATION)
             .apply { init(Cipher.ENCRYPT_MODE, key) }
         val cipherText = cipher.doFinal(password.toByteArray(Charsets.UTF_8))
@@ -131,8 +132,8 @@ class EncryptionRepository : IEncryptionRepository {
         Json.encodeToString(payload)
     }.ifError { logger.error("Password encryption failed", it) }
 
-    override fun decryptPassword(encryptedPassword: String): BinaryResult<String, Exception> = runCatchingAsResult {
-        val key = keyStoreRepository.getKey()
+    override fun decryptPassword(encryptedPassword: String, purpose: KeyStorePurpose): BinaryResult<String, Exception> = runCatchingAsResult {
+        val key = keyStoreRepository.getKey(purpose)
             ?: throw IllegalStateException("No KeyStore key available")
 
         val payload = Json.decodeFromString<EncryptedPasswordPayload>(encryptedPassword)
@@ -146,7 +147,7 @@ class EncryptionRepository : IEncryptionRepository {
         cipher.doFinal(data).toString(Charsets.UTF_8)
     }.ifError { logger.error("Password decryption failed", it) }
 
-    override fun deleteKeyStoreKey(): Boolean = keyStoreRepository.deleteKey()
+    override fun deleteKeyStoreKey(purpose: KeyStorePurpose): Boolean = keyStoreRepository.deleteKey(purpose)
 
     private fun generateRandomBytes(size: Int): ByteArray {
         val bytes = ByteArray(size)

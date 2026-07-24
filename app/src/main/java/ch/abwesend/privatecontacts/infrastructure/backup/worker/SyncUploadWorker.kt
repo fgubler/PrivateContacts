@@ -27,6 +27,7 @@ import ch.abwesend.privatecontacts.domain.model.sync.SyncOutboxCommand
 import ch.abwesend.privatecontacts.domain.model.sync.UpdateContactCommand
 import ch.abwesend.privatecontacts.domain.repository.IBackupMessageRepository
 import ch.abwesend.privatecontacts.domain.repository.IEncryptionRepository
+import ch.abwesend.privatecontacts.domain.repository.KeyStorePurpose
 import ch.abwesend.privatecontacts.domain.repository.ISyncCursorRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncOutboxRepository
 import ch.abwesend.privatecontacts.domain.repository.ISyncStateRepository
@@ -93,7 +94,7 @@ class SyncUploadWorker(
                 return@doWorkWithErrorHandling Result.success()
             }
 
-            val passphrase = when (val decrypted = encryptionRepository.decryptPassword(settings.syncPasswordEncrypted)) {
+            val passphrase = when (val decrypted = encryptionRepository.decryptPassword(settings.syncPasswordEncrypted, KeyStorePurpose.SYNC)) {
                 is SuccessResult -> decrypted.value
                 is ErrorResult -> {
                     logger.error("Failed to decrypt the sync passphrase", decrypted.error)
