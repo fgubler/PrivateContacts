@@ -879,6 +879,7 @@ object SettingsScreen {
                     errorMessage = stringResource(id = state.error.errorMessageRes),
                     title = R.string.drive_backup_setup_failed_title,
                     onClose = { viewModel.resetDriveSetupState() },
+                    onRetry = { viewModel.enableGoogleDriveBackup() },
                 )
             }
             is GoogleDriveSetupState.ConsentRequired -> {
@@ -981,8 +982,9 @@ object SettingsScreen {
             is GoogleAccountConnectState.Error -> {
                 ErrorDialog(
                     errorMessage = stringResource(id = state.error.errorMessageRes),
-                    title = R.string.drive_backup_setup_failed_title,
+                    title = R.string.google_account_setup_failed_title,
                     onClose = { viewModel.resetGoogleAccountConnectState() },
+                    onRetry = { viewModel.retryGoogleAccountConnect() },
                 )
             }
             is GoogleAccountConnectState.ConsentRequired -> {
@@ -1112,15 +1114,16 @@ object SettingsScreen {
         when (val state = setupState) {
             is SyncSetupState.Loading -> {
                 SimpleProgressDialog(
-                    title = R.string.drive_backup_setup_in_progress,
+                    title = R.string.sync_setup_in_progress,
                     allowRunningInBackground = false,
                 )
             }
             is SyncSetupState.Error -> {
                 ErrorDialog(
                     errorMessage = stringResource(id = state.error.errorMessageRes),
-                    title = R.string.drive_backup_setup_failed_title,
+                    title = R.string.sync_setup_failed_title,
                     onClose = { viewModel.resetSyncSetupState() },
+                    onRetry = { viewModel.beginSyncSetup() },
                 )
             }
             is SyncSetupState.ConsentRequired -> {

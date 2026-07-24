@@ -560,6 +560,9 @@
     <string name="google_account_switch_button">Switch account</string>
     <string name="google_account_disconnect_button">Disconnect account</string>
     <string name="google_account_setup_in_progress">Connecting Google account...</string>
+    <string name="google_account_setup_failed_title">Could not connect the Google account</string>
+    <string name="sync_setup_in_progress">Setting up contact synchronization...</string>
+    <string name="sync_setup_failed_title">Contact synchronization setup failed</string>
     <string name="google_account_switch_warning_title">Switch Google account?</string>
     <string name="google_account_switch_warning_message">Backup and synchronization will be set up freshly on the new account. Data on the previous account will no longer be used. Your contacts and your synchronization passphrase are kept.</string>
     <string name="google_account_disconnect_warning_title">Disconnect Google account?</string>

@@ -348,6 +348,11 @@ class SettingsViewModel : ViewModel() {
         _googleAccountConnectState.withConnectLoadingState { accountConnectionService.handleConsentResponse(data) }
     }
 
+    /** Retries connecting, keeping any pending feature chaining (e.g. an in-progress switch or enable). */
+    fun retryGoogleAccountConnect() {
+        _googleAccountConnectState.withConnectLoadingState { accountConnectionService.connectAccount() }
+    }
+
     fun resetGoogleAccountConnectState() {
         _googleAccountConnectState.value = GoogleAccountConnectState.Inactive
     }
