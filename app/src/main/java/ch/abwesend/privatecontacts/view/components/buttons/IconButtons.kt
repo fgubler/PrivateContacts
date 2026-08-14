@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.view.components.CancelIcon
 import ch.abwesend.privatecontacts.view.components.CompressIcon
 import ch.abwesend.privatecontacts.view.components.EditIcon
 import ch.abwesend.privatecontacts.view.components.ExpandIcon
+import ch.abwesend.privatecontacts.view.components.FilterIcon
 import ch.abwesend.privatecontacts.view.components.InfoIcon
 import ch.abwesend.privatecontacts.view.components.MoreActionsIcon
 import ch.abwesend.privatecontacts.view.components.RefreshIcon
@@ -42,6 +43,11 @@ fun EditIconButton(enabled: Boolean = true, onClick: () -> Unit) {
 @Composable
 fun SearchIconButton(enabled: Boolean = true, onClick: () -> Unit) {
     IconButton(enabled = enabled, onClick = onClick) { SearchIcon() }
+}
+
+@Composable
+fun FilterIconButton(enabled: Boolean = true, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) { FilterIcon() }
 }
 
 @Composable
