@@ -6,10 +6,12 @@
 
 package ch.abwesend.privatecontacts.domain.repository
 
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 
 interface IContactGroupRepository {
     suspend fun createMissingContactGroups(contactGroups: List<IContactGroup>): ContactSaveResult
     suspend fun loadAllContactGroups(): List<IContactGroup>
+    suspend fun getContactIdsInGroups(groupNames: Collection<String>): Set<IContactIdInternal>
 }

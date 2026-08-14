@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.domain.service
 
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.repository.IAndroidContactLoadService
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
@@ -25,4 +26,8 @@ class ContactGroupService {
             ContactType.SECRET -> contactGroupRepository.loadAllContactGroups()
             ContactType.PUBLIC -> androidContactService.getAllContactGroups()
         }
+
+    /** beware: only supported for contacts of type [ContactType.SECRET] */
+    suspend fun getContactIdsInGroups(groupNames: Collection<String>): Set<IContactIdInternal> =
+        contactGroupRepository.getContactIdsInGroups(groupNames)
 }

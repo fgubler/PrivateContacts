@@ -60,6 +60,27 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
     }
 
     @Test
+    fun `should load the contact-ids contained in the passed groups`() {
+        val contactId1 = someContactId()
+        val contactId2 = someContactId()
+        val group1 = "Group 1"
+        val group2 = "Group 2"
+        coEvery { contactGroupRelationDao.getRelationsForContactGroup(group1) } returns listOf(
+            someContactGroupRelationEntity(groupName = group1, contactId = contactId1.uuid),
+            someContactGroupRelationEntity(groupName = group1, contactId = contactId2.uuid),
+        )
+        coEvery { contactGroupRelationDao.getRelationsForContactGroup(group2) } returns listOf(
+            someContactGroupRelationEntity(groupName = group2, contactId = contactId2.uuid),
+        )
+
+        val result = runBlocking { underTest.getContactIdsInGroups(listOf(group1, group2)) }
+
+        coVerify { contactGroupRelationDao.getRelationsForContactGroup(group1) }
+        coVerify { contactGroupRelationDao.getRelationsForContactGroup(group2) }
+        assertThat(result).containsExactlyInAnyOrder(contactId1, contactId2)
+    }
+
+    @Test
     fun `should create missing contact groups and replace relationships`() {
         val contactId = someContactId()
         val existingContactGroups = listOf(

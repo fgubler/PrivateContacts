@@ -2,6 +2,7 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.model.ModelStatus
+import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
@@ -46,6 +47,16 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
     override suspend fun loadAllContactGroups(): List<IContactGroup> =
         withDatabase { database ->
             database.contactGroupDao().getAll().map { it.toContactGroup() }.toList()
+        }
+
+    // TODO can that flatMap be replaced by a bigger DB-query?
+    override suspend fun getContactIdsInGroups(groupNames: Collection<String>): Set<IContactIdInternal> =
+        withDatabase { database ->
+            val relations = groupNames.flatMap { groupName ->
+                database.contactGroupRelationDao().getRelationsForContactGroup(groupName)
+            }
+            logger.debug("Found ${relations.size} contact group relations for ${groupNames.size} groups")
+            relations.map { ContactIdInternal(it.contactId) }.toSet()
         }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
