@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">Impossibile caricare i gruppi di contatti: riprova.</string>
     <string name="create_contact_group">Crea gruppo contatti</string>
     <string name="contact_group">Gruppo contatti</string>
+    <string name="filter">Filtro</string>
+    <string name="clear_filter">Rimuovere filtro</string>
     <string name="new_contact_group_title">Nuovo gruppo contatti</string>
     <string name="contact_group_name">Nome del gruppo</string>
     <string name="contact_group_notes">Note</string>

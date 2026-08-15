@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">Failed to load contact groups: please try again.</string>
     <string name="create_contact_group">Create Contact Group</string>
     <string name="contact_group">Contact Group</string>
+    <string name="filter">Filter</string>
+    <string name="clear_filter">Clear filter</string>
     <string name="new_contact_group_title">New Contact Group</string>
     <string name="contact_group_name">Group name / label</string>
     <string name="contact_group_notes">Notes</string>
