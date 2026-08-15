@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">Kontaktgruppen konnten nicht geladen werden: Bitte versuchen Sie es erneut.</string>
     <string name="create_contact_group">Kontaktgruppe erstellen</string>
     <string name="contact_group">Kontaktgruppe</string>
+    <string name="filter">Filter</string>
+    <string name="clear_filter">Filter entfernen</string>
     <string name="new_contact_group_title">Neue Kontaktgruppe</string>
     <string name="contact_group_name">Gruppenname / Bezeichnung</string>
     <string name="contact_group_notes">Notizen</string>
@@ -546,4 +548,5 @@
     <string name="release_notes_v104">Die App ermöglicht es jetzt, periodische Backups automatisch auf Google Drive hochzuladen.</string>
     <string name="release_notes_v111">Funktionalität zum Bearbeiten von Werten für Ereignisse und Datumswerten hinzugefügt.</string>
     <string name="release_notes_v113">Umstellung auf Material 3 für ein moderneres Erscheinungsbild.</string>
+    <string name="release_notes_v117">Die Liste der geheimen Kontakte kann jetzt nach Kontaktgruppe (Label) gefiltert werden.</string>
 </resources>

@@ -21,9 +21,12 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBaseWithAccountInformation
+import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.importexport.VCardVersion
 import ch.abwesend.privatecontacts.domain.model.result.batch.ContactIdBatchChangeResult
 import ch.abwesend.privatecontacts.domain.service.ContactExportService
+import ch.abwesend.privatecontacts.domain.service.ContactGroupService
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
@@ -45,6 +48,7 @@ class ContactListViewModel : ViewModel() {
     private val searchService: FullTextSearchService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
     private val exportService: ContactExportService by injectAnywhere()
+    private val contactGroupService: ContactGroupService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
 
     private var showSearch: Boolean = false
@@ -79,6 +83,14 @@ class ContactListViewModel : ViewModel() {
     /** the currently applied search-filter for the list */
     private var currentFilter: String? = null
     private var contactLoadingJob: Job? = null
+
+    /** the names of the contact-groups by which the list is currently filtered */
+    private val _contactGroupFilter = mutableStateOf<Set<String>>(emptySet())
+    val contactGroupFilter: State<Set<String>> = _contactGroupFilter
+
+    /** all contact-groups available for the currently selected tab */
+    private val _filterableContactGroups = mutableStateOf<List<IContactGroup>>(emptyList())
+    val filterableContactGroups: State<List<IContactGroup>> = _filterableContactGroups
 
     @FlowPreview
     private val searchQueryDebouncer by lazy {
@@ -122,6 +134,9 @@ class ContactListViewModel : ViewModel() {
 
     fun selectTab(tab: ContactListTab) {
         _selectedTab.value = tab
+        // the available groups depend on the tab
+        _contactGroupFilter.value = emptySet()
+        _filterableContactGroups.value = emptyList()
         reloadContacts()
     }
 
@@ -134,8 +149,51 @@ class ContactListViewModel : ViewModel() {
         }
         contactLoadingJob = viewModelScope.launch {
             val contactsFlow = currentFilter?.let { searchContacts(it) } ?: loadContacts()
-            val sortedContactsFlow = contactsFlow.mapReady { contacts -> contacts.sortedBy { it.displayName } }
+            val groupFilteredContactsFlow = applyContactGroupFilter(contactsFlow)
+            val sortedContactsFlow = groupFilteredContactsFlow.mapReady { contacts ->
+                contacts.sortedBy { it.displayName }
+            }
             _contacts.emitAll(sortedContactsFlow)
+        }
+    }
+
+    /**
+     * Beware: currently only filters secret contacts
+     * (group-filtering is not supported for android contacts)
+     */
+    private suspend fun applyContactGroupFilter(
+        contactsFlow: ResourceFlow<List<IContactBase>>
+    ): ResourceFlow<List<IContactBase>> {
+        val groupFilter = _contactGroupFilter.value
+        if (groupFilter.isEmpty()) {
+            return contactsFlow
+        }
+        logger.debug("Filtering contacts by ${groupFilter.size} contact-groups")
+        val contactIds = contactGroupService.getContactIdsInGroups(groupFilter).map { it.uuid }.toSet()
+        return contactsFlow.mapReady { contacts ->
+            contacts.filter { contact -> (contact.id as? IContactIdInternal)?.uuid in contactIds }
+        }
+    }
+
+    fun loadFilterableContactGroups() {
+        viewModelScope.launch {
+            val contactGroups = contactGroupService.loadAllContactGroups(ContactType.SECRET, ignoreEmptyGroups = true)
+            _filterableContactGroups.value = contactGroups.sortedBy { it.id.name }
+        }
+    }
+
+    fun toggleContactGroupFilter(groupName: String) {
+        val currentGroupFilter = _contactGroupFilter.value
+        _contactGroupFilter.value =
+            if (currentGroupFilter.contains(groupName)) currentGroupFilter.minus(groupName)
+            else currentGroupFilter.plus(groupName)
+        reloadContacts()
+    }
+
+    fun clearContactGroupFilter() {
+        if (_contactGroupFilter.value.isNotEmpty()) {
+            _contactGroupFilter.value = emptySet()
+            reloadContacts()
         }
     }
 

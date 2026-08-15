@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">Failed to load contact groups: please try again.</string>
     <string name="create_contact_group">Create Contact Group</string>
     <string name="contact_group">Contact Group</string>
+    <string name="filter">Filter</string>
+    <string name="clear_filter">Clear filter</string>
     <string name="new_contact_group_title">New Contact Group</string>
     <string name="contact_group_name">Group name / label</string>
     <string name="contact_group_notes">Notes</string>
@@ -551,4 +553,5 @@
     <string name="release_notes_v104">The app now allows to upload periodic backups automatically to Google Drive.</string>
     <string name="release_notes_v111">Added the functionality to edit the values of events and dates.</string>
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
+    <string name="release_notes_v117">The list of secret contacts can now be filtered by contact-group (label).</string>
 </resources>

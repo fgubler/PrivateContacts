@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">No se pudieron cargar los grupos de contacto. Inténtalo de nuevo</string>
     <string name="create_contact_group">Crear grupo de contactos</string>
     <string name="contact_group">Grupo de contactos</string>
+    <string name="filter">Filtro</string>
+    <string name="clear_filter">Quitar filtro</string>
     <string name="new_contact_group_title">Nuevo grupo de contactos</string>
     <string name="contact_group_name">Nombre del grupo</string>
     <string name="contact_group_notes">Notas</string>
@@ -546,4 +548,5 @@
     <string name="release_notes_v104">La app ahora permite subir automáticamente las copias de seguridad periódicas a Google Drive.</string>
     <string name="release_notes_v111">Se ha añadido la funcionalidad para editar los valores de eventos y fechas.</string>
     <string name="release_notes_v113">Actualización a Material 3 para un aspecto más moderno.</string>
+    <string name="release_notes_v117">La lista de contactos secretos ahora se puede filtrar por grupo de contactos (etiqueta).</string>
 </resources>

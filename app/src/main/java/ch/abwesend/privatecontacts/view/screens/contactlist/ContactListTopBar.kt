@@ -8,8 +8,12 @@ package ch.abwesend.privatecontacts.view.screens.contactlist
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -33,6 +37,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -42,6 +47,7 @@ import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
 import ch.abwesend.privatecontacts.view.components.SearchIcon
 import ch.abwesend.privatecontacts.view.components.buttons.BackIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.FilterIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.MenuButton
 import ch.abwesend.privatecontacts.view.components.buttons.MoreActionsIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.RefreshIconButton
@@ -66,11 +72,13 @@ fun ContactListTopBar(
 
     when (val screenState = screenStateState.value) {
         is Normal -> NormalTopBar(
+            viewModel = viewModel,
             drawerState = drawerState,
             reloadContacts = { viewModel.reloadContacts() },
             showSearch = { viewModel.showSearch() }
         )
         is Search -> SearchTopBar(
+            viewModel = viewModel,
             searchText = screenState.searchText,
             changeSearchText = { viewModel.changeSearchQuery(it) },
             resetSearch = { viewModel.reloadContacts(resetSearch = true) }
@@ -86,6 +94,7 @@ fun ContactListTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NormalTopBar(
+    viewModel: ContactListViewModel,
     drawerState: DrawerState,
     reloadContacts: () -> Unit,
     showSearch: () -> Unit,
@@ -98,6 +107,7 @@ private fun NormalTopBar(
         modifier = modifier,
         actions = {
             RefreshIconButton { reloadContacts() }
+            ContactGroupFilterAction(viewModel = viewModel)
             SearchIconButton { showSearch() }
         },
         colors = appTopAppBarColors(),
@@ -107,6 +117,7 @@ private fun NormalTopBar(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SearchTopBar(
+    viewModel: ContactListViewModel,
     searchText: String,
     modifier: Modifier = Modifier,
     changeSearchText: (String) -> Unit,
@@ -118,9 +129,72 @@ private fun SearchTopBar(
         title = { SearchField(searchText, backgroundColor, contentColor) { changeSearchText(it) } },
         navigationIcon = { BackIconButton { resetSearch() } },
         modifier = modifier,
+        actions = { ContactGroupFilterAction(viewModel = viewModel) },
         colors = appTopAppBarColors(),
     )
     BackHandler { resetSearch() }
+}
+
+@Composable
+private fun ContactGroupFilterAction(viewModel: ContactListViewModel) {
+    if (viewModel.selectedTab.value != ContactListTab.SECRET_CONTACTS) {
+        return
+    }
+
+    var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
+
+    FilterIconButton {
+        viewModel.loadFilterableContactGroups()
+        dropDownMenuExpanded = true
+    }
+    ContactGroupFilterMenu(
+        viewModel = viewModel,
+        expanded = dropDownMenuExpanded,
+        onCloseMenu = { dropDownMenuExpanded = false },
+    )
+}
+
+@Composable
+private fun ContactGroupFilterMenu(
+    viewModel: ContactListViewModel,
+    expanded: Boolean,
+    onCloseMenu: () -> Unit,
+) {
+    val contactGroups = viewModel.filterableContactGroups.value
+    val selectedGroups = viewModel.contactGroupFilter.value
+
+    DropdownMenu(expanded = expanded, onDismissRequest = onCloseMenu) {
+        if (contactGroups.isEmpty()) {
+            Text(
+                text = stringResource(id = R.string.no_contact_groups_exist),
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+        }
+        DropdownMenuItem(
+            text = { Text(text = stringResource(id = R.string.clear_filter)) },
+            trailingIcon = { Icons.Default.Close },
+            enabled = selectedGroups.isNotEmpty(),
+            onClick = {
+                viewModel.clearContactGroupFilter()
+                onCloseMenu()
+            },
+        )
+        HorizontalDivider()
+        contactGroups.forEach { contactGroup ->
+            val groupName = contactGroup.id.name
+            DropdownMenuItem(
+                text = { Text(text = groupName) },
+                leadingIcon = {
+                    Checkbox(
+                        checked = selectedGroups.contains(groupName),
+                        onCheckedChange = null,
+                    )
+                },
+                onClick = { viewModel.toggleContactGroupFilter(groupName) },
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

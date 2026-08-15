@@ -33,12 +33,12 @@ ktlint {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ch.abwesend.privatecontacts"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
 
         /*
          * When incrementing the version, consider
@@ -47,8 +47,8 @@ android {
          *   - adding release-notes in the fastlane/metadata folder
          * consider using the prepare-release junie-skill to automate this
          */
-        versionCode = 116
-        versionName = "6.0.2"
+        versionCode = 118
+        versionName = "6.1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

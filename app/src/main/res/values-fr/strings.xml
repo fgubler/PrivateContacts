@@ -159,6 +159,8 @@
     <string name="contact_groups_load_error">Échec du chargement des groupes de contacts : veuillez réessayer.</string>
     <string name="create_contact_group">Créer un groupe de contacts</string>
     <string name="contact_group">Groupe de contacts</string>
+    <string name="filter">Filtre</string>
+    <string name="clear_filter">Effacer le filtre</string>
     <string name="new_contact_group_title">Nouveau groupe de contacts</string>
     <string name="contact_group_name">Nom / libellé du groupe</string>
     <string name="contact_group_notes">Notes</string>
@@ -547,4 +549,5 @@
     <string name="release_notes_v104">L\'application permet désormais de téléverser automatiquement les sauvegardes périodiques sur Google Drive.</string>
     <string name="release_notes_v111">Ajout de la fonctionnalité permettant de modifier les valeurs des événements et des dates.</string>
     <string name="release_notes_v113">Passage à Material 3 pour une apparence plus moderne.</string>
+    <string name="release_notes_v117">La liste des contacts secrets peut désormais être filtrée par groupe de contacts (libellé).</string>
 </resources>

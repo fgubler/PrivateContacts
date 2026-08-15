@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Compress
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Expand
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.Save
@@ -50,6 +51,14 @@ fun SearchIcon() {
     Icon(
         imageVector = Icons.Default.Search,
         contentDescription = stringResource(id = R.string.search)
+    )
+}
+
+@Composable
+fun FilterIcon() {
+    Icon(
+        imageVector = Icons.Default.FilterList,
+        contentDescription = stringResource(id = R.string.filter)
     )
 }
 
