@@ -33,12 +33,12 @@ ktlint {
 }
 
 android {
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "ch.abwesend.privatecontacts"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
 
         /*
          * When incrementing the version, consider
