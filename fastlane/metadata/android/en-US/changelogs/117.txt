@@ -1,0 +1,2 @@
+6.1.0
+Added a filter in the list of secret contacts to filter for contract-groups / labels.

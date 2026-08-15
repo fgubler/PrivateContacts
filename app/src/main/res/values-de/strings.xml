@@ -548,4 +548,5 @@
     <string name="release_notes_v104">Die App ermöglicht es jetzt, periodische Backups automatisch auf Google Drive hochzuladen.</string>
     <string name="release_notes_v111">Funktionalität zum Bearbeiten von Werten für Ereignisse und Datumswerten hinzugefügt.</string>
     <string name="release_notes_v113">Umstellung auf Material 3 für ein moderneres Erscheinungsbild.</string>
+    <string name="release_notes_v117">Die Liste der geheimen Kontakte kann jetzt nach Kontaktgruppe (Label) gefiltert werden.</string>
 </resources>
