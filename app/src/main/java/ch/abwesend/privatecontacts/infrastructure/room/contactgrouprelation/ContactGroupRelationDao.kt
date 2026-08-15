@@ -20,6 +20,9 @@ interface ContactGroupRelationDao {
     @Query("SELECT * FROM ContactGroupRelationEntity WHERE contactGroupName = :groupName")
     suspend fun getRelationsForContactGroup(groupName: String): List<ContactGroupRelationEntity>
 
+    @Query("SELECT DISTINCT contactGroupName FROM ContactGroupRelationEntity")
+    suspend fun getGroupNamesWithContacts(): List<String>
+
     @Insert
     suspend fun insert(data: ContactGroupRelationEntity)
 

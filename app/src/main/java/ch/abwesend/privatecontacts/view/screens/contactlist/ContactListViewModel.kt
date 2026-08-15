@@ -177,7 +177,7 @@ class ContactListViewModel : ViewModel() {
 
     fun loadFilterableContactGroups() {
         viewModelScope.launch {
-            val contactGroups = contactGroupService.loadAllContactGroups(ContactType.SECRET)
+            val contactGroups = contactGroupService.loadAllContactGroups(ContactType.SECRET, ignoreEmptyGroups = true)
             _filterableContactGroups.value = contactGroups.sortedBy { it.id.name }
         }
     }

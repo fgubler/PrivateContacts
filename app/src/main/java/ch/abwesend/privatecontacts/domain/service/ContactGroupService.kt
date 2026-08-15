@@ -17,13 +17,22 @@ class ContactGroupService {
     private val contactGroupRepository: IContactGroupRepository by injectAnywhere()
     private val androidContactService: IAndroidContactLoadService by injectAnywhere()
 
-    suspend fun loadAllContactGroups(): List<IContactGroup> =
-        (loadAllContactGroups(ContactType.PUBLIC) + loadAllContactGroups(ContactType.SECRET))
+    /**
+     * @param ignoreEmptyGroups if true, contact-groups without any contacts are filtered out.
+     * Beware: only supported for contacts of type [ContactType.SECRET]; the flag is ignored for public groups.
+     */
+    suspend fun loadAllContactGroups(ignoreEmptyGroups: Boolean = false): List<IContactGroup> =
+        (loadAllContactGroups(ContactType.PUBLIC, ignoreEmptyGroups) +
+                loadAllContactGroups(ContactType.SECRET, ignoreEmptyGroups))
             .distinctBy { it.id.name }
 
-    suspend fun loadAllContactGroups(contactType: ContactType): List<IContactGroup> =
+    /**
+     * @param ignoreEmptyGroups if true, contact-groups without any contacts are filtered out.
+     * Beware: only supported for contacts of type [ContactType.SECRET]; the flag is ignored for public groups.
+     */
+    suspend fun loadAllContactGroups(contactType: ContactType, ignoreEmptyGroups: Boolean = false): List<IContactGroup> =
         when (contactType) {
-            ContactType.SECRET -> contactGroupRepository.loadAllContactGroups()
+            ContactType.SECRET -> contactGroupRepository.loadAllContactGroups(ignoreEmptyGroups)
             ContactType.PUBLIC -> androidContactService.getAllContactGroups()
         }
 

@@ -44,9 +44,13 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             ContactSaveResult.Failure(UNABLE_TO_CREATE_CONTACT_GROUP)
         }
 
-    override suspend fun loadAllContactGroups(): List<IContactGroup> =
+    override suspend fun loadAllContactGroups(ignoreEmptyGroups: Boolean): List<IContactGroup> =
         withDatabase { database ->
-            database.contactGroupDao().getAll().map { it.toContactGroup() }.toList()
+            val allGroups = database.contactGroupDao().getAll().map { it.toContactGroup() }.toList()
+            if (ignoreEmptyGroups) {
+                val nonEmptyGroupNames = database.contactGroupRelationDao().getGroupNamesWithContacts().toSet()
+                allGroups.filter { it.id.name in nonEmptyGroupNames }
+            } else allGroups
         }
 
     // TODO can that flatMap be replaced by a bigger DB-query?
