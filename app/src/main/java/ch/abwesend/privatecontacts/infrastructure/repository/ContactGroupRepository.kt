@@ -53,15 +53,13 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
             } else allGroups
         }
 
-    // TODO can that flatMap be replaced by a bigger DB-query?
-    override suspend fun getContactIdsInGroups(groupNames: Collection<String>): Set<IContactIdInternal> =
-        withDatabase { database ->
-            val relations = groupNames.flatMap { groupName ->
-                database.contactGroupRelationDao().getRelationsForContactGroup(groupName)
-            }
-            logger.debug("Found ${relations.size} contact group relations for ${groupNames.size} groups")
-            relations.map { ContactIdInternal(it.contactId) }.toSet()
+    override suspend fun getContactIdsInGroups(groupNames: Collection<String>): Set<IContactIdInternal> {
+        val relations = bulkLoadingOperation(groupNames) { database, groupNamesChunk ->
+            database.contactGroupRelationDao().getRelationsForContactGroups(groupNamesChunk)
         }
+        logger.debug("Found ${relations.size} contact group relations for ${groupNames.size} groups")
+        return relations.map { ContactIdInternal(it.contactId) }.toSet()
+    }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
         logger.debug("Creating missing contact groups")
