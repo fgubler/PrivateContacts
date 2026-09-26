@@ -1,0 +1,122 @@
+# Docker Sandbox (sbx) mixin
+# For more information see https://docs.docker.com/ai/sandboxes/customize/
+
+schemaVersion: "1"
+kind: mixin
+name: sbx-basics
+displayName: agent build environment
+description: >
+  Temurin JDKs, the Android SDK
+  (with x86_64 emulation on arm64), CLI tooling and Claude Code configuration.
+
+network:
+  allowedDomains:
+    - "packages.adoptium.net:443"
+    - "dl.google.com:443" # Android SDK downloads + google() maven repo
+    - "repo1.maven.org"
+    - "maven.google.com:443" # alias of the google() maven repo
+
+environment:
+  variables:
+    TERM: xterm-256color
+    ANDROID_HOME: /opt/android-sdk # where the kit installs the Android SDK
+
+commands:
+  install:
+    # Install Temurin 21; see https://adoptium.net/de/installation/linux
+    - description: Install Temurin 21 JDK
+      command: |
+        exec >/tmp/install.log 2>&1
+        # output goes to /tmp/install.log
+        set -exuo pipefail
+        update-ca-certificates
+        
+        curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public -o /etc/apt/keyrings/adoptium.asc
+        cat > /etc/apt/sources.list.d/adoptium.sources <<EOF
+        Types: deb
+        URIs: https://packages.adoptium.net/artifactory/deb/
+        Suites: noble
+        Components: main
+        Signed-By: /etc/apt/keyrings/adoptium.asc
+        EOF
+        
+        # wait out the base image's initial apt activity; still locked after 3 min means it is stuck
+        timeout 180 sh -c 'while fuser /var/lib/apt/lists/lock /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 1; done'
+        apt-get update -q
+        apt-get install -y temurin-21-jdk
+        # the base image ships a newer OpenJDK as default `java`, but the Gradle daemon must run on 21: detekt's
+        # embedded Kotlin compiler rejects the JVM-target of newer JDKs
+        update-alternatives --set java "/usr/lib/jvm/temurin-21-jdk-$(dpkg --print-architecture)/bin/java"
+        echo "done."
+
+    # cmdline-tools run on the JVM and are arch-neutral. compileSdk must match build-logic (currently 37.1).
+    - description: Install Android SDK (cmdline-tools, platform 37.1)
+      command: |
+        exec >/tmp/install-android.log 2>&1
+        # output goes to /tmp/install-android.log
+        set -exuo pipefail
+        export ANDROID_HOME=/opt/android-sdk
+        apt-get install -y unzip
+        curl -fsSL https://dl.google.com/android/repository/commandlinetools-linux-13114758_latest.zip -o /tmp/cmdline-tools.zip
+        mkdir -p "$ANDROID_HOME/cmdline-tools"
+        unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-tools
+        mv /tmp/cmdline-tools/cmdline-tools "$ANDROID_HOME/cmdline-tools/latest"
+        rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools
+        (yes || true) | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses
+        # build-tools 36.0.0 is what AGP 9.3.1 requires by default
+        "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37.1" "build-tools;36.0.0" "platform-tools"
+        chmod -R a+rX "$ANDROID_HOME"
+        echo "done."
+
+    # aapt2 ships only as an x86_64 Linux binary, so arm64 hosts need qemu. No-op on amd64.
+    - description: Install qemu-user + x86_64 runtime libs for Android SDK tools on arm64
+      command: |
+        exec >/tmp/install-qemu.log 2>&1
+        # output goes to /tmp/install-qemu.log
+        set -exuo pipefail
+        if [ "$(dpkg --print-architecture)" != "arm64" ]; then echo "amd64 host, nothing to do."; exit 0; fi
+        apt-get install -y qemu-user-binfmt
+        # aapt2 also needs the amd64 libc, which the arm64 mirror does not carry
+        CODENAME=$(. /etc/os-release; echo "$VERSION_CODENAME")
+        sed -i "/^Components:/a Architectures: arm64" /etc/apt/sources.list.d/ubuntu.sources
+        dpkg --add-architecture amd64
+        cat > /etc/apt/sources.list.d/amd64.sources <<EOF
+        Types: deb
+        URIs: http://archive.ubuntu.com/ubuntu/
+        Suites: $CODENAME $CODENAME-updates $CODENAME-security
+        Components: main universe
+        Architectures: amd64
+        Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+        EOF
+        apt-get update -q
+        apt-get install -y libc6:amd64 libstdc++6:amd64 zlib1g:amd64
+        echo "done."
+
+    # The micro-VM already provides the isolation boundary
+    - description: Disable sandboxing globally
+      command: |
+        exec >/tmp/install-claude-config.log 2>&1
+        # output goes to /tmp/install-claude-config.log
+        set -exuo pipefail
+        mkdir -p /etc/claude-code
+        cat > /etc/claude-code/managed-settings.json << 'EOF'
+        {
+          "sandbox": {
+            "enabled": false
+          }
+        }
+        EOF
+
+  startup:
+    # binfmt_misc is kernel state lost on every restart, so the handler is registered at startup, not at install time.
+    # No-op on amd64, where the qemu conf file does not exist.
+    - description: Register qemu-x86_64 binfmt handler (arm64 only)
+      command:
+        - sh
+        - -c
+        - |
+          # startup commands run as the agent user -> sudo for the kernel-side operations
+          set -e
+          [ -f /usr/lib/binfmt.d/qemu-x86_64.conf ] || exit 0
+          mountpoint -q /proc/sys/fs/binfmt_misc || sudo -n mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
+          [ -e /proc/sys/fs/binfmt_misc/qemu-x86_64 ] || grep -v '^#' /usr/lib/binfmt.d/qemu-x86_64.conf | sudo -n tee /proc/sys/fs/binfmt_misc/register >/dev/null
