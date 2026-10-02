@@ -12,6 +12,7 @@ buildscript {
         kotlinVersion = "2.3.0"
         coroutinesVersion = "1.10.2"
         androidLifecycleVersion = "2.10.0"
+        navigation3Version = "1.2.0"
         androidReviewVersion = "2.0.2"
 
         kspVersion = '2.3.5'

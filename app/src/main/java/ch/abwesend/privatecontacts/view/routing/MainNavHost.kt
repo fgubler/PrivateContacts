@@ -6,12 +6,17 @@
 
 package ch.abwesend.privatecontacts.view.routing
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
-
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.scene.Scene
+import androidx.navigation3.ui.NavDisplay
 import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactDetail
@@ -30,18 +35,40 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsScreen
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
+/** the duration used by the old Jetpack-Navigation NavHost: keep the visual style unchanged */
+private const val TRANSITION_DURATION_MILLIS = 700
+
 @ExperimentalFoundationApi
 @FlowPreview
 @ExperimentalContracts
 @Composable
-fun MainNavHost(navController: NavHostController, screenContext: ScreenContext) {
-    NavHost(navController = navController, startDestination = ContactList.key) {
-        composable(ContactList.key) { ContactListScreen.Screen(screenContext) }
-        composable(ContactDetail.key) { ContactDetailScreen.Screen(screenContext) }
-        composable(ContactEdit.key) { ContactEditScreen.Screen(screenContext) }
-        composable(Settings.key) { SettingsScreen.Screen(screenContext) }
-        composable(ImportExport.key) { ContactImportExportScreen.Screen(screenContext) }
-        composable(Introduction.key) { IntroductionScreen.Screen(screenContext) }
-        composable(AboutTheApp.key) { AboutScreen.Screen(screenContext) }
+fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenContext) {
+    val transitionSpec: AnimatedContentTransitionScope<Scene<Screen>>.() -> ContentTransform = {
+        fadeIn(animationSpec = tween(TRANSITION_DURATION_MILLIS)) togetherWith
+            fadeOut(animationSpec = tween(TRANSITION_DURATION_MILLIS))
     }
+
+    NavDisplay(
+        backStack = navigationViewModel.backStack,
+        onBack = { navigationViewModel.navigateUp() },
+        transitionSpec = transitionSpec,
+        popTransitionSpec = transitionSpec,
+        predictivePopTransitionSpec = { transitionSpec() },
+        entryProvider = { screenKey ->
+            NavEntry(
+                key = screenKey,
+                contentKey = "${screenKey.key}-${navigationViewModel.refreshCounter}",
+            ) { selectedScreen ->
+                when (selectedScreen) {
+                    ContactList -> ContactListScreen.Screen(screenContext)
+                    ContactDetail -> ContactDetailScreen.Screen(screenContext)
+                    ContactEdit -> ContactEditScreen.Screen(screenContext)
+                    Settings -> SettingsScreen.Screen(screenContext)
+                    ImportExport -> ContactImportExportScreen.Screen(screenContext)
+                    Introduction -> IntroductionScreen.Screen(screenContext)
+                    AboutTheApp -> AboutScreen.Screen(screenContext)
+                }
+            }
+        },
+    )
 }

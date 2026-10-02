@@ -40,8 +40,6 @@ import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.IntentCompat
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
 import ch.abwesend.privatecontacts.domain.settings.AppTheme
@@ -73,6 +71,7 @@ import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
+import ch.abwesend.privatecontacts.view.routing.NavigationViewModel
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
@@ -97,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     private val callScreeningRoleHelper: CallScreeningRoleHelper by injectAnywhere()
 
     private val viewModel: MainViewModel by viewModels()
+    private val navigationViewModel: NavigationViewModel by viewModels()
     private val contactListViewModel: ContactListViewModel by viewModels()
     private val contactDetailViewModel: ContactDetailViewModel by viewModels()
     private val contactEditViewModel: ContactEditViewModel by viewModels()
@@ -184,12 +184,11 @@ class MainActivity : AppCompatActivity() {
             handleAuthentication(settings, viewModel)
         }
 
-        val navController = rememberNavController()
-        val screenContext = createScreenContext(navController, settings)
+        val screenContext = createScreenContext(navigationViewModel, settings)
 
         AuthenticatedContent(settings) {
             MainNavHost(
-                navController = navController,
+                navigationViewModel = navigationViewModel,
                 screenContext = screenContext,
             )
 
@@ -279,10 +278,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createScreenContext(
-        navController: NavHostController,
+        navigationViewModel: NavigationViewModel,
         settings: ISettingsState
     ): ScreenContext {
-        val router: GenericRouter = getAnywhereWithParams(navController)
+        val router: GenericRouter = getAnywhereWithParams(navigationViewModel)
         val permissionProvider = PermissionProvider(
             callPermissionHelper,
             contactPermissionHelper,
