@@ -6,10 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.routing
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 
@@ -21,17 +18,13 @@ import androidx.lifecycle.ViewModel
  * which are lost as well, so restoring the back-stack would show screens without their data.
  */
 class NavigationViewModel : ViewModel() {
-    val backStack: SnapshotStateList<Screen> = mutableStateListOf(Screen.ContactList)
+    private var instanceCounter: Int = 0
 
-    /**
-     * Changing this value rebuilds the content of the current screen
-     * (see the content-key of the nav-entries in MainNavHost).
-     */
-    var refreshCounter: Int by mutableIntStateOf(0)
-        private set
+    val backStack: SnapshotStateList<ScreenInstance> =
+        mutableStateListOf(createInstance(Screen.ContactList))
 
     fun navigateTo(screen: Screen) {
-        backStack.add(screen)
+        backStack.add(createInstance(screen))
     }
 
     fun navigateUp(): Boolean {
@@ -42,8 +35,20 @@ class NavigationViewModel : ViewModel() {
         return canNavigateUp
     }
 
-    /** rebuilds the current screen from scratch, e.g. after the app-language was changed */
+    /**
+     * Rebuilds the current screen from scratch, e.g. after the app-language was changed:
+     * replacing the top-most entry by a new instance of the same screen discards its state
+     * without touching the entries below it.
+     */
     fun refreshCurrentScreen() {
-        refreshCounter += 1
+        val currentScreen = backStack.lastOrNull()?.screen
+        if (currentScreen != null) {
+            backStack[backStack.lastIndex] = createInstance(currentScreen)
+        }
+    }
+
+    private fun createInstance(screen: Screen): ScreenInstance {
+        instanceCounter += 1
+        return ScreenInstance(screen = screen, instanceId = instanceCounter)
     }
 }

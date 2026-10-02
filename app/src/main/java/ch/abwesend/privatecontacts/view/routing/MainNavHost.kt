@@ -43,7 +43,7 @@ private const val TRANSITION_DURATION_MILLIS = 700
 @ExperimentalContracts
 @Composable
 fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenContext) {
-    val transitionSpec: AnimatedContentTransitionScope<Scene<Screen>>.() -> ContentTransform = {
+    val transitionSpec: AnimatedContentTransitionScope<Scene<ScreenInstance>>.() -> ContentTransform = {
         fadeIn(animationSpec = tween(TRANSITION_DURATION_MILLIS)) togetherWith
             fadeOut(animationSpec = tween(TRANSITION_DURATION_MILLIS))
     }
@@ -54,12 +54,12 @@ fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenC
         transitionSpec = transitionSpec,
         popTransitionSpec = transitionSpec,
         predictivePopTransitionSpec = { transitionSpec() },
-        entryProvider = { screenKey ->
+        entryProvider = { screenInstance ->
             NavEntry(
-                key = screenKey,
-                contentKey = "${screenKey.key}-${navigationViewModel.refreshCounter}",
-            ) { selectedScreen ->
-                when (selectedScreen) {
+                key = screenInstance,
+                contentKey = screenInstance.contentKey,
+            ) { selectedInstance ->
+                when (selectedInstance.screen) {
                     ContactList -> ContactListScreen.Screen(screenContext)
                     ContactDetail -> ContactDetailScreen.Screen(screenContext)
                     ContactEdit -> ContactEditScreen.Screen(screenContext)

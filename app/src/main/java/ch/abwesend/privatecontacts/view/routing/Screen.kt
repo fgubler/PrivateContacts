@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Output
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation3.runtime.NavKey
 import ch.abwesend.privatecontacts.R
 
 /**
@@ -27,7 +26,7 @@ enum class Screen(
     val key: String,
     val selfInitializing: Boolean,
     private val showInSideDrawer: Boolean,
-) : NavKey {
+) {
     ContactList(
         titleRes = R.string.screen_contact_list,
         icon = Icons.Default.Contacts,
