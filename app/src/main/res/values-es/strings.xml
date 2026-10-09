@@ -561,4 +561,5 @@
     <string name="release_notes_v111">Se ha añadido la funcionalidad para editar los valores de eventos y fechas.</string>
     <string name="release_notes_v113">Actualización a Material 3 para un aspecto más moderno.</string>
     <string name="release_notes_v117">La lista de contactos secretos ahora se puede filtrar por grupo de contactos (etiqueta).</string>
+    <string name="release_notes_v119">Se ha añadido una nueva pantalla para gestionar los grupos de contactos (etiquetas).</string>
 </resources>
