@@ -11,6 +11,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface ContactGroupDao {
@@ -25,6 +26,12 @@ interface ContactGroupDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE) // must not replace existing groups because that would delete their relations
     suspend fun insertMissing(data: List<ContactGroupEntity>)
+
+    @Insert
+    suspend fun insert(data: ContactGroupEntity)
+
+    @Update
+    suspend fun update(data: ContactGroupEntity)
 
     @Delete
     suspend fun delete(data: ContactGroupEntity)

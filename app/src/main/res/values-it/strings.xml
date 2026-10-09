@@ -12,6 +12,7 @@
     <string name="greetings_from_the_developer">Un saluto dallo sviluppatore, Florian.</string>
 
     <string name="screen_contact_list">Contatti</string>
+    <string name="screen_contact_groups">Gruppi di contatti</string>
     <string name="screen_settings">Impostazioni</string>
     <string name="screen_about_the_app">Informazioni</string>
     <string name="screen_introduction">Introduzione</string>
@@ -66,6 +67,8 @@
     <string name="contact_creation_id_collision">Esiste già un contatto con questo ID: probabilmente si tratta di un problema interno all\'app. Ci scusiamo per l\'inconveniente.</string>
     <string name="unable_to_resolve_contact">Impossibile caricare il contatto</string>
     <string name="unable_to_create_contact_groups">Impossibile aggiungere uno o più gruppi di contatti</string>
+    <string name="unable_to_update_contact_group">Impossibile salvare il gruppo di contatti</string>
+    <string name="unable_to_delete_contact_group">Impossibile eliminare il gruppo di contatti</string>
     <string name="not_yet_implemented_for_external_error">Questa funzione non è ancora disponibile per i contatti Android “normali”.</string>
     <string name="not_yet_implemented_for_internal_error">Questa funzione non è ancora disponibile per i contatti segreti.</string>
     <string name="error_report_sent_confirmation">Segnalazione di errore inviata agli sviluppatori</string>
@@ -166,6 +169,13 @@
     <string name="contact_group_notes">Note</string>
     <string name="contact_group_validation_name_empty">Inserisci un nome per il gruppo.</string>
     <string name="contact_group_validation_name_duplicate">Esiste già un gruppo con questo nome.</string>
+    <string name="edit_contact_group_title">Modifica gruppo di contatti</string>
+    <string name="delete">Elimina</string>
+    <string name="delete_contact_group_title">Elimina gruppo di contatti</string>
+    <string name="delete_contact_group_text">Sei sicuro di voler eliminare il gruppo di contatti \"%1$s\"?\n\nI contatti del gruppo non vengono eliminati: vengono solo rimossi dal gruppo.</string>
+    <string name="no_contact_groups_defined">Non esistono ancora gruppi di contatti. Usa il pulsante + per crearne uno.</string>
+    <string name="public_contact_groups_not_implemented">Spiacenti, la gestione dei gruppi dei contatti pubblici non è ancora disponibile.</string>
+    <string name="number_of_contacts">Numero di contatti</string>
     <string name="add_contact_image">Aggiungi immagine contatto</string>
     <string name="change_contact_image">Cambia immagine contatto</string>
     <string name="remove_contact_image">Rimuovi immagine contatto</string>
@@ -366,6 +376,8 @@
     <string name="secret_contacts_tab_title">Contatti segreti</string>
     <string name="all_contacts_tab_title">Tutti i contatti</string>
     <string name="public_contacts_tab_title">Contatti pubblici</string>
+    <string name="secret_contact_groups_tab_title">Gruppi segreti</string>
+    <string name="public_contact_groups_tab_title">Gruppi pubblici</string>
 
     <string name="target_account">Account di destinazione</string>
     <string name="app_internal">All\'interno dell\'app</string>
@@ -549,4 +561,5 @@
     <string name="release_notes_v111">Aggiunta la funzionalità per modificare i valori di eventi e date.</string>
     <string name="release_notes_v113">Aggiornamento a Material 3 per un aspetto più moderno.</string>
     <string name="release_notes_v117">L\'elenco dei contatti segreti può ora essere filtrato per gruppo di contatti (etichetta).</string>
+    <string name="release_notes_v119">Aggiunta una nuova schermata per gestire i gruppi di contatti (etichette).</string>
 </resources>

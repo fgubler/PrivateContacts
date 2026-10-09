@@ -10,6 +10,7 @@
     <string name="greetings_from_the_developer">Greetings from the Developer, Florian.</string>
 
     <string name="screen_contact_list">Contacts</string>
+    <string name="screen_contact_groups">Contact Groups</string>
     <string name="screen_settings">Settings</string>
     <string name="screen_about_the_app">About</string>
     <string name="screen_introduction">Introduction</string>
@@ -65,6 +66,8 @@
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
     <string name="contact_creation_id_collision">A contact with this ID already exists: this is likely an internal problem of the app. We apologize for the inconvenience.</string>
     <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
+    <string name="unable_to_update_contact_group">The contact-group could not be saved.</string>
+    <string name="unable_to_delete_contact_group">The contact-group could not be deleted.</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>
@@ -166,6 +169,13 @@
     <string name="contact_group_notes">Notes</string>
     <string name="contact_group_validation_name_empty">Please enter a group name.</string>
     <string name="contact_group_validation_name_duplicate">A group of this name already exists.</string>
+    <string name="edit_contact_group_title">Edit Contact Group</string>
+    <string name="delete">Delete</string>
+    <string name="delete_contact_group_title">Delete Contact Group</string>
+    <string name="delete_contact_group_text">Are you sure you would like to delete the contact-group \"%1$s\"?\n\nThe contacts in it are not deleted: they are only removed from the group.</string>
+    <string name="no_contact_groups_defined">No contact groups have been defined, yet. Use the + button to create one.</string>
+    <string name="public_contact_groups_not_implemented">Sorry, managing the groups of public contacts is not yet supported.</string>
+    <string name="number_of_contacts">Number of contacts</string>
 
     <string name="add_contact_image">Add contact image</string>
     <string name="change_contact_image">Change contact image</string>
@@ -371,6 +381,8 @@
     <string name="secret_contacts_tab_title">Secret Contacts</string>
     <string name="all_contacts_tab_title">All Contacts</string>
     <string name="public_contacts_tab_title">Public Contacts</string>
+    <string name="secret_contact_groups_tab_title">Secret Groups</string>
+    <string name="public_contact_groups_tab_title">Public Groups</string>
 
     <string name="target_account">Target account</string>
     <string name="app_internal">Within this app</string>
@@ -554,4 +566,5 @@
     <string name="release_notes_v111">Added the functionality to edit the values of events and dates.</string>
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
     <string name="release_notes_v117">The list of secret contacts can now be filtered by contact-group (label).</string>
+    <string name="release_notes_v119">Added new screen to manage contact-groups (labels).</string>
 </resources>

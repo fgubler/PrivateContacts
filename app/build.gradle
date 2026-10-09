@@ -33,7 +33,11 @@ ktlint {
 }
 
 android {
-    compileSdk = 37
+    compileSdk {
+        version = release(37) {
+            minorApiLevel = 1
+        }
+    }
 
     defaultConfig {
         applicationId = "ch.abwesend.privatecontacts"
@@ -47,8 +51,8 @@ android {
          *   - adding release-notes in the fastlane/metadata folder
          * consider using the prepare-release junie-skill to automate this
          */
-        versionCode = 118
-        versionName = "6.1.1"
+        versionCode = 119
+        versionName = "6.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

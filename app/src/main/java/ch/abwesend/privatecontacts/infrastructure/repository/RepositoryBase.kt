@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.infrastructure.repository
 
+import androidx.room.withTransaction
 import ch.abwesend.privatecontacts.domain.lib.coroutine.IDispatchers
 import ch.abwesend.privatecontacts.domain.lib.coroutine.mapAsync
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
@@ -24,6 +25,12 @@ abstract class RepositoryBase {
     ): T = withContext(dispatchers.io) {
         databaseHolder.ensureInitialized()
         query(databaseHolder.database)
+    }
+
+    protected suspend fun <T> withDatabaseTransaction(
+        query: suspend (AppDatabase) -> T
+    ): T = withDatabase { database ->
+        database.withTransaction { query(database) }
     }
 
     protected suspend fun <T, S> bulkOperation(
