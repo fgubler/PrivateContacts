@@ -18,6 +18,7 @@ import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListViewModel
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
@@ -26,6 +27,7 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 data class ScreenContext(
     private val genericRouter: GenericRouter,
     override val contactListViewModel: ContactListViewModel,
+    override val contactGroupListViewModel: ContactGroupListViewModel,
     override val contactDetailViewModel: ContactDetailViewModel,
     override val contactEditViewModel: ContactEditViewModel,
     override val settingsViewModel: SettingsViewModel,

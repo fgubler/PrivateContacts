@@ -12,6 +12,7 @@
     <string name="greetings_from_the_developer">Salutations du développeur, Florian.</string>
 
     <string name="screen_contact_list">Contacts</string>
+    <string name="screen_contact_groups">Groupes de contacts</string>
     <string name="screen_settings">Paramètres</string>
     <string name="screen_about_the_app">À propos</string>
     <string name="screen_introduction">Introduction</string>

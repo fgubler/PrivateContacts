@@ -7,6 +7,7 @@
 package ch.abwesend.privatecontacts.view.routing
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.ContactPage
 import androidx.compose.material.icons.filled.Contacts
 import androidx.compose.material.icons.filled.Info
@@ -31,6 +32,14 @@ enum class Screen(
         titleRes = R.string.screen_contact_list,
         icon = Icons.Default.Contacts,
         key = "ContactListScreen",
+        selfInitializing = true,
+        showInSideDrawer = true,
+    ),
+
+    ContactGroups(
+        titleRes = R.string.screen_contact_groups,
+        icon = Icons.AutoMirrored.Filled.Label,
+        key = "ContactGroupsScreen",
         selfInitializing = true,
         showInSideDrawer = true,
     ),
