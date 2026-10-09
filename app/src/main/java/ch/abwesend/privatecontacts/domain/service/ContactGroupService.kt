@@ -50,6 +50,10 @@ class ContactGroupService {
         contactGroupRepository.loadNumberOfContactsPerGroup()
 
     /** beware: only supported for contacts of type [ContactType.SECRET] */
+    suspend fun createContactGroup(contactGroup: IContactGroup): ContactSaveResult =
+        contactGroupRepository.createMissingContactGroups(listOf(contactGroup))
+
+    /** beware: only supported for contacts of type [ContactType.SECRET] */
     suspend fun updateContactGroup(oldGroup: IContactGroup, newGroup: IContactGroup): ContactSaveResult {
         val result = contactGroupRepository.updateContactGroup(oldGroup, newGroup)
         val nameChanged = oldGroup.id.name != newGroup.id.name

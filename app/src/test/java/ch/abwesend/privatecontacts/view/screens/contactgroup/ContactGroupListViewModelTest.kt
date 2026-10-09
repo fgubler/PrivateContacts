@@ -13,13 +13,16 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.ContactGroupService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.view.model.ContactGroupWithContactCount
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -124,5 +127,43 @@ class ContactGroupListViewModelTest : TestBase() {
         underTest.deleteContactGroup(group)
 
         coVerify(exactly = 0) { contactGroupService.loadAllContactGroups(any<ContactType>()) }
+    }
+
+    @Test
+    fun `should select the secret tab on initialization if android contacts are not shown`() {
+        val settings = mockk<ISettingsState> { every { showAndroidContacts } returns false }
+        coEvery { contactGroupService.loadAllContactGroups(any<ContactType>()) } returns emptyList()
+        coEvery { contactGroupService.loadNumberOfContactsPerGroup() } returns emptyMap()
+        underTest.selectTab(ContactGroupListTab.PUBLIC_GROUPS)
+
+        underTest.initializeScreen(settings)
+
+        assertThat(underTest.selectedTab.value).isEqualTo(ContactGroupListTab.SECRET_GROUPS)
+        coVerify { contactGroupService.loadAllContactGroups(ContactType.SECRET) }
+    }
+
+    @Test
+    fun `should keep the selected tab on initialization if android contacts are shown`() {
+        val settings = mockk<ISettingsState> { every { showAndroidContacts } returns true }
+        coEvery { contactGroupService.loadAllContactGroups(any<ContactType>()) } returns emptyList()
+        coEvery { contactGroupService.loadNumberOfContactsPerGroup() } returns emptyMap()
+        underTest.selectTab(ContactGroupListTab.PUBLIC_GROUPS)
+
+        underTest.initializeScreen(settings)
+
+        assertThat(underTest.selectedTab.value).isEqualTo(ContactGroupListTab.PUBLIC_GROUPS)
+    }
+
+    @Test
+    fun `should reload the groups after a successful creation`() {
+        val group = someContactGroup(name = "New Group")
+        coEvery { contactGroupService.createContactGroup(any()) } returns ContactSaveResult.Success
+        coEvery { contactGroupService.loadAllContactGroups(any<ContactType>()) } returns listOf(group)
+        coEvery { contactGroupService.loadNumberOfContactsPerGroup() } returns emptyMap()
+
+        underTest.createContactGroup(group)
+
+        coVerify { contactGroupService.createContactGroup(group) }
+        coVerify { contactGroupService.loadAllContactGroups(ContactType.SECRET) }
     }
 }

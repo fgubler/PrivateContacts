@@ -169,6 +169,13 @@
     <string name="contact_group_notes">Notes</string>
     <string name="contact_group_validation_name_empty">Please enter a group name.</string>
     <string name="contact_group_validation_name_duplicate">A group of this name already exists.</string>
+    <string name="edit_contact_group_title">Edit Contact Group</string>
+    <string name="delete">Delete</string>
+    <string name="delete_contact_group_title">Delete Contact Group</string>
+    <string name="delete_contact_group_text">Are you sure you would like to delete the contact-group \"%1$s\"?\n\nThe contacts in it are not deleted: they are only removed from the group.</string>
+    <string name="no_contact_groups_defined">No contact groups have been defined, yet. Use the + button to create one.</string>
+    <string name="public_contact_groups_not_implemented">Sorry, managing the groups of public contacts is not yet supported.</string>
+    <string name="number_of_contacts">Number of contacts</string>
 
     <string name="add_contact_image">Add contact image</string>
     <string name="change_contact_image">Change contact image</string>

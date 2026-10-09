@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.domain.service
 
+import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_GROUP
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_UPDATE_CONTACT_GROUP
@@ -152,5 +153,16 @@ class ContactGroupServiceTest : TestBase() {
 
         assertThat(result).isEqualTo(failure)
         coVerify(exactly = 0) { contactRepository.recomputeFullTextSearch(any()) }
+    }
+
+    @Test
+    fun `should create a new contact group`() {
+        val group = someContactGroup(name = "New Group", modelStatus = NEW)
+        coEvery { contactGroupRepository.createMissingContactGroups(any()) } returns ContactSaveResult.Success
+
+        val result = runBlocking { underTest.createContactGroup(group) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        coVerify { contactGroupRepository.createMissingContactGroups(listOf(group)) }
     }
 }

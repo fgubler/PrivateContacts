@@ -169,6 +169,13 @@
     <string name="contact_group_notes">Notes</string>
     <string name="contact_group_validation_name_empty">Veuillez saisir un nom de groupe.</string>
     <string name="contact_group_validation_name_duplicate">Un groupe avec ce nom existe déjà.</string>
+    <string name="edit_contact_group_title">Modifier le groupe de contacts</string>
+    <string name="delete">Supprimer</string>
+    <string name="delete_contact_group_title">Supprimer le groupe de contacts</string>
+    <string name="delete_contact_group_text">Es-tu sûr de vouloir supprimer le groupe de contacts \"%1$s\" ?\n\nLes contacts du groupe ne sont pas supprimés : ils sont seulement retirés du groupe.</string>
+    <string name="no_contact_groups_defined">Aucun groupe de contacts n\'a encore été défini. Utilise le bouton + pour en créer un.</string>
+    <string name="public_contact_groups_not_implemented">Désolé, la gestion des groupes des contacts publics n\'est pas encore disponible.</string>
+    <string name="number_of_contacts">Nombre de contacts</string>
     <string name="add_contact_image">Ajouter une image au contact</string>
     <string name="change_contact_image">Modifier l\'image du contact</string>
     <string name="remove_contact_image">Supprimer l\'image du contact</string>

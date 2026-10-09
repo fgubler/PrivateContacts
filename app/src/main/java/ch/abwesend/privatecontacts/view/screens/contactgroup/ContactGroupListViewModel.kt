@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.ContactGroupService
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.model.ContactGroupWithContactCount
 import kotlinx.coroutines.Job
@@ -46,6 +47,13 @@ class ContactGroupListViewModel : ViewModel() {
     private val _deleteResult = mutableResourceStateFlow<ContactDeleteResult>()
     val deleteResult: ResourceFlow<ContactDeleteResult> = _deleteResult
 
+    fun initializeScreen(settings: ISettingsState) {
+        if (!settings.showAndroidContacts) { // typically after a settings-change
+            selectTab(ContactGroupListTab.default)
+        }
+        reloadContactGroups()
+    }
+
     fun selectTab(tab: ContactGroupListTab) {
         _selectedTab.value = tab
     }
@@ -61,6 +69,18 @@ class ContactGroupListViewModel : ViewModel() {
                 contactGroups
                     .map { ContactGroupWithContactCount(it, numberOfContactsPerGroup[it.id.name] ?: 0) }
                     .sortedBy { it.contactGroup.id.name.lowercase() }
+            }
+        }
+    }
+
+    fun createContactGroup(contactGroup: IContactGroup) {
+        viewModelScope.launch {
+            val result = _saveResult.withLoadingState {
+                contactGroupService.createContactGroup(contactGroup)
+            }
+
+            if (result is ContactSaveResult.Success) {
+                reloadContactGroups()
             }
         }
     }
