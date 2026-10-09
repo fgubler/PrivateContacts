@@ -65,6 +65,8 @@
     <string name="unable_to_resolve_contact">The contact could not be loaded</string>
     <string name="contact_creation_id_collision">A contact with this ID already exists: this is likely an internal problem of the app. We apologize for the inconvenience.</string>
     <string name="unable_to_create_contact_groups">One or more contact-groups could not be added.</string>
+    <string name="unable_to_update_contact_group">The contact-group could not be saved.</string>
+    <string name="unable_to_delete_contact_group">The contact-group could not be deleted.</string>
     <string name="not_yet_implemented_for_external_error">Sorry, this feature has not yet been implemented for "normal" Android contacts.</string>
     <string name="not_yet_implemented_for_internal_error">Sorry, this feature has not yet been implemented for secret contacts.</string>
     <string name="error_report_sent_confirmation">Error report sent to developers</string>

@@ -26,6 +26,19 @@ interface ContactGroupRelationDao {
     @Query("SELECT DISTINCT contactGroupName FROM ContactGroupRelationEntity")
     suspend fun getGroupNamesWithContacts(): List<String>
 
+    @Query(
+        """
+        SELECT ContactGroupEntity.name AS contactGroupName, COUNT(relation.contactId) AS numberOfContacts
+        FROM ContactGroupEntity
+        LEFT JOIN ContactGroupRelationEntity AS relation ON relation.contactGroupName = ContactGroupEntity.name
+        GROUP BY ContactGroupEntity.name
+    """
+    )
+    suspend fun getNumberOfContactsPerGroup(): List<ContactGroupSizeEntity>
+
+    @Query("UPDATE ContactGroupRelationEntity SET contactGroupName = :newGroupName WHERE contactGroupName = :oldGroupName")
+    suspend fun renameContactGroup(oldGroupName: String, newGroupName: String)
+
     @Insert
     suspend fun insert(data: ContactGroupRelationEntity)
 

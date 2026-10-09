@@ -66,6 +66,8 @@
     <string name="unable_to_resolve_contact">Kontakt konnte nicht geladen werden</string>
     <string name="contact_creation_id_collision">Ein Kontakt mit dieser ID existiert bereits: Das ist höchst wahrscheinlich ein interner Fehler der App. Wir entschuldigen uns für die Unannehmlichkeiten.</string>
     <string name="unable_to_create_contact_groups">Eine oder mehrere Kontaktgruppen konnten nicht hinzugefügt werden.</string>
+    <string name="unable_to_update_contact_group">Die Kontaktgruppe konnte nicht gespeichert werden.</string>
+    <string name="unable_to_delete_contact_group">Die Kontaktgruppe konnte nicht gelöscht werden.</string>
     <string name="not_yet_implemented_for_external_error">Diese Funktion ist für „normale“ Android-Kontakte noch nicht implementiert.</string>
     <string name="not_yet_implemented_for_internal_error">Diese Funktion ist für geheime Kontakte noch nicht implementiert.</string>
     <string name="error_report_sent_confirmation">Fehlermeldung an Entwickler gesendet</string>
