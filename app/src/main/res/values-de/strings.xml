@@ -12,6 +12,7 @@
     <string name="greetings_from_the_developer">Grüsse vom Entwickler, Florian.</string>
 
     <string name="screen_contact_list">Kontakte</string>
+    <string name="screen_contact_groups">Kontaktgruppen</string>
     <string name="screen_settings">Einstellungen</string>
     <string name="screen_about_the_app">Über die App</string>
     <string name="screen_introduction">Einführung</string>
@@ -66,6 +67,8 @@
     <string name="unable_to_resolve_contact">Kontakt konnte nicht geladen werden</string>
     <string name="contact_creation_id_collision">Ein Kontakt mit dieser ID existiert bereits: Das ist höchst wahrscheinlich ein interner Fehler der App. Wir entschuldigen uns für die Unannehmlichkeiten.</string>
     <string name="unable_to_create_contact_groups">Eine oder mehrere Kontaktgruppen konnten nicht hinzugefügt werden.</string>
+    <string name="unable_to_update_contact_group">Die Kontaktgruppe konnte nicht gespeichert werden.</string>
+    <string name="unable_to_delete_contact_group">Die Kontaktgruppe konnte nicht gelöscht werden.</string>
     <string name="not_yet_implemented_for_external_error">Diese Funktion ist für „normale“ Android-Kontakte noch nicht implementiert.</string>
     <string name="not_yet_implemented_for_internal_error">Diese Funktion ist für geheime Kontakte noch nicht implementiert.</string>
     <string name="error_report_sent_confirmation">Fehlermeldung an Entwickler gesendet</string>
@@ -166,6 +169,13 @@
     <string name="contact_group_notes">Notizen</string>
     <string name="contact_group_validation_name_empty">Bitte geben Sie einen Gruppennamen ein.</string>
     <string name="contact_group_validation_name_duplicate">Eine Gruppe mit diesem Namen existiert bereits.</string>
+    <string name="edit_contact_group_title">Kontaktgruppe bearbeiten</string>
+    <string name="delete">Löschen</string>
+    <string name="delete_contact_group_title">Kontaktgruppe löschen</string>
+    <string name="delete_contact_group_text">Sind Sie sicher, dass Sie die Kontaktgruppe \"%1$s\" löschen möchten?\n\nDie Kontakte darin werden nicht gelöscht, sondern nur aus der Gruppe entfernt.</string>
+    <string name="no_contact_groups_defined">Es wurden noch keine Kontaktgruppen erstellt. Mit der + Schaltfläche können Sie eine erstellen.</string>
+    <string name="public_contact_groups_not_implemented">Die Gruppen von öffentlichen Kontakten können leider noch nicht verwaltet werden.</string>
+    <string name="number_of_contacts">Anzahl Kontakte</string>
     <string name="add_contact_image">Kontaktbild hinzufügen</string>
     <string name="change_contact_image">Kontaktbild ändern</string>
     <string name="remove_contact_image">Kontaktbild entfernen</string>
@@ -366,6 +376,8 @@
     <string name="secret_contacts_tab_title">Geheime Kontakte</string>
     <string name="all_contacts_tab_title">Alle Kontakte</string>
     <string name="public_contacts_tab_title">Öffentliche</string>
+    <string name="secret_contact_groups_tab_title">Geheime Gruppen</string>
+    <string name="public_contact_groups_tab_title">Öffentliche</string>
 
     <string name="target_account">Zielkonto</string>
     <string name="app_internal">In dieser App</string>

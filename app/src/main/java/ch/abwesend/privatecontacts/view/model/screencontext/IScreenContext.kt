@@ -13,6 +13,7 @@ import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListViewModel
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
@@ -39,6 +40,10 @@ interface IContactListScreenContext : IScreenContextWithGenericNavigation {
     fun navigateToContactCreateScreen(): Boolean
 }
 
+interface IContactGroupListScreenContext : IScreenContextBase {
+    val contactGroupListViewModel: ContactGroupListViewModel
+}
+
 interface IContactDetailScreenContext : IScreenContextBase {
     val contactDetailViewModel: ContactDetailViewModel
     fun navigateToContactEditScreen(contact: IContact): Boolean
@@ -62,6 +67,7 @@ interface IContactImportExportScreenContext : IScreenContextBase {
 
 interface IScreenContext :
     IContactListScreenContext,
+    IContactGroupListScreenContext,
     IContactDetailScreenContext,
     IContactEditScreenContext,
     ISettingsScreenContext,

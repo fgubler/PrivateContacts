@@ -12,6 +12,7 @@
     <string name="greetings_from_the_developer">Salutations du développeur, Florian.</string>
 
     <string name="screen_contact_list">Contacts</string>
+    <string name="screen_contact_groups">Groupes de contacts</string>
     <string name="screen_settings">Paramètres</string>
     <string name="screen_about_the_app">À propos</string>
     <string name="screen_introduction">Introduction</string>
@@ -66,6 +67,8 @@
     <string name="contact_creation_id_collision">Un contact portant cet identifiant existe déjà : il s\'agit probablement d\'un problème interne à l\'application. Nous vous prions de nous excuser pour ce désagrément.</string>
     <string name="unable_to_resolve_contact">Le contact n\'a pas pu être chargé</string>
     <string name="unable_to_create_contact_groups">Un ou plusieurs groupes de contacts n\'ont pas pu être ajoutés.</string>
+    <string name="unable_to_update_contact_group">Le groupe de contacts n\'a pas pu être enregistré.</string>
+    <string name="unable_to_delete_contact_group">Le groupe de contacts n\'a pas pu être supprimé.</string>
     <string name="not_yet_implemented_for_external_error">Désolé, cette fonctionnalité n\'est pas encore disponible pour les contacts Android « normaux ».</string>
     <string name="not_yet_implemented_for_internal_error">Désolé, cette fonctionnalité n\'est pas encore disponible pour les contacts secrets.</string>
     <string name="error_report_sent_confirmation">Rapport d\'erreur envoyé aux développeurs</string>
@@ -166,6 +169,13 @@
     <string name="contact_group_notes">Notes</string>
     <string name="contact_group_validation_name_empty">Veuillez saisir un nom de groupe.</string>
     <string name="contact_group_validation_name_duplicate">Un groupe avec ce nom existe déjà.</string>
+    <string name="edit_contact_group_title">Modifier le groupe de contacts</string>
+    <string name="delete">Supprimer</string>
+    <string name="delete_contact_group_title">Supprimer le groupe de contacts</string>
+    <string name="delete_contact_group_text">Es-tu sûr de vouloir supprimer le groupe de contacts \"%1$s\" ?\n\nLes contacts du groupe ne sont pas supprimés : ils sont seulement retirés du groupe.</string>
+    <string name="no_contact_groups_defined">Aucun groupe de contacts n\'a encore été défini. Utilise le bouton + pour en créer un.</string>
+    <string name="public_contact_groups_not_implemented">Désolé, la gestion des groupes des contacts publics n\'est pas encore disponible.</string>
+    <string name="number_of_contacts">Nombre de contacts</string>
     <string name="add_contact_image">Ajouter une image au contact</string>
     <string name="change_contact_image">Modifier l\'image du contact</string>
     <string name="remove_contact_image">Supprimer l\'image du contact</string>
@@ -366,6 +376,8 @@
     <string name="secret_contacts_tab_title">Contacts secrets</string>
     <string name="all_contacts_tab_title">Tous les contacts</string>
     <string name="public_contacts_tab_title">Contacts publics</string>
+    <string name="secret_contact_groups_tab_title">Groupes secrets</string>
+    <string name="public_contact_groups_tab_title">Groupes publics</string>
 
     <string name="target_account">Compte cible</string>
     <string name="app_internal">Dans cette appli</string>
