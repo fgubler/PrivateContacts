@@ -6,7 +6,10 @@
 
 package ch.abwesend.privatecontacts.view.components.buttons
 
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import ch.abwesend.privatecontacts.view.components.BackIcon
 import ch.abwesend.privatecontacts.view.components.CancelIcon
@@ -46,8 +49,16 @@ fun SearchIconButton(enabled: Boolean = true, onClick: () -> Unit) {
 }
 
 @Composable
-fun FilterIconButton(enabled: Boolean = true, onClick: () -> Unit) {
-    IconButton(enabled = enabled, onClick = onClick) { FilterIcon() }
+fun FilterIconButton(enabled: Boolean = true, numberOfActiveFilters: Int = 0, onClick: () -> Unit) {
+    IconButton(enabled = enabled, onClick = onClick) {
+        BadgedBox(
+            badge = {
+                if (numberOfActiveFilters > 0) {
+                    Badge { Text(text = numberOfActiveFilters.toString()) }
+                }
+            }
+        ) { FilterIcon() }
+    }
 }
 
 @Composable
