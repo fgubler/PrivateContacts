@@ -373,6 +373,8 @@
     <string name="secret_contacts_tab_title">Secret Contacts</string>
     <string name="all_contacts_tab_title">All Contacts</string>
     <string name="public_contacts_tab_title">Public Contacts</string>
+    <string name="secret_contact_groups_tab_title">Secret Groups</string>
+    <string name="public_contact_groups_tab_title">Public Groups</string>
 
     <string name="target_account">Target account</string>
     <string name="app_internal">Within this app</string>

@@ -368,6 +368,8 @@
     <string name="secret_contacts_tab_title">Contactos secretos</string>
     <string name="all_contacts_tab_title">Todos los contactos</string>
     <string name="public_contacts_tab_title">Contactos públicos</string>
+    <string name="secret_contact_groups_tab_title">Grupos secretos</string>
+    <string name="public_contact_groups_tab_title">Grupos públicos</string>
 
     <string name="target_account">Cuenta de destino</string>
     <string name="app_internal">Dentro de esta aplicación</string>
