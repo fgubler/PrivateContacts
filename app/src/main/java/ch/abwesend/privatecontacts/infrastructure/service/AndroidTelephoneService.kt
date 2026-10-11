@@ -44,9 +44,9 @@ class AndroidTelephoneService(applicationContext: Context) : TelephoneService {
         forceLegacyComparison: Boolean,
     ): Boolean =
         if (!forceLegacyComparison && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            potentialCountryCodes.map {
+            potentialCountryCodes.any {
                 PhoneNumberUtils.areSamePhoneNumber(phoneNumber1, phoneNumber2, it)
-            }.any()
+            }
         } else {
             @Suppress("DEPRECATION")
             PhoneNumberUtils.compare(phoneNumber1, phoneNumber2)
