@@ -401,11 +401,11 @@
     <string name="decryption_failed">Échec du déchiffrement : veuillez réessayer</string>
     <string name="file_is_empty">Le fichier est vide</string>
     <string name="vcf_parsing_failed">Le fichier ne contient pas de VCF valide</string>
-    <string name="newly_imported_contacts">Nouveaux contacts importés :</string>
-    <string name="replaced_existing_contacts">Contacts remplacés :</string>
+    <string name="newly_imported_contacts">Nouveaux contacts importés : %s</string>
+    <string name="replaced_existing_contacts">Contacts remplacés : %s</string>
     <string name="vcf_parsing_errors">Erreurs de VCF :</string>
-    <string name="import_errors">Erreurs d\'importation :</string>
-    <string name="import_validation_errors">Erreurs de validation à l\'importation :</string>
+    <string name="import_errors">Erreurs d\'importation : %s</string>
+    <string name="import_validation_errors">Erreurs de validation à l\'importation : %s</string>
     <string name="import_error_details_title">Détails de l\'erreur</string>
     <string name="import_show_error_details">Afficher les détails de l\'erreur</string>
     <string name="import_show_result_overview">Afficher le résumé des résultats</string>

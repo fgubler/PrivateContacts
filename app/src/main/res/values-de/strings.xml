@@ -401,11 +401,11 @@
     <string name="decryption_failed">Entschlüsselung fehlgeschlagen: Bitte versuchen Sie es erneut</string>
     <string name="file_is_empty">Die Datei ist leer</string>
     <string name="vcf_parsing_failed">VCF konnte aus Datei nicht gelesen werden</string>
-    <string name="newly_imported_contacts">Neu importierte Kontakte:</string>
-    <string name="replaced_existing_contacts">Ersetzte Kontakte:</string>
+    <string name="newly_imported_contacts">Neu importierte Kontakte: %s</string>
+    <string name="replaced_existing_contacts">Ersetzte Kontakte: %s</string>
     <string name="vcf_parsing_errors">VCF-Fehler:</string>
-    <string name="import_errors">Import-Fehler:</string>
-    <string name="import_validation_errors">Validierungsfehler beim Import:</string>
+    <string name="import_errors">Import-Fehler: %s</string>
+    <string name="import_validation_errors">Validierungsfehler beim Import: %s</string>
     <string name="import_error_details_title">Fehlerdetails</string>
     <string name="import_show_error_details">Fehlerdetails anzeigen</string>
     <string name="import_show_result_overview">Ergebnisübersicht anzeigen</string>
