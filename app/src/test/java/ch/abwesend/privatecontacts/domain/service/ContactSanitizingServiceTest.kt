@@ -38,7 +38,7 @@ class ContactSanitizingServiceTest : TestBase(mockTelephoneService = false) {
         super.setup()
         underTest = ContactSanitizingService()
         every { telephoneService.formatPhoneNumberForDisplay(any()) } answers { firstArg<String>() + displayPostfix }
-        every { telephoneService.formatPhoneNumberForMatching(any()) } answers { firstArg<String>() + matchingPostfix }
+        every { telephoneService.normalizeNumberForComparison(any()) } answers { firstArg<String>() + matchingPostfix }
     }
 
     override fun setupKoinModule(module: Module) {
@@ -87,9 +87,9 @@ class ContactSanitizingServiceTest : TestBase(mockTelephoneService = false) {
 
         underTest.sanitizeContact(contact)
 
-        verify(exactly = 2) { telephoneService.formatPhoneNumberForMatching(any()) }
-        verify(exactly = 1) { telephoneService.formatPhoneNumberForMatching(firstNumber) }
-        verify(exactly = 1) { telephoneService.formatPhoneNumberForMatching(secondNumber) }
+        verify(exactly = 2) { telephoneService.normalizeNumberForComparison(any()) }
+        verify(exactly = 1) { telephoneService.normalizeNumberForComparison(firstNumber) }
+        verify(exactly = 1) { telephoneService.normalizeNumberForComparison(secondNumber) }
         val firstSanitizedValue = (contact.contactDataSet[0] as StringBasedContactData).valueForMatching
         val secondSanitizedValue = (contact.contactDataSet[1] as StringBasedContactData).valueForMatching
         assertThat(firstSanitizedValue).isEqualTo(firstNumberSanitized)

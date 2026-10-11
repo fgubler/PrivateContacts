@@ -53,8 +53,10 @@ class IncomingCallService {
     }
 
     private fun isDirectMatch(phoneNumber: String, contact: ContactWithPhoneNumbers): Boolean {
-        val normalizedPhoneNumber = phoneNumber.filter { it.isDigit() }
-        return contact.phoneNumbers.any { it.value.filter { char -> char.isDigit() } == normalizedPhoneNumber }
+        val normalizedPhoneNumber = telephoneService.normalizeNumberForComparison(phoneNumber)
+        return contact.phoneNumbers.any {
+            telephoneService.normalizeNumberForComparison(it.value) == normalizedPhoneNumber
+        }
     }
 
     private fun filterCandidates(
