@@ -47,28 +47,28 @@ object ImportComponents {
     @Composable
     fun ReplaceExistingContactsCheckBox(currentValue: Boolean, toggleValue: () -> Unit) {
         Row(
-            verticalAlignment = Alignment.Companion.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.Companion
+            modifier = Modifier
                 .fillMaxWidth()
                 .clickable { toggleValue() },
         ) {
-            Column(modifier = Modifier.Companion.weight(1f)) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(id = R.string.replace_existing_contacts_label),
-                    fontWeight = FontWeight.Companion.SemiBold,
+                    fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 Text(
                     text = stringResource(id = R.string.replace_existing_contacts_description),
-                    fontStyle = FontStyle.Companion.Italic,
+                    fontStyle = FontStyle.Italic,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
             Checkbox(
                 checked = currentValue,
                 onCheckedChange = { toggleValue() },
-                modifier = Modifier.Companion.padding(start = 10.dp)
+                modifier = Modifier.padding(start = 10.dp)
             )
         }
     }
@@ -87,7 +87,7 @@ object ImportComponents {
         )
 
         if (targetType.accountSelectionRequired) {
-            Spacer(modifier = Modifier.Companion.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             AccountSelectionDropDownField(
                 selectedAccount = selectedAccount,
                 onValueChanged = onTargetAccountChanged
@@ -157,46 +157,50 @@ object ImportComponents {
     private fun SuccessResultOverview(importData: ContactImportData) {
         val scrollState = rememberScrollState()
 
-        Column(modifier = Modifier.Companion.verticalScroll(scrollState)) {
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
             Row {
                 Text(
-                    text = stringResource(id = R.string.newly_imported_contacts),
-                    fontWeight = FontWeight.Companion.Bold
+                    text = stringResource(
+                        id = R.string.newly_imported_contacts,
+                        importData.newImportedContacts.size.toString()
+                    ),
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.Companion.width(5.dp))
-                Text(text = importData.newImportedContacts.size.toString())
             }
             Row {
                 Text(
-                    text = stringResource(id = R.string.replaced_existing_contacts),
-                    fontWeight = FontWeight.Companion.Bold
+                    text = stringResource(
+                        id = R.string.replaced_existing_contacts,
+                        importData.replacedExistingContacts.size.toString()
+                    ),
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.Companion.width(5.dp))
-                Text(text = importData.replacedExistingContacts.size.toString())
             }
             Row {
                 Text(
                     text = stringResource(id = R.string.vcf_parsing_errors),
-                    fontWeight = FontWeight.Companion.Bold
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.Companion.width(5.dp))
+                Spacer(modifier = Modifier.width(5.dp))
                 Text(text = importData.numberOfParsingFailures.toString())
             }
             Row {
                 Text(
-                    text = stringResource(id = R.string.import_validation_errors),
-                    fontWeight = FontWeight.Companion.Bold
+                    text = stringResource(
+                        id = R.string.import_validation_errors,
+                        importData.importValidationFailures.size.toString()
+                    ),
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.Companion.width(5.dp))
-                Text(text = importData.importValidationFailures.size.toString())
             }
             Row {
                 Text(
-                    text = stringResource(id = R.string.import_errors),
-                    fontWeight = FontWeight.Companion.Bold
+                    text = stringResource(
+                        id = R.string.import_errors,
+                        importData.importFailures.size.toString()
+                    ),
+                    fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.Companion.width(5.dp))
-                Text(text = importData.importFailures.size.toString())
             }
         }
     }
@@ -211,8 +215,8 @@ object ImportComponents {
             contacts.map { it.displayName }.sorted()
         }
 
-        Column(modifier = Modifier.Companion.verticalScroll(scrollState)) {
-            Spacer(modifier = Modifier.Companion.height(20.dp))
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            Spacer(modifier = Modifier.height(20.dp))
             Text(text = stringResource(id = R.string.import_failed_contacts))
             val missingNameFallback = stringResource(id = R.string.no_contact_name_fallback)
             failedContactNames

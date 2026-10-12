@@ -406,11 +406,11 @@
     <string name="file_is_empty">The file is empty</string>
     <string name="file_reading_failed">Failed to read the file</string>
     <string name="vcf_parsing_failed">Failed to read the VCF in the file</string>
-    <string name="newly_imported_contacts">Newly imported contacts:</string>
-    <string name="replaced_existing_contacts">Replaced contacts:</string>
+    <string name="newly_imported_contacts">Newly imported contacts: %s</string>
+    <string name="replaced_existing_contacts">Replaced contacts: %s</string>
     <string name="vcf_parsing_errors">VCF errors:</string>
-    <string name="import_errors">Import errors:</string>
-    <string name="import_validation_errors">Import validation errors:</string>
+    <string name="import_errors">Import errors: %s</string>
+    <string name="import_validation_errors">Import validation errors: %s</string>
     <string name="import_error_details_title">Error Details</string>
     <string name="import_show_error_details">Show error details</string>
     <string name="import_show_result_overview">Show result overview</string>

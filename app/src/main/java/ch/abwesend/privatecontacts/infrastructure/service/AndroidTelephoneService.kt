@@ -26,7 +26,8 @@ class AndroidTelephoneService(applicationContext: Context) : TelephoneService {
     override fun formatPhoneNumberForDisplay(number: String): String =
         potentialCountryCodes.firstNotNullOfOrNull { PhoneNumberUtils.formatNumber(number, it) } ?: number
 
-    override fun formatPhoneNumberForMatching(number: String): String = removeSeparators(number)
+    override fun normalizeNumberForComparison(number: String): String =
+        PhoneNumberUtils.normalizeNumber(number) ?: number
 
     override fun removeSeparators(number: String): String =
         PhoneNumberUtils.stripSeparators(number) ?: number
@@ -44,9 +45,9 @@ class AndroidTelephoneService(applicationContext: Context) : TelephoneService {
         forceLegacyComparison: Boolean,
     ): Boolean =
         if (!forceLegacyComparison && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            potentialCountryCodes.map {
+            potentialCountryCodes.any {
                 PhoneNumberUtils.areSamePhoneNumber(phoneNumber1, phoneNumber2, it)
-            }.any()
+            }
         } else {
             @Suppress("DEPRECATION")
             PhoneNumberUtils.compare(phoneNumber1, phoneNumber2)

@@ -25,7 +25,7 @@ class ContactSanitizingService {
 
     fun sanitizePhoneNumber(phoneNumber: PhoneNumber): PhoneNumber {
         val formattedValue = telephoneService.formatPhoneNumberForDisplay(phoneNumber.value)
-        val valueForMatching = telephoneService.formatPhoneNumberForMatching(phoneNumber.value)
+        val valueForMatching = telephoneService.normalizeNumberForComparison(phoneNumber.value)
         return phoneNumber.copy(
             formattedValue = formattedValue,
             valueForMatching = valueForMatching
