@@ -53,7 +53,7 @@ object ImportContactsFromIntentComponents {
                     importMultipleDialogData = result.parsedData
                 }
                 is ParseVcfFromIntentResult.SingleContact -> {
-                    screenContext.navigateToContactEditScreen(result.contact)
+                    screenContext.navigateToUnsavedContactEditScreen(result.contact)
                 }
             }
         }

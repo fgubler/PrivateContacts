@@ -9,6 +9,9 @@ package ch.abwesend.privatecontacts.view.routing
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
+import ch.abwesend.privatecontacts.domain.lib.logging.error
+import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 
 /**
  * Owns the navigation back-stack of the app.
@@ -20,11 +23,24 @@ import androidx.lifecycle.ViewModel
 class NavigationViewModel : ViewModel() {
     private var instanceCounter: Int = 0
 
-    val backStack: SnapshotStateList<ScreenInstance> =
-        mutableStateListOf(createInstance(Screen.ContactList))
+    val backStack: SnapshotStateList<ScreenRoute> =
+        mutableStateListOf(SelfInitializingRoute(Screen.ContactList, nextInstanceId()))
 
-    fun navigateTo(screen: Screen) {
-        backStack.add(createInstance(screen))
+    fun navigateTo(screen: Screen): Boolean {
+        if (screen.selfInitializing) {
+            backStack.add(SelfInitializingRoute(screen, nextInstanceId()))
+        } else {
+            logger.error("Trying to navigate to screen '$screen' without passing data")
+        }
+        return screen.selfInitializing
+    }
+
+    fun navigateToContactDetail(contactId: ContactId) {
+        backStack.add(ContactDetailRoute(contactId, nextInstanceId()))
+    }
+
+    fun navigateToContactEdit(target: ContactEditTarget) {
+        backStack.add(ContactEditRoute(target, nextInstanceId()))
     }
 
     fun navigateUp(): Boolean {
@@ -36,19 +52,33 @@ class NavigationViewModel : ViewModel() {
     }
 
     /**
+     * Leaves the current screen. If the screen below is a contact-detail screen, it is replaced by a
+     * new instance (showing [contactId] if passed): the contact may have changed, including its ID.
+     */
+    fun returnToContactDetail(contactId: ContactId?): Boolean {
+        val navigatedUp = navigateUp()
+        val currentRoute = backStack.last()
+        if (navigatedUp && currentRoute is ContactDetailRoute) {
+            val newContactId = contactId ?: currentRoute.contactId
+            backStack[backStack.lastIndex] = ContactDetailRoute(newContactId, nextInstanceId())
+        }
+        return navigatedUp
+    }
+
+    /**
      * Rebuilds the current screen from scratch, e.g. after the app-language was changed:
-     * replacing the top-most entry by a new instance of the same screen discards its state
+     * replacing the top-most entry by a new instance of the same route discards its state
      * without touching the entries below it.
      */
     fun refreshCurrentScreen() {
-        val currentScreen = backStack.lastOrNull()?.screen
-        if (currentScreen != null) {
-            backStack[backStack.lastIndex] = createInstance(currentScreen)
+        val currentRoute = backStack.lastOrNull()
+        if (currentRoute != null) {
+            backStack[backStack.lastIndex] = currentRoute.withInstanceId(nextInstanceId())
         }
     }
 
-    private fun createInstance(screen: Screen): ScreenInstance {
+    private fun nextInstanceId(): Int {
         instanceCounter += 1
-        return ScreenInstance(screen = screen, instanceId = instanceCounter)
+        return instanceCounter
     }
 }

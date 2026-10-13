@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +60,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.ContactTypeChangeMenuConfig
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactDetailScreenContext
+import ch.abwesend.privatecontacts.view.routing.ContactDetailRoute
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
@@ -76,8 +78,9 @@ import kotlin.contracts.ExperimentalContracts
 object ContactDetailScreen {
 
     @Composable
-    fun Screen(screenContext: IContactDetailScreenContext) {
+    fun Screen(screenContext: IContactDetailScreenContext, route: ContactDetailRoute) {
         val viewModel = screenContext.contactDetailViewModel
+        LaunchedEffect(route) { viewModel.initialize(route) }
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsStateWithLifecycle()
 
         BaseScreen(
@@ -196,7 +199,7 @@ object ContactDetailScreen {
             actions = {
                 if (contact != null) {
                     EditIconButton {
-                        screenContext.navigateToContactEditScreen(contact)
+                        screenContext.navigateToContactEditScreen(contact.id)
                     }
                     MoreActionsIconButton {
                         dropDownMenuExpanded = true
@@ -224,7 +227,7 @@ object ContactDetailScreen {
             DropdownMenuItem(
                 text = { Text(stringResource(id = R.string.refresh)) },
                 onClick = {
-                    viewModel.reloadContact(contact)
+                    viewModel.reloadContact()
                     onCloseMenu()
                 },
             )

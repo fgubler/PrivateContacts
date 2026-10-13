@@ -45,7 +45,7 @@ private const val TRANSITION_DURATION_MILLIS = 700
 @ExperimentalContracts
 @Composable
 fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenContext) {
-    val transitionSpec: AnimatedContentTransitionScope<Scene<ScreenInstance>>.() -> ContentTransform = {
+    val transitionSpec: AnimatedContentTransitionScope<Scene<ScreenRoute>>.() -> ContentTransform = {
         fadeIn(animationSpec = tween(TRANSITION_DURATION_MILLIS)) togetherWith
             fadeOut(animationSpec = tween(TRANSITION_DURATION_MILLIS))
     }
@@ -56,22 +56,33 @@ fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenC
         transitionSpec = transitionSpec,
         popTransitionSpec = transitionSpec,
         predictivePopTransitionSpec = { transitionSpec() },
-        entryProvider = { screenInstance ->
+        entryProvider = { route ->
             NavEntry(
-                key = screenInstance,
-                contentKey = screenInstance.contentKey,
-            ) { selectedInstance ->
-                when (selectedInstance.screen) {
-                    ContactList -> ContactListScreen.Screen(screenContext)
-                    ContactGroups -> ContactGroupListScreen.Screen(screenContext)
-                    ContactDetail -> ContactDetailScreen.Screen(screenContext)
-                    ContactEdit -> ContactEditScreen.Screen(screenContext)
-                    Settings -> SettingsScreen.Screen(screenContext)
-                    ImportExport -> ContactImportExportScreen.Screen(screenContext)
-                    Introduction -> IntroductionScreen.Screen(screenContext)
-                    AboutTheApp -> AboutScreen.Screen(screenContext)
+                key = route,
+                contentKey = route.contentKey,
+            ) { selectedRoute ->
+                when (selectedRoute) {
+                    is ContactDetailRoute -> ContactDetailScreen.Screen(screenContext, selectedRoute)
+                    is ContactEditRoute -> ContactEditScreen.Screen(screenContext, selectedRoute)
+                    is SelfInitializingRoute -> SelfInitializingScreen(selectedRoute.screen, screenContext)
                 }
             }
         },
     )
+}
+
+@ExperimentalFoundationApi
+@FlowPreview
+@ExperimentalContracts
+@Composable
+private fun SelfInitializingScreen(screen: Screen, screenContext: ScreenContext) {
+    when (screen) {
+        ContactList -> ContactListScreen.Screen(screenContext)
+        ContactGroups -> ContactGroupListScreen.Screen(screenContext)
+        Settings -> SettingsScreen.Screen(screenContext)
+        ImportExport -> ContactImportExportScreen.Screen(screenContext)
+        Introduction -> IntroductionScreen.Screen(screenContext)
+        AboutTheApp -> AboutScreen.Screen(screenContext)
+        ContactDetail, ContactEdit -> Unit // this branch can never be reached
+    }
 }

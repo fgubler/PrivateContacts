@@ -6,7 +6,9 @@
 
 package ch.abwesend.privatecontacts.view.routing
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.testutil.TestBase
+import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
@@ -55,6 +57,105 @@ class NavigationViewModelTest : TestBase() {
 
         assertThat(result).isFalse
         assertThat(underTest.backStack).containsExactly(rootEntry)
+    }
+
+    @Test
+    fun `navigateTo should refuse screens which need data`() {
+        val rootEntry = underTest.backStack.single()
+
+        val result = underTest.navigateTo(Screen.ContactDetail)
+
+        assertThat(result).isFalse
+        assertThat(underTest.backStack).containsExactly(rootEntry)
+    }
+
+    @Test
+    fun `navigateToContactDetail should pass the contact-id via the route`() {
+        val contactId: ContactId = someContactId()
+
+        underTest.navigateToContactDetail(contactId)
+
+        val route = underTest.backStack.last()
+        assertThat(route).isInstanceOf(ContactDetailRoute::class.java)
+        assertThat((route as ContactDetailRoute).contactId).isEqualTo(contactId)
+        assertThat(route.screen).isEqualTo(Screen.ContactDetail)
+    }
+
+    @Test
+    fun `navigateToContactEdit should pass the target via the route`() {
+        val target = ContactEditTarget.Existing(someContactId())
+
+        underTest.navigateToContactEdit(target)
+
+        val route = underTest.backStack.last()
+        assertThat(route).isInstanceOf(ContactEditRoute::class.java)
+        assertThat((route as ContactEditRoute).target).isEqualTo(target)
+        assertThat(route.screen).isEqualTo(Screen.ContactEdit)
+    }
+
+    @Test
+    fun `returnToContactDetail should replace the detail-screen by a new instance`() {
+        val contactId: ContactId = someContactId()
+        underTest.navigateToContactDetail(contactId)
+        val detailRouteBefore = underTest.backStack.last()
+        underTest.navigateToContactEdit(ContactEditTarget.Existing(contactId))
+
+        val result = underTest.returnToContactDetail(contactId)
+
+        assertThat(result).isTrue
+        assertThat(underTest.backStack).hasSize(2)
+        val detailRouteAfter = underTest.backStack.last() as ContactDetailRoute
+        assertThat(detailRouteAfter.contactId).isEqualTo(contactId)
+        assertThat(detailRouteAfter.contentKey).isNotEqualTo(detailRouteBefore.contentKey)
+    }
+
+    @Test
+    fun `returnToContactDetail should show the new contact-id`() {
+        val oldContactId: ContactId = someContactId()
+        val newContactId: ContactId = someContactId()
+        underTest.navigateToContactDetail(oldContactId)
+        underTest.navigateToContactEdit(ContactEditTarget.Existing(oldContactId))
+
+        underTest.returnToContactDetail(newContactId)
+
+        val detailRoute = underTest.backStack.last() as ContactDetailRoute
+        assertThat(detailRoute.contactId).isEqualTo(newContactId)
+    }
+
+    @Test
+    fun `returnToContactDetail should keep the contact-id if none is passed`() {
+        val contactId: ContactId = someContactId()
+        underTest.navigateToContactDetail(contactId)
+        underTest.navigateToContactEdit(ContactEditTarget.Existing(contactId))
+
+        underTest.returnToContactDetail(contactId = null)
+
+        val detailRoute = underTest.backStack.last() as ContactDetailRoute
+        assertThat(detailRoute.contactId).isEqualTo(contactId)
+    }
+
+    @Test
+    fun `returnToContactDetail should just navigate up if there is no detail-screen below`() {
+        val rootEntry = underTest.backStack.single()
+        underTest.navigateToContactEdit(ContactEditTarget.New)
+
+        val result = underTest.returnToContactDetail(someContactId())
+
+        assertThat(result).isTrue
+        assertThat(underTest.backStack).containsExactly(rootEntry)
+    }
+
+    @Test
+    fun `refreshCurrentScreen should keep the data of the route`() {
+        val contactId: ContactId = someContactId()
+        underTest.navigateToContactDetail(contactId)
+        val routeBefore = underTest.backStack.last()
+
+        underTest.refreshCurrentScreen()
+
+        val routeAfter = underTest.backStack.last() as ContactDetailRoute
+        assertThat(routeAfter.contactId).isEqualTo(contactId)
+        assertThat(routeAfter.contentKey).isNotEqualTo(routeBefore.contentKey)
     }
 
     @Test

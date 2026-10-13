@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
@@ -46,12 +47,12 @@ interface IContactGroupListScreenContext : IScreenContextBase {
 
 interface IContactDetailScreenContext : IScreenContextBase {
     val contactDetailViewModel: ContactDetailViewModel
-    fun navigateToContactEditScreen(contact: IContact): Boolean
+    fun navigateToContactEditScreen(contactId: ContactId): Boolean
 }
 
 interface IContactEditScreenContext : IScreenContextBase {
     val contactEditViewModel: ContactEditViewModel
-    fun returnToContactDetailScreen(contact: IContactBase? = null): Boolean
+    fun returnToContactDetailScreen(contactId: ContactId? = null): Boolean
 }
 
 interface ISettingsScreenContext : IScreenContextBase {
@@ -71,4 +72,7 @@ interface IScreenContext :
     IContactDetailScreenContext,
     IContactEditScreenContext,
     ISettingsScreenContext,
-    IContactImportExportScreenContext
+    IContactImportExportScreenContext {
+    /** e.g. for a contact parsed from a vcf-file which was opened with the app */
+    fun navigateToUnsavedContactEditScreen(contact: IContact): Boolean
+}

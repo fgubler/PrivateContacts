@@ -11,6 +11,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditable
 import ch.abwesend.privatecontacts.domain.model.contact.ContactEditableWrapper
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
@@ -18,17 +19,25 @@ import ch.abwesend.privatecontacts.domain.model.contact.asEditable
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.ContactGroupService
+import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
+import ch.abwesend.privatecontacts.view.routing.ContactEditRoute
+import ch.abwesend.privatecontacts.view.routing.ContactEditTarget
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ContactEditViewModel : ViewModel() {
+    private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val groupService: ContactGroupService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
+
+    private var initializedInstanceId: Int? = null
+    private var loadingJob: Job? = null
 
     var originalContact: IContact? = null
         private set
@@ -36,7 +45,11 @@ class ContactEditViewModel : ViewModel() {
     var selectedContact: ContactEditableWrapper? by mutableStateOf(null)
         private set
 
-    private val _saveResult = EventFlow.Companion.createShared<ContactSaveResult>()
+    /** only relevant for [ContactEditTarget.Existing]: the other targets do not need to load anything */
+    private val _contactLoadingState = mutableResourceStateFlow<IContact>()
+    val contactLoadingState = _contactLoadingState.asStateFlow()
+
+    private val _saveResult = EventFlow.createShared<ContactSaveResult>()
     val saveResult: Flow<ContactSaveResult> = _saveResult
 
     private val _allContactGroups = mutableResourceStateFlow<List<IContactGroup>>()
@@ -45,15 +58,35 @@ class ContactEditViewModel : ViewModel() {
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
 
-    fun selectContact(contact: IContact) {
+    /**
+     * Only initializes the contact once per [ContactEditRoute.instanceId]:
+     * e.g. a rotation must not discard the changes the user already made.
+     */
+    fun initialize(route: ContactEditRoute) {
+        if (route.instanceId != initializedInstanceId) {
+            initializedInstanceId = route.instanceId
+            loadingJob?.cancel()
+            when (val target = route.target) {
+                is ContactEditTarget.New -> selectContact(ContactEditable.createNew())
+                is ContactEditTarget.Unsaved -> selectContact(target.contact)
+                is ContactEditTarget.Existing -> loadContact(target.contactId)
+            }
+        }
+    }
+
+    private fun loadContact(contactId: ContactId) {
+        originalContact = null
+        selectedContact = null
+        loadingJob = viewModelScope.launch {
+            val contact = _contactLoadingState.withLoadingState { loadService.resolveContact(contactId) }
+            contact?.let { selectContact(it) }
+        }
+    }
+
+    private fun selectContact(contact: IContact) {
         val editable = contact.asEditable()
         originalContact = editable
         selectedContact = editable.deepCopy().wrap()
-    }
-
-    fun createContact() {
-        val contact = ContactEditable.Companion.createNew()
-        selectContact(contact)
     }
 
     fun changeContact(contact: IContactEditable) {

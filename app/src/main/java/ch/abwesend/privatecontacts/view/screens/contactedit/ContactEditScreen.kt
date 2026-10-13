@@ -24,7 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,7 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
+import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
@@ -46,6 +50,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Validat
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.FullScreenError
+import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
@@ -53,6 +58,7 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactEditScreenContext
+import ch.abwesend.privatecontacts.view.routing.ContactEditRoute
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
@@ -65,8 +71,9 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalContracts
 object ContactEditScreen {
     @Composable
-    fun Screen(screenContext: IContactEditScreenContext) {
+    fun Screen(screenContext: IContactEditScreenContext, route: ContactEditRoute) {
         val viewModel = screenContext.contactEditViewModel
+        LaunchedEffect(route) { viewModel.initialize(route) }
         val selectedContact = viewModel.selectedContact
 
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
@@ -81,7 +88,7 @@ object ContactEditScreen {
             showDiscardConfirmationDialog = false
             onSaveResult(
                 result = result,
-                onSuccess = { screenContext.returnToContactDetailScreen(selectedContact) },
+                onSuccess = { screenContext.returnToContactDetailScreen(selectedContact?.id) },
                 setSavingErrors = { savingErrors = it },
                 setValidationErrors = { validationErrors = it },
             )
@@ -136,7 +143,7 @@ object ContactEditScreen {
                     }
                 }
             }
-        } ?: NoContactLoaded(viewModel)
+        } ?: NoContactLoaded(screenContext, viewModel)
     }
 
     @Composable
@@ -327,15 +334,20 @@ object ContactEditScreen {
     }
 
     @Composable
-    private fun NoContactLoaded(viewModel: ContactEditViewModel) {
-        FullScreenError(
-            errorMessage = R.string.no_contact_selected,
-            buttonConfig = ButtonConfig(
-                label = R.string.create_contact,
-                icon = Icons.Default.Add
-            ) {
-                viewModel.createContact()
-            }
-        )
+    private fun NoContactLoaded(screenContext: IContactEditScreenContext, viewModel: ContactEditViewModel) {
+        val loadingState: AsyncResource<IContact> by viewModel.contactLoadingState.collectAsStateWithLifecycle()
+
+        if (loadingState is ErrorResource) {
+            FullScreenError(
+                errorMessage = R.string.no_contact_selected_error,
+                buttonConfig = ButtonConfig(
+                    label = R.string.back,
+                    icon = Icons.AutoMirrored.Default.ArrowBack,
+                    onClick = screenContext::navigateUp,
+                ),
+            )
+        } else {
+            LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts)
+        }
     }
 }

@@ -6,12 +6,12 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
-import ch.abwesend.privatecontacts.domain.lib.logging.error
-import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
+import ch.abwesend.privatecontacts.view.routing.ContactEditTarget
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
@@ -39,40 +39,27 @@ data class ScreenContext(
 
     /** from [IScreenContextWithGenericNavigation] */
     override fun navigateToSelfInitializingScreen(screen: Screen): Boolean =
-        if (screen.selfInitializing) {
-            genericRouter.navigateToScreen(screen)
-        } else {
-            logger.error("Trying to navigate to screen '$screen' without passing data")
-            false
-        }
+        genericRouter.navigateToScreen(screen)
 
     /** from [IContactListScreenContext] */
-    override fun navigateToContactDetailScreen(contact: IContactBase): Boolean {
-        contactDetailViewModel.selectContact(contact)
-        return genericRouter.navigateToScreen(Screen.ContactDetail)
-    }
+    override fun navigateToContactDetailScreen(contact: IContactBase): Boolean =
+        genericRouter.navigateToContactDetail(contact.id)
 
     /** from [IContactListScreenContext] */
-    override fun navigateToContactCreateScreen(): Boolean {
-        contactEditViewModel.createContact()
-        return genericRouter.navigateToScreen(Screen.ContactEdit)
-    }
+    override fun navigateToContactCreateScreen(): Boolean =
+        genericRouter.navigateToContactEdit(ContactEditTarget.New)
 
     /** from [IContactDetailScreenContext] */
-    override fun navigateToContactEditScreen(contact: IContact): Boolean {
-        contactEditViewModel.selectContact(contact)
-        return genericRouter.navigateToScreen(Screen.ContactEdit)
-    }
+    override fun navigateToContactEditScreen(contactId: ContactId): Boolean =
+        genericRouter.navigateToContactEdit(ContactEditTarget.Existing(contactId))
 
     /** from [IContactEditScreenContext] */
-    override fun returnToContactDetailScreen(contact: IContactBase?): Boolean {
-        if (contact == null) {
-            contactDetailViewModel.reloadContact()
-        } else {
-            contactDetailViewModel.selectContact(contact)
-        }
-        return genericRouter.navigateUp()
-    }
+    override fun returnToContactDetailScreen(contactId: ContactId?): Boolean =
+        genericRouter.returnToContactDetail(contactId)
+
+    /** from [IScreenContext] */
+    override fun navigateToUnsavedContactEditScreen(contact: IContact): Boolean =
+        genericRouter.navigateToContactEdit(ContactEditTarget.Unsaved(contact))
 
     /** from [IContactImportExportScreenContext] */
     override fun navigateToSettingsScreen(): Boolean =
