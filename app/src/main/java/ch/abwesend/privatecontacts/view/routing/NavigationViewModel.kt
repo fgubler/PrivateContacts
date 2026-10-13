@@ -17,8 +17,8 @@ import ch.abwesend.privatecontacts.domain.model.contact.ContactId
  * Owns the navigation back-stack of the app.
  *
  * Being a view-model scoped to the activity, the back-stack survives configuration-changes
- * but is intentionally lost on process-death: the screens get their data from view-models
- * which are lost as well, so restoring the back-stack would show screens without their data.
+ * but is intentionally lost on process-death: the app should start fresh on the contact-list.
+ * This also allows routes to carry objects which are not serializable (see [ContactEditTarget.Unsaved]).
  */
 class NavigationViewModel : ViewModel() {
     private var instanceCounter: Int = 0
@@ -26,13 +26,26 @@ class NavigationViewModel : ViewModel() {
     val backStack: SnapshotStateList<ScreenRoute> =
         mutableStateListOf(SelfInitializingRoute(Screen.ContactList, nextInstanceId()))
 
+    /**
+     * The root of the back-stack is always the contact-list: navigating to it returns to that root-entry
+     * instead of adding a new one (which would come with a new view-model and therefore lose the
+     * selected tab, the search, the scroll-position etc.).
+     */
     fun navigateTo(screen: Screen): Boolean {
-        if (screen.selfInitializing) {
-            backStack.add(SelfInitializingRoute(screen, nextInstanceId()))
-        } else {
+        if (!screen.selfInitializing) {
             logger.error("Trying to navigate to screen '$screen' without passing data")
+        } else if (screen == Screen.ContactList) {
+            returnToRoot()
+        } else {
+            backStack.add(SelfInitializingRoute(screen, nextInstanceId()))
         }
         return screen.selfInitializing
+    }
+
+    private fun returnToRoot() {
+        while (backStack.size > 1) {
+            backStack.removeAt(backStack.lastIndex)
+        }
     }
 
     fun navigateToContactDetail(contactId: ContactId) {

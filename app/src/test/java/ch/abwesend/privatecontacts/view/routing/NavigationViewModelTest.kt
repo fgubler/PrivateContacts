@@ -29,13 +29,26 @@ class NavigationViewModelTest : TestBase() {
     @Test
     fun `should give entries of the same screen different content-keys`() {
         underTest.navigateTo(Screen.Settings)
-        underTest.navigateTo(Screen.ContactList)
+        underTest.navigateTo(Screen.AboutTheApp)
+        underTest.navigateTo(Screen.Settings)
 
         val contentKeys = underTest.backStack.map { it.contentKey }
 
         assertThat(underTest.backStack.map { it.screen })
-            .containsExactly(Screen.ContactList, Screen.Settings, Screen.ContactList)
+            .containsExactly(Screen.ContactList, Screen.Settings, Screen.AboutTheApp, Screen.Settings)
         assertThat(contentKeys).doesNotHaveDuplicates()
+    }
+
+    @Test
+    fun `navigateTo the contact-list should return to the root-entry`() {
+        val rootEntry = underTest.backStack.single()
+        underTest.navigateTo(Screen.Settings)
+        underTest.navigateTo(Screen.AboutTheApp)
+
+        val result = underTest.navigateTo(Screen.ContactList)
+
+        assertThat(result).isTrue
+        assertThat(underTest.backStack).containsExactly(rootEntry)
     }
 
     @Test

@@ -105,7 +105,6 @@ object ImportContactsFromIntentComponents {
         }
         ProgressAndResultHandler(viewModel.contactImportResult) {
             viewModel.resetContactImportResult()
-            screenContext.contactListViewModel.reloadContacts()
             importStarted = false
             onCloseDialog()
         }

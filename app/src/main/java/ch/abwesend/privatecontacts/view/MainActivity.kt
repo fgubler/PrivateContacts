@@ -72,13 +72,6 @@ import ch.abwesend.privatecontacts.view.permission.PermissionProvider
 import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.routing.NavigationViewModel
-import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
-import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListViewModel
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
-import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
 import ch.abwesend.privatecontacts.view.util.authenticateWithBiometrics
 import ch.abwesend.privatecontacts.view.util.observeAsNullableState
@@ -98,13 +91,6 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private val navigationViewModel: NavigationViewModel by viewModels()
-    private val contactListViewModel: ContactListViewModel by viewModels()
-    private val contactGroupListViewModel: ContactGroupListViewModel by viewModels()
-    private val contactDetailViewModel: ContactDetailViewModel by viewModels()
-    private val contactEditViewModel: ContactEditViewModel by viewModels()
-    private val settingsViewModel: SettingsViewModel by viewModels()
-    private val exportViewModel: ContactExportViewModel by viewModels()
-    private val importViewModel: ContactImportViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -293,13 +279,6 @@ class MainActivity : AppCompatActivity() {
             genericRouter = router,
             settings = settings,
             permissionProvider = permissionProvider,
-            contactListViewModel = contactListViewModel,
-            contactGroupListViewModel = contactGroupListViewModel,
-            contactDetailViewModel = contactDetailViewModel,
-            contactEditViewModel = contactEditViewModel,
-            settingsViewModel = settingsViewModel,
-            exportViewModel = exportViewModel,
-            importViewModel = importViewModel,
         )
     }
 }

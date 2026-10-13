@@ -102,7 +102,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings as SettingsScree
 @ExperimentalContracts
 object SettingsScreen {
     @Composable
-    fun Screen(screenContext: ISettingsScreenContext) {
+    fun Screen(screenContext: ISettingsScreenContext, viewModel: SettingsViewModel) {
         val settingsRepository = Settings.repository
         val currentSettings = screenContext.settings
         val permissionProvider = screenContext.permissionProvider
@@ -112,13 +112,13 @@ object SettingsScreen {
         val callDetectionPossible = remember { callIdentificationPossible }
 
         LaunchedEffect(Unit) {
-            screenContext.settingsViewModel.initialize(settingsRepository)
+            viewModel.initialize(settingsRepository)
         }
 
         BaseScreen(
             screenContext = screenContext,
             selectedScreen = SettingsScreen,
-            topBarActions = { SettingsActions(screenContext.settingsViewModel) },
+            topBarActions = { SettingsActions(viewModel) },
         ) { padding ->
             Column(
                 modifier = Modifier
@@ -154,11 +154,11 @@ object SettingsScreen {
                     permissionProvider = permissionProvider,
                     settingsRepository = settingsRepository,
                     currentSettings = currentSettings,
-                    viewModel = screenContext.settingsViewModel,
+                    viewModel = viewModel,
                 )
                 SettingsCategorySpacer()
 
-                PrivacyCategory(settingsRepository, currentSettings, screenContext.settingsViewModel)
+                PrivacyCategory(settingsRepository, currentSettings, viewModel)
                 SettingsCategorySpacer() // makes sure the last card is not cut off
             }
         }

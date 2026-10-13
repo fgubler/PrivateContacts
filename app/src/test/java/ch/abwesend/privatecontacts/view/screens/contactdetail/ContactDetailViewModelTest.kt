@@ -12,7 +12,6 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
-import ch.abwesend.privatecontacts.view.routing.ContactDetailRoute
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.confirmVerified
@@ -34,8 +33,6 @@ class ContactDetailViewModelTest : TestBase() {
     @MockK
     private lateinit var loadService: ContactLoadService
 
-    private lateinit var underTest: ContactDetailViewModel
-
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { loadService }
@@ -44,7 +41,6 @@ class ContactDetailViewModelTest : TestBase() {
     override fun setup() {
         super.setup()
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        underTest = ContactDetailViewModel()
     }
 
     override fun tearDown() {
@@ -53,11 +49,11 @@ class ContactDetailViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should load the contact of the route`() {
+    fun `should load the contact on creation`() {
         val contact = someContactEditable()
         coEvery { loadService.resolveContact(contact.id) } returns contact
 
-        underTest.initialize(ContactDetailRoute(contact.id, instanceId = 1))
+        val underTest = ContactDetailViewModel(contact.id)
 
         assertThat(underTest.selectedContact.value).isEqualTo(ReadyResource<IContact>(contact))
         coVerify { loadService.resolveContact(contact.id) }
@@ -65,35 +61,10 @@ class ContactDetailViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should not load the contact again for the same instance`() {
+    fun `reloadContact should load the contact again`() {
         val contact = someContactEditable()
         coEvery { loadService.resolveContact(contact.id) } returns contact
-        val route = ContactDetailRoute(contact.id, instanceId = 1)
-
-        underTest.initialize(route)
-        underTest.initialize(route)
-
-        coVerify(exactly = 1) { loadService.resolveContact(contact.id) }
-        confirmVerified(loadService)
-    }
-
-    @Test
-    fun `initialize should load the contact again for a new instance`() {
-        val contact = someContactEditable()
-        coEvery { loadService.resolveContact(contact.id) } returns contact
-
-        underTest.initialize(ContactDetailRoute(contact.id, instanceId = 1))
-        underTest.initialize(ContactDetailRoute(contact.id, instanceId = 2))
-
-        coVerify(exactly = 2) { loadService.resolveContact(contact.id) }
-        confirmVerified(loadService)
-    }
-
-    @Test
-    fun `reloadContact should load the contact of the route again`() {
-        val contact = someContactEditable()
-        coEvery { loadService.resolveContact(contact.id) } returns contact
-        underTest.initialize(ContactDetailRoute(contact.id, instanceId = 1))
+        val underTest = ContactDetailViewModel(contact.id)
 
         underTest.reloadContact()
 
@@ -106,7 +77,7 @@ class ContactDetailViewModelTest : TestBase() {
         val contact = someContactEditable()
         coEvery { loadService.resolveContact(contact.id) } throws IllegalArgumentException("Test")
 
-        underTest.initialize(ContactDetailRoute(contact.id, instanceId = 1))
+        val underTest = ContactDetailViewModel(contact.id)
 
         assertThat(underTest.selectedContact.value).isInstanceOf(ErrorResource::class.java)
     }

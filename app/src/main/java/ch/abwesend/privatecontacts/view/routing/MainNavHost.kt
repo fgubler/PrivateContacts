@@ -14,7 +14,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.Scene
 import androidx.navigation3.ui.NavDisplay
 import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
@@ -28,12 +31,19 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Introduction
 import ch.abwesend.privatecontacts.view.routing.Screen.Settings
 import ch.abwesend.privatecontacts.view.screens.about.AboutScreen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailScreen
+import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
+import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
 import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListScreen
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListViewModel
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.ContactImportExportScreen
+import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.screens.introduction.IntroductionScreen
 import ch.abwesend.privatecontacts.view.screens.settings.SettingsScreen
+import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlin.contracts.ExperimentalContracts
 
@@ -56,14 +66,25 @@ fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenC
         transitionSpec = transitionSpec,
         popTransitionSpec = transitionSpec,
         predictivePopTransitionSpec = { transitionSpec() },
+        // each entry gets its own view-models, which are cleared once the entry is popped
+        entryDecorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator(),
+            rememberViewModelStoreNavEntryDecorator(),
+        ),
         entryProvider = { route ->
             NavEntry(
                 key = route,
                 contentKey = route.contentKey,
             ) { selectedRoute ->
                 when (selectedRoute) {
-                    is ContactDetailRoute -> ContactDetailScreen.Screen(screenContext, selectedRoute)
-                    is ContactEditRoute -> ContactEditScreen.Screen(screenContext, selectedRoute)
+                    is ContactDetailRoute -> ContactDetailScreen.Screen(
+                        screenContext = screenContext,
+                        viewModel = viewModel { ContactDetailViewModel(selectedRoute.contactId) },
+                    )
+                    is ContactEditRoute -> ContactEditScreen.Screen(
+                        screenContext = screenContext,
+                        viewModel = viewModel { ContactEditViewModel(selectedRoute.target) },
+                    )
                     is SelfInitializingRoute -> SelfInitializingScreen(selectedRoute.screen, screenContext)
                 }
             }
@@ -77,10 +98,14 @@ fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenC
 @Composable
 private fun SelfInitializingScreen(screen: Screen, screenContext: ScreenContext) {
     when (screen) {
-        ContactList -> ContactListScreen.Screen(screenContext)
-        ContactGroups -> ContactGroupListScreen.Screen(screenContext)
-        Settings -> SettingsScreen.Screen(screenContext)
-        ImportExport -> ContactImportExportScreen.Screen(screenContext)
+        ContactList -> ContactListScreen.Screen(screenContext, viewModel { ContactListViewModel() })
+        ContactGroups -> ContactGroupListScreen.Screen(screenContext, viewModel { ContactGroupListViewModel() })
+        Settings -> SettingsScreen.Screen(screenContext, viewModel { SettingsViewModel() })
+        ImportExport -> ContactImportExportScreen.Screen(
+            screenContext = screenContext,
+            importViewModel = viewModel { ContactImportViewModel() },
+            exportViewModel = viewModel { ContactExportViewModel() },
+        )
         Introduction -> IntroductionScreen.Screen(screenContext)
         AboutTheApp -> AboutScreen.Screen(screenContext)
         ContactDetail, ContactEdit -> Unit // this branch can never be reached

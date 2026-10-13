@@ -28,21 +28,17 @@ import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.ContactTypeChangeService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.routing.ContactDetailRoute
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ContactDetailViewModel : ViewModel() {
+class ContactDetailViewModel(private val contactId: ContactId) : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
     private val exportService: ContactExportService by injectAnywhere()
     private val imageService: ContactImageService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
-
-    private var initializedInstanceId: Int? = null
-    private var contactId: ContactId? = null
 
     private val _selectedContact = mutableResourceStateFlow<IContact>()
     val selectedContact = _selectedContact.asStateFlow()
@@ -59,23 +55,14 @@ class ContactDetailViewModel : ViewModel() {
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
 
-    /** only loads the contact once per [ContactDetailRoute.instanceId] (e.g. not again after a rotation) */
-    fun initialize(route: ContactDetailRoute) {
-        if (route.instanceId != initializedInstanceId) {
-            initializedInstanceId = route.instanceId
-            loadContact(route.contactId)
-        }
+    init {
+        reloadContact()
     }
 
     fun reloadContact() {
-        contactId?.let { loadContact(it) }
-    }
-
-    private fun loadContact(contactIdToLoad: ContactId) {
-        contactId = contactIdToLoad
         viewModelScope.launch {
             _selectedContact.withLoadingState {
-                loadService.resolveContact(contactIdToLoad)
+                loadService.resolveContact(contactId)
             }
         }
     }

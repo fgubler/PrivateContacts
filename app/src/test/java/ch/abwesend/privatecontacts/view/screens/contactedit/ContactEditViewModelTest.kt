@@ -10,7 +10,6 @@ import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
 import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.testutil.TestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactEditable
-import ch.abwesend.privatecontacts.view.routing.ContactEditRoute
 import ch.abwesend.privatecontacts.view.routing.ContactEditTarget
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -33,8 +32,6 @@ class ContactEditViewModelTest : TestBase() {
     @MockK
     private lateinit var loadService: ContactLoadService
 
-    private lateinit var underTest: ContactEditViewModel
-
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { loadService }
@@ -43,7 +40,6 @@ class ContactEditViewModelTest : TestBase() {
     override fun setup() {
         super.setup()
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        underTest = ContactEditViewModel()
     }
 
     override fun tearDown() {
@@ -52,8 +48,8 @@ class ContactEditViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should create a new contact`() {
-        underTest.initialize(ContactEditRoute(ContactEditTarget.New, instanceId = 1))
+    fun `should create a new contact`() {
+        val underTest = ContactEditViewModel(ContactEditTarget.New)
 
         val selectedContact = underTest.selectedContact
         assertThat(selectedContact).isNotNull
@@ -63,10 +59,10 @@ class ContactEditViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should select the unsaved contact`() {
+    fun `should select the unsaved contact`() {
         val contact = someContactEditable(firstName = "Arya", isNew = true)
 
-        underTest.initialize(ContactEditRoute(ContactEditTarget.Unsaved(contact), instanceId = 1))
+        val underTest = ContactEditViewModel(ContactEditTarget.Unsaved(contact))
 
         assertThat(underTest.selectedContact?.id).isEqualTo(contact.id)
         assertThat(underTest.selectedContact?.firstName).isEqualTo("Arya")
@@ -74,11 +70,11 @@ class ContactEditViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should load an existing contact`() {
+    fun `should load an existing contact`() {
         val contact = someContactEditable(firstName = "Sansa")
         coEvery { loadService.resolveContact(contact.id) } returns contact
 
-        underTest.initialize(ContactEditRoute(ContactEditTarget.Existing(contact.id), instanceId = 1))
+        val underTest = ContactEditViewModel(ContactEditTarget.Existing(contact.id))
 
         assertThat(underTest.selectedContact?.id).isEqualTo(contact.id)
         assertThat(underTest.selectedContact?.firstName).isEqualTo("Sansa")
@@ -87,27 +83,15 @@ class ContactEditViewModelTest : TestBase() {
     }
 
     @Test
-    fun `initialize should not discard changes for the same instance`() {
-        val route = ContactEditRoute(ContactEditTarget.New, instanceId = 1)
-        underTest.initialize(route)
+    fun `changes should not affect the original contact`() {
+        val underTest = ContactEditViewModel(ContactEditTarget.New)
         val changedContact = underTest.selectedContact!!.deepCopy()
         changedContact.firstName = "Changed"
+
         underTest.changeContact(changedContact)
 
-        underTest.initialize(route)
-
         assertThat(underTest.selectedContact?.firstName).isEqualTo("Changed")
-    }
-
-    @Test
-    fun `initialize should replace the contact for a new instance`() {
-        val firstContact = someContactEditable(firstName = "First", isNew = true)
-        val secondContact = someContactEditable(firstName = "Second", isNew = true)
-
-        underTest.initialize(ContactEditRoute(ContactEditTarget.Unsaved(firstContact), instanceId = 1))
-        underTest.initialize(ContactEditRoute(ContactEditTarget.Unsaved(secondContact), instanceId = 2))
-
-        assertThat(underTest.selectedContact?.firstName).isEqualTo("Second")
+        assertThat(underTest.originalContact?.firstName).isNotEqualTo("Changed")
     }
 
     @Test
@@ -115,7 +99,7 @@ class ContactEditViewModelTest : TestBase() {
         val contact = someContactEditable()
         coEvery { loadService.resolveContact(contact.id) } throws IllegalArgumentException("Test")
 
-        underTest.initialize(ContactEditRoute(ContactEditTarget.Existing(contact.id), instanceId = 1))
+        val underTest = ContactEditViewModel(ContactEditTarget.Existing(contact.id))
 
         assertThat(underTest.selectedContact).isNull()
         assertThat(underTest.contactLoadingState.value).isInstanceOf(ErrorResource::class.java)

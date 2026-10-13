@@ -58,7 +58,6 @@ import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.YesNoDialog
 import ch.abwesend.privatecontacts.view.model.config.ButtonConfig
 import ch.abwesend.privatecontacts.view.model.screencontext.IContactEditScreenContext
-import ch.abwesend.privatecontacts.view.routing.ContactEditRoute
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreenContent.ContactEditContent
@@ -71,9 +70,7 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalContracts
 object ContactEditScreen {
     @Composable
-    fun Screen(screenContext: IContactEditScreenContext, route: ContactEditRoute) {
-        val viewModel = screenContext.contactEditViewModel
-        LaunchedEffect(route) { viewModel.initialize(route) }
+    fun Screen(screenContext: IContactEditScreenContext, viewModel: ContactEditViewModel) {
         val selectedContact = viewModel.selectedContact
 
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
@@ -101,6 +98,7 @@ object ContactEditScreen {
                 topBar = {
                     ContactEditTopBar(
                         screenContext = screenContext,
+                        viewModel = viewModel,
                         contact = contact,
                         showDiscardConfirmationDialog = { showDiscardConfirmationDialog = true },
                     )
@@ -109,13 +107,13 @@ object ContactEditScreen {
                 // The actual content
                 Column(modifier = Modifier.padding(padding)) {
                     ContactEditContent(
-                        viewModel = screenContext.contactEditViewModel,
+                        viewModel = viewModel,
                         contact = contact,
                         modifier = Modifier.weight(1F),
                     )
 
                     if (screenContext.settings.showExtraButtonsInEditScreen) {
-                        ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+                        ButtonFooter(screenContext, viewModel, contact) { showDiscardConfirmationDialog = true }
                     }
                 }
 
@@ -138,7 +136,7 @@ object ContactEditScreen {
 
                 BackHandler {
                     // trigger discard-changes logic
-                    onDiscard(screenContext) {
+                    onDiscard(screenContext, viewModel) {
                         showDiscardConfirmationDialog = true
                     }
                 }
@@ -149,6 +147,7 @@ object ContactEditScreen {
     @Composable
     private fun ButtonFooter(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         contact: IContactEditable,
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
@@ -162,14 +161,14 @@ object ContactEditScreen {
                 .padding(15.dp),
         ) {
             OutlinedButton(
-                onClick = { onDiscard(screenContext, showDiscardDialog) },
+                onClick = { onDiscard(screenContext, viewModel, showDiscardDialog) },
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.cancel))
             }
             Spacer(modifier = Modifier.width(10.dp))
             Button(
-                onClick = { onSave(screenContext.contactEditViewModel, contact) },
+                onClick = { onSave(viewModel, contact) },
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.save))
@@ -181,6 +180,7 @@ object ContactEditScreen {
     @Composable
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         contact: IContactEditable,
         showDiscardConfirmationDialog: () -> Unit,
     ) {
@@ -190,10 +190,10 @@ object ContactEditScreen {
         TopAppBar(
             title = { Text(text = stringResource(id = title)) },
             navigationIcon = {
-                CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
+                CancelIconButton { onDiscard(screenContext, viewModel, showDiscardConfirmationDialog) }
             },
             actions = {
-                SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
+                SaveIconButton { onSave(viewModel, contact) }
             },
             colors = appTopAppBarColors(),
         )
@@ -218,9 +218,10 @@ object ContactEditScreen {
 
     private fun onDiscard(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         showConfirmationDialog: () -> Unit,
     ) {
-        if (hasChanges(screenContext.contactEditViewModel)) {
+        if (hasChanges(viewModel)) {
             showConfirmationDialog()
         } else {
             onDiscardConfirmed(screenContext)
@@ -229,7 +230,6 @@ object ContactEditScreen {
 
     private fun onDiscardConfirmed(screenContext: IContactEditScreenContext) {
         screenContext.navigateUp()
-        screenContext.contactEditViewModel.clearContact()
     }
 
     private fun hasChanges(viewModel: ContactEditViewModel): Boolean =

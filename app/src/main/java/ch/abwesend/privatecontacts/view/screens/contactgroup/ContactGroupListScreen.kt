@@ -74,8 +74,7 @@ import ch.abwesend.privatecontacts.view.theme.AppColors
 
 object ContactGroupListScreen {
     @Composable
-    fun Screen(screenContext: IContactGroupListScreenContext) {
-        val viewModel = screenContext.contactGroupListViewModel
+    fun Screen(screenContext: IContactGroupListScreenContext, viewModel: ContactGroupListViewModel) {
         val settings = screenContext.settings
         var showCreateDialog: Boolean by remember { mutableStateOf(false) }
 

@@ -23,21 +23,16 @@ import ch.abwesend.privatecontacts.domain.service.ContactLoadService
 import ch.abwesend.privatecontacts.domain.service.ContactSaveService
 import ch.abwesend.privatecontacts.domain.service.interfaces.PermissionService
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
-import ch.abwesend.privatecontacts.view.routing.ContactEditRoute
 import ch.abwesend.privatecontacts.view.routing.ContactEditTarget
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ContactEditViewModel : ViewModel() {
+class ContactEditViewModel(target: ContactEditTarget) : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val groupService: ContactGroupService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
-
-    private var initializedInstanceId: Int? = null
-    private var loadingJob: Job? = null
 
     var originalContact: IContact? = null
         private set
@@ -58,26 +53,16 @@ class ContactEditViewModel : ViewModel() {
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
 
-    /**
-     * Only initializes the contact once per [ContactEditRoute.instanceId]:
-     * e.g. a rotation must not discard the changes the user already made.
-     */
-    fun initialize(route: ContactEditRoute) {
-        if (route.instanceId != initializedInstanceId) {
-            initializedInstanceId = route.instanceId
-            loadingJob?.cancel()
-            when (val target = route.target) {
-                is ContactEditTarget.New -> selectContact(ContactEditable.createNew())
-                is ContactEditTarget.Unsaved -> selectContact(target.contact)
-                is ContactEditTarget.Existing -> loadContact(target.contactId)
-            }
+    init {
+        when (target) {
+            is ContactEditTarget.New -> selectContact(ContactEditable.createNew())
+            is ContactEditTarget.Unsaved -> selectContact(target.contact)
+            is ContactEditTarget.Existing -> loadContact(target.contactId)
         }
     }
 
     private fun loadContact(contactId: ContactId) {
-        originalContact = null
-        selectedContact = null
-        loadingJob = viewModelScope.launch {
+        viewModelScope.launch {
             val contact = _contactLoadingState.withLoadingState { loadService.resolveContact(contactId) }
             contact?.let { selectContact(it) }
         }
@@ -107,10 +92,6 @@ class ContactEditViewModel : ViewModel() {
             }
             _saveResult.emit(result)
         }
-    }
-
-    fun clearContact() {
-        selectedContact = null
     }
 
     fun loadAllContactGroups(contactType: ContactType) {
