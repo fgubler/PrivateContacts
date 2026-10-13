@@ -43,9 +43,20 @@ class IncomingCallService {
             filterCandidates(phoneNumber, contactCandidates, forceLegacyComparison = true)
         }
 
-        return matchingCandidates
+        val relevantCandidates = matchingCandidates
+            .filter { isDirectMatch(phoneNumber, it) }
+            .ifEmpty { matchingCandidates }
+
+        return relevantCandidates
             .take(CONSIDER_MATCHING_CONTACTS)
             .sortedBy { it.displayName }
+    }
+
+    private fun isDirectMatch(phoneNumber: String, contact: ContactWithPhoneNumbers): Boolean {
+        val normalizedPhoneNumber = telephoneService.normalizeNumberForComparison(phoneNumber)
+        return contact.phoneNumbers.any {
+            telephoneService.normalizeNumberForComparison(it.value) == normalizedPhoneNumber
+        }
     }
 
     private fun filterCandidates(

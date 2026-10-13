@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
@@ -253,6 +254,27 @@ class ContactRepository : RepositoryBase(), IContactRepository {
         }
 
         return ContactIdBatchChangeResult(successfulChanges = deletedContacts, failedChanges = notDeletedContacts)
+    }
+
+    override suspend fun recomputeFullTextSearch(contactIds: Collection<IContactIdInternal>): ContactSaveResult {
+        val failedContactIds = contactIds.mapAsyncChunked { contactId ->
+            try {
+                val contact = resolveContact(contactId)
+                val fullTextSearch = searchService.computeFullTextSearchColumn(contact)
+                withDatabase { database -> database.contactDao().updateFullTextSearch(contactId.uuid, fullTextSearch) }
+                null
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                logger.warning("Failed to re-compute full-text-search of contact $contactId", e)
+                contactId
+            }
+        }.filterNotNull()
+
+        logger.debug("Re-computed full-text-search of ${contactIds.size - failedContactIds.size} of ${contactIds.size} contacts")
+
+        return if (failedContactIds.isEmpty()) ContactSaveResult.Success
+        else ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT)
     }
 
     override suspend fun resolveMatchingContacts(importIds: Collection<ContactImportId>): List<IContact> {

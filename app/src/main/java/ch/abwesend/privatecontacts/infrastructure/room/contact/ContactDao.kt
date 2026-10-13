@@ -98,6 +98,9 @@ interface ContactDao {
     @Update
     suspend fun update(contact: ContactEntity)
 
+    @Query("UPDATE ContactEntity SET fullTextSearch = :fullTextSearch WHERE id = :contactId")
+    suspend fun updateFullTextSearch(contactId: UUID, fullTextSearch: String)
+
     @Insert
     suspend fun insert(contact: ContactEntity)
 

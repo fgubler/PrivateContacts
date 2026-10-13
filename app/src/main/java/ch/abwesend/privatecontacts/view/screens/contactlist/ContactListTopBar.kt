@@ -143,7 +143,7 @@ private fun ContactGroupFilterAction(viewModel: ContactListViewModel) {
 
     var dropDownMenuExpanded: Boolean by remember { mutableStateOf(false) }
 
-    FilterIconButton {
+    FilterIconButton(numberOfActiveFilters = viewModel.contactGroupFilter.value.size) {
         viewModel.loadFilterableContactGroups()
         dropDownMenuExpanded = true
     }

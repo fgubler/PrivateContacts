@@ -41,5 +41,7 @@ interface IContactRepository {
     suspend fun updateContact(contactId: IContactIdInternal, contact: IContact): ContactSaveResult
     suspend fun deleteContacts(contactIds: Collection<IContactIdInternal>): ContactIdBatchChangeResult
 
+    suspend fun recomputeFullTextSearch(contactIds: Collection<IContactIdInternal>): ContactSaveResult
+
     suspend fun resolveMatchingContacts(importIds: Collection<ContactImportId>): List<IContact>
 }

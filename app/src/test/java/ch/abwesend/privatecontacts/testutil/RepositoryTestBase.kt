@@ -6,6 +6,7 @@
 
 package ch.abwesend.privatecontacts.testutil
 
+import androidx.room.withTransaction
 import ch.abwesend.privatecontacts.infrastructure.room.contact.ContactDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactdata.ContactDataDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
@@ -18,6 +19,8 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.jupiter.api.extension.ExtendWith
 import org.koin.core.module.Module
@@ -69,5 +72,20 @@ abstract class RepositoryTestBase : TestBase() {
         every { database.contactGroupDao() } returns contactGroupDao
         every { database.contactGroupRelationDao() } returns contactGroupRelationDao
         every { database.contactImageDao() } returns contactImageDao
+
+        // run the transaction-block directly: a mocked database has no real transaction-support
+        mockkStatic(ROOM_DATABASE_EXTENSIONS)
+        coEvery { database.withTransaction(any<suspend () -> Any?>()) } coAnswers {
+            secondArg<suspend () -> Any?>().invoke()
+        }
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        unmockkStatic(ROOM_DATABASE_EXTENSIONS)
+    }
+
+    private companion object {
+        const val ROOM_DATABASE_EXTENSIONS = "androidx.room.RoomDatabaseKt"
     }
 }

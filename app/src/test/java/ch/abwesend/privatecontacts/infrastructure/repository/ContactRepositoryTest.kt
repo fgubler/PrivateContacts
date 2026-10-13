@@ -9,11 +9,13 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.CHANGED
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.contact.ContactIdInternal
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactIdInternal
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.EMAIL
 import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataCategory.PHONE_NUMBER
 import ch.abwesend.privatecontacts.domain.model.contactdata.PhoneNumberValue
 import ch.abwesend.privatecontacts.domain.model.contactimage.ContactImage
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_SAVE_CONTACT
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNKNOWN_ERROR
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.service.FullTextSearchService
@@ -394,5 +396,36 @@ class ContactRepositoryTest : RepositoryTestBase() {
         assertThat(resultingIds).isEqualTo(internalIds)
         coVerify { contactDao.getExistingIdsByImportIds(importUuids) }
         coVerify { underTest.resolveContacts(internalIds.toSet()) }
+    }
+
+    @Test
+    fun `should re-compute the full-text-search of the passed contacts`() {
+        val contactId1 = someContactId()
+        val contactId2 = someContactId()
+        coEvery { underTest.resolveContact(any()) } answers { someContactEditable(id = firstArg()) }
+        every { searchService.computeFullTextSearchColumn(any()) } answers { "search ${firstArg<IContact>().id}" }
+        coEvery { contactDao.updateFullTextSearch(any(), any()) } just runs
+
+        val result = runBlocking { underTest.recomputeFullTextSearch(listOf(contactId1, contactId2)) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        coVerify { contactDao.updateFullTextSearch(contactId1.uuid, "search $contactId1") }
+        coVerify { contactDao.updateFullTextSearch(contactId2.uuid, "search $contactId2") }
+    }
+
+    @Test
+    fun `should continue re-computing the full-text-search after a failure`() {
+        val failingContactId = someContactId()
+        val contactId = someContactId()
+        coEvery { underTest.resolveContact(failingContactId) } throws IllegalArgumentException("Test")
+        coEvery { underTest.resolveContact(contactId) } returns someContactEditable(id = contactId)
+        every { searchService.computeFullTextSearchColumn(any()) } returns "search"
+        coEvery { contactDao.updateFullTextSearch(any(), any()) } just runs
+
+        val result = runBlocking { underTest.recomputeFullTextSearch(listOf(failingContactId, contactId)) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Failure(UNABLE_TO_SAVE_CONTACT))
+        coVerify(exactly = 1) { contactDao.updateFullTextSearch(any(), any()) }
+        coVerify { contactDao.updateFullTextSearch(contactId.uuid, "search") }
     }
 }

@@ -19,6 +19,8 @@ enum class ContactChangeError(@param:StringRes val label: Int) {
     UNABLE_TO_CREATE_CONTACT_WITH_NEW_TYPE(R.string.type_change_create_new_contact_error),
     UNABLE_TO_DELETE_CONTACT_WITH_OLD_TYPE(R.string.type_change_delete_old_contact_error),
     UNABLE_TO_CREATE_CONTACT_GROUP(R.string.unable_to_save_contact),
+    UNABLE_TO_UPDATE_CONTACT_GROUP(R.string.unable_to_update_contact_group),
+    UNABLE_TO_DELETE_CONTACT_GROUP(R.string.unable_to_delete_contact_group),
     CONTACT_CREATION_ID_COLLISION(R.string.contact_creation_id_collision),
 
     NOT_YET_IMPLEMENTED_FOR_EXTERNAL_CONTACTS(R.string.not_yet_implemented_for_external_error),

@@ -57,7 +57,7 @@ class AndroidContactDataMapper {
                 type = type,
                 value = number,
                 formattedValue = telephoneService.formatPhoneNumberForDisplay(number),
-                valueForMatching = telephoneService.formatPhoneNumberForMatching(number),
+                valueForMatching = telephoneService.normalizeNumberForComparison(number),
                 isMain = index == 0,
                 modelStatus = ModelStatus.UNCHANGED,
             )

@@ -164,7 +164,7 @@ class ContactListViewModel : ViewModel() {
     private suspend fun applyContactGroupFilter(
         contactsFlow: ResourceFlow<List<IContactBase>>
     ): ResourceFlow<List<IContactBase>> {
-        val groupFilter = _contactGroupFilter.value
+        val groupFilter = removeUnknownGroupsFromFilter()
         if (groupFilter.isEmpty()) {
             return contactsFlow
         }
@@ -173,6 +173,23 @@ class ContactListViewModel : ViewModel() {
         return contactsFlow.mapReady { contacts ->
             contacts.filter { contact -> (contact.id as? IContactIdInternal)?.uuid in contactIds }
         }
+    }
+
+    /** the groups might have been renamed or deleted since the filter was set */
+    private suspend fun removeUnknownGroupsFromFilter(): Set<String> {
+        val groupFilter = _contactGroupFilter.value
+        val validGroupFilter = if (groupFilter.isEmpty()) groupFilter else {
+            val existingGroupNames = contactGroupService.loadAllContactGroups(ContactType.SECRET)
+                .map { it.id.name }
+                .toSet()
+            groupFilter.intersect(existingGroupNames)
+        }
+
+        if (validGroupFilter != groupFilter) {
+            logger.info("Removing ${groupFilter.size - validGroupFilter.size} unknown contact-groups from the filter")
+            _contactGroupFilter.value = validGroupFilter
+        }
+        return validGroupFilter
     }
 
     fun loadFilterableContactGroups() {

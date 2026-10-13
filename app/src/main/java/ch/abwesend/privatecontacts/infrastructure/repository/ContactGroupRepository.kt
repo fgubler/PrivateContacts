@@ -8,6 +8,9 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.filterShouldUpsert
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_CREATE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_UPDATE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
 import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.domain.repository.IContactGroupRepository
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupDao
@@ -15,6 +18,7 @@ import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGro
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationDao
 import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupRelationEntity
+import kotlinx.coroutines.CancellationException
 
 class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
     suspend fun getContactGroups(contactId: IContactIdInternal): List<ContactGroup> = withDatabase { database ->
@@ -60,6 +64,49 @@ class ContactGroupRepository : RepositoryBase(), IContactGroupRepository {
         logger.debug("Found ${relations.size} contact group relations for ${groupNames.size} groups")
         return relations.map { ContactIdInternal(it.contactId) }.toSet()
     }
+
+    override suspend fun loadNumberOfContactsPerGroup(): Map<String, Int> = withDatabase { database ->
+        database.contactGroupRelationDao().getNumberOfContactsPerGroup()
+            .associate { it.contactGroupName to it.numberOfContacts }
+    }
+
+    override suspend fun updateContactGroup(oldGroup: IContactGroup, newGroup: IContactGroup): ContactSaveResult =
+        try {
+            val oldName = oldGroup.id.name
+            val newName = newGroup.id.name
+            withDatabaseTransaction { database ->
+                if (oldName == newName) {
+                    database.contactGroupDao().update(newGroup.toEntity())
+                } else {
+                    // the name is the primary key: create the new group, move the relations, then delete the old one
+                    database.contactGroupDao().insert(newGroup.toEntity())
+                    database.contactGroupRelationDao().renameContactGroup(oldGroupName = oldName, newGroupName = newName)
+                    database.contactGroupDao().delete(oldGroup.toEntity())
+                }
+            }
+            logger.debug("Updated contact group '$oldName' (new name '$newName')")
+            ContactSaveResult.Success
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to update contact group '${oldGroup.id.name}'", e)
+            ContactSaveResult.Failure(UNABLE_TO_UPDATE_CONTACT_GROUP)
+        }
+
+    override suspend fun deleteContactGroup(contactGroup: IContactGroup): ContactDeleteResult =
+        try {
+            withDatabase { database ->
+                // the relations are deleted by cascade-delete
+                database.contactGroupDao().delete(contactGroup.toEntity())
+            }
+            logger.debug("Deleted contact group '${contactGroup.id.name}'")
+            ContactDeleteResult.Success
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            logger.error("Failed to delete contact group '${contactGroup.id.name}'", e)
+            ContactDeleteResult.Failure(UNABLE_TO_DELETE_CONTACT_GROUP)
+        }
 
     private suspend fun ContactGroupDao.createMissingContactGroups(contactGroups: Collection<IContactGroup>) {
         logger.debug("Creating missing contact groups")

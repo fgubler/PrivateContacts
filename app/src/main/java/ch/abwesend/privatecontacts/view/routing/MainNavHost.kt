@@ -21,6 +21,7 @@ import ch.abwesend.privatecontacts.view.model.screencontext.ScreenContext
 import ch.abwesend.privatecontacts.view.routing.Screen.AboutTheApp
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactDetail
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactEdit
+import ch.abwesend.privatecontacts.view.routing.Screen.ContactGroups
 import ch.abwesend.privatecontacts.view.routing.Screen.ContactList
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
 import ch.abwesend.privatecontacts.view.routing.Screen.Introduction
@@ -28,6 +29,7 @@ import ch.abwesend.privatecontacts.view.routing.Screen.Settings
 import ch.abwesend.privatecontacts.view.screens.about.AboutScreen
 import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailScreen
 import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditScreen
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListScreen
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListScreen
 import ch.abwesend.privatecontacts.view.screens.importexport.ContactImportExportScreen
 import ch.abwesend.privatecontacts.view.screens.introduction.IntroductionScreen
@@ -61,6 +63,7 @@ fun MainNavHost(navigationViewModel: NavigationViewModel, screenContext: ScreenC
             ) { selectedInstance ->
                 when (selectedInstance.screen) {
                     ContactList -> ContactListScreen.Screen(screenContext)
+                    ContactGroups -> ContactGroupListScreen.Screen(screenContext)
                     ContactDetail -> ContactDetailScreen.Screen(screenContext)
                     ContactEdit -> ContactEditScreen.Screen(screenContext)
                     Settings -> SettingsScreen.Screen(screenContext)

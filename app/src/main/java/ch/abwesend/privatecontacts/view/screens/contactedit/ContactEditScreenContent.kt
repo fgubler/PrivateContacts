@@ -84,8 +84,7 @@ import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDa
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactDataEditComponents.Websites
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.ContactCategory
 import ch.abwesend.privatecontacts.view.screens.contactedit.components.ContactEditCommonComponents.textFieldModifier
-import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupEditComponent
-import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupValidity
+import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupEditDialog
 import ch.abwesend.privatecontacts.view.util.accountSelectionRequired
 import ch.abwesend.privatecontacts.view.util.addOrReplace
 import ch.abwesend.privatecontacts.view.util.bringIntoViewDelayed
@@ -504,28 +503,15 @@ object ContactEditScreenContent {
         )
 
         if (showDialog) {
-            var contactGroup: IContactGroup by remember { mutableStateOf(ContactGroup.new("")) }
-
-            val groupValidity = when {
-                contactGroup.id.name.isBlank() -> ContactGroupValidity.EMPTY_NAME
-                existingGroups.any {
-                    it.id.name.equals(contactGroup.id.name, ignoreCase = true,)
-                } -> ContactGroupValidity.DUPLICATE_NAME
-
-                else -> ContactGroupValidity.VALID
-            }
-
-            SaveCancelDialog(
+            ContactGroupEditDialog(
                 title = R.string.new_contact_group_title,
-                content = @Composable {
-                    ContactGroupEditComponent(contactGroup, groupValidity) { contactGroup = it }
-                },
-                saveButtonEnabled = groupValidity == ContactGroupValidity.VALID,
-                onCancel = { showDialog = false },
-                onSave = {
+                originalGroup = ContactGroup.new(""),
+                allGroups = existingGroups,
+                onSave = { contactGroup ->
                     onCreateContactGroup(contactGroup)
                     showDialog = false
                 },
+                onCancel = { showDialog = false },
             )
         }
     }

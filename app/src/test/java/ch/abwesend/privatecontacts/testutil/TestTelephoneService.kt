@@ -4,7 +4,7 @@ import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 
 class TestTelephoneService : TelephoneService {
     override fun formatPhoneNumberForDisplay(number: String): String = number
-    override fun formatPhoneNumberForMatching(number: String): String = number
+    override fun normalizeNumberForComparison(number: String): String = number.filter { it.isDigit() }
     override fun removeSeparators(number: String): String = number.filter { it.isDigit() }
 
     override fun isInInternationalFormat(number: String): Boolean = true

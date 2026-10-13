@@ -8,9 +8,14 @@ package ch.abwesend.privatecontacts.infrastructure.repository
 
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.NEW
 import ch.abwesend.privatecontacts.domain.model.ModelStatus.UNCHANGED
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_DELETE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_UPDATE_CONTACT_GROUP
+import ch.abwesend.privatecontacts.domain.model.result.ContactDeleteResult
+import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.ContactGroupEntity
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toContactGroup
 import ch.abwesend.privatecontacts.infrastructure.room.contactgroup.toEntity
+import ch.abwesend.privatecontacts.infrastructure.room.contactgrouprelation.ContactGroupSizeEntity
 import ch.abwesend.privatecontacts.testutil.RepositoryTestBase
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroup
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroupEntity
@@ -18,6 +23,8 @@ import ch.abwesend.privatecontacts.testutil.databuilders.someContactGroupRelatio
 import ch.abwesend.privatecontacts.testutil.databuilders.someContactId
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
+import io.mockk.confirmVerified
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
@@ -150,5 +157,96 @@ class ContactGroupRepositoryTest : RepositoryTestBase() {
 
         coVerify { contactGroupRelationDao.deleteRelationsForContact(contactId.uuid) }
         coVerify { contactGroupRelationDao.insertAll(contactGroupRelations) }
+    }
+
+    @Test
+    fun `should load the number of contacts per group`() {
+        coEvery { contactGroupRelationDao.getNumberOfContactsPerGroup() } returns listOf(
+            ContactGroupSizeEntity(contactGroupName = "Group 1", numberOfContacts = 3),
+            ContactGroupSizeEntity(contactGroupName = "Group 2", numberOfContacts = 1),
+            ContactGroupSizeEntity(contactGroupName = "Empty Group", numberOfContacts = 0),
+        )
+
+        val result = runBlocking { underTest.loadNumberOfContactsPerGroup() }
+
+        assertThat(result).isEqualTo(mapOf("Group 1" to 3, "Group 2" to 1, "Empty Group" to 0))
+    }
+
+    @Test
+    fun `should only update the group itself if the name did not change`() {
+        val oldGroup = someContactGroup(name = "Group", notes = "Old notes", modelStatus = UNCHANGED)
+        val newGroup = oldGroup.changeNotes("New notes")
+        coEvery { contactGroupDao.update(any()) } just runs
+
+        val result = runBlocking { underTest.updateContactGroup(oldGroup, newGroup) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        coVerify { contactGroupDao.update(ContactGroupEntity(name = "Group", notes = "New notes")) }
+        confirmVerified(contactGroupDao, contactGroupRelationDao)
+    }
+
+    @Test
+    fun `should move the relations to the new group on rename`() {
+        val oldGroup = someContactGroup(name = "Old name", notes = "Notes", modelStatus = UNCHANGED)
+        val newGroup = oldGroup.changeName("New name")
+        coEvery { contactGroupDao.insert(any()) } just runs
+        coEvery { contactGroupRelationDao.renameContactGroup(any(), any()) } just runs
+        coEvery { contactGroupDao.delete(any()) } just runs
+
+        val result = runBlocking { underTest.updateContactGroup(oldGroup, newGroup) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        coVerifyOrder {
+            contactGroupDao.insert(ContactGroupEntity(name = "New name", notes = "Notes"))
+            contactGroupRelationDao.renameContactGroup(oldGroupName = "Old name", newGroupName = "New name")
+            contactGroupDao.delete(ContactGroupEntity(name = "Old name", notes = "Notes"))
+        }
+        confirmVerified(contactGroupDao, contactGroupRelationDao)
+    }
+
+    @Test
+    fun `should treat a case-only change as a rename`() {
+        val oldGroup = someContactGroup(name = "group", notes = "", modelStatus = UNCHANGED)
+        val newGroup = oldGroup.changeName("Group")
+        coEvery { contactGroupDao.insert(any()) } just runs
+        coEvery { contactGroupRelationDao.renameContactGroup(any(), any()) } just runs
+        coEvery { contactGroupDao.delete(any()) } just runs
+
+        val result = runBlocking { underTest.updateContactGroup(oldGroup, newGroup) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Success)
+        coVerify { contactGroupRelationDao.renameContactGroup(oldGroupName = "group", newGroupName = "Group") }
+    }
+
+    @Test
+    fun `should return a failure if the update fails`() {
+        val oldGroup = someContactGroup(name = "Old name", modelStatus = UNCHANGED)
+        val newGroup = oldGroup.changeName("New name")
+        coEvery { contactGroupDao.insert(any()) } throws IllegalStateException("Test")
+
+        val result = runBlocking { underTest.updateContactGroup(oldGroup, newGroup) }
+
+        assertThat(result).isEqualTo(ContactSaveResult.Failure(UNABLE_TO_UPDATE_CONTACT_GROUP))
+    }
+
+    @Test
+    fun `should delete the group`() {
+        val group = someContactGroup(name = "Group", notes = "Notes", modelStatus = UNCHANGED)
+        coEvery { contactGroupDao.delete(any()) } just runs
+
+        val result = runBlocking { underTest.deleteContactGroup(group) }
+
+        assertThat(result).isEqualTo(ContactDeleteResult.Success)
+        coVerify { contactGroupDao.delete(ContactGroupEntity(name = "Group", notes = "Notes")) }
+    }
+
+    @Test
+    fun `should return a failure if the deletion fails`() {
+        val group = someContactGroup(name = "Group", modelStatus = UNCHANGED)
+        coEvery { contactGroupDao.delete(any()) } throws IllegalStateException("Test")
+
+        val result = runBlocking { underTest.deleteContactGroup(group) }
+
+        assertThat(result).isEqualTo(ContactDeleteResult.Failure(UNABLE_TO_DELETE_CONTACT_GROUP))
     }
 }
