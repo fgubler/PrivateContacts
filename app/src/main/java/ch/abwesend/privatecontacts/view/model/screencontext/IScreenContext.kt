@@ -20,26 +20,26 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 interface IScreenContextBase {
     val settings: ISettingsState
     val permissionProvider: IPermissionProvider
-    fun navigateUp(): Boolean
+    fun navigateUp()
 }
 
 interface IScreenContextWithGenericNavigation : IScreenContextBase {
-    fun navigateToSelfInitializingScreen(screen: Screen): Boolean
+    fun navigateToSelfInitializingScreen(screen: Screen)
 }
 
 interface IContactListScreenContext : IScreenContextWithGenericNavigation {
-    fun navigateToContactDetailScreen(contact: IContactBase): Boolean
-    fun navigateToContactCreateScreen(): Boolean
+    fun navigateToContactDetailScreen(contact: IContactBase)
+    fun navigateToContactCreateScreen()
 }
 
 interface IContactGroupListScreenContext : IScreenContextBase
 
 interface IContactDetailScreenContext : IScreenContextBase {
-    fun navigateToContactEditScreen(contactId: ContactId): Boolean
+    fun navigateToContactEditScreen(contactId: ContactId)
 }
 
 interface IContactEditScreenContext : IScreenContextBase {
-    fun returnToContactDetailScreen(contactId: ContactId? = null): Boolean
+    fun returnToContactDetailScreen(contactId: ContactId? = null)
 }
 
 interface ISettingsScreenContext : IScreenContextBase {
@@ -47,7 +47,7 @@ interface ISettingsScreenContext : IScreenContextBase {
 }
 
 interface IContactImportExportScreenContext : IScreenContextBase {
-    fun navigateToSettingsScreen(): Boolean
+    fun navigateToSettingsScreen()
 }
 
 interface IScreenContext :
@@ -58,5 +58,5 @@ interface IScreenContext :
     ISettingsScreenContext,
     IContactImportExportScreenContext {
     /** e.g. for a contact parsed from a vcf-file which was opened with the app */
-    fun navigateToUnsavedContactEditScreen(contact: IContact): Boolean
+    fun navigateToUnsavedContactEditScreen(contact: IContact)
 }

@@ -21,7 +21,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -63,7 +62,6 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.util.composeIfError
-import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
@@ -93,7 +91,6 @@ object ContactDetailScreen {
             val modifier = Modifier.padding(padding)
             contactResource
                 .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
-                .composeIfInactive { NoContactLoaded(modifier = modifier, navigateUp = screenContext::navigateUp) }
                 .composeIfLoading {
                     LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
                 }
@@ -331,19 +328,6 @@ object ContactDetailScreen {
             }
             onCloseMenu()
         }
-    }
-
-    @Composable
-    private fun NoContactLoaded(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
-        FullScreenError(
-            errorMessage = R.string.no_contact_selected,
-            modifier = modifier,
-            buttonConfig = ButtonConfig(
-                label = R.string.back,
-                icon = Icons.AutoMirrored.Default.ArrowBack,
-                onClick = navigateUp,
-            ),
-        )
     }
 
     @Composable

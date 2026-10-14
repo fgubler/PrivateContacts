@@ -21,43 +21,40 @@ data class ScreenContext(
     override val settings: ISettingsState,
 ) : IScreenContext {
     /** from [IScreenContextBase] */
-    override fun navigateUp() = navigationViewModel.navigateUp()
+    override fun navigateUp() {
+        navigationViewModel.navigateUp()
+    }
 
     /** from [IScreenContextWithGenericNavigation] */
-    override fun navigateToSelfInitializingScreen(screen: Screen): Boolean =
+    override fun navigateToSelfInitializingScreen(screen: Screen) {
         navigationViewModel.navigateTo(screen)
+    }
 
     /** from [IContactListScreenContext] */
-    override fun navigateToContactDetailScreen(contact: IContactBase): Boolean {
+    override fun navigateToContactDetailScreen(contact: IContactBase) =
         navigationViewModel.navigateToContactDetail(contact.id)
-        return true
-    }
 
     /** from [IContactListScreenContext] */
-    override fun navigateToContactCreateScreen(): Boolean {
+    override fun navigateToContactCreateScreen() =
         navigationViewModel.navigateToContactEdit(ContactEditTarget.New)
-        return true
-    }
 
     /** from [IContactDetailScreenContext] */
-    override fun navigateToContactEditScreen(contactId: ContactId): Boolean {
+    override fun navigateToContactEditScreen(contactId: ContactId) =
         navigationViewModel.navigateToContactEdit(ContactEditTarget.Existing(contactId))
-        return true
-    }
 
     /** from [IContactEditScreenContext] */
-    override fun returnToContactDetailScreen(contactId: ContactId?): Boolean =
+    override fun returnToContactDetailScreen(contactId: ContactId?) {
         navigationViewModel.returnToContactDetail(contactId)
-
-    /** from [IScreenContext] */
-    override fun navigateToUnsavedContactEditScreen(contact: IContact): Boolean {
-        navigationViewModel.navigateToContactEdit(ContactEditTarget.Unsaved(contact))
-        return true
     }
 
+    /** from [IScreenContext] */
+    override fun navigateToUnsavedContactEditScreen(contact: IContact) =
+        navigationViewModel.navigateToContactEdit(ContactEditTarget.Unsaved(contact))
+
     /** from [IContactImportExportScreenContext] */
-    override fun navigateToSettingsScreen(): Boolean =
+    override fun navigateToSettingsScreen() {
         navigationViewModel.navigateTo(Screen.Settings)
+    }
 
     override fun refreshSettingsScreen() = navigationViewModel.refreshCurrentScreen()
 }
