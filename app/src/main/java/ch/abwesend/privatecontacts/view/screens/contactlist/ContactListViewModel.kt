@@ -50,6 +50,7 @@ class ContactListViewModel : ViewModel() {
     private val exportService: ContactExportService by injectAnywhere()
     private val contactGroupService: ContactGroupService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
+    private val refreshTrigger: ContactListRefreshTrigger by injectAnywhere()
 
     private var showSearch: Boolean = false
         set(value) {
@@ -131,6 +132,12 @@ class ContactListViewModel : ViewModel() {
 
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
+
+    init {
+        viewModelScope.launch {
+            refreshTrigger.refreshRequests.collect { reloadContacts() }
+        }
+    }
 
     fun selectTab(tab: ContactListTab) {
         _selectedTab.value = tab

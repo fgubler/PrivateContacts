@@ -21,6 +21,7 @@ import io.mockk.junit5.MockKExtension
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -38,12 +39,15 @@ class ContactListViewModelTest : TestBase() {
     @MockK
     private lateinit var contactGroupService: ContactGroupService
 
+    private val refreshTrigger = ContactListRefreshTrigger()
+
     private lateinit var underTest: ContactListViewModel
 
     override fun setupKoinModule(module: Module) {
         super.setupKoinModule(module)
         module.single { loadService }
         module.single { contactGroupService }
+        module.single { refreshTrigger }
     }
 
     override fun setup() {
@@ -98,5 +102,15 @@ class ContactListViewModelTest : TestBase() {
 
         assertThat(underTest.contacts.value).isEqualTo(ReadyResource(contacts))
         coVerify(exactly = 0) { contactGroupService.loadAllContactGroups(any<ContactType>()) }
+    }
+
+    @Test
+    fun `should reload the contacts when a refresh is requested`() {
+        coEvery { loadService.loadSecretContacts() } returns flowOf(ReadyResource(emptyList()))
+
+        runBlocking { refreshTrigger.requestRefresh() }
+
+        // the trigger is shared via a background-scope => wait for the event to arrive
+        coVerify(timeout = 5000) { loadService.loadSecretContacts() }
     }
 }

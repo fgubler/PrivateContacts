@@ -45,9 +45,7 @@ import kotlin.contracts.ExperimentalContracts
 object PeriodicBackupCategoryComponent {
 
     @Composable
-    fun PeriodicBackupCategory(screenContext: IContactImportExportScreenContext) {
-        val viewModel = screenContext.importViewModel
-
+    fun PeriodicBackupCategory(screenContext: IContactImportExportScreenContext, viewModel: ContactImportViewModel) {
         ImportExportScreenComponents.ImportExportCategory(title = R.string.backup_title) {
             Text(text = stringResource(id = R.string.backup_manage_in_settings_description))
             Spacer(modifier = Modifier.height(10.dp))

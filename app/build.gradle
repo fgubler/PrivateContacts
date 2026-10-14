@@ -133,6 +133,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${androidLifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-service:${androidLifecycleVersion}"
     implementation "androidx.lifecycle:lifecycle-runtime-compose:${androidLifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:${androidLifecycleVersion}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-navigation3:${androidLifecycleVersion}"
 
     // Android Jetpack Compose
     Dependency composeBom = platform('androidx.compose:compose-bom:2026.04.01')
@@ -143,7 +145,8 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview"
     implementation "androidx.compose.runtime:runtime"
     implementation "androidx.activity:activity-compose:1.13.0"
-    implementation "androidx.navigation:navigation-compose:2.9.8"
+    implementation "androidx.navigation3:navigation3-runtime:$navigation3Version"
+    implementation "androidx.navigation3:navigation3-ui:$navigation3Version"
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation "androidx.constraintlayout:constraintlayout-compose:1.1.1"
     debugImplementation "androidx.compose.ui:ui-tooling"

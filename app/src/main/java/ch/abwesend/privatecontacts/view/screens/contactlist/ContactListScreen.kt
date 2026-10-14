@@ -79,9 +79,8 @@ object ContactListScreen {
     private const val ALPHABETIC_SCROLLBAR_WIDTH_DP = 24
 
     @Composable
-    fun Screen(screenContext: IContactListScreenContext) {
+    fun Screen(screenContext: IContactListScreenContext, viewModel: ContactListViewModel) {
         val drawerState = rememberDrawerState(DrawerValue.Closed)
-        val viewModel = screenContext.contactListViewModel
         val settings = screenContext.settings
         val permissionProvider = screenContext.permissionProvider
 
@@ -106,12 +105,12 @@ object ContactListScreen {
             ) {
                 if (settings.invertTopAndBottomBars) {
                     Surface(modifier = Modifier.weight(1.0f)) { // let the tabs get their space first
-                        ContactListContent(screenContext)
+                        ContactListContent(screenContext, viewModel)
                     }
                     TabBox(viewModel, settings, permissionProvider)
                 } else {
                     TabBox(viewModel, settings, permissionProvider)
-                    ContactListContent(screenContext)
+                    ContactListContent(screenContext, viewModel)
                 }
             }
         }
@@ -218,8 +217,7 @@ object ContactListScreen {
     }
 
     @Composable
-    private fun ContactListContent(screenContext: IContactListScreenContext) {
-        val viewModel = screenContext.contactListViewModel
+    private fun ContactListContent(screenContext: IContactListScreenContext, viewModel: ContactListViewModel) {
         val contactsResource = viewModel.contacts.collectAsStateWithLifecycle(initialValue = InactiveResource()).value
 
         val screenState = viewModel.screenState.value
@@ -237,8 +235,8 @@ object ContactListScreen {
                 scrollingState = viewModel.scrollingState,
                 alphabeticScrollbarWidth = ALPHABETIC_SCROLLBAR_WIDTH_DP.dp,
                 showTypeIcons = showTypeIcons,
-                onContactClicked = { contact -> selectContact(screenContext, contact, bulkMode) },
-                onContactLongClicked = { contact -> longClickContact(screenContext, contact) }
+                onContactClicked = { contact -> selectContact(screenContext, viewModel, contact, bulkMode) },
+                onContactLongClicked = { contact -> longClickContact(screenContext, viewModel, contact) }
             )
         }
 
@@ -327,17 +325,26 @@ object ContactListScreen {
         )
     }
 
-    private fun selectContact(screenContext: IContactListScreenContext, contact: IContactBase, bulkMode: Boolean) {
+    private fun selectContact(
+        screenContext: IContactListScreenContext,
+        viewModel: ContactListViewModel,
+        contact: IContactBase,
+        bulkMode: Boolean,
+    ) {
         if (bulkMode) {
-            screenContext.contactListViewModel.toggleContactSelected(contact)
+            viewModel.toggleContactSelected(contact)
         } else {
             screenContext.navigateToContactDetailScreen(contact)
         }
     }
 
-    private fun longClickContact(screenContext: IContactListScreenContext, contact: IContactBase) {
-        screenContext.contactListViewModel.setBulkMode(enabled = true)
-        selectContact(screenContext, contact, bulkMode = true)
+    private fun longClickContact(
+        screenContext: IContactListScreenContext,
+        viewModel: ContactListViewModel,
+        contact: IContactBase,
+    ) {
+        viewModel.setBulkMode(enabled = true)
+        selectContact(screenContext, viewModel, contact, bulkMode = true)
     }
 
     private fun createContact(screenContext: IContactListScreenContext) {

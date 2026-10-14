@@ -53,7 +53,7 @@ object ImportContactsFromIntentComponents {
                     importMultipleDialogData = result.parsedData
                 }
                 is ParseVcfFromIntentResult.SingleContact -> {
-                    screenContext.navigateToContactEditScreen(result.contact)
+                    screenContext.navigateToUnsavedContactEditScreen(result.contact)
                 }
             }
         }
@@ -105,7 +105,6 @@ object ImportContactsFromIntentComponents {
         }
         ProgressAndResultHandler(viewModel.contactImportResult) {
             viewModel.resetContactImportResult()
-            screenContext.contactListViewModel.reloadContacts()
             importStarted = false
             onCloseDialog()
         }

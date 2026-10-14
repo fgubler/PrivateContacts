@@ -8,6 +8,7 @@ import ch.abwesend.privatecontacts.domain.lib.flow.mutableResourceStateFlow
 import ch.abwesend.privatecontacts.domain.lib.flow.withLoadingState
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
@@ -31,7 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class ContactDetailViewModel : ViewModel() {
+class ContactDetailViewModel(private val contactId: ContactId) : ViewModel() {
     private val loadService: ContactLoadService by injectAnywhere()
     private val saveService: ContactSaveService by injectAnywhere()
     private val typeChangeService: ContactTypeChangeService by injectAnywhere()
@@ -39,34 +40,31 @@ class ContactDetailViewModel : ViewModel() {
     private val imageService: ContactImageService by injectAnywhere()
     private val permissionService: PermissionService by injectAnywhere()
 
-    private var latestSelectedContact: IContactBase? = null
-
     private val _selectedContact = mutableResourceStateFlow<IContact>()
     val selectedContact = _selectedContact.asStateFlow()
 
-    private val _deleteResult = EventFlow.Companion.createShared<ContactDeleteResult>()
+    private val _deleteResult = EventFlow.createShared<ContactDeleteResult>()
     val deleteResult: Flow<ContactDeleteResult> = _deleteResult
 
-    private val _typeChangeResult = EventFlow.Companion.createShared<ContactSaveResult>()
+    private val _typeChangeResult = EventFlow.createShared<ContactSaveResult>()
     val typeChangeResult: Flow<ContactSaveResult> = _typeChangeResult
 
-    private val _exportResult = EventFlow.Companion.createShared<BinaryResult<ContactExportData, VCardExportError>>()
+    private val _exportResult = EventFlow.createShared<BinaryResult<ContactExportData, VCardExportError>>()
     val exportResult: Flow<BinaryResult<ContactExportData, VCardExportError>> = _exportResult
 
     val hasContactWritePermission: Boolean
         get() = permissionService.hasContactWritePermission()
 
-    fun selectContact(contact: IContactBase) {
-        latestSelectedContact = contact
-        viewModelScope.launch {
-            _selectedContact.withLoadingState {
-                loadService.resolveContact(contact.id)
-            }
-        }
+    init {
+        reloadContact()
     }
 
-    fun reloadContact(contact: IContactBase? = latestSelectedContact) {
-        contact?.let { selectContact(it) }
+    fun reloadContact() {
+        viewModelScope.launch {
+            _selectedContact.withLoadingState {
+                loadService.resolveContact(contactId)
+            }
+        }
     }
 
     fun selectContactImage(uri: Uri, contact: IContact) {
@@ -80,7 +78,7 @@ class ContactDetailViewModel : ViewModel() {
         val editableContact = contact.asEditable()
         editableContact.image = editableContact.image.change(fullImage = image.content)
         val saveResult = saveService.saveContact(editableContact)
-        reloadContact(editableContact)
+        reloadContact()
 
         when (saveResult) {
             is ContactSaveResult.Success -> logger.debug("Successfully saved contact with new image")
@@ -95,7 +93,7 @@ class ContactDetailViewModel : ViewModel() {
             val editableContact = contact.toContactEditable()
             editableContact.image = editableContact.image.deleteFullImage()
             saveService.saveContact(editableContact)
-            reloadContact(contact)
+            reloadContact()
         }
     }
 

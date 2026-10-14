@@ -8,7 +8,6 @@ package ch.abwesend.privatecontacts.application
 
 import android.app.Application
 import android.content.Context
-import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.logging.FileLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.LogcatLogger
 import ch.abwesend.privatecontacts.domain.lib.logging.RemoteLoggingHelper
@@ -37,7 +36,6 @@ class PrivateContactsApplication : Application(), KoinComponent {
     override fun onCreate() {
         super.onCreate()
         initializeKoin()
-        ContactDetailInitializationWorkaround.hasOpenedContact = false
         FileLogger.tryCleanOldLogFilesAsync(applicationContext)
         backupScheduler.schedulePeriodicBackup()
         initializeCrashlytics()
