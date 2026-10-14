@@ -94,7 +94,6 @@ import ch.abwesend.privatecontacts.infrastructure.settings.DataStoreSettingsRepo
 import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
-import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListRefreshTrigger
 import com.alexstyl.contactstore.ContactStore
 import org.koin.android.ext.koin.androidContext
@@ -177,7 +176,6 @@ internal val koinModule = module {
     single<IDispatchers> { Dispatchers }
 
     single { ApplicationScope() }
-    factory { GenericRouter(get()) }
     single { ContactListRefreshTrigger() } // required to be a Singleton: shared between the screens
     factory<StringProvider> { ResourcesBasedStringProvider(androidContext().resources) }
 

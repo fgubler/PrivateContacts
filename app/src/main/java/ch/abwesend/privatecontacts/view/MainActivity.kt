@@ -46,7 +46,6 @@ import ch.abwesend.privatecontacts.domain.settings.AppTheme
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.domain.settings.Settings
 import ch.abwesend.privatecontacts.domain.settings.SettingsState
-import ch.abwesend.privatecontacts.domain.util.getAnywhereWithParams
 import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.ImportContactsFromIntentComponents.ObserveVcfImportResult
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullWidth
@@ -69,7 +68,6 @@ import ch.abwesend.privatecontacts.view.permission.AndroidContactPermissionHelpe
 import ch.abwesend.privatecontacts.view.permission.CallPermissionHelper
 import ch.abwesend.privatecontacts.view.permission.CallScreeningRoleHelper
 import ch.abwesend.privatecontacts.view.permission.PermissionProvider
-import ch.abwesend.privatecontacts.view.routing.GenericRouter
 import ch.abwesend.privatecontacts.view.routing.MainNavHost
 import ch.abwesend.privatecontacts.view.routing.NavigationViewModel
 import ch.abwesend.privatecontacts.view.theme.PrivateContactsTheme
@@ -269,14 +267,13 @@ class MainActivity : AppCompatActivity() {
         navigationViewModel: NavigationViewModel,
         settings: ISettingsState
     ): ScreenContext {
-        val router: GenericRouter = getAnywhereWithParams(navigationViewModel)
         val permissionProvider = PermissionProvider(
             callPermissionHelper,
             contactPermissionHelper,
             callScreeningRoleHelper
         )
         return ScreenContext(
-            genericRouter = router,
+            navigationViewModel = navigationViewModel,
             settings = settings,
             permissionProvider = permissionProvider,
         )

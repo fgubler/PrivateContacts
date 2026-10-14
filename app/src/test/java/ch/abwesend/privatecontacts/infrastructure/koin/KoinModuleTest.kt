@@ -4,8 +4,6 @@ import android.content.Context
 import ch.abwesend.privatecontacts.application.koinModule
 import ch.abwesend.privatecontacts.domain.lib.coroutine.ApplicationScope
 import ch.abwesend.privatecontacts.infrastructure.room.database.DatabaseHolder
-import ch.abwesend.privatecontacts.view.routing.GenericRouter
-import ch.abwesend.privatecontacts.view.routing.NavigationViewModel
 import kotlinx.coroutines.CoroutineScope
 import org.junit.jupiter.api.Test
 import org.koin.core.annotation.KoinExperimentalAPI
@@ -18,8 +16,6 @@ class KoinModuleTest : KoinTest {
     private val whiteList: List<KClass<*>> = listOf(
         /** for the manually used constructor of [ApplicationScope] */
         CoroutineScope::class,
-        /** for the manually used constructor of [GenericRouter] */
-        NavigationViewModel::class,
         /** for the manually used constructor of [DatabaseHolder] */
         Context::class,
     )
