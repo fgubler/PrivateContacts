@@ -127,5 +127,8 @@ Four rules are disabled project-wide: `trailing-comma-on-declaration-site`, `tra
 - Apply them silently. Do not re-announce learned behavior.
 - If the user corrects a mistake: fix it, remember it, move on.
 
+## Skill use
+- When reviewing code changes, use the skill `code-review`.
+
 ## Override Rule
 User instructions always override this file.
