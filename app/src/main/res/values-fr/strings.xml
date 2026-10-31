@@ -24,7 +24,6 @@
 
     <string name="no_contacts_found">Aucun contact trouvé</string>
     <string name="data_loading_error">Une erreur est survenue lors du chargement des données</string>
-    <string name="no_contact_selected">Aucun contact sélectionné</string>
     <string name="no_contact_selected_error">Échec du chargement du contact</string>
     <string name="failed_to_import_contacts">Échec de l\'importation du ou des contacts</string>
 

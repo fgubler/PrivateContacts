@@ -6,18 +6,12 @@
 
 package ch.abwesend.privatecontacts.view.model.screencontext
 
+import ch.abwesend.privatecontacts.domain.model.contact.ContactId
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactBase
 import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.view.permission.IPermissionProvider
 import ch.abwesend.privatecontacts.view.routing.Screen
-import ch.abwesend.privatecontacts.view.screens.contactdetail.ContactDetailViewModel
-import ch.abwesend.privatecontacts.view.screens.contactedit.ContactEditViewModel
-import ch.abwesend.privatecontacts.view.screens.contactgroup.ContactGroupListViewModel
-import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
-import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
-import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 
 /**
  * The idea of these interfaces is to improve information-hiding and deliver to each screen
@@ -26,43 +20,34 @@ import ch.abwesend.privatecontacts.view.screens.settings.SettingsViewModel
 interface IScreenContextBase {
     val settings: ISettingsState
     val permissionProvider: IPermissionProvider
-    fun navigateUp(): Boolean
+    fun navigateUp()
 }
 
 interface IScreenContextWithGenericNavigation : IScreenContextBase {
-    fun navigateToSelfInitializingScreen(screen: Screen): Boolean
+    fun navigateToSelfInitializingScreen(screen: Screen)
 }
 
 interface IContactListScreenContext : IScreenContextWithGenericNavigation {
-    val contactListViewModel: ContactListViewModel
-
-    fun navigateToContactDetailScreen(contact: IContactBase): Boolean
-    fun navigateToContactCreateScreen(): Boolean
+    fun navigateToContactDetailScreen(contact: IContactBase)
+    fun navigateToContactCreateScreen()
 }
 
-interface IContactGroupListScreenContext : IScreenContextBase {
-    val contactGroupListViewModel: ContactGroupListViewModel
-}
+interface IContactGroupListScreenContext : IScreenContextBase
 
 interface IContactDetailScreenContext : IScreenContextBase {
-    val contactDetailViewModel: ContactDetailViewModel
-    fun navigateToContactEditScreen(contact: IContact): Boolean
+    fun navigateToContactEditScreen(contactId: ContactId)
 }
 
 interface IContactEditScreenContext : IScreenContextBase {
-    val contactEditViewModel: ContactEditViewModel
-    fun returnToContactDetailScreen(contact: IContactBase? = null): Boolean
+    fun returnToContactDetailScreen(contactId: ContactId? = null)
 }
 
 interface ISettingsScreenContext : IScreenContextBase {
-    val settingsViewModel: SettingsViewModel
-    fun refreshSettingsScreen(): Boolean
+    fun refreshSettingsScreen()
 }
 
 interface IContactImportExportScreenContext : IScreenContextBase {
-    val exportViewModel: ContactExportViewModel
-    val importViewModel: ContactImportViewModel
-    fun navigateToSettingsScreen(): Boolean
+    fun navigateToSettingsScreen()
 }
 
 interface IScreenContext :
@@ -71,4 +56,7 @@ interface IScreenContext :
     IContactDetailScreenContext,
     IContactEditScreenContext,
     ISettingsScreenContext,
-    IContactImportExportScreenContext
+    IContactImportExportScreenContext {
+    /** e.g. for a contact parsed from a vcf-file which was opened with the app */
+    fun navigateToUnsavedContactEditScreen(contact: IContact)
+}

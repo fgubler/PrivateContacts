@@ -32,6 +32,7 @@ import ch.abwesend.privatecontacts.domain.util.injectAnywhere
 import ch.abwesend.privatecontacts.view.initialization.InitializationState
 import ch.abwesend.privatecontacts.view.model.AuthenticationStatus
 import ch.abwesend.privatecontacts.view.model.result.ParseVcfFromIntentResult
+import ch.abwesend.privatecontacts.view.screens.contactlist.ContactListRefreshTrigger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -40,6 +41,7 @@ class MainViewModel : ViewModel() {
     private val dispatchers: IDispatchers by injectAnywhere()
     private val importService: ContactImportService by injectAnywhere()
     private val backupMessageRepository: IBackupMessageRepository by injectAnywhere()
+    private val contactListRefreshTrigger: ContactListRefreshTrigger by injectAnywhere()
 
     private val _initializationState: MutableState<InitializationState> = mutableStateOf(
         InitializationState.InitialState {
@@ -143,6 +145,7 @@ class MainViewModel : ViewModel() {
                 logger.debug("Import $numberOfChanged contact(s) successfully")
                 SuccessResult(result)
             }
+            contactListRefreshTrigger.requestRefresh()
         }
     }
 

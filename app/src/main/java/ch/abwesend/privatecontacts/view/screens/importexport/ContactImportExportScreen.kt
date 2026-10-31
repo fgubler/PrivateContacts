@@ -11,21 +11,27 @@ import ch.abwesend.privatecontacts.view.model.screencontext.IContactImportExport
 import ch.abwesend.privatecontacts.view.routing.Screen.ImportExport
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.screens.importexport.PeriodicBackupCategoryComponent.PeriodicBackupCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.export.ContactExportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.export.ExportCategoryComponent.ExportCategory
+import ch.abwesend.privatecontacts.view.screens.importexport.import.ContactImportViewModel
 import ch.abwesend.privatecontacts.view.screens.importexport.import.ImportCategoryComponent.ImportCategory
 import kotlin.contracts.ExperimentalContracts
 
 @ExperimentalContracts
 object ContactImportExportScreen {
     @Composable
-    fun Screen(screenContext: IContactImportExportScreenContext) {
+    fun Screen(
+        screenContext: IContactImportExportScreenContext,
+        importViewModel: ContactImportViewModel,
+        exportViewModel: ContactExportViewModel,
+    ) {
         val scrollState = rememberScrollState()
 
         BaseScreen(screenContext = screenContext, selectedScreen = ImportExport) { padding ->
             Column(modifier = Modifier.padding(padding).verticalScroll(scrollState)) {
-                ImportCategory(screenContext.importViewModel, screenContext.permissionProvider)
-                ExportCategory(screenContext.exportViewModel, screenContext.permissionProvider)
-                PeriodicBackupCategory(screenContext)
+                ImportCategory(importViewModel, screenContext.permissionProvider)
+                ExportCategory(exportViewModel, screenContext.permissionProvider)
+                PeriodicBackupCategory(screenContext, importViewModel)
             }
         }
     }

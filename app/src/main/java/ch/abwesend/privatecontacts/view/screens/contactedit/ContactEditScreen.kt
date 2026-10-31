@@ -24,7 +24,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,7 +35,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
+import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
+import ch.abwesend.privatecontacts.domain.lib.flow.ErrorResource
+import ch.abwesend.privatecontacts.domain.model.contact.IContact
 import ch.abwesend.privatecontacts.domain.model.contact.IContactEditable
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError
 import ch.abwesend.privatecontacts.domain.model.result.ContactChangeError.UNABLE_TO_RESOLVE_EXISTING_CONTACT
@@ -46,6 +50,7 @@ import ch.abwesend.privatecontacts.domain.model.result.ContactSaveResult.Validat
 import ch.abwesend.privatecontacts.domain.model.result.ContactValidationError
 import ch.abwesend.privatecontacts.domain.util.Constants
 import ch.abwesend.privatecontacts.view.components.FullScreenError
+import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.CancelIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SaveIconButton
 import ch.abwesend.privatecontacts.view.components.buttons.SecondaryButton
@@ -65,8 +70,7 @@ import kotlin.contracts.ExperimentalContracts
 @ExperimentalContracts
 object ContactEditScreen {
     @Composable
-    fun Screen(screenContext: IContactEditScreenContext) {
-        val viewModel = screenContext.contactEditViewModel
+    fun Screen(screenContext: IContactEditScreenContext, viewModel: ContactEditViewModel) {
         val selectedContact = viewModel.selectedContact
 
         var showDiscardConfirmationDialog: Boolean by remember { mutableStateOf(false) }
@@ -81,7 +85,7 @@ object ContactEditScreen {
             showDiscardConfirmationDialog = false
             onSaveResult(
                 result = result,
-                onSuccess = { screenContext.returnToContactDetailScreen(selectedContact) },
+                onSuccess = { screenContext.returnToContactDetailScreen(selectedContact?.id) },
                 setSavingErrors = { savingErrors = it },
                 setValidationErrors = { validationErrors = it },
             )
@@ -94,6 +98,7 @@ object ContactEditScreen {
                 topBar = {
                     ContactEditTopBar(
                         screenContext = screenContext,
+                        viewModel = viewModel,
                         contact = contact,
                         showDiscardConfirmationDialog = { showDiscardConfirmationDialog = true },
                     )
@@ -102,13 +107,13 @@ object ContactEditScreen {
                 // The actual content
                 Column(modifier = Modifier.padding(padding)) {
                     ContactEditContent(
-                        viewModel = screenContext.contactEditViewModel,
+                        viewModel = viewModel,
                         contact = contact,
                         modifier = Modifier.weight(1F),
                     )
 
                     if (screenContext.settings.showExtraButtonsInEditScreen) {
-                        ButtonFooter(screenContext, contact) { showDiscardConfirmationDialog = true }
+                        ButtonFooter(screenContext, viewModel, contact) { showDiscardConfirmationDialog = true }
                     }
                 }
 
@@ -131,17 +136,18 @@ object ContactEditScreen {
 
                 BackHandler {
                     // trigger discard-changes logic
-                    onDiscard(screenContext) {
+                    onDiscard(screenContext, viewModel) {
                         showDiscardConfirmationDialog = true
                     }
                 }
             }
-        } ?: NoContactLoaded(viewModel)
+        } ?: NoContactLoaded(screenContext, viewModel)
     }
 
     @Composable
     private fun ButtonFooter(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         contact: IContactEditable,
         modifier: Modifier = Modifier,
         showDiscardDialog: () -> Unit,
@@ -155,14 +161,14 @@ object ContactEditScreen {
                 .padding(15.dp),
         ) {
             OutlinedButton(
-                onClick = { onDiscard(screenContext, showDiscardDialog) },
+                onClick = { onDiscard(screenContext, viewModel, showDiscardDialog) },
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.cancel))
             }
             Spacer(modifier = Modifier.width(10.dp))
             Button(
-                onClick = { onSave(screenContext.contactEditViewModel, contact) },
+                onClick = { onSave(viewModel, contact) },
                 modifier = buttonModifier.weight(1F),
             ) {
                 Text(text = stringResource(id = R.string.save))
@@ -174,6 +180,7 @@ object ContactEditScreen {
     @Composable
     private fun ContactEditTopBar(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         contact: IContactEditable,
         showDiscardConfirmationDialog: () -> Unit,
     ) {
@@ -183,10 +190,10 @@ object ContactEditScreen {
         TopAppBar(
             title = { Text(text = stringResource(id = title)) },
             navigationIcon = {
-                CancelIconButton { onDiscard(screenContext, showDiscardConfirmationDialog) }
+                CancelIconButton { onDiscard(screenContext, viewModel, showDiscardConfirmationDialog) }
             },
             actions = {
-                SaveIconButton { onSave(screenContext.contactEditViewModel, contact) }
+                SaveIconButton { onSave(viewModel, contact) }
             },
             colors = appTopAppBarColors(),
         )
@@ -211,9 +218,10 @@ object ContactEditScreen {
 
     private fun onDiscard(
         screenContext: IContactEditScreenContext,
+        viewModel: ContactEditViewModel,
         showConfirmationDialog: () -> Unit,
     ) {
-        if (hasChanges(screenContext.contactEditViewModel)) {
+        if (hasChanges(viewModel)) {
             showConfirmationDialog()
         } else {
             onDiscardConfirmed(screenContext)
@@ -222,7 +230,6 @@ object ContactEditScreen {
 
     private fun onDiscardConfirmed(screenContext: IContactEditScreenContext) {
         screenContext.navigateUp()
-        screenContext.contactEditViewModel.clearContact()
     }
 
     private fun hasChanges(viewModel: ContactEditViewModel): Boolean =
@@ -327,15 +334,20 @@ object ContactEditScreen {
     }
 
     @Composable
-    private fun NoContactLoaded(viewModel: ContactEditViewModel) {
-        FullScreenError(
-            errorMessage = R.string.no_contact_selected,
-            buttonConfig = ButtonConfig(
-                label = R.string.create_contact,
-                icon = Icons.Default.Add
-            ) {
-                viewModel.createContact()
-            }
-        )
+    private fun NoContactLoaded(screenContext: IContactEditScreenContext, viewModel: ContactEditViewModel) {
+        val loadingState: AsyncResource<IContact> by viewModel.contactLoadingState.collectAsStateWithLifecycle()
+
+        if (loadingState is ErrorResource) {
+            FullScreenError(
+                errorMessage = R.string.no_contact_selected_error,
+                buttonConfig = ButtonConfig(
+                    label = R.string.back,
+                    icon = Icons.AutoMirrored.Default.ArrowBack,
+                    onClick = screenContext::navigateUp,
+                ),
+            )
+        } else {
+            LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts)
+        }
     }
 }

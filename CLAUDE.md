@@ -44,7 +44,7 @@ APPLICATION → VIEW → DOMAIN ← INFRASTRUCTURE
 - **`domain/`** — Business logic, models, repository/service interfaces. No Android imports.
 - **`infrastructure/`** — Room DB, Android APIs, ContactStore, Google Drive, vCard parsing
 
-ViewModels are created at `MainActivity` level and passed down via CompositionLocal — do not use `viewModel()` inside sub-composables.
+Navigation uses Navigation 3: the back stack (`NavigationViewModel`) holds `ScreenRoute`s which carry the data a screen needs (e.g. a contact-id). Screen ViewModels are scoped to their back-stack entry: they are created in `MainNavHost` via `viewModel { ... }` (route data as constructor parameters) and passed to the screen's `Screen(...)` composable - do not use `viewModel()` inside screens or sub-composables. Only `MainViewModel` and `NavigationViewModel` are created at `MainActivity` level.
 
 ## Key Patterns
 

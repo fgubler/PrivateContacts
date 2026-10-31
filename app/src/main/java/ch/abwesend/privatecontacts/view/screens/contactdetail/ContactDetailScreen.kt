@@ -21,10 +21,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,7 +33,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ch.abwesend.privatecontacts.R
-import ch.abwesend.privatecontacts.domain.ContactDetailInitializationWorkaround
 import ch.abwesend.privatecontacts.domain.lib.flow.AsyncResource
 import ch.abwesend.privatecontacts.domain.model.contact.ContactType
 import ch.abwesend.privatecontacts.domain.model.contact.IContact
@@ -65,7 +62,6 @@ import ch.abwesend.privatecontacts.view.routing.Screen
 import ch.abwesend.privatecontacts.view.screens.BaseScreen
 import ch.abwesend.privatecontacts.view.util.collectWithEffect
 import ch.abwesend.privatecontacts.view.util.composeIfError
-import ch.abwesend.privatecontacts.view.util.composeIfInactive
 import ch.abwesend.privatecontacts.view.util.composeIfLoading
 import ch.abwesend.privatecontacts.view.util.composeIfReady
 import ch.abwesend.privatecontacts.view.theme.appTopAppBarColors
@@ -78,8 +74,7 @@ import kotlin.contracts.ExperimentalContracts
 object ContactDetailScreen {
 
     @Composable
-    fun Screen(screenContext: IContactDetailScreenContext) {
-        val viewModel = screenContext.contactDetailViewModel
+    fun Screen(screenContext: IContactDetailScreenContext, viewModel: ContactDetailViewModel) {
         val contactResource: AsyncResource<IContact> by viewModel.selectedContact.collectAsStateWithLifecycle()
 
         BaseScreen(
@@ -88,20 +83,14 @@ object ContactDetailScreen {
             topBar = {
                 ContactDetailTopBar(
                     screenContext = screenContext,
+                    viewModel = viewModel,
                     contact = contactResource.valueOrNull
                 )
             },
         ) { padding ->
-            LaunchedEffect(Unit) {
-                if (!ContactDetailInitializationWorkaround.hasOpenedContact) {
-                    screenContext.navigateUp()
-                }
-            }
-
             val modifier = Modifier.padding(padding)
             contactResource
                 .composeIfError { NoContactLoadedError(viewModel = viewModel, modifier = modifier) }
-                .composeIfInactive { NoContactLoaded(modifier = modifier, navigateUp = screenContext::navigateUp) }
                 .composeIfLoading {
                     LoadingIndicatorFullScreen(textAfterIndicator = R.string.loading_contacts, modifier = modifier)
                 }
@@ -184,6 +173,7 @@ object ContactDetailScreen {
     @Composable
     private fun ContactDetailTopBar(
         screenContext: IContactDetailScreenContext,
+        viewModel: ContactDetailViewModel,
         contact: IContact?,
     ) {
         @StringRes val title = R.string.screen_contact_details
@@ -204,13 +194,13 @@ object ContactDetailScreen {
             actions = {
                 if (contact != null) {
                     EditIconButton {
-                        screenContext.navigateToContactEditScreen(contact)
+                        screenContext.navigateToContactEditScreen(contact.id)
                     }
                     MoreActionsIconButton {
                         dropDownMenuExpanded = true
                     }
                     ActionsMenu(
-                        viewModel = screenContext.contactDetailViewModel,
+                        viewModel = viewModel,
                         contact = contact,
                         expanded = dropDownMenuExpanded,
                     ) { dropDownMenuExpanded = false }
@@ -232,7 +222,7 @@ object ContactDetailScreen {
             DropdownMenuItem(
                 text = { Text(stringResource(id = R.string.refresh)) },
                 onClick = {
-                    viewModel.reloadContact(contact)
+                    viewModel.reloadContact()
                     onCloseMenu()
                 },
             )
@@ -338,19 +328,6 @@ object ContactDetailScreen {
             }
             onCloseMenu()
         }
-    }
-
-    @Composable
-    private fun NoContactLoaded(modifier: Modifier = Modifier, navigateUp: () -> Unit) {
-        FullScreenError(
-            errorMessage = R.string.no_contact_selected,
-            modifier = modifier,
-            buttonConfig = ButtonConfig(
-                label = R.string.back,
-                icon = Icons.AutoMirrored.Default.ArrowBack,
-                onClick = navigateUp,
-            ),
-        )
     }
 
     @Composable
