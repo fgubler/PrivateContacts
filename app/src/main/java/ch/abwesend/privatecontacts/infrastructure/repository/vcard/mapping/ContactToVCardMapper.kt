@@ -36,6 +36,9 @@ import ezvcard.property.StructuredName
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
+/** custom vCard property to store whether a (secret) contact is blocked */
+internal const val VCARD_PROPERTY_BLOCKED = "X-PRIVATECONTACTS-BLOCKED"
+
 class ContactToVCardMapper {
     private val companyMappingService: AndroidContactCompanyMappingService by injectAnywhere()
 
@@ -75,6 +78,10 @@ class ContactToVCardMapper {
 
             contact.image.toPhotos().forEach { photo ->
                 vCard.addPhoto(photo)
+            }
+
+            if (contact.isBlocked) {
+                vCard.addExtendedProperty(VCARD_PROPERTY_BLOCKED, true.toString())
             }
 
             vCard.kind = Kind.individual() // TODO compute once non-person contacts are supported
