@@ -187,7 +187,7 @@ object ContactEditScreenContent {
             Groups(contact, onChanged, allContactGroups, viewModel::createContactGroup)
             Notes(contact, onChanged)
 
-            if (contact.type == ContactType.SECRET && settings.allowBlockingContacts) {
+            if (contact.type == ContactType.SECRET && (settings.allowBlockingContacts || contact.isBlocked)) {
                 CallBlocking(contact, onChanged)
             }
             ContactDataTypeCustomValueDialog(
