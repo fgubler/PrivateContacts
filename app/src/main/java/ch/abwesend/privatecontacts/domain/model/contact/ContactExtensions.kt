@@ -38,8 +38,7 @@ fun getFullName(
 }
 
 fun IContact.asEditable(): ContactEditable =
-    if (this is ContactEditable) this
-    else toContactEditable()
+    this as? ContactEditable ?: toContactEditable()
 
 fun IContact.toContactEditable(): ContactEditable =
     ContactEditable(
