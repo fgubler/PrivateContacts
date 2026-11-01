@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
@@ -65,6 +66,7 @@ import ch.abwesend.privatecontacts.view.model.whatsapp.WhatsAppNavigationResult
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactCategoryWithHeader
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.ContactDataCategory
 import ch.abwesend.privatecontacts.view.screens.contactdetail.components.ContactDetailCommonComponents.labelColor
+import ch.abwesend.privatecontacts.view.theme.AppColors
 import ch.abwesend.privatecontacts.view.util.color
 import ch.abwesend.privatecontacts.view.util.getFullBitmapImage
 import ch.abwesend.privatecontacts.view.util.joinFilteredGroupsToString
@@ -96,6 +98,7 @@ object ContactDetailScreenContent {
             Relationships(contact = contact)
             ContactGroups(contact = contact)
             Notes(contact = contact)
+            CallBlocking(contact = contact)
         }
     }
 
@@ -337,6 +340,19 @@ object ContactDetailScreenContent {
                 modifier = Modifier.longClickForCopyToClipboard(contact.notes),
             ) {
                 Text(text = contact.notes)
+            }
+        }
+    }
+
+    @Composable
+    private fun CallBlocking(contact: IContact) {
+        if (contact.isBlocked) {
+            ContactCategoryWithHeader(
+                categoryTitle = R.string.call_blocking,
+                icon = Icons.Default.Block,
+                alignContentWithTitle = true,
+            ) {
+                Text(text = stringResource(id = R.string.contact_blocked), color = AppColors.dangerRed)
             }
         }
     }

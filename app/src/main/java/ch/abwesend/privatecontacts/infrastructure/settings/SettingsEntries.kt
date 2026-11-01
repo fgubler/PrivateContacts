@@ -83,6 +83,10 @@ internal val blockIncomingCallsFromUnknownNumbersEntry = SettingsEntry(
     key = booleanPreferencesKey("blockIncomingCallsFromUnknownNumbers"),
     defaultValue = defaultSettings.blockIncomingCallsFromUnknownNumbers
 )
+internal val allowBlockingContactsEntry = SettingsEntry(
+    key = booleanPreferencesKey("allowBlockingContacts"),
+    defaultValue = defaultSettings.allowBlockingContacts
+)
 internal val useAlternativeAppIconEntry = SettingsEntry(
     key = booleanPreferencesKey("useAlternativeAppIcon"),
     defaultValue = defaultSettings.useAlternativeAppIcon

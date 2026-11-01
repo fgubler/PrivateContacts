@@ -14,6 +14,9 @@ interface IContactBase {
     val id: ContactId
     val type: ContactType
     val displayName: String
+
+    /** (only supported for secret contacts) */
+    val isBlocked: Boolean
 }
 
 /**
@@ -44,4 +47,5 @@ data class ContactBase(
     override val id: ContactId,
     override val type: ContactType,
     override val displayName: String,
+    override val isBlocked: Boolean,
 ) : IContactBase

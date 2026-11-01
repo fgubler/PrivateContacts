@@ -132,6 +132,12 @@
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>
     <string name="visibility">Visibility</string>
+    <string name="call_blocking">Call blocking</string>
+    <string name="block_contact">Block contact</string>
+    <string name="block_contact_info_title">Blocked contact</string>
+    <string name="block_contact_info_text">Calls from a contact marked as \"blocked\" will be blocked automatically.</string>
+    <string name="contact_blocked">Contact is blocked</string>
+    <string name="settings_entry_allow_blocking_contacts">Allow blocking contacts</string>
     <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>
@@ -264,7 +270,7 @@
     <string name="incoming_call_channel_title">Incoming call</string>
     <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
     <string name="blocked_call_notification_title">Blocked incoming call</string>
-    <string name="blocked_call_notification_text">Call from %1$s has been blocked because the number is not in your contacts.</string>
+    <string name="blocked_call_notification_text">Call from %1$s has been blocked because the number is blocked or not in your contacts.</string>
 
     <string name="about_app_title">About the App</string>
     <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>
@@ -567,4 +573,5 @@
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
     <string name="release_notes_v117">The list of secret contacts can now be filtered by contact-group (label).</string>
     <string name="release_notes_v119">Added new screen to manage contact-groups (labels).</string>
+    <string name="release_notes_v122">Added the option to mark secret contacts as blocked to suppress any calls by them.</string>
 </resources>

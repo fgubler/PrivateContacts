@@ -132,6 +132,12 @@
     <string name="notes">Notes</string>
     <string name="contact_groups">Groupes</string>
     <string name="visibility">Visibilité</string>
+    <string name="call_blocking">Blocage des appels</string>
+    <string name="block_contact">Bloquer le contact</string>
+    <string name="block_contact_info_title">Contact bloqué</string>
+    <string name="block_contact_info_text">Les appels d\'un contact marqué comme \"bloqué\" seront bloqués automatiquement.</string>
+    <string name="contact_blocked">Le contact est bloqué</string>
+    <string name="settings_entry_allow_blocking_contacts">Autoriser le blocage de contacts</string>
     <string name="visibility_colon">Visibilité :</string>
 
     <string name="phone_number">Numéro de téléphone</string>
@@ -261,7 +267,7 @@
     <string name="incoming_call_channel_title">Appel entrant</string>
     <string name="incoming_call_channel_description">Notifications pour signaler les correspondances entre les appels entrants et les contacts enregistrés.</string>
     <string name="blocked_call_notification_title">Appel bloqué</string>
-    <string name="blocked_call_notification_text">L\'appel de %1$s a été bloqué car le numéro n\'est pas dans tes contacts.</string>
+    <string name="blocked_call_notification_text">L\'appel de %1$s a été bloqué car le numéro est bloqué ou n\'est pas dans tes contacts.</string>
 
     <string name="about_app_title">À propos de l\'application</string>
     <string name="about_app_description">Cette application a pour but de stocker des contacts qui ne doivent pas être partagés avec d\'autres applications du téléphone.</string>
@@ -563,4 +569,5 @@
     <string name="release_notes_v113">Passage à Material 3 pour une apparence plus moderne.</string>
     <string name="release_notes_v117">La liste des contacts secrets peut désormais être filtrée par groupe de contacts (libellé).</string>
     <string name="release_notes_v119">Ajout d\'un nouvel écran pour gérer les groupes de contacts (libellés).</string>
+    <string name="release_notes_v122">Ajout de la possibilité de marquer les contacts secrets comme bloqués afin de supprimer tous leurs appels.</string>
 </resources>

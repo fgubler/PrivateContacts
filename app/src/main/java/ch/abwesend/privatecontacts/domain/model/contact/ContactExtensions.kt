@@ -38,8 +38,7 @@ fun getFullName(
 }
 
 fun IContact.asEditable(): ContactEditable =
-    if (this is ContactEditable) this
-    else toContactEditable()
+    this as? ContactEditable ?: toContactEditable()
 
 fun IContact.toContactEditable(): ContactEditable =
     ContactEditable(
@@ -56,10 +55,16 @@ fun IContact.toContactEditable(): ContactEditable =
         image = image,
         contactDataSet = contactDataSet.toMutableList(),
         contactGroups = contactGroups.toMutableList(),
+        isBlocked = isBlocked,
         saveInAccount = ContactAccount.currentDefaultForContactType(type)
     )
 
-fun IContact.toContactBase(): ContactBase = ContactBase(id = id, type = type, displayName = getFullName())
+fun IContact.toContactBase(): ContactBase = ContactBase(
+    id = id,
+    type = type,
+    displayName = getFullName(),
+    isBlocked = isBlocked,
+)
 
 val IContactBase.isExternal: Boolean
     get() = id.isExternal

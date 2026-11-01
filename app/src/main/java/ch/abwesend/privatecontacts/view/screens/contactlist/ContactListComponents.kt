@@ -24,10 +24,12 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.runtime.Composable
@@ -203,6 +205,7 @@ private fun Contact(
         val name = contact.displayName
         val contactIcon = when {
             selected -> Icons.Default.TaskAlt
+            contact.isBlocked -> Icons.Filled.Block
             name.lowercase().contains(EASTER_EGG_LOVE) -> Icons.Filled.Favorite
             else -> Icons.Filled.AccountCircle
         }

@@ -70,6 +70,9 @@ class VCardToContactMapper {
             val image = vCard.photos.orEmpty().filterNotNull().toContactImage()
             contact.image = image
 
+            contact.isBlocked = targetType == ContactType.SECRET &&
+                vCard.getExtendedProperty(VCARD_PROPERTY_BLOCKED)?.value.toBoolean()
+
             val contactCategory = vCard.kind // TODO use once this becomes a thing
             // TODO figure out how to handle the name of companies/organizations
 

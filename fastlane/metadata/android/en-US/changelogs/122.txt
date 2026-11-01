@@ -1,0 +1,2 @@
+6.3.0
+Added the option to mark secret contacts as blocked to suppress any calls by them.

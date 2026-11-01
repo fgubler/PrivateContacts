@@ -71,6 +71,7 @@ class DatabaseInitializer {
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(),
                 contactGroups = mutableListOf(),
+                isBlocked = false,
                 saveInAccount = ContactAccount.None,
             ),
             ContactEditable(
@@ -84,6 +85,7 @@ class DatabaseInitializer {
                 nameSuffix = "",
                 type = SECRET,
                 notes = "Lost his hand",
+                isBlocked = false,
                 image = ContactImage(
                     thumbnailUri = "Pseudo Thumbnail",
                     fullImage = ByteArray(0),
@@ -180,6 +182,7 @@ class DatabaseInitializer {
                 nameSuffix = "",
                 type = SECRET,
                 notes = "Efficient way of suicide",
+                isBlocked = false,
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(
                     PhoneNumber(
@@ -213,6 +216,7 @@ class DatabaseInitializer {
                 nameSuffix = "",
                 type = SECRET,
                 notes = "Small and green",
+                isBlocked = false,
                 image = ContactImage.empty,
                 contactDataSet = mutableListOf(
                     PhoneNumber(

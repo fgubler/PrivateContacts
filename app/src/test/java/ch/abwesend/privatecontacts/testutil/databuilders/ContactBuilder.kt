@@ -50,7 +50,8 @@ fun someContactBase(
 ): IContactBase = ContactBase(
     id = id,
     type = type,
-    displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix)
+    displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix),
+    isBlocked = false,
 )
 
 fun someContactEntity(
@@ -247,6 +248,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
     saveInAccount: ContactAccount = ContactAccount.None,
+    isBlocked: Boolean = false,
 ): IContactEditable = ContactEditable(
     id = id,
     importId = importId,
@@ -263,6 +265,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactGroups = contactGroups.toMutableList(),
     isNew = isNew,
     saveInAccount = saveInAccount,
+    isBlocked = isBlocked,
 )
 
 fun someOnlineAccount(

@@ -62,7 +62,7 @@ class PhoneStateReceiver : BroadcastReceiver() {
             logger.debug("Receiving a call from $incomingNumber")
             incomingNumber?.let {
                 applicationScope.launch {
-                    incomingCallHelper.handleIncomingCall(context, it)
+                    incomingCallHelper.handleIncomingCall(context, it, preloadedMatches = null)
                 }
             }
         }

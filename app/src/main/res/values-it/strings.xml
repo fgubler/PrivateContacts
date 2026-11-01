@@ -132,6 +132,12 @@
     <string name="notes">Note</string>
     <string name="contact_groups">Gruppi</string>
     <string name="visibility">Visibilità</string>
+    <string name="call_blocking">Blocco chiamate</string>
+    <string name="block_contact">Blocca contatto</string>
+    <string name="block_contact_info_title">Contatto bloccato</string>
+    <string name="block_contact_info_text">Le chiamate da un contatto contrassegnato come \"bloccato\" verranno bloccate automaticamente.</string>
+    <string name="contact_blocked">Il contatto è bloccato</string>
+    <string name="settings_entry_allow_blocking_contacts">Consenti il blocco dei contatti</string>
     <string name="visibility_colon">Visibilità:</string>
 
     <string name="phone_number">Numero di telefono</string>
@@ -261,7 +267,7 @@
     <string name="incoming_call_channel_title">Chiamata in arrivo</string>
     <string name="incoming_call_channel_description">Notifiche per chiamate in arrivo che corrispondono a contatti salvati.</string>
     <string name="blocked_call_notification_title">Chiamata bloccata</string>
-    <string name="blocked_call_notification_text">La chiamata da %1$s è stata bloccata perché il numero non è presente nei tuoi contatti.</string>
+    <string name="blocked_call_notification_text">La chiamata da %1$s è stata bloccata perché il numero è bloccato o non è presente nei tuoi contatti.</string>
 
     <string name="about_app_title">Informazioni sull\'app</string>
     <string name="about_app_description">Questa app consente di salvare contatti che non devono essere condivisi con altre applicazioni.</string>
@@ -562,4 +568,5 @@
     <string name="release_notes_v113">Aggiornamento a Material 3 per un aspetto più moderno.</string>
     <string name="release_notes_v117">L\'elenco dei contatti segreti può ora essere filtrato per gruppo di contatti (etichetta).</string>
     <string name="release_notes_v119">Aggiunta una nuova schermata per gestire i gruppi di contatti (etichette).</string>
+    <string name="release_notes_v122">Aggiunta la possibilità di contrassegnare i contatti segreti come bloccati per sopprimere tutte le loro chiamate.</string>
 </resources>

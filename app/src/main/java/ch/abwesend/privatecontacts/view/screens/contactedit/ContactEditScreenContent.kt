@@ -23,18 +23,19 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -68,10 +69,13 @@ import ch.abwesend.privatecontacts.domain.model.contactdata.ContactDataType
 import ch.abwesend.privatecontacts.domain.model.contactgroup.ContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroup
 import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroupId
+import ch.abwesend.privatecontacts.domain.settings.ISettingsState
 import ch.abwesend.privatecontacts.view.components.AddIcon
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SaveCancelDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
 import ch.abwesend.privatecontacts.view.components.inputs.ContactTypeField
@@ -100,6 +104,7 @@ object ContactEditScreenContent {
     fun ContactEditContent(
         viewModel: ContactEditViewModel,
         contact: IContactEditable,
+        settings: ISettingsState,
         modifier: Modifier = Modifier,
     ) {
         val onChanged = { newContact: IContactEditable ->
@@ -180,7 +185,10 @@ object ContactEditScreenContent {
             )
 
             Groups(contact, onChanged, allContactGroups, viewModel::createContactGroup)
+            CallBlocking(contact, settings, onChanged)
             Notes(contact, onChanged)
+
+
             ContactDataTypeCustomValueDialog(
                 visible = contactDataWaitingForCustomType != null,
                 initialText = customTypeInitialText,
@@ -335,6 +343,49 @@ object ContactEditScreenContent {
                 ContactTypeField(contact, onChanged)
                 AccountSelectionField(contact, onChanged)
             }
+        }
+    }
+
+    @Composable
+    private fun CallBlocking(
+        contact: IContactEditable,
+        settings: ISettingsState,
+        onChanged: (IContactEditable) -> Unit
+    ) {
+        val showCallBlocking = contact.type == ContactType.SECRET &&
+                (settings.allowBlockingContacts || contact.isBlocked)
+        if (!showCallBlocking) return
+
+        var showInfoDialog by remember { mutableStateOf(false) }
+
+        ContactCategory(
+            categoryTitle = R.string.call_blocking,
+            icon = Icons.Default.Block,
+            initiallyExpanded = contact.isBlocked,
+            alignContentWithTitle = false,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = contact.isBlocked,
+                    onCheckedChange = { newValue ->
+                        contact.isBlocked = newValue
+                        onChanged(contact)
+                    },
+                )
+                Text(
+                    text = stringResource(id = R.string.block_contact),
+                    modifier = Modifier.weight(1f),
+                )
+                InfoIconButton { showInfoDialog = true }
+            }
+        }
+
+        if (showInfoDialog) {
+            OkDialog(
+                title = R.string.block_contact_info_title,
+                text = R.string.block_contact_info_text,
+                onClose = { showInfoDialog = false },
+            )
         }
     }
 

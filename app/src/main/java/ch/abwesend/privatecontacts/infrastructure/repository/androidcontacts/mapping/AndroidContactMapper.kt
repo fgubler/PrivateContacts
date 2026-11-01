@@ -27,6 +27,7 @@ class AndroidContactMapper {
                 id = ContactIdAndroid(contactNo = contact.contactId, lookupKey = contact.lookupKey?.value),
                 type = ContactType.PUBLIC,
                 displayName = contact.displayName,
+                isBlocked = false,
             )
         } catch (t: Throwable) {
             logger.warning("Failed to map android contact with id = ${contact.contactId}", t)
@@ -67,6 +68,7 @@ class AndroidContactMapper {
                 contactDataSet = contactDataFactory.getContactData(contact).toMutableList(),
                 contactGroups = groups.toContactGroups().toMutableList(),
                 saveInAccount = ContactAccount.None,
+                isBlocked = false,
             ).also { it.addCompanyWorkarounds(this) }
         } catch (t: Throwable) {
             logger.warning("Failed to map android contact with id = $contactId", t)

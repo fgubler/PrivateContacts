@@ -10,6 +10,8 @@ import android.content.Context
 import ch.abwesend.privatecontacts.R
 import ch.abwesend.privatecontacts.domain.lib.logging.debugLocally
 import ch.abwesend.privatecontacts.domain.lib.logging.logger
+import ch.abwesend.privatecontacts.domain.model.contact.ContactType
+import ch.abwesend.privatecontacts.domain.model.contact.ContactWithPhoneNumbers
 import ch.abwesend.privatecontacts.domain.service.IncomingCallService
 import ch.abwesend.privatecontacts.domain.service.interfaces.TelephoneService
 import ch.abwesend.privatecontacts.domain.util.applicationScope
@@ -23,21 +25,27 @@ class IncomingCallHelper {
     private val notificationRepository: CallNotificationRepository by injectAnywhere()
     private val toastRepository: ToastRepository by injectAnywhere()
 
-    suspend fun matchesAnyKnownContact(phoneNumber: String): Boolean {
+    suspend fun findMatchingContacts(
+        phoneNumber: String,
+        considerPublicContacts: Boolean,
+    ): List<ContactWithPhoneNumbers> {
         val matchingContacts = incomingCallService.findCorrespondingContacts(
             phoneNumber = phoneNumber,
-            considerPublicContacts = true,
+            considerPublicContacts = considerPublicContacts,
         )
         logger.debug("Found ${matchingContacts.size} matching contacts")
-        return matchingContacts.isNotEmpty()
+        return matchingContacts
     }
 
     suspend fun handleIncomingCall(
         context: Context,
         phoneNumber: String,
+        preloadedMatches: List<ContactWithPhoneNumbers>?,
     ) {
-        val correspondingContacts = incomingCallService
-            .findCorrespondingContacts(phoneNumber)
+        val matchingContacts = preloadedMatches?.filter { it.type == ContactType.SECRET }
+            ?: incomingCallService.findCorrespondingContacts(phoneNumber)
+
+        val correspondingContacts = matchingContacts
             .map { it.displayName }
             .distinct()
 
