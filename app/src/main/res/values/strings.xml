@@ -132,6 +132,11 @@
     <string name="notes">Notes</string>
     <string name="contact_groups">Groups</string>
     <string name="visibility">Visibility</string>
+    <string name="call_blocking">Call blocking</string>
+    <string name="block_contact">Block contact</string>
+    <string name="block_contact_info_title">Blocked contact</string>
+    <string name="block_contact_info_text">Calls from a contact marked as \"blocked\" will be blocked automatically. Note that the app must be set as caller-ID app for call-blocking to work.</string>
+    <string name="contact_blocked">Contact is blocked</string>
     <string name="visibility_colon">Visibility:</string>
 
     <string name="phone_number">Phone number</string>

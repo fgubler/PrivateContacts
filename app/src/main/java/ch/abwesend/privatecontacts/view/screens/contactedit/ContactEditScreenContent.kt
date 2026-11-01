@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.SpeakerNotes
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
@@ -71,6 +72,8 @@ import ch.abwesend.privatecontacts.domain.model.contactgroup.IContactGroupId
 import ch.abwesend.privatecontacts.view.components.AddIcon
 import ch.abwesend.privatecontacts.view.components.LoadingIndicatorFullScreen
 import ch.abwesend.privatecontacts.view.components.buttons.EditIconButton
+import ch.abwesend.privatecontacts.view.components.buttons.InfoIconButton
+import ch.abwesend.privatecontacts.view.components.dialogs.OkDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.EditTextDialog
 import ch.abwesend.privatecontacts.view.components.dialogs.SaveCancelDialog
 import ch.abwesend.privatecontacts.view.components.inputs.AccountSelectionDropDownField
@@ -181,6 +184,10 @@ object ContactEditScreenContent {
 
             Groups(contact, onChanged, allContactGroups, viewModel::createContactGroup)
             Notes(contact, onChanged)
+
+            if (contact.type == ContactType.SECRET) {
+                CallBlocking(contact, onChanged)
+            }
             ContactDataTypeCustomValueDialog(
                 visible = contactDataWaitingForCustomType != null,
                 initialText = customTypeInitialText,
@@ -335,6 +342,41 @@ object ContactEditScreenContent {
                 ContactTypeField(contact, onChanged)
                 AccountSelectionField(contact, onChanged)
             }
+        }
+    }
+
+    @Composable
+    private fun CallBlocking(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
+        var showInfoDialog by remember { mutableStateOf(false) }
+
+        ContactCategory(
+            categoryTitle = R.string.call_blocking,
+            icon = Icons.Default.Block,
+            initiallyExpanded = contact.isBlocked,
+            alignContentWithTitle = true,
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = contact.isBlocked,
+                    onCheckedChange = { newValue ->
+                        contact.isBlocked = newValue
+                        onChanged(contact)
+                    },
+                )
+                Text(
+                    text = stringResource(id = R.string.block_contact),
+                    modifier = Modifier.weight(1f),
+                )
+                InfoIconButton { showInfoDialog = true }
+            }
+        }
+
+        if (showInfoDialog) {
+            OkDialog(
+                title = R.string.block_contact_info_title,
+                text = R.string.block_contact_info_text,
+                onClose = { showInfoDialog = false },
+            )
         }
     }
 

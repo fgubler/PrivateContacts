@@ -31,6 +31,7 @@ fun IContact.toEntity(contactId: IContactIdInternal): ContactEntity {
         nameSuffix = nameSuffix,
         notes = notes,
         fullTextSearch = fullTextSearchColumn,
+        isBlocked = isBlocked,
     )
 }
 
@@ -44,4 +45,5 @@ fun ContactEntity.toContactBase(): ContactBase =
         id = id,
         type = type,
         displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix),
+        isBlocked = isBlocked,
     )

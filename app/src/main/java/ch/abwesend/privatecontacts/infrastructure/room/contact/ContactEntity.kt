@@ -32,6 +32,8 @@ data class ContactEntity(
     val nameSuffix: String,
     val type: ContactType,
     val notes: String,
+    @ColumnInfo(defaultValue = "0")
+    val isBlocked: Boolean = false,
     var fullTextSearch: String, // column optimized for full-text search
 ) {
     @Ignore val id: IContactIdInternal =

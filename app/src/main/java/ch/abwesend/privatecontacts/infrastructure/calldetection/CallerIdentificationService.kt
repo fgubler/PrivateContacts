@@ -46,10 +46,12 @@ class CallerIdentificationService : CallScreeningService() {
         val blockCallsFromUnknownNumbers = Settings.nextOrDefault().blockIncomingCallsFromUnknownNumbers
         val hasReadContactsPermission = permissionService.hasContactReadPermission()
 
-        val shouldBlockCall = phoneNumber != null &&
+        val isBlockedContact = phoneNumber != null && incomingCallHelper.matchesAnyBlockedContact(phoneNumber)
+        val isBlockedUnknownNumber = phoneNumber != null &&
             blockCallsFromUnknownNumbers &&
             hasReadContactsPermission &&
             !incomingCallHelper.matchesAnyKnownContact(phoneNumber)
+        val shouldBlockCall = isBlockedContact || isBlockedUnknownNumber
 
         if (shouldBlockCall) {
             blockCall(callDetails, phoneNumber)

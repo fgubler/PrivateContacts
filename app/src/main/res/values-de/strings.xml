@@ -132,6 +132,11 @@
     <string name="notes">Notizen</string>
     <string name="contact_groups">Gruppen</string>
     <string name="visibility">Sichtbarkeit</string>
+    <string name="call_blocking">Anrufe blockieren</string>
+    <string name="block_contact">Kontakt blockieren</string>
+    <string name="block_contact_info_title">Blockierter Kontakt</string>
+    <string name="block_contact_info_text">Anrufe von einem als \"blockiert\" markierten Kontakt werden automatisch blockiert. Damit das Blockieren funktioniert, muss die App als Anrufer-ID-App gesetzt sein.</string>
+    <string name="contact_blocked">Kontakt ist blockiert</string>
     <string name="visibility_colon">Sichtbarkeit:</string>
 
     <string name="phone_number">Telefonnummer</string>

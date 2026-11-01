@@ -166,6 +166,7 @@ class ContactRepository : RepositoryBase(), IContactRepository {
             contactGroups = contactGroups.toMutableList(),
             saveInAccount = ContactAccount.None,
             isNew = false,
+            isBlocked = contactEntity.isBlocked,
         )
     }
 

@@ -56,6 +56,7 @@ fun IContact.toContactEditable(): ContactEditable =
         image = image,
         contactDataSet = contactDataSet.toMutableList(),
         contactGroups = contactGroups.toMutableList(),
+        isBlocked = isBlocked,
         saveInAccount = ContactAccount.currentDefaultForContactType(type)
     )
 

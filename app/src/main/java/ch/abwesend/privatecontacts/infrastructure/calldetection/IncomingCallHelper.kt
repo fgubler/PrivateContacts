@@ -23,6 +23,13 @@ class IncomingCallHelper {
     private val notificationRepository: CallNotificationRepository by injectAnywhere()
     private val toastRepository: ToastRepository by injectAnywhere()
 
+    suspend fun matchesAnyBlockedContact(phoneNumber: String): Boolean {
+        val matchingContacts = incomingCallService.findCorrespondingContacts(phoneNumber)
+        val blockedContacts = matchingContacts.filter { it.isBlocked }
+        logger.debug("Found ${blockedContacts.size} matching blocked contacts")
+        return blockedContacts.isNotEmpty()
+    }
+
     suspend fun matchesAnyKnownContact(phoneNumber: String): Boolean {
         val matchingContacts = incomingCallService.findCorrespondingContacts(
             phoneNumber = phoneNumber,
