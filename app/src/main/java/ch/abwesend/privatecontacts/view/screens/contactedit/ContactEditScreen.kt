@@ -104,6 +104,7 @@ object ContactEditScreen {
                     ContactEditContent(
                         viewModel = screenContext.contactEditViewModel,
                         contact = contact,
+                        settings = screenContext.settings,
                         modifier = Modifier.weight(1F),
                     )
 
