@@ -27,6 +27,7 @@ class AndroidContactMapper {
                 id = ContactIdAndroid(contactNo = contact.contactId, lookupKey = contact.lookupKey?.value),
                 type = ContactType.PUBLIC,
                 displayName = contact.displayName,
+                isBlocked = false,
             )
         } catch (t: Throwable) {
             logger.warning("Failed to map android contact with id = ${contact.contactId}", t)

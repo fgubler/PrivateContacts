@@ -47,5 +47,5 @@ data class ContactBase(
     override val id: ContactId,
     override val type: ContactType,
     override val displayName: String,
-    override val isBlocked: Boolean = false,
+    override val isBlocked: Boolean,
 ) : IContactBase

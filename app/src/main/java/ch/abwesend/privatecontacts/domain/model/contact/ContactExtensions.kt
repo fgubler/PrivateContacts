@@ -59,7 +59,12 @@ fun IContact.toContactEditable(): ContactEditable =
         saveInAccount = ContactAccount.currentDefaultForContactType(type)
     )
 
-fun IContact.toContactBase(): ContactBase = ContactBase(id = id, type = type, displayName = getFullName())
+fun IContact.toContactBase(): ContactBase = ContactBase(
+    id = id,
+    type = type,
+    displayName = getFullName(),
+    isBlocked = isBlocked,
+)
 
 val IContactBase.isExternal: Boolean
     get() = id.isExternal

@@ -50,7 +50,8 @@ fun someContactBase(
 ): IContactBase = ContactBase(
     id = id,
     type = type,
-    displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix)
+    displayName = getFullName(firstName, lastName, nickname, middleName, namePrefix, nameSuffix),
+    isBlocked = false,
 )
 
 fun someContactEntity(
