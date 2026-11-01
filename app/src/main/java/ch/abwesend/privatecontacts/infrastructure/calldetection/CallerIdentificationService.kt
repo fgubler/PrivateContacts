@@ -43,14 +43,16 @@ class CallerIdentificationService : CallScreeningService() {
         val phoneNumber: String? = callDetails.handle?.schemeSpecificPart
         logger.debug("Incoming call from number '$phoneNumber'")
 
-        val blockCallsFromUnknownNumbers = Settings.nextOrDefault().blockIncomingCallsFromUnknownNumbers
-        val hasReadContactsPermission = permissionService.hasContactReadPermission()
+        val settings = Settings.nextOrDefault()
+        val checkForUnknownNumber = settings.blockIncomingCallsFromUnknownNumbers &&
+            permissionService.hasContactReadPermission()
 
-        val isBlockedContact = phoneNumber != null && incomingCallHelper.matchesAnyBlockedContact(phoneNumber)
-        val isBlockedUnknownNumber = phoneNumber != null &&
-            blockCallsFromUnknownNumbers &&
-            hasReadContactsPermission &&
-            !incomingCallHelper.matchesAnyKnownContact(phoneNumber)
+        val matchingContacts = phoneNumber?.let {
+            incomingCallHelper.findMatchingContacts(it, considerPublicContacts = checkForUnknownNumber)
+        }.orEmpty()
+
+        val isBlockedContact = settings.allowBlockingContacts && matchingContacts.any { it.isBlocked }
+        val isBlockedUnknownNumber = phoneNumber != null && checkForUnknownNumber && matchingContacts.isEmpty()
         val shouldBlockCall = isBlockedContact || isBlockedUnknownNumber
 
         if (shouldBlockCall) {
@@ -58,7 +60,7 @@ class CallerIdentificationService : CallScreeningService() {
         } else {
             val response = CallResponse.Builder().build() // we don't want to interfere with anything here...
             respondToCall(callDetails, response)
-            phoneNumber?.let { incomingCallHelper.handleIncomingCall(baseContext, it) }
+            phoneNumber?.let { incomingCallHelper.handleIncomingCall(baseContext, it, matchingContacts) }
         }
     }
 
