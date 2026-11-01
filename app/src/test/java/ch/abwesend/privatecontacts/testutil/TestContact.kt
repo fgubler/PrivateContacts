@@ -32,6 +32,7 @@ data class TestContact(
     override val image: ContactImage,
     override val saveInAccount: ContactAccount = ContactAccount.None,
     override val importId: ContactImportId? = null,
+    override val isBlocked: Boolean = false,
 ) : IContact {
     override val displayName: String
         get() = getFullName()

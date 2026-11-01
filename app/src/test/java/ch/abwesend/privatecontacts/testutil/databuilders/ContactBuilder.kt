@@ -247,6 +247,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactGroups: List<ContactGroup> = emptyList(),
     isNew: Boolean = false,
     saveInAccount: ContactAccount = ContactAccount.None,
+    isBlocked: Boolean = false,
 ): IContactEditable = ContactEditable(
     id = id,
     importId = importId,
@@ -263,6 +264,7 @@ fun <T : ContactId> someContactEditableGeneric(
     contactGroups = contactGroups.toMutableList(),
     isNew = isNew,
     saveInAccount = saveInAccount,
+    isBlocked = isBlocked,
 )
 
 fun someOnlineAccount(
