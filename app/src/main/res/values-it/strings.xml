@@ -568,4 +568,5 @@
     <string name="release_notes_v113">Aggiornamento a Material 3 per un aspetto più moderno.</string>
     <string name="release_notes_v117">L\'elenco dei contatti segreti può ora essere filtrato per gruppo di contatti (etichetta).</string>
     <string name="release_notes_v119">Aggiunta una nuova schermata per gestire i gruppi di contatti (etichette).</string>
+    <string name="release_notes_v122">Aggiunta la possibilità di contrassegnare i contatti segreti come bloccati per sopprimere tutte le loro chiamate.</string>
 </resources>

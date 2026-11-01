@@ -568,4 +568,5 @@
     <string name="release_notes_v113">Umstellung auf Material 3 für ein moderneres Erscheinungsbild.</string>
     <string name="release_notes_v117">Die Liste der geheimen Kontakte kann jetzt nach Kontaktgruppe (Label) gefiltert werden.</string>
     <string name="release_notes_v119">Neuer Bildschirm zur Verwaltung von Kontaktgruppen (Labels) hinzugefügt.</string>
+    <string name="release_notes_v122">Geheime Kontakte können jetzt als blockiert markiert werden, um alle Anrufe von ihnen zu unterdrücken.</string>
 </resources>

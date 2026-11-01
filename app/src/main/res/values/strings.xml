@@ -573,4 +573,5 @@
     <string name="release_notes_v113">Upgrade to Material 3 for a more modern look and feel.</string>
     <string name="release_notes_v117">The list of secret contacts can now be filtered by contact-group (label).</string>
     <string name="release_notes_v119">Added new screen to manage contact-groups (labels).</string>
+    <string name="release_notes_v122">Added the option to mark secret contacts as blocked to suppress any calls by them.</string>
 </resources>

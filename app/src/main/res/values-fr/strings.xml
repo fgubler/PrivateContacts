@@ -569,4 +569,5 @@
     <string name="release_notes_v113">Passage à Material 3 pour une apparence plus moderne.</string>
     <string name="release_notes_v117">La liste des contacts secrets peut désormais être filtrée par groupe de contacts (libellé).</string>
     <string name="release_notes_v119">Ajout d\'un nouvel écran pour gérer les groupes de contacts (libellés).</string>
+    <string name="release_notes_v122">Ajout de la possibilité de marquer les contacts secrets comme bloqués afin de supprimer tous leurs appels.</string>
 </resources>

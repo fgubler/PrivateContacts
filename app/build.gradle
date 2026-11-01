@@ -51,8 +51,8 @@ android {
          *   - adding release-notes in the fastlane/metadata folder
          * consider using the prepare-release junie-skill to automate this
          */
-        versionCode = 121
-        versionName = "6.2.2"
+        versionCode = 122
+        versionName = "6.3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
