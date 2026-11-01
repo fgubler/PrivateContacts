@@ -185,11 +185,10 @@ object ContactEditScreenContent {
             )
 
             Groups(contact, onChanged, allContactGroups, viewModel::createContactGroup)
+            CallBlocking(contact, settings, onChanged)
             Notes(contact, onChanged)
 
-            if (contact.type == ContactType.SECRET && (settings.allowBlockingContacts || contact.isBlocked)) {
-                CallBlocking(contact, onChanged)
-            }
+
             ContactDataTypeCustomValueDialog(
                 visible = contactDataWaitingForCustomType != null,
                 initialText = customTypeInitialText,
@@ -348,14 +347,22 @@ object ContactEditScreenContent {
     }
 
     @Composable
-    private fun CallBlocking(contact: IContactEditable, onChanged: (IContactEditable) -> Unit) {
+    private fun CallBlocking(
+        contact: IContactEditable,
+        settings: ISettingsState,
+        onChanged: (IContactEditable) -> Unit
+    ) {
+        val showCallBlocking = contact.type == ContactType.SECRET &&
+                (settings.allowBlockingContacts || contact.isBlocked)
+        if (!showCallBlocking) return
+
         var showInfoDialog by remember { mutableStateOf(false) }
 
         ContactCategory(
             categoryTitle = R.string.call_blocking,
             icon = Icons.Default.Block,
             initiallyExpanded = contact.isBlocked,
-            alignContentWithTitle = true,
+            alignContentWithTitle = false,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(

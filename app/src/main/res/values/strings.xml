@@ -135,7 +135,7 @@
     <string name="call_blocking">Call blocking</string>
     <string name="block_contact">Block contact</string>
     <string name="block_contact_info_title">Blocked contact</string>
-    <string name="block_contact_info_text">Calls from a contact marked as \"blocked\" will be blocked automatically. Note that the app must be set as caller-ID app for call-blocking to work.</string>
+    <string name="block_contact_info_text">Calls from a contact marked as \"blocked\" will be blocked automatically.</string>
     <string name="contact_blocked">Contact is blocked</string>
     <string name="settings_entry_allow_blocking_contacts">Allow blocking contacts</string>
     <string name="visibility_colon">Visibility:</string>
@@ -270,7 +270,7 @@
     <string name="incoming_call_channel_title">Incoming call</string>
     <string name="incoming_call_channel_description">Notifications to inform the user about matches between incoming calls and his stored contacts.</string>
     <string name="blocked_call_notification_title">Blocked incoming call</string>
-    <string name="blocked_call_notification_text">Call from %1$s has been blocked because the number is not in your contacts.</string>
+    <string name="blocked_call_notification_text">Call from %1$s has been blocked because the number is blocked or not in your contacts.</string>
 
     <string name="about_app_title">About the App</string>
     <string name="about_app_description">The idea of this app is to store contacts which should not be shared with other apps on the device.</string>

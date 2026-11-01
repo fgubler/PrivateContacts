@@ -135,7 +135,7 @@
     <string name="call_blocking">Bloqueo de llamadas</string>
     <string name="block_contact">Bloquear contacto</string>
     <string name="block_contact_info_title">Contacto bloqueado</string>
-    <string name="block_contact_info_text">Las llamadas de un contacto marcado como \"bloqueado\" se bloquearán automáticamente. Para que el bloqueo funcione, la aplicación debe estar configurada como aplicación de identificación de llamadas.</string>
+    <string name="block_contact_info_text">Las llamadas de un contacto marcado como \"bloqueado\" se bloquearán automáticamente.</string>
     <string name="contact_blocked">El contacto está bloqueado</string>
     <string name="settings_entry_allow_blocking_contacts">Permitir bloquear contactos</string>
     <string name="visibility_colon">Visibilidad:</string>
@@ -267,7 +267,7 @@
     <string name="incoming_call_channel_title">Llamada entrante</string>
     <string name="incoming_call_channel_description">Notificaciones para llamadas que coinciden con contactos almacenados.</string>
     <string name="blocked_call_notification_title">Llamada bloqueada</string>
-    <string name="blocked_call_notification_text">La llamada de %1$s ha sido bloqueada porque el número no está en tus contactos.\nSe tienen en cuenta tanto los contactos públicos como los secretos.</string>
+    <string name="blocked_call_notification_text">La llamada de %1$s ha sido bloqueada porque el número está bloqueado o no está en tus contactos.</string>
 
     <string name="about_app_title">Acerca de la app</string>
     <string name="about_app_description">Esta app está diseñada para guardar contactos que no deben ser compartidos con otras apps de tu teléfono.</string>

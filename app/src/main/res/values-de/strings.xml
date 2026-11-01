@@ -135,7 +135,7 @@
     <string name="call_blocking">Anrufe blockieren</string>
     <string name="block_contact">Kontakt blockieren</string>
     <string name="block_contact_info_title">Blockierter Kontakt</string>
-    <string name="block_contact_info_text">Anrufe von einem als \"blockiert\" markierten Kontakt werden automatisch blockiert. Damit das Blockieren funktioniert, muss die App als Anrufer-ID-App gesetzt sein.</string>
+    <string name="block_contact_info_text">Anrufe von einem als \"blockiert\" markierten Kontakt werden automatisch blockiert.</string>
     <string name="contact_blocked">Kontakt ist blockiert</string>
     <string name="settings_entry_allow_blocking_contacts">Blockieren von Kontakten erlauben</string>
     <string name="visibility_colon">Sichtbarkeit:</string>
@@ -267,7 +267,7 @@
     <string name="incoming_call_channel_title">Eingehender Anruf</string>
     <string name="incoming_call_channel_description">Benachrichtigungen über eingehende Anrufe, die mit gespeicherten Kontakten übereinstimmen.</string>
     <string name="blocked_call_notification_title">Eingehender Anruf blockiert</string>
-    <string name="blocked_call_notification_text">Ein Anruf von %1$s wurde blockiert, weil die Nummer nicht in Ihren Kontakten hinterlegt ist.</string>
+    <string name="blocked_call_notification_text">Ein Anruf von %1$s wurde blockiert, weil die Nummer blockiert oder nicht in Ihren Kontakten hinterlegt ist.</string>
 
     <string name="about_app_title">Über die App</string>
     <string name="about_app_description">Diese App ermöglicht es, Kontakte zu speichern, die nicht mit anderen Apps geteilt werden sollen.</string>
