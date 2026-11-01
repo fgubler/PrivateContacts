@@ -123,6 +123,10 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         get() = currentSettings.blockIncomingCallsFromUnknownNumbers
         set(value) = dataStore.setValue(blockIncomingCallsFromUnknownNumbersEntry, value)
 
+    override var allowBlockingContacts: Boolean
+        get() = currentSettings.allowBlockingContacts
+        set(value) = dataStore.setValue(allowBlockingContactsEntry, value)
+
     override var useAlternativeAppIcon: Boolean
         get() = currentSettings.useAlternativeAppIcon
         set(value) = dataStore.setValue(useAlternativeAppIconEntry, value)
@@ -227,6 +231,7 @@ class DataStoreSettingsRepository(context: Context) : SettingsRepository {
         requestIncomingCallPermissions = settings.requestIncomingCallPermissions
         observeIncomingCalls = settings.observeIncomingCalls
         blockIncomingCallsFromUnknownNumbers = settings.blockIncomingCallsFromUnknownNumbers
+        allowBlockingContacts = settings.allowBlockingContacts
         showAndroidContacts = settings.showAndroidContacts
         showThirdPartyContactAccounts = settings.showThirdPartyContactAccounts
         useAlternativeAppIcon = settings.useAlternativeAppIcon

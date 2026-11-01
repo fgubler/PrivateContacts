@@ -137,6 +137,7 @@
     <string name="block_contact_info_title">Contacto bloqueado</string>
     <string name="block_contact_info_text">Las llamadas de un contacto marcado como \"bloqueado\" se bloquearán automáticamente. Para que el bloqueo funcione, la aplicación debe estar configurada como aplicación de identificación de llamadas.</string>
     <string name="contact_blocked">El contacto está bloqueado</string>
+    <string name="settings_entry_allow_blocking_contacts">Permitir bloquear contactos</string>
     <string name="visibility_colon">Visibilidad:</string>
 
     <string name="phone_number">Número de teléfono</string>

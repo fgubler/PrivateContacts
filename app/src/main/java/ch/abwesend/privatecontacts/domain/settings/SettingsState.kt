@@ -65,6 +65,12 @@ interface ISettingsState {
      */
     val blockIncomingCallsFromUnknownNumbers: Boolean
 
+    /**
+     * Whether secret contacts can be marked as blocked.
+     * Depends on [observeIncomingCalls]
+     */
+    val allowBlockingContacts: Boolean
+
     // Android Contacts
     val showAndroidContacts: Boolean
     val showThirdPartyContactAccounts: Boolean
@@ -122,6 +128,7 @@ data class SettingsState(
     override val observeIncomingCalls: Boolean,
     override val showIncomingCallsOnLockScreen: Boolean,
     override val blockIncomingCallsFromUnknownNumbers: Boolean,
+    override val allowBlockingContacts: Boolean,
 
     override val showAndroidContacts: Boolean,
     override val showThirdPartyContactAccounts: Boolean,
@@ -165,6 +172,7 @@ data class SettingsState(
             requestIncomingCallPermissions = true,
             observeIncomingCalls = true,
             blockIncomingCallsFromUnknownNumbers = false,
+            allowBlockingContacts = false,
             showAndroidContacts = true,
             showThirdPartyContactAccounts = false,
             authenticationRequired = false,

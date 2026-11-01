@@ -137,6 +137,7 @@
     <string name="block_contact_info_title">Blockierter Kontakt</string>
     <string name="block_contact_info_text">Anrufe von einem als \"blockiert\" markierten Kontakt werden automatisch blockiert. Damit das Blockieren funktioniert, muss die App als Anrufer-ID-App gesetzt sein.</string>
     <string name="contact_blocked">Kontakt ist blockiert</string>
+    <string name="settings_entry_allow_blocking_contacts">Blockieren von Kontakten erlauben</string>
     <string name="visibility_colon">Sichtbarkeit:</string>
 
     <string name="phone_number">Telefonnummer</string>

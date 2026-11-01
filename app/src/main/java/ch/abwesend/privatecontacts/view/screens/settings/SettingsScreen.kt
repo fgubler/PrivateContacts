@@ -303,6 +303,19 @@ object SettingsScreen {
                     settingsRepository.blockIncomingCallsFromUnknownNumbers = false
                 }
             }
+
+            SettingsEntryDivider()
+
+            SettingsCheckbox(
+                label = R.string.settings_entry_allow_blocking_contacts,
+                description = null,
+                infoDialogTexts = OkDialogTexts(
+                    title = R.string.block_contact_info_title,
+                    text = R.string.block_contact_info_text,
+                ),
+                value = currentSettings.observeIncomingCalls && currentSettings.allowBlockingContacts,
+                enabled = currentSettings.observeIncomingCalls,
+            ) { settingsRepository.allowBlockingContacts = it }
         }
 
         if (requestPermissions) {
